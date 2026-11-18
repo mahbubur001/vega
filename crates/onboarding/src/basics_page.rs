@@ -670,6 +670,9 @@ fn render_zed_agent_button(user_store: &Entity<UserStore>, cx: &mut App) -> impl
         })
 }
 
+/// The Zed agent needs a zed.dev account, which VEGA doesn't offer.
+const SHOW_ZED_AGENT_BUTTON: bool = false;
+
 fn render_ai_section(user_store: &Entity<UserStore>, cx: &mut App) -> impl IntoElement {
     let registry_agents = AgentRegistryStore::try_global(cx)
         .map(|store| store.read(cx).agents().to_vec())
@@ -680,7 +683,7 @@ fn render_ai_section(user_store: &Entity<UserStore>, cx: &mut App) -> impl IntoE
         .get::<AllAgentServersSettings>(None)
         .clone();
 
-    let column_count = 1 + FEATURED_AGENT_IDS.len() as u16;
+    let column_count = u16::from(SHOW_ZED_AGENT_BUTTON) + FEATURED_AGENT_IDS.len() as u16;
 
     let grid = FEATURED_AGENT_IDS.iter().fold(
         div()
@@ -689,7 +692,9 @@ fn render_ai_section(user_store: &Entity<UserStore>, cx: &mut App) -> impl IntoE
             .grid()
             .grid_cols(column_count)
             .gap_2()
-            .child(render_zed_agent_button(user_store, cx)),
+            .when(SHOW_ZED_AGENT_BUTTON, |grid| {
+                grid.child(render_zed_agent_button(user_store, cx))
+            }),
         |grid, agent_id| {
             let Some(agent) = registry_agents
                 .iter()

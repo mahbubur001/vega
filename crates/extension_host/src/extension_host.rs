@@ -76,6 +76,9 @@ pub use extension_settings::ExtensionSettings;
 use crate::headless_host::hash_directory_contents;
 
 pub const RELOAD_DEBOUNCE_DURATION: Duration = Duration::from_millis(200);
+/// Whether to auto-install and update extensions from the registry at startup.
+const CONTACT_REGISTRY_ON_STARTUP: bool = false;
+
 const FS_WATCH_LATENCY: Duration = Duration::from_millis(100);
 pub(crate) const REMOTE_SYNC_RETRY_DELAY: Duration = Duration::from_secs(1);
 pub(crate) const MAX_REMOTE_SYNC_RETRY_DELAY: Duration = Duration::from_secs(60);
@@ -461,13 +464,17 @@ impl ExtensionStore {
             .shared();
         this.initial_index_load = initial_index_load.clone();
 
-        cx.spawn(async move |this, cx| {
-            initial_index_load.await;
-            this.update(cx, |this, cx| this.auto_install_extensions(cx))
-                .ok();
-            this.update(cx, |this, cx| this.check_for_updates(cx)).ok();
-        })
-        .detach();
+        // VEGA doesn't contact Zed's extension registry on its own; it's only
+        // reached when the user opens the extensions page or installs one.
+        if CONTACT_REGISTRY_ON_STARTUP {
+            cx.spawn(async move |this, cx| {
+                initial_index_load.await;
+                this.update(cx, |this, cx| this.auto_install_extensions(cx))
+                    .ok();
+                this.update(cx, |this, cx| this.check_for_updates(cx)).ok();
+            })
+            .detach();
+        }
 
         // Perform all extension loading in a single task to ensure that we
         // never attempt to simultaneously load/unload extensions from multiple

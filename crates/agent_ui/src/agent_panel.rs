@@ -104,6 +104,9 @@ use workspace::{
     item::{ItemEvent, ItemHandle},
 };
 
+/// Zed AI onboarding and trial upsells need a zed.dev account, which VEGA doesn't offer.
+const SHOW_ZED_AI_ONBOARDING: bool = false;
+
 const AGENT_PANEL_KEY: &str = "agent_panel";
 const MIN_PANEL_WIDTH: Pixels = px(300.);
 const LAST_USED_AGENT_KEY: &str = "agent_panel__last_used_external_agent";
@@ -6269,7 +6272,7 @@ impl AgentPanel {
     }
 
     fn should_render_trial_end_upsell(&self, cx: &mut Context<Self>) -> bool {
-        if TrialEndUpsell::dismissed(cx) {
+        if !SHOW_ZED_AI_ONBOARDING || TrialEndUpsell::dismissed(cx) {
             return false;
         }
 
@@ -6302,9 +6305,10 @@ impl AgentPanel {
     }
 
     fn should_render_new_user_onboarding(&mut self, cx: &mut Context<Self>) -> bool {
-        if self
-            .new_user_onboarding_upsell_dismissed
-            .load(Ordering::Acquire)
+        if !SHOW_ZED_AI_ONBOARDING
+            || self
+                .new_user_onboarding_upsell_dismissed
+                .load(Ordering::Acquire)
         {
             return false;
         }
