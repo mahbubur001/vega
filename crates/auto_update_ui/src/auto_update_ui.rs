@@ -106,6 +106,25 @@ fn view_release_notes_locally(
     let version = AppVersion::global(cx).to_string();
 
     let client = client::Client::global(cx).http_client();
+    // VEGA must never talk to zed.dev, and publishes no release notes of its own yet (P10).
+    if auto_update::is_zed_hosted(&client.base_url()) {
+        struct ReleaseNotesUnavailable;
+
+        impl WorkspaceError for ReleaseNotesUnavailable {
+            fn primary_message(&self) -> SharedString {
+                "VEGA doesn't publish release notes yet".into()
+            }
+            fn severity(&self) -> ErrorSeverity {
+                ErrorSeverity::Warning
+            }
+            fn primary_action(&self) -> ErrorAction {
+                ErrorAction::dismiss()
+            }
+        }
+
+        workspace.show_error(ReleaseNotesUnavailable, cx);
+        return;
+    }
     let url = client.build_url(&format!(
         "/api/release_notes/v2/{}/{}",
         release_channel.dev_name(),

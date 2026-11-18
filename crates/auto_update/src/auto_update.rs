@@ -360,7 +360,12 @@ pub fn release_notes_url(cx: &mut App) -> Option<String> {
             current_version.build = semver::BuildMetadata::EMPTY;
             let release_channel = release_channel.dev_name();
             let path = format!("/releases/{release_channel}/{current_version}");
-            auto_updater.client.http_client().build_url(&path)
+            let http_client = auto_updater.client.http_client();
+            // VEGA has no release notes page of its own yet (P10); never point at zed.dev.
+            if is_zed_hosted(&http_client.base_url()) {
+                return None;
+            }
+            http_client.build_url(&path)
         }
         ReleaseChannel::Nightly => {
             "https://github.com/zed-industries/zed/commits/nightly/".to_string()
@@ -1012,7 +1017,7 @@ impl AutoUpdater {
 }
 
 /// Whether `base_url` points at Zed Industries' hosted services (zed.dev or a subdomain).
-fn is_zed_hosted(base_url: &str) -> bool {
+pub fn is_zed_hosted(base_url: &str) -> bool {
     http_client::Url::parse(base_url)
         .ok()
         .and_then(|url| url.host_str().map(str::to_owned))
@@ -1487,6 +1492,21 @@ mod tests {
 
         assert_eq!(url.as_deref(), Some("https://test.example/remote-server"));
         assert_eq!(requests.load(atomic::Ordering::SeqCst), 1);
+    }
+
+    #[gpui::test]
+    fn test_release_notes_url_never_points_at_zed_dev(cx: &mut TestAppContext) {
+        init_remote_server_lookup(Some("https://zed.dev"), Arc::new(AtomicUsize::new(0)), cx);
+        assert_eq!(cx.update(|cx| release_notes_url(cx)), None);
+    }
+
+    #[gpui::test]
+    fn test_release_notes_url_uses_custom_server_url(cx: &mut TestAppContext) {
+        init_remote_server_lookup(None, Arc::new(AtomicUsize::new(0)), cx);
+        assert_eq!(
+            cx.update(|cx| release_notes_url(cx)).as_deref(),
+            Some("http://test.example/releases/stable/0.100.0")
+        );
     }
 
     #[test]

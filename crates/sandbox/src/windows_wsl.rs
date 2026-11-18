@@ -68,6 +68,11 @@ const PROBE_RESULT_PREFIX: &str = "zed-wsl-probe:";
 /// login-shell stdout noise just like [`PROBE_RESULT_PREFIX`].
 const HELPER_RESULT_PREFIX: &str = "zed-wsl-helper:";
 
+/// Whether [`HELPER_PROVISION_SCRIPT`] may run. It downloads the helper from
+/// `cloud.zed.dev`, which VEGA must never contact; re-enable once VEGA serves
+/// its own Linux builds (P10) and the script points there.
+const PROVISION_HELPER_FROM_ZED_CLOUD: bool = false;
+
 /// Ensures a Linux `zed` matching the running release is available inside WSL to
 /// act as the sandbox helper (`--wsl-sandbox-helper`), and prints its absolute
 /// in-WSL path on a [`HELPER_RESULT_PREFIX`] line. `$1` is the release channel,
@@ -93,6 +98,9 @@ const HELPER_RESULT_PREFIX: &str = "zed-wsl-helper:";
 /// We ship no `zed` (nor `bwrap`) into WSL ourselves; this downloads `zed` on
 /// demand. A missing `curl`/`wget` (or a failed download) is a hard error the
 /// caller surfaces to the user, exactly like a missing `bwrap`.
+///
+/// VEGA: disabled, because the script downloads from `cloud.zed.dev`. See
+/// [`PROVISION_HELPER_FROM_ZED_CLOUD`].
 const HELPER_PROVISION_SCRIPT: &str = r#"
 set -eu
 channel="$1"
@@ -873,6 +881,15 @@ async fn ensure_wsl_zed_helper(
         return Ok(helper);
     }
 
+    // VEGA must never talk to zed.dev, and publishes no Linux build for the
+    // provisioning script to download yet (P10).
+    if !PROVISION_HELPER_FROM_ZED_CLOUD {
+        return Err(unavailable(
+            "VEGA can't download a Linux sandbox helper yet. \
+             Set ZED_WSL_SANDBOX_HELPER to the absolute path of a Linux VEGA build inside WSL.",
+        ));
+    }
+
     type HelperCache = HashMap<(Option<String>, String, String), String>;
     static CACHE: OnceLock<Mutex<HelperCache>> = OnceLock::new();
     let cache = CACHE.get_or_init(|| Mutex::new(HashMap::new()));
@@ -1526,6 +1543,32 @@ fn parse_native_drive_path(path: &str) -> Result<WslPath> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn helper_is_never_provisioned_from_zed_cloud() {
+        if std::env::var_os("ZED_WSL_SANDBOX_HELPER").is_some() {
+            return; // The development override short-circuits before the guard.
+        }
+        // The guard must fire before any WSL command runs, so a bogus `wsl.exe`
+        // proves nothing was executed (and nothing was downloaded).
+        let error = smol::block_on(ensure_wsl_zed_helper(
+            Path::new("Z:\\does-not-exist\\wsl.exe"),
+            None,
+            "stable",
+            "0.100.0",
+        ))
+        .expect_err("provisioning from cloud.zed.dev must be refused");
+        let unavailable = error
+            .downcast_ref::<WslSandboxUnavailable>()
+            .expect("refusal should be a WslSandboxUnavailable");
+        assert!(
+            unavailable
+                .message()
+                .contains("can't download a Linux sandbox helper"),
+            "unexpected message: {}",
+            unavailable.message()
+        );
+    }
 
     #[test]
     fn wrap_invocation_future_is_send() {
