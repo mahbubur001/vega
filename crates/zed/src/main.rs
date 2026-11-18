@@ -692,6 +692,7 @@ fn main() {
         };
         let credentials_provider = zed_credentials_provider::global(cx);
         settings_sync::init(
+            app_state.fs.clone(),
             app_state.client.http_client(),
             credentials_provider.clone(),
             cx,

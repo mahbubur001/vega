@@ -16489,11 +16489,13 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "credentials_provider",
+ "fs",
  "futures 0.3.34",
  "gpui",
  "http_client",
  "log",
  "menu",
+ "paths",
  "serde",
  "serde_json",
  "ui",

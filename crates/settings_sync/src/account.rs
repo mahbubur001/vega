@@ -135,6 +135,11 @@ impl GitHubAccount {
         }
     }
 
+    /// The OAuth token, available while signed in.
+    pub(crate) fn token(&self) -> Option<&str> {
+        self.token.as_deref()
+    }
+
     /// Begins the GitHub device flow. Progress is reported through
     /// [`Self::status`]; observe this entity to react to changes.
     pub fn sign_in(&mut self, cx: &mut Context<Self>) {

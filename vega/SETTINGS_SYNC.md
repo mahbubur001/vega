@@ -55,6 +55,11 @@ Headers: `Authorization: Bearer <token>`, `Accept: application/vnd.github+json`,
 
 Limits: GitHub keeps ≤10 tokens per user per app (an 11th machine revokes the oldest, so a 401 means "sign in again"). Rate limits: serial requests, ≥1 s between writes, honour `retry-after` / `x-ratelimit-reset`. Sign-out deletes the local token and links to `github.com/settings/applications` to revoke (a public app can't revoke via API).
 
+## Status
+
+- **M1/M2 built.** `settings.json` and the per-OS keymap sync whole-file with base tracking, conflict prompts (Keep This Machine's / Use GitHub's) and backups in `<data>/settings_sync/backups/`. Local state is `<data>/settings_sync/state.json`.
+- **Not yet:** the post-PATCH history check for writes racing between machines (M3), per-key merge (M3), never-sync rules (M3).
+
 ## Code layout
 
 New crate `crates/settings_sync` (thin seams into upstream):
