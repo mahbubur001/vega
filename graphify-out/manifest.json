@@ -1686,9 +1686,9 @@
     "semantic_hash": "a200352233dde320857bbc67abaf9313"
   },
   "crates/auto_update/src/auto_update.rs": {
-    "mtime": 1795017523.7548332,
-    "seen": 1795018371.4082859,
-    "ast_hash": "f2087b094b64bd4e15e8f5aafa6e2b80",
+    "mtime": 1795018765.9404461,
+    "seen": 1795019191.51981,
+    "ast_hash": "2d0afa6d04284001f68a3ad784e7aaf1",
     "semantic_hash": ""
   },
   "crates/auto_update_helper/Cargo.toml": {
@@ -1728,10 +1728,10 @@
     "semantic_hash": "6346e61da1598d87f586d9289c426030"
   },
   "crates/auto_update_ui/src/auto_update_ui.rs": {
-    "mtime": 1795011961.892366,
-    "seen": 1795016968.624033,
-    "ast_hash": "60780e87324499a8b6c16b54b2212bdf",
-    "semantic_hash": "60780e87324499a8b6c16b54b2212bdf"
+    "mtime": 1795018755.6489408,
+    "seen": 1795019191.519916,
+    "ast_hash": "b702cb7910935b7f37b7be541c128dc6",
+    "semantic_hash": ""
   },
   "crates/aws_http_client/Cargo.toml": {
     "mtime": 1795011961.892441,
@@ -9762,10 +9762,10 @@
     "semantic_hash": "32135fa1b9a70021150826f4515cee63"
   },
   "crates/open_router/src/open_router.rs": {
-    "mtime": 1795011962.090477,
-    "seen": 1795016968.624783,
-    "ast_hash": "8a0b52f73c65937c82896fa85e3b623d",
-    "semantic_hash": "8a0b52f73c65937c82896fa85e3b623d"
+    "mtime": 1795018766.0604115,
+    "seen": 1795019191.543749,
+    "ast_hash": "3941b6723f9fd19b05e3d27781051321",
+    "semantic_hash": ""
   },
   "crates/openai_subscribed/Cargo.toml": {
     "mtime": 1795011962.0906875,
@@ -11286,10 +11286,10 @@
     "semantic_hash": "2854e569a1b8ac80529082478828b7d6"
   },
   "crates/sandbox/src/windows_wsl.rs": {
-    "mtime": 1795011962.1317575,
-    "seen": 1795016968.624917,
-    "ast_hash": "0d63b71a3b319e75453a34e57b2a8054",
-    "semantic_hash": "0d63b71a3b319e75453a34e57b2a8054"
+    "mtime": 1795018788.6903234,
+    "seen": 1795019191.5481741,
+    "ast_hash": "0b7f0a5365bff9e21cfcb60ea5aa426f",
+    "semantic_hash": ""
   },
   "crates/sandbox/src/wsl_sandbox_test_helper.rs": {
     "mtime": 1795011962.131987,
@@ -16314,10 +16314,10 @@
     "semantic_hash": "586bbc2c2807fc8daa30afaa83c16a9c"
   },
   "crates/zed/src/zed/app_menus.rs": {
-    "mtime": 1795011962.235451,
-    "seen": 1795016968.625358,
-    "ast_hash": "dfd6c634e4fe8db176f342b8e49133e8",
-    "semantic_hash": "dfd6c634e4fe8db176f342b8e49133e8"
+    "mtime": 1795018755.7681792,
+    "seen": 1795019191.5630379,
+    "ast_hash": "110e7e3c0c0de4b2efbc9b27c27ab25a",
+    "semantic_hash": ""
   },
   "crates/zed/src/zed/edit_prediction_registry.rs": {
     "mtime": 1795011962.2355103,
@@ -19800,9 +19800,9 @@
     "semantic_hash": "c28d81d3006f29e314d94e46abcae829"
   },
   "vega/ROADMAP.md": {
-    "mtime": 1795018126.2292717,
-    "seen": 1795018371.463999,
-    "ast_hash": "211956195e7df77e90f91dd5d4ef8c75",
+    "mtime": 1795018802.2608297,
+    "seen": 1795019191.573395,
+    "ast_hash": "1e0615c2a08d03eaa58ea4954e7fc4e7",
     "semantic_hash": ""
   },
   "vega/SETTINGS_SYNC.md": {
