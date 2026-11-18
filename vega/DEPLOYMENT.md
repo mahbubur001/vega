@@ -28,7 +28,7 @@ crates/deployment_ui   (GPUI)    Remote Host panel, transfers status item, serve
 
 - **Engine per worktree.** A `DeploymentStore` entity per workspace holds one `Engine` per local worktree root. SSH/remote projects are out of scope at first.
 - **Upload on save.** Subscribe to `BufferStore` → `BufferEvent::Saved`, then call `Engine::on_saved`. Worktree entry updates replace iRemote's own file watcher for external changes, deletes and renames.
-- **Config.** Read and write iRemote's existing format unchanged: `.zed/iremote.json` per project, shared servers in `~/.config/iremote/servers.json`. Existing iRemote projects work immediately.
+- **Config.** Same schema as iRemote, in VEGA's own files: `.zed/deployment.json` per project and shared servers in `~/.config/vega/deployment_servers.json`. A project's existing `.zed/iremote.json` is imported once (the original is left untouched).
 - **Secrets.** In the OS keychain only, never in JSON or logs. See decision 2.
 - **Security.** Unchanged from iRemote: `known_hosts` checks with strict-host-key modes, TLS verified against the system store, explicit fingerprint trust.
 
@@ -73,9 +73,9 @@ D0–D1 is the smallest useful slice: upload on save and the menu actions workin
 - **UI rewrite (~10k lines).** The largest cost. iRemote's UI was never visually reviewed, so treat it as a reference, not a spec.
 - **Tests.** No UI tests yet; integration tests need Docker (`tests/servers/compose.yml`). rsync is an unused stub in iRemote; it stays out.
 
-## Decisions (owner)
+## Decisions (owner, 2026-11-18)
 
-1. **Config file.** Keep `.zed/iremote.json` + `~/.config/iremote/servers.json` (compatible with iRemote for Zed/VS Code/Neovim) *(recommended)*, or rename to `.zed/deployment.json`.
-2. **Keychain.** Store secrets through VEGA's credentials provider *(recommended)* and fall back to reading iRemote's existing `iremote` keychain entries once, so saved passwords keep working.
-3. **Source of truth.** Vendor the core into VEGA and let it evolve there *(recommended)*, or keep one shared crate for both iRemote-for-Zed and VEGA.
-4. **First slice.** Start with D0–D1 (upload on save, actions, JSON config) *(recommended)*, or go straight for the Remote Host panel.
+1. **Config:** new VEGA files (`.zed/deployment.json`, `~/.config/vega/deployment_servers.json`), with a one-time import of `.zed/iremote.json`.
+2. **Passwords:** VEGA's credentials provider, reading iRemote's `iremote` keychain entries once as a fallback.
+3. **Source:** iremote-core is vendored into `crates/deployment` and evolves in VEGA.
+4. **First slice:** D0–D1.
