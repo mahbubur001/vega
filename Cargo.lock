@@ -5070,6 +5070,7 @@ dependencies = [
  "menu",
  "project",
  "project_panel",
+ "tempfile",
  "tokio",
  "ui",
  "ui_input",

@@ -1018,6 +1018,8 @@ pub mod deployment {
             CompareWithDeployedVersion,
             /// Opens this project's deployment configuration, creating it if needed.
             OpenDeploymentConfig,
+            /// Opens the Deployment Servers dialog to add, edit, test and remove servers.
+            OpenDeploymentServers,
             /// Cancels running and queued deployment transfers.
             CancelTransfers,
         ]
@@ -1057,7 +1059,7 @@ pub mod deployment {
             )));
         }
         items.push(None);
-        items.push(Some(("Configuration…", Box::new(OpenDeploymentConfig))));
+        items.push(Some(("Configuration…", Box::new(OpenDeploymentServers))));
         items
     }
 }

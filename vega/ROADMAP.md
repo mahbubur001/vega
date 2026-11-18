@@ -27,7 +27,7 @@ Status keys: `[ ]` todo · `[~]` in progress · `[x]` done. Each item maps to a 
 - [ ] Deployment & Remote Host (built-in iRemote) — see `DEPLOYMENT.md`
   - [x] D0 Vendor the core (63 tests incl. real SFTP/FTP/WebDAV servers)
   - [~] D1 Upload on save + actions — code written, not built yet (see DEPLOYMENT.md "Next session")
-  - [ ] D2 Deployment Servers UI
+  - [~] D2 Deployment Servers UI — dialog built and tested at the config level; not tried in the app yet (see DEPLOYMENT.md)
   - [ ] D3 Remote Host panel
   - [ ] D4 Compare & Sync
   - [ ] D5 Extras (SSH, agent tools)

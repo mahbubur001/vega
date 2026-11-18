@@ -4,6 +4,7 @@
 mod prompter;
 mod secret_modal;
 mod secrets;
+mod servers_modal;
 mod store;
 mod transfers_indicator;
 
@@ -26,7 +27,7 @@ use workspace::notifications::NotificationId;
 use workspace::{OpenOptions, Toast, Workspace};
 use zed_actions::deployment::{
     CancelTransfers, CompareWithDeployedVersion, DownloadFromDefaultServer, OpenDeploymentConfig,
-    UploadToDefaultServer,
+    OpenDeploymentServers, UploadToDefaultServer,
 };
 
 use crate::prompter::{Request, WindowPrompter};
@@ -103,8 +104,21 @@ fn register_actions(workspace: &mut Workspace, store: Entity<DeploymentStore>) {
             run_on_selection(workspace, &store, Operation::Compare, window, cx);
         }
     });
-    workspace
-        .register_action(move |_, _: &CancelTransfers, _, cx| store.read(cx).cancel_transfers());
+    workspace.register_action({
+        let store = store.clone();
+        move |_, _: &CancelTransfers, _, cx| store.read(cx).cancel_transfers()
+    });
+    workspace.register_action({
+        move |workspace, _: &OpenDeploymentServers, window, cx| {
+            let Some((root, engine, prompter)) = store.read(cx).servers_dialog_context(cx) else {
+                return;
+            };
+            let credentials = secrets::credentials(cx);
+            workspace.toggle_modal(window, cx, |window, cx| {
+                servers_modal::ServersModal::new(root, engine, prompter, credentials, window, cx)
+            });
+        }
+    });
     workspace.register_action(|workspace, _: &OpenDeploymentConfig, window, cx| {
         open_config(workspace, window, cx);
     });

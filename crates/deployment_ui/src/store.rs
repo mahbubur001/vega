@@ -273,6 +273,25 @@ impl DeploymentStore {
         };
     }
 
+    /// What the Deployment Servers dialog needs for this project: the root of
+    /// its first local folder, that folder's engine if it has a config, and
+    /// the prompter for host-key and password questions.
+    pub(crate) fn servers_dialog_context(
+        &self,
+        cx: &App,
+    ) -> Option<(PathBuf, Option<Arc<Engine>>, Arc<dyn Prompter>)> {
+        let project = self.project.upgrade()?;
+        let worktree = project.read(cx).visible_worktrees(cx).next()?;
+        let worktree = worktree.read(cx);
+        if !worktree.is_local() {
+            return None;
+        }
+        let root = worktree.abs_path().to_path_buf();
+        let engine = self.engines.get(&worktree.id()).cloned();
+        let prompter: Arc<dyn Prompter> = self.prompter.clone();
+        Some((root, engine, prompter))
+    }
+
     pub fn cancel_transfers(&self) {
         for engine in self.engines.values() {
             engine.cancel(None);

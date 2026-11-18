@@ -35,5 +35,6 @@ zed_actions.workspace = true
 zed_credentials_provider.workspace = true
 
 [dev-dependencies]
+tempfile.workspace = true
 credentials_provider = { workspace = true, features = ["test-support"] }
 gpui = { workspace = true, features = ["test-support"] }
