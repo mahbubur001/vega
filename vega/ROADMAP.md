@@ -58,4 +58,4 @@ Every default VEGA changes from Zed (`assets/settings/default.json` unless noted
 | `theme.dark` | `One Dark` | `VEGA Dark` | Brand default (also `settings_content::DEFAULT_DARK_THEME`) | P06 |
 
 ## Ongoing
-- [ ] Weekly upstream sync (P14)
+- [ ] Weekly upstream sync (P14) — last: 2026-11-19, upstream `dd091a1b4f` (22 commits, no conflicts). Check after each merge: VEGA guards in `client.rs` (`ZED_ACCOUNTS_ENABLED`), `telemetry.rs` (`UPLOAD_EVENTS`), `auto_update.rs` (`is_zed_hosted`), and no new `build_zed_*_url`/zed.dev calls in code. Test `workspace` on its own (combined test runs enable `remote/test-support` and fail to compile)
