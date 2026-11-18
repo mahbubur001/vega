@@ -504,9 +504,9 @@
     "semantic_hash": "4cd385763a696f14d59d93267927cf3e"
   },
   "assets/settings/default.json": {
-    "mtime": 1795025063.4323359,
-    "seen": 1795025253.748568,
-    "ast_hash": "072762d769b5e9fbe0c28d06a06683be",
+    "mtime": 1795026528.7343042,
+    "seen": 1795026712.020664,
+    "ast_hash": "068bf64ee90cf05f21d631f57702fa22",
     "semantic_hash": ""
   },
   "assets/settings/default_semantic_token_rules.json": {
@@ -11568,10 +11568,10 @@
     "semantic_hash": "c372cfa1654ee11155bec5a8bcd5b062"
   },
   "crates/settings/src/vscode_import.rs": {
-    "mtime": 1795011962.1382189,
-    "seen": 1795016968.62494,
-    "ast_hash": "c132e945f40284d81f9fcb53e78d89a1",
-    "semantic_hash": "c132e945f40284d81f9fcb53e78d89a1"
+    "mtime": 1795026423.65495,
+    "seen": 1795026712.0548081,
+    "ast_hash": "922819630cbf54ebfa9aecd3a6d7d9b5",
+    "semantic_hash": ""
   },
   "crates/settings_content/Cargo.toml": {
     "mtime": 1795011962.1383061,
@@ -11640,10 +11640,10 @@
     "semantic_hash": "ca613d4fa5e012ae7a6dd589622d0ab5"
   },
   "crates/settings_content/src/settings_content.rs": {
-    "mtime": 1795011962.139991,
-    "seen": 1795016968.6249459,
-    "ast_hash": "ede8b1242c80e92fc10ff79e7a3e2a4e",
-    "semantic_hash": "ede8b1242c80e92fc10ff79e7a3e2a4e"
+    "mtime": 1795026410.9397333,
+    "seen": 1795026712.054999,
+    "ast_hash": "bf9235cba3064ac53b2622e244ca54e3",
+    "semantic_hash": ""
   },
   "crates/settings_content/src/terminal.rs": {
     "mtime": 1795011962.140071,
@@ -19800,15 +19800,15 @@
     "semantic_hash": "c28d81d3006f29e314d94e46abcae829"
   },
   "vega/ROADMAP.md": {
-    "mtime": 1795026243.5014088,
-    "seen": 1795026327.8620732,
-    "ast_hash": "1d43ea2f6028ecaeefe2a0a6787f831e",
+    "mtime": 1795026625.9832668,
+    "seen": 1795026712.079059,
+    "ast_hash": "8b7388dd19011fbb1092c57828e3e066",
     "semantic_hash": ""
   },
   "vega/SETTINGS_SYNC.md": {
-    "mtime": 1795026243.5011995,
-    "seen": 1795026327.8620732,
-    "ast_hash": "a9caeabb27c963e4de93ed3c9e24e76a",
+    "mtime": 1795026625.9830017,
+    "seen": 1795026712.07906,
+    "ast_hash": "89e029166f5c8bcf8a83f486c786eb6c",
     "semantic_hash": ""
   },
   "assets/icons/acp_registry.svg": {
@@ -22476,9 +22476,15 @@
     "semantic_hash": ""
   },
   "crates/settings_sync/src/merge.rs": {
-    "mtime": 1795025974.841612,
-    "seen": 1795026327.8380868,
-    "ast_hash": "b919c73801a24f6000a12fa90c36bf32",
+    "mtime": 1795026610.1344938,
+    "seen": 1795026712.055306,
+    "ast_hash": "088f7313713508f9f055789fcefd8830",
+    "semantic_hash": ""
+  },
+  "crates/settings_content/src/settings_sync.rs": {
+    "mtime": 1795026374.1910584,
+    "seen": 1795026712.055,
+    "ast_hash": "09e3e00b2b83d5cc6356dcbcddd8d843",
     "semantic_hash": ""
   },
   "script/danger/pnpm-lock.yaml": {
