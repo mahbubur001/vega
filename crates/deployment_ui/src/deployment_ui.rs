@@ -3,6 +3,7 @@
 
 mod prompter;
 mod secret_modal;
+mod secrets;
 mod store;
 mod transfers_indicator;
 

@@ -5058,6 +5058,7 @@ dependencies = [
  "anyhow",
  "async-trait",
  "collections",
+ "credentials_provider",
  "deployment",
  "futures 0.3.34",
  "git_ui_core",
@@ -5073,6 +5074,7 @@ dependencies = [
  "util",
  "workspace",
  "zed_actions",
+ "zed_credentials_provider",
 ]
 
 [[package]]

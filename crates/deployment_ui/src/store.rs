@@ -175,11 +175,12 @@ impl DeploymentStore {
             return;
         };
         let prompter: Arc<dyn Prompter> = self.prompter.clone();
+        let credentials = crate::secrets::credentials(cx);
         let load = Tokio::spawn(cx, async move {
             import_iremote_config(&root).log_err();
             locate_config(&root)
                 .exists
-                .then(|| Engine::new(&root, prompter))
+                .then(|| Engine::new(&root, prompter, credentials))
         });
         let task = cx.spawn(async move |this, cx| {
             let Some(engine) = load.await.ok().flatten() else {

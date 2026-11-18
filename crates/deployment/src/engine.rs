@@ -190,13 +190,12 @@ fn edits_dir(root: &Path) -> PathBuf {
 }
 
 impl Engine {
-    pub fn new(root: &Path, prompter: Arc<dyn Prompter>) -> Arc<Self> {
-        Self::with_parts(
-            root,
-            prompter,
-            Arc::new(Credentials::new()),
-            ConfigStore::load(root),
-        )
+    pub fn new(
+        root: &Path,
+        prompter: Arc<dyn Prompter>,
+        credentials: Arc<Credentials>,
+    ) -> Arc<Self> {
+        Self::with_parts(root, prompter, credentials, ConfigStore::load(root))
     }
 
     pub fn with_parts(
