@@ -63,7 +63,17 @@ D0–D1 is the smallest useful slice: upload on save and the menu actions workin
 
 ## Status
 
-- **D0 done (2026-11-18).** `crates/deployment` holds iremote-core, renamed and trimmed: no IPC, dialog subprocess, tray, Zed CLI shell-outs or own file watcher (`Engine::on_fs_event` takes VEGA's events instead). Uses VEGA's library versions (zed reqwest fork, rustls with aws-lc-rs, sha/hmac 0.10/0.12, `log`); paths live in VEGA's config/data dirs (`VEGA_DEPLOYMENT_HOME` overrides them). 52 tests pass; the Docker server tests (`--features integration`) still need a run. Keychain access is still iRemote's (`iremote` service) until D1 moves it to VEGA's credentials provider.
+- **D0 done (2026-11-18).** `crates/deployment` holds iremote-core, renamed and trimmed: no IPC, dialog subprocess, tray, Zed CLI shell-outs or own file watcher (`Engine::on_fs_event` takes VEGA's events instead). Uses VEGA's library versions (zed reqwest fork, rustls with aws-lc-rs, sha/hmac 0.10/0.12, `log`); paths live in VEGA's config/data dirs (`VEGA_DEPLOYMENT_HOME` overrides them). All 63 tests pass, including the Docker server tests for SFTP, FTP/FTPS and WebDAV. Keychain access is still iRemote's (`iremote` service) until D1 moves it to VEGA's credentials provider.
+
+### Running the server tests
+
+```sh
+cd crates/deployment/tests/servers
+[ -f fixtures/id_ed25519 ] || ssh-keygen -q -t ed25519 -N '' -f fixtures/id_ed25519
+docker compose up -d --build --wait
+cd - && cargo test -p deployment --features integration
+docker compose -f crates/deployment/tests/servers/compose.yml down -v
+```
 
 ## Upstream seams (kept small for merges)
 

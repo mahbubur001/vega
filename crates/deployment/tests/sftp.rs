@@ -19,7 +19,7 @@ fn server(auth: SftpAuth) -> Server {
 
 fn key_path() -> String {
     format!(
-        "{}/../../tests/servers/fixtures/id_ed25519",
+        "{}/tests/servers/fixtures/id_ed25519",
         env!("CARGO_MANIFEST_DIR")
     )
 }

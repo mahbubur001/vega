@@ -14,7 +14,7 @@ doctest = false
 
 [features]
 # Tests against the Docker servers in tests/servers (`docker compose -f tests/servers/compose.yml up`).
-integration = []
+integration = ["dep:tempfile"]
 
 [dependencies]
 async-trait.workspace = true
@@ -42,6 +42,7 @@ serde_json.workspace = true
 sha1.workspace = true
 sha2.workspace = true
 suppaftp.workspace = true
+tempfile = { workspace = true, optional = true }
 thiserror.workspace = true
 tokio = { workspace = true, features = ["fs", "io-util", "sync", "time", "macros", "rt", "rt-multi-thread", "net", "process"] }
 tokio-rustls = { workspace = true, features = ["aws_lc_rs", "tls12"] }
