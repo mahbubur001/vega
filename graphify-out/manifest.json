@@ -11760,9 +11760,9 @@
     "semantic_hash": ""
   },
   "crates/settings_sync/src/settings_sync.rs": {
-    "mtime": 1795027086.432102,
-    "seen": 1795027208.69956,
-    "ast_hash": "57de6270e2bb19179864a3d08ef561d0",
+    "mtime": 1795027513.6704018,
+    "seen": 1795027808.6092968,
+    "ast_hash": "c0ed9ce5b92b96e743186a30071eb75a",
     "semantic_hash": ""
   },
   "crates/settings_sync/src/sign_in_window.rs": {
@@ -11832,10 +11832,10 @@
     "semantic_hash": "57986db8b4e9e9d290d5cecf6e540b55"
   },
   "crates/settings_ui/src/page_data.rs": {
-    "mtime": 1795011962.1438515,
-    "seen": 1795016968.624963,
-    "ast_hash": "2cd69e01f471faf010c48ee8fc63a596",
-    "semantic_hash": "2cd69e01f471faf010c48ee8fc63a596"
+    "mtime": 1795027503.7033365,
+    "seen": 1795027808.609511,
+    "ast_hash": "439be9429931c43ab3d89cb6725e9b90",
+    "semantic_hash": ""
   },
   "crates/settings_ui/src/pages.rs": {
     "mtime": 1795011962.1441412,
@@ -18534,10 +18534,10 @@
     "semantic_hash": "9a2d79aa7f73bdea753c86f856b6baa8"
   },
   "docs/src/SUMMARY.md": {
-    "mtime": 1795011962.2417502,
-    "seen": 1795016968.625561,
-    "ast_hash": "51af3a2d5dd40a515721e3aec2dfbfa0",
-    "semantic_hash": "51af3a2d5dd40a515721e3aec2dfbfa0"
+    "mtime": 1795027246.264583,
+    "seen": 1795027808.629782,
+    "ast_hash": "cf3032eb37de9f6040d51600d3f32db8",
+    "semantic_hash": ""
   },
   "docs/src/account/billing.md": {
     "mtime": 1795011962.2418904,
@@ -19800,15 +19800,15 @@
     "semantic_hash": "c28d81d3006f29e314d94e46abcae829"
   },
   "vega/ROADMAP.md": {
-    "mtime": 1795026841.9556637,
-    "seen": 1795026926.486975,
-    "ast_hash": "b46ff0cc79dc4dc95f79c2599606aa04",
+    "mtime": 1795027721.3529441,
+    "seen": 1795027808.63343,
+    "ast_hash": "a26277b7dfa239d15258d097803c94c1",
     "semantic_hash": ""
   },
   "vega/SETTINGS_SYNC.md": {
-    "mtime": 1795027123.7986956,
-    "seen": 1795027208.724162,
-    "ast_hash": "2029950fbcb76101123a1044ffb0f8d0",
+    "mtime": 1795027721.352534,
+    "seen": 1795027808.633431,
+    "ast_hash": "23fda80752440e50c589c51a2f81fff1",
     "semantic_hash": ""
   },
   "assets/icons/acp_registry.svg": {
@@ -22491,6 +22491,12 @@
     "mtime": 1795027086.5710251,
     "seen": 1795027208.699502,
     "ast_hash": "d25455eb7e0157bf40b989484ad8801a",
+    "semantic_hash": ""
+  },
+  "docs/src/settings-sync.md": {
+    "mtime": 1795027246.14659,
+    "seen": 1795027808.632977,
+    "ast_hash": "71542e19eca9d80a8dc3f047c26f79ec",
     "semantic_hash": ""
   },
   "script/danger/pnpm-lock.yaml": {
