@@ -2,10 +2,10 @@
 AppId={#AppId}
 AppName={#AppName}
 AppVerName={#AppDisplayName}
-AppPublisher=Zed Industries
-AppPublisherURL=https://www.zed.dev/
-AppSupportURL=https://www.zed.dev/
-AppUpdatesURL=https://www.zed.dev/
+AppPublisher=VEGA contributors
+AppPublisherURL=https://github.com/
+AppSupportURL=https://github.com/
+AppUpdatesURL=https://github.com/
 DefaultGroupName={#AppName}
 DisableProgramGroupPage=yes
 DisableReadyPage=yes
@@ -1256,10 +1256,10 @@ Root: HKCU; Subkey: "Software\Classes\Drive\shell\{#RegValueName}\command"; Valu
 Root: HKCU; Subkey: "Environment"; ValueType: expandsz; ValueName: "Path"; ValueData: "{code:AddToPath|{app}\bin}"; Tasks: addtopath; Check: NeedsAddToPath(ExpandConstant('{app}\bin'))
 
 ; URI Scheme
-Root: HKCU; Subkey: "Software\Classes\zed"; ValueType: "string"; ValueData: "URL:zed Protocol"; Flags: uninsdeletekey
-Root: HKCU; Subkey: "Software\Classes\zed"; ValueType: "string"; ValueName: "URL Protocol"; ValueData: ""
-Root: HKCU; Subkey: "Software\Classes\zed\DefaultIcon"; ValueType: "string"; ValueData: "{app}\Zed.exe,1"
-Root: HKCU; Subkey: "Software\Classes\zed\shell\open\command"; ValueType: "string"; ValueData: """{app}\Zed.exe"" ""%1"""
+Root: HKCU; Subkey: "Software\Classes\vega"; ValueType: "string"; ValueData: "URL:vega Protocol"; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\Classes\vega"; ValueType: "string"; ValueName: "URL Protocol"; ValueData: ""
+Root: HKCU; Subkey: "Software\Classes\vega\DefaultIcon"; ValueType: "string"; ValueData: "{app}\Zed.exe,1"
+Root: HKCU; Subkey: "Software\Classes\vega\shell\open\command"; ValueType: "string"; ValueData: """{app}\Zed.exe"" ""%1"""
 
 [Code]
 function WizardNotSilent(): Boolean;

@@ -6,7 +6,7 @@ version = "1.30.0"
 publish.workspace = true
 license = "GPL-3.0-or-later"
 authors = ["Zed Team <hi@zed.dev>"]
-default-run = "zed"
+default-run = "vega"
 
 [lints]
 workspace = true
@@ -55,7 +55,7 @@ visual-tests = [
 ]
 
 [[bin]]
-name = "zed"
+name = "vega"
 path = "src/main.rs"
 
 [[bin]]
@@ -289,39 +289,39 @@ repl = { workspace = true, features = ["test-support"] }
 
 [package.metadata.bundle-dev]
 icon = ["resources/app-icon-dev@2x.png", "resources/app-icon-dev.png"]
-identifier = "dev.zed.Zed-Dev"
-name = "Zed Dev"
+identifier = "dev.vega.Vega-Dev"
+name = "VEGA Dev"
 category = "Developer Tool"
 osx_minimum_system_version = "12.0"
 osx_info_plist_exts = ["resources/info/*"]
-osx_url_schemes = ["zed"]
+osx_url_schemes = ["vega"]
 
 [package.metadata.bundle-nightly]
 icon = ["resources/app-icon-nightly@2x.png", "resources/app-icon-nightly.png"]
-identifier = "dev.zed.Zed-Nightly"
-name = "Zed Nightly"
+identifier = "dev.vega.Vega-Nightly"
+name = "VEGA Nightly"
 category = "Developer Tool"
 osx_minimum_system_version = "12.0"
 osx_info_plist_exts = ["resources/info/*"]
-osx_url_schemes = ["zed"]
+osx_url_schemes = ["vega"]
 
 [package.metadata.bundle-preview]
 icon = ["resources/app-icon-preview@2x.png", "resources/app-icon-preview.png"]
-identifier = "dev.zed.Zed-Preview"
-name = "Zed Preview"
+identifier = "dev.vega.Vega-Preview"
+name = "VEGA Preview"
 category = "Developer Tool"
 osx_minimum_system_version = "12.0"
 osx_info_plist_exts = ["resources/info/*"]
-osx_url_schemes = ["zed"]
+osx_url_schemes = ["vega"]
 
 [package.metadata.bundle-stable]
 icon = ["resources/app-icon@2x.png", "resources/app-icon.png"]
-identifier = "dev.zed.Zed"
-name = "Zed"
+identifier = "dev.vega.Vega"
+name = "VEGA"
 category = "Developer Tool"
 osx_minimum_system_version = "12.0"
 osx_info_plist_exts = ["resources/info/*"]
-osx_url_schemes = ["zed"]
+osx_url_schemes = ["vega"]
 
 [package.metadata.cargo-shear]
 ignored = ["profiling", "tracing"]
