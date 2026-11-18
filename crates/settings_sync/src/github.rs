@@ -14,7 +14,7 @@ use serde::Deserialize;
 
 /// The public client ID of VEGA's GitHub OAuth App. Forks can override it with
 /// the `VEGA_GITHUB_CLIENT_ID` environment variable, at build time or run time.
-const DEFAULT_CLIENT_ID: &str = "";
+const DEFAULT_CLIENT_ID: &str = "Ov23li2JG5K9UrEu5qQ6";
 
 /// `gist` is the narrowest scope that can store data. The user's login and
 /// avatar come from `GET /user`, which works with any token.
