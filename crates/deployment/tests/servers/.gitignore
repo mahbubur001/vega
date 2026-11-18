@@ -1,0 +1,2 @@
+# Test SSH key, generated locally by the integration test setup.
+fixtures/id_ed25519*
