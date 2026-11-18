@@ -104,7 +104,7 @@ pub fn add_account_entries(menu: ContextMenu, cx: &App) -> ContextMenu {
     else {
         return menu;
     };
-    let (sync_status, sync_enabled) = sync_state(cx);
+    let (sync_status, sync_enabled, last_synced) = sync_state(cx);
     let profile_url = format!("https://github.com/{}", user.login);
 
     let menu = menu
@@ -123,7 +123,7 @@ pub fn add_account_entries(menu: ContextMenu, cx: &App) -> ContextMenu {
             move |_, cx| cx.open_url(&profile_url),
         )
         .separator()
-        .header(status_label(&sync_status));
+        .header(status_label(&sync_status, last_synced));
     let menu = match &sync_status {
         SyncStatus::Conflict(_) => menu
             .action(
@@ -153,21 +153,70 @@ pub fn add_sign_out_entry(menu: ContextMenu, cx: &App) -> ContextMenu {
     }
 }
 
-fn sync_state(cx: &App) -> (SyncStatus, bool) {
+fn sync_state(cx: &App) -> (SyncStatus, bool, Option<std::time::SystemTime>) {
     SettingsSync::global(cx)
         .map(|sync| {
             let sync = sync.read(cx);
-            (sync.status().clone(), sync.is_enabled())
+            (sync.status().clone(), sync.is_enabled(), sync.last_synced())
         })
-        .unwrap_or((SyncStatus::Off, false))
+        .unwrap_or((SyncStatus::Off, false, None))
 }
 
-fn status_label(status: &SyncStatus) -> SharedString {
+/// "just now", "5 min ago", "3 h ago" or "2 days ago".
+fn time_ago(elapsed: std::time::Duration) -> String {
+    let minutes = elapsed.as_secs() / 60;
+    match minutes {
+        0 => "just now".into(),
+        1..=59 => format!("{minutes} min ago"),
+        60..=1439 => format!("{} h ago", minutes / 60),
+        _ => match minutes / 1440 {
+            1 => "1 day ago".into(),
+            days => format!("{days} days ago"),
+        },
+    }
+}
+
+fn status_label(status: &SyncStatus, last_synced: Option<std::time::SystemTime>) -> SharedString {
+    let since = last_synced
+        .and_then(|time| time.elapsed().ok())
+        .map(time_ago);
     match status {
         SyncStatus::Off => "Settings Sync is off".into(),
-        SyncStatus::Idle => "Settings are synced".into(),
+        SyncStatus::Idle => match since {
+            Some(since) => format!("Settings are synced · {since}").into(),
+            None => "Settings are synced".into(),
+        },
         SyncStatus::Syncing => "Syncing settings…".into(),
         SyncStatus::Conflict(labels) => format!("Sync conflict: {}", labels.join(", ")).into(),
         SyncStatus::Error(message) => format!("Sync failed: {message}").into(),
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use std::time::Duration;
+
+    use super::*;
+
+    #[test]
+    fn time_ago_reads_naturally() {
+        assert_eq!(time_ago(Duration::from_secs(20)), "just now");
+        assert_eq!(time_ago(Duration::from_secs(5 * 60)), "5 min ago");
+        assert_eq!(time_ago(Duration::from_secs(3 * 3600 + 10)), "3 h ago");
+        assert_eq!(time_ago(Duration::from_secs(26 * 3600)), "1 day ago");
+        assert_eq!(time_ago(Duration::from_secs(3 * 86400)), "3 days ago");
+    }
+
+    #[test]
+    fn idle_status_shows_the_last_sync() {
+        let an_hour_ago = std::time::SystemTime::now() - Duration::from_secs(3600);
+        assert_eq!(
+            status_label(&SyncStatus::Idle, Some(an_hour_ago)).as_ref(),
+            "Settings are synced · 1 h ago"
+        );
+        assert_eq!(
+            status_label(&SyncStatus::Idle, None).as_ref(),
+            "Settings are synced"
+        );
     }
 }

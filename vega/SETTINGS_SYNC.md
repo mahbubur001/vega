@@ -66,7 +66,8 @@ Limits: GitHub keeps ≤10 tokens per user per app (an 11th machine revokes the 
   - Writes racing between machines: after each PATCH, the response's previous history version must be the one this machine merged against. If not, the other machine's version is fetched and merged in with a second PATCH; incompatible changes give the other machine's copy back and are asked about.
   - `settings_sync.ignored_settings` (top-level keys or dotted paths, e.g. `"terminal.font_size"`): this machine neither uploads those settings nor takes them from GitHub, and GitHub keeps other machines' values for them. The `settings_sync` block itself never syncs. Schema in `settings_content::SettingsSyncContent`, default in `default.json`.
 - **M4 in progress.** Built: `tasks.json`, `debug.json` and the global `AGENTS.md` sync whole-file; every `*.json` in the user `snippets/` and `themes/` folders syncs as `snippets__<name>` / `themes__<name>` (gist names that could escape the folder are ignored). Deleting a file on one machine deletes it on GitHub and then on the others (with a backup); a file edited here after another machine deleted it is uploaded again.
-- **Not yet (M4):** installed extensions list, status / last-sync indicator, history + restore, settings page, user docs.
+  - The account menu's status line shows when this machine last synced ("Settings are synced · 5 min ago").
+- **Not yet (M4):** history + restore, settings page, user docs. The installed-extensions list waits for the extension catalogue (installing missing extensions would call Zed's registry on its own).
 
 ## Code layout
 

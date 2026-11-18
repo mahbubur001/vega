@@ -44,6 +44,8 @@ pub struct SettingsSync {
     http_client: Arc<dyn HttpClient>,
     enabled: bool,
     status: SyncStatus,
+    /// When this machine last finished a sync with GitHub.
+    last_synced: Option<SystemTime>,
     sync_task: Option<Task<()>>,
     sync_again: bool,
     delayed_sync: Option<Task<()>>,
@@ -135,6 +137,7 @@ impl SettingsSync {
             http_client,
             enabled: false,
             status: SyncStatus::Off,
+            last_synced: None,
             sync_task: None,
             sync_again: false,
             delayed_sync: None,
@@ -145,6 +148,10 @@ impl SettingsSync {
 
     pub fn status(&self) -> &SyncStatus {
         &self.status
+    }
+
+    pub fn last_synced(&self) -> Option<SystemTime> {
+        self.last_synced
     }
 
     pub fn is_enabled(&self) -> bool {
@@ -214,6 +221,9 @@ impl SettingsSync {
             let result = sync_once(&fs, &http_client, &token, &login, resolution).await;
             this.update(cx, |this, cx| {
                 this.sync_task = None;
+                if result.is_ok() {
+                    this.last_synced = Some(SystemTime::now());
+                }
                 this.status = match result {
                     Ok(conflicts) if conflicts.is_empty() => SyncStatus::Idle,
                     Ok(conflicts) => SyncStatus::Conflict(conflicts),
