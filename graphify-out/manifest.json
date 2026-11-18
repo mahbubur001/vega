@@ -1686,10 +1686,10 @@
     "semantic_hash": "a200352233dde320857bbc67abaf9313"
   },
   "crates/auto_update/src/auto_update.rs": {
-    "mtime": 1795011961.8903828,
-    "seen": 1795016968.6240299,
-    "ast_hash": "e8a49e52aad1ca7f3a456a61a0d893ca",
-    "semantic_hash": "e8a49e52aad1ca7f3a456a61a0d893ca"
+    "mtime": 1795017523.7548332,
+    "seen": 1795018371.4082859,
+    "ast_hash": "f2087b094b64bd4e15e8f5aafa6e2b80",
+    "semantic_hash": ""
   },
   "crates/auto_update_helper/Cargo.toml": {
     "mtime": 1795011961.8905666,
@@ -17970,10 +17970,10 @@
     "semantic_hash": "1d600ecf4fcd7b5adb1332e473bff6a3"
   },
   "CLAUDE.md": {
-    "mtime": 1795016182.9413426,
-    "seen": 1795016968.625524,
-    "ast_hash": "be2243ab7ee8770c43cc05d535c0299e",
-    "semantic_hash": "be2243ab7ee8770c43cc05d535c0299e"
+    "mtime": 1795017203.578267,
+    "seen": 1795018371.458626,
+    "ast_hash": "fb3096182e028392c8e749711b81d03b",
+    "semantic_hash": ""
   },
   "CODE_OF_CONDUCT.md": {
     "mtime": 1795011961.8228443,
@@ -19800,10 +19800,10 @@
     "semantic_hash": "c28d81d3006f29e314d94e46abcae829"
   },
   "vega/ROADMAP.md": {
-    "mtime": 1795011962.2829304,
-    "seen": 1795016968.6256828,
-    "ast_hash": "76cc6916fffd237400b73727fa550a35",
-    "semantic_hash": "76cc6916fffd237400b73727fa550a35"
+    "mtime": 1795018126.2292717,
+    "seen": 1795018371.463999,
+    "ast_hash": "211956195e7df77e90f91dd5d4ef8c75",
+    "semantic_hash": ""
   },
   "vega/SETTINGS_SYNC.md": {
     "mtime": 1795011962.2830415,
@@ -22430,13 +22430,19 @@
   "crates/collab/migrations.sqlite/20221109000000_test_schema.sql": {
     "mtime": 1795011961.9005377,
     "seen": 1795016968.624071,
-    "ast_hash": "0dc4ee363b803d48520a563cdff2eedc",
-    "semantic_hash": "0dc4ee363b803d48520a563cdff2eedc"
+    "ast_hash": "",
+    "semantic_hash": ""
   },
   "crates/collab/migrations/20251208000000_test_schema.sql": {
     "mtime": 1795011961.9006665,
     "seen": 1795016968.624073,
-    "ast_hash": "f1ee24cdc4c04c3b1f78d7c7c1f72bc9",
-    "semantic_hash": "f1ee24cdc4c04c3b1f78d7c7c1f72bc9"
+    "ast_hash": "",
+    "semantic_hash": ""
+  },
+  "script/danger/pnpm-lock.yaml": {
+    "mtime": 1795011962.2659066,
+    "seen": 1795018371.471404,
+    "ast_hash": "a32dfd4922cde2a67117ca5b827f12b4",
+    "semantic_hash": ""
   }
 }
