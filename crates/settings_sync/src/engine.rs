@@ -15,7 +15,7 @@ use crate::account::{AccountStatus, GitHubAccount};
 use crate::gist::{self, Fetched, MARKER_FILE};
 use crate::merge::{Prefer, SettingsMerge, merge_settings};
 use crate::reconcile::{Outcome, is_untouched, reconcile};
-use crate::resources::{SyncState, resources, state_dir};
+use crate::resources::{SyncState, resources, state_dir, watched_paths};
 
 const LOCAL_CHANGE_DELAY: Duration = Duration::from_secs(3);
 const POLL_INTERVAL: Duration = Duration::from_secs(5 * 60);
@@ -113,12 +113,10 @@ impl SettingsSync {
                 }
             }
         }));
-        for resource in resources() {
+        for path in watched_paths() {
             let fs = fs.clone();
             tasks.push(cx.spawn(async move |this, cx| {
-                let (events, _watcher) = fs
-                    .watch(&resource.local_path, Duration::from_millis(500))
-                    .await;
+                let (events, _watcher) = fs.watch(&path, Duration::from_millis(500)).await;
                 futures::pin_mut!(events);
                 while events.next().await.is_some() {
                     let scheduled = this.update(cx, |this, cx| {
@@ -276,7 +274,7 @@ async fn sync_once(
     let Some(remote) = remote else {
         // First machine: create the gist from this machine's files.
         let mut files = BTreeMap::new();
-        for resource in resources() {
+        for resource in resources(fs, &BTreeMap::new()).await? {
             let local = load_local(fs, &resource.local_path, resource.empty_contents).await?;
             let upload = if resource.merge_keys {
                 // Never-sync values are removed before anything is uploaded.
@@ -308,7 +306,7 @@ async fn sync_once(
     let mut changes = BTreeMap::new();
     let mut conflicts = Vec::new();
     let mut backup_dir = None;
-    for resource in resources() {
+    for resource in resources(fs, &remote).await? {
         let local = load_local(fs, &resource.local_path, resource.empty_contents).await?;
         let remote_file = remote.get(&resource.gist_file).map(String::as_str);
         let base = state.bases.get(&resource.gist_file).map(String::as_str);
@@ -361,9 +359,25 @@ async fn sync_once(
             (Outcome::Adopt, _) => {
                 state.bases.insert(resource.gist_file, local);
             }
+            (Outcome::Push, _) if local.trim().is_empty() => {
+                // Deleted on this machine: delete it on GitHub too (gists reject blank files).
+                changes.insert(resource.gist_file.clone(), None);
+                state.bases.remove(&resource.gist_file);
+            }
             (Outcome::Push, _) => {
                 changes.insert(resource.gist_file.clone(), Some(local.clone()));
                 state.bases.insert(resource.gist_file, local);
+            }
+            (Outcome::DeleteLocal, _) => {
+                let backup_dir = backup_dir.get_or_insert_with(new_backup_dir);
+                fs.create_dir(backup_dir).await?;
+                fs.atomic_write(backup_dir.join(&resource.gist_file), local)
+                    .await
+                    .context("backing up before applying synced changes")?;
+                fs.remove_file(&resource.local_path, Default::default())
+                    .await
+                    .with_context(|| format!("deleting {}", resource.local_path.display()))?;
+                state.bases.remove(&resource.gist_file);
             }
             (Outcome::Pull, Some(remote_file)) => {
                 if !is_untouched(&local) {
@@ -373,6 +387,9 @@ async fn sync_once(
                         .await
                         .context("backing up before applying synced changes")?;
                 }
+                if let Some(parent) = resource.local_path.parent() {
+                    fs.create_dir(parent).await?;
+                }
                 fs.atomic_write(resource.local_path.clone(), remote_file.to_string())
                     .await
                     .with_context(|| format!("writing {}", resource.local_path.display()))?;
@@ -381,7 +398,7 @@ async fn sync_once(
                     .insert(resource.gist_file, remote_file.to_string());
             }
             (Outcome::Pull, None) => {}
-            (Outcome::Conflict, _) => conflicts.push(resource.label.into()),
+            (Outcome::Conflict, _) => conflicts.push(resource.label.clone()),
         }
     }
 
@@ -438,7 +455,7 @@ async fn merge_race(
     backup_dir: &mut Option<std::path::PathBuf>,
 ) -> Result<BTreeMap<String, Option<String>>> {
     let mut fixes = BTreeMap::new();
-    for resource in resources() {
+    for resource in resources(fs, other).await? {
         let Some(Some(ours)) = written.get(&resource.gist_file) else {
             continue;
         };
@@ -500,7 +517,7 @@ async fn merge_race(
             if let Some(base) = base {
                 state.bases.insert(resource.gist_file.clone(), base.clone());
             }
-            conflicts.push(resource.label.into());
+            conflicts.push(resource.label.clone());
         }
     }
     Ok(fixes)
@@ -916,6 +933,82 @@ mod tests {
             .await
             .unwrap();
         assert_eq!(conflicts, vec![SharedString::from("Settings (tab_size)")]);
+    }
+
+    #[gpui::test]
+    async fn test_snippets_and_agents_md_sync_and_deletions_follow(cx: &mut TestAppContext) {
+        let (github, http_client) = fake_github();
+        let machine_a = machine(cx, "{}\n").await;
+        let snippet = paths::snippets_dir().join("rust.json");
+        machine_a.create_dir(paths::snippets_dir()).await.unwrap();
+        machine_a
+            .atomic_write(
+                snippet.clone(),
+                "{ \"log\": { \"body\": \"dbg!($1)\" } }".into(),
+            )
+            .await
+            .unwrap();
+        machine_a
+            .atomic_write(paths::agents_file().clone(), "Be brief.\n".into())
+            .await
+            .unwrap();
+        sync_once(&machine_a, &http_client, "token", "octocat", None)
+            .await
+            .unwrap();
+        {
+            let gist = &github.lock().unwrap().gists["gist1"];
+            assert!(gist.contains_key("snippets__rust.json"));
+            assert_eq!(gist["AGENTS.md"], "Be brief.\n");
+        }
+
+        // A fresh machine gets both.
+        let machine_b = machine(cx, "{}\n").await;
+        sync_once(&machine_b, &http_client, "token", "octocat", None)
+            .await
+            .unwrap();
+        assert!(machine_b.load(&snippet).await.unwrap().contains("dbg!"));
+        assert_eq!(
+            machine_b.load(paths::agents_file()).await.unwrap(),
+            "Be brief.\n"
+        );
+
+        // Deleting the snippet on A deletes it on GitHub, then on B.
+        machine_a
+            .remove_file(&snippet, Default::default())
+            .await
+            .unwrap();
+        sync_once(&machine_a, &http_client, "token", "octocat", None)
+            .await
+            .unwrap();
+        assert!(!github.lock().unwrap().gists["gist1"].contains_key("snippets__rust.json"));
+        let conflicts = sync_once(&machine_b, &http_client, "token", "octocat", None)
+            .await
+            .unwrap();
+        assert!(conflicts.is_empty(), "{conflicts:?}");
+        assert!(!machine_b.is_file(&snippet).await);
+    }
+
+    #[gpui::test]
+    async fn test_gist_file_names_cannot_escape_the_synced_folder(cx: &mut TestAppContext) {
+        let (github, http_client) = fake_github();
+        let machine_a = machine(cx, "{ \"vim_mode\": true }").await;
+        sync_once(&machine_a, &http_client, "token", "octocat", None)
+            .await
+            .unwrap();
+        github
+            .lock()
+            .unwrap()
+            .gists
+            .get_mut("gist1")
+            .unwrap()
+            .insert(
+                "snippets__../../settings.json".into(),
+                "{ \"hacked\": true }".into(),
+            );
+        sync_once(&machine_a, &http_client, "token", "octocat", None)
+            .await
+            .unwrap();
+        assert_eq!(settings(&machine_a).await, json!({ "vim_mode": true }));
     }
 
     #[gpui::test]

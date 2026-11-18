@@ -13,6 +13,8 @@ pub(crate) enum Outcome {
     Pull,
     /// Both sides changed differently. Never resolved silently.
     Conflict,
+    /// Another machine deleted the file and this one hasn't changed it: delete it here.
+    DeleteLocal,
 }
 
 /// `local` is the file on disk (empty if missing), `remote` the gist file
@@ -20,10 +22,11 @@ pub(crate) enum Outcome {
 /// sides had after the last sync (`None` before the first sync).
 pub(crate) fn reconcile(local: &str, remote: Option<&str>, base: Option<&str>) -> Outcome {
     let Some(remote) = remote else {
-        return if is_untouched(local) {
-            Outcome::Unchanged
-        } else {
-            Outcome::Push
+        return match base {
+            // It was synced before and is gone from GitHub: deleted elsewhere.
+            Some(base) if local == base => Outcome::DeleteLocal,
+            _ if is_untouched(local) => Outcome::Unchanged,
+            _ => Outcome::Push,
         };
     };
 
@@ -106,6 +109,13 @@ mod tests {
             reconcile("{\"b\": 2}", Some("{\"a\": 1}"), None),
             Outcome::Conflict
         );
+    }
+
+    #[test]
+    fn test_deleted_on_another_machine() {
+        assert_eq!(reconcile("a", None, Some("a")), Outcome::DeleteLocal);
+        // Edited here after the other machine deleted it: keep the edit.
+        assert_eq!(reconcile("b", None, Some("a")), Outcome::Push);
     }
 
     #[test]
