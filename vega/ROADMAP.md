@@ -11,7 +11,7 @@ Status keys: `[ ]` todo · `[~]` in progress · `[x]` done. Each item maps to a 
 
 ## Phase 1 — Independent build
 - [x] Rebrand app name, bundle IDs, URL scheme, icons (P03) — bundled .app check pending (P11)
-- [x] Disable telemetry, crash upload, auto-update against zed.dev (P04)
+- [x] Disable telemetry, crash upload, auto-update against zed.dev (P04) — release-asset lookups (incl. the SSH/WSL/Docker remote-server download) now refuse zed.dev too; P10 gives them a real host
 - [x] Remove/hide Zed sign-in, Zed AI plan, collab UI (P05)
 - [ ] Default "VEGA Dark" theme (P06)
 
@@ -33,7 +33,7 @@ Status keys: `[ ]` todo · `[~]` in progress · `[x]` done. Each item maps to a 
   - [ ] D5 Extras (SSH, agent tools)
 
 ## Phase 3 — Ship
-- [ ] Own update server / GitHub Releases auto-update (P10)
+- [ ] Own update server / GitHub Releases auto-update (P10) — must also serve `zed-remote-server` for SSH/WSL/Docker projects (`AutoUpdater::get_release_asset`)
 - [ ] Signed + notarized macOS bundle (P11)
 - [ ] Linux + Windows builds in CI (P12)
 - [ ] Website, docs, README rewrite (P13)

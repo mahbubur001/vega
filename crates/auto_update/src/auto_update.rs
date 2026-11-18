@@ -692,6 +692,14 @@ impl AutoUpdater {
     ) -> Result<ReleaseAsset> {
         let client = this.read_with(cx, |this, _| this.client.clone());
 
+        // VEGA must never talk to zed.dev, and has no release host of its own yet (P10).
+        let base_url = client.http_client().base_url();
+        anyhow::ensure!(
+            !is_zed_hosted(&base_url),
+            "VEGA doesn't host {asset} builds yet (server_url is {base_url}). \
+             Install {asset} on the host yourself, or use a dev build, which builds it from source."
+        );
+
         let (system_id, metrics_id, is_staff) = if client.telemetry().metrics_enabled() {
             (
                 client.telemetry().system_id(),
@@ -1001,6 +1009,14 @@ impl AutoUpdater {
             Ok(kvp.read_kvp(SHOULD_SHOW_UPDATE_NOTIFICATION_KEY)?.is_some())
         })
     }
+}
+
+/// Whether `base_url` points at Zed Industries' hosted services (zed.dev or a subdomain).
+fn is_zed_hosted(base_url: &str) -> bool {
+    http_client::Url::parse(base_url)
+        .ok()
+        .and_then(|url| url.host_str().map(str::to_owned))
+        .is_some_and(|host| host == "zed.dev" || host.ends_with(".zed.dev"))
 }
 
 async fn download_remote_server_binary(
@@ -1375,7 +1391,7 @@ mod tests {
         rc::Rc,
         sync::{
             Arc,
-            atomic::{self, AtomicBool},
+            atomic::{self, AtomicBool, AtomicUsize},
         },
     };
     use tempfile::tempdir;
@@ -1389,6 +1405,100 @@ mod tests {
 
     pub(super) struct InstallOverride(pub Rc<dyn Fn(&Path, &AsyncApp) -> Result<Option<PathBuf>>>);
     impl Global for InstallOverride {}
+
+    fn init_remote_server_lookup(
+        base_url: Option<&str>,
+        requests: Arc<AtomicUsize>,
+        cx: &mut TestAppContext,
+    ) {
+        cx.update(|cx| {
+            settings::init(cx);
+            release_channel::init_test(Version::new(0, 100, 0), ReleaseChannel::Stable, cx);
+
+            let http_client = FakeHttpClient::create(move |_request| {
+                requests.fetch_add(1, atomic::Ordering::SeqCst);
+                async move {
+                    Ok(Response::builder()
+                        .status(200)
+                        .body(
+                            r#"{"version":"0.100.0","url":"https://test.example/remote-server"}"#
+                                .into(),
+                        )
+                        .unwrap())
+                }
+            });
+            if let Some(base_url) = base_url {
+                http_client.set_base_url(base_url);
+            }
+            let client = Client::new(Arc::new(FakeSystemClock::new()), http_client, cx);
+            crate::init(client, cx);
+        });
+    }
+
+    #[gpui::test]
+    async fn test_remote_server_lookup_never_contacts_zed_dev(cx: &mut TestAppContext) {
+        let base_url = "https://zed.dev";
+        let requests = Arc::new(AtomicUsize::new(0));
+        init_remote_server_lookup(Some(base_url), requests.clone(), cx);
+
+        let result = cx
+            .spawn(async move |mut cx| {
+                AutoUpdater::get_remote_server_release_url(
+                    ReleaseChannel::Stable,
+                    None,
+                    "linux",
+                    "x86_64",
+                    &mut cx,
+                )
+                .await
+            })
+            .await;
+
+        let error = result.expect_err("lookup against zed.dev must be refused");
+        assert!(
+            error.to_string().contains("VEGA doesn't host"),
+            "unexpected error: {error:#}"
+        );
+        assert_eq!(
+            requests.load(atomic::Ordering::SeqCst),
+            0,
+            "no request may be sent to {base_url}"
+        );
+    }
+
+    #[gpui::test]
+    async fn test_remote_server_lookup_uses_custom_server_url(cx: &mut TestAppContext) {
+        let requests = Arc::new(AtomicUsize::new(0));
+        init_remote_server_lookup(None, requests.clone(), cx);
+
+        let url = cx
+            .spawn(async move |mut cx| {
+                AutoUpdater::get_remote_server_release_url(
+                    ReleaseChannel::Stable,
+                    None,
+                    "linux",
+                    "x86_64",
+                    &mut cx,
+                )
+                .await
+            })
+            .await
+            .expect("lookup against a non-zed.dev server_url should work");
+
+        assert_eq!(url.as_deref(), Some("https://test.example/remote-server"));
+        assert_eq!(requests.load(atomic::Ordering::SeqCst), 1);
+    }
+
+    #[test]
+    fn test_is_zed_hosted() {
+        assert!(is_zed_hosted("https://zed.dev"));
+        assert!(is_zed_hosted("https://staging.zed.dev"));
+        assert!(is_zed_hosted("https://cloud.zed.dev/releases"));
+        assert!(!is_zed_hosted("https://notzed.dev"));
+        assert!(!is_zed_hosted("https://zed.dev.example.com"));
+        assert!(!is_zed_hosted("http://localhost:3000"));
+        assert!(!is_zed_hosted("not a url"));
+    }
 
     #[gpui::test]
     fn test_auto_update_defaults_to_false(cx: &mut TestAppContext) {
