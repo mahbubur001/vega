@@ -107,6 +107,7 @@
 - [Keybindings](./key-bindings.md)
   - [Vim Mode](./vim.md)
   - [Helix Mode](./helix.md)
+- [Settings Sync](./settings-sync.md)
 
 # Language Support
 

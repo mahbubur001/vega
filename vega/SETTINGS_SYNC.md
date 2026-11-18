@@ -68,7 +68,8 @@ Limits: GitHub keeps ≤10 tokens per user per app (an 11th machine revokes the 
 - **M4 in progress.** Built: `tasks.json`, `debug.json` and the global `AGENTS.md` sync whole-file; every `*.json` in the user `snippets/` and `themes/` folders syncs as `snippets__<name>` / `themes__<name>` (gist names that could escape the folder are ignored). Deleting a file on one machine deletes it on GitHub and then on the others (with a backup); a file edited here after another machine deleted it is uploaded again.
   - The account menu's status line shows when this machine last synced ("Settings are synced · 5 min ago").
   - History and restore: `settings_sync: show history` (also "Sync History…" in the account menu) lists the gist's saved versions, newest first. Picking one writes its files back as the newest version (files added since are removed, the marker file stays), then syncs, so this machine's files are backed up before they change and other machines pick it up on their next sync.
-- **Not yet (M4):** settings page, user docs. The installed-extensions list waits for the extension catalogue (installing missing extensions would call Zed's registry on its own).
+  - User docs: `docs/src/settings-sync.md` (Customization > Settings Sync).
+- **Not yet (M4):** a Settings Sync page in the settings UI. The installed-extensions list waits for the extension catalogue (installing missing extensions would call Zed's registry on its own).
 
 ## Code layout
 
