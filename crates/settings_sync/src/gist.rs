@@ -129,6 +129,32 @@ pub(crate) async fn fetch_gist(
     Ok(Fetched::Found(gist))
 }
 
+/// One saved version of the sync gist, newest first in [`list_versions`].
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
+pub(crate) struct GistVersion {
+    pub version: String,
+    /// RFC 3339, e.g. `2026-11-19T08:03:12Z`.
+    pub committed_at: String,
+}
+
+/// The gist's most recent versions, newest first.
+pub(crate) async fn list_versions(
+    http_client: &Arc<dyn HttpClient>,
+    token: &str,
+    id: &str,
+) -> Result<Vec<GistVersion>> {
+    let request = api_request(
+        Method::GET,
+        &format!("/gists/{id}/commits?per_page={PAGE_SIZE}"),
+        token,
+    )
+    .body(AsyncBody::empty())?;
+    let mut response = http_client.send(request).await?;
+    let body = read_body(&mut response).await?;
+    check_status(&response, &body, "reading the sync history")?;
+    serde_json::from_slice(&body).context("parsing the sync history")
+}
+
 /// Fetches the gist as it was at `version`.
 pub(crate) async fn fetch_gist_version(
     http_client: &Arc<dyn HttpClient>,

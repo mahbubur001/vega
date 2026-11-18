@@ -6,6 +6,7 @@ mod account_button;
 mod engine;
 mod gist;
 mod github;
+mod history_picker;
 mod merge;
 mod reconcile;
 mod resources;
@@ -50,6 +51,8 @@ actions!(
         UseLocalSettings,
         /// Settles a sync conflict by taking the settings from GitHub.
         UseSyncedSettings,
+        /// Shows earlier versions of your synced settings and restores one.
+        ShowHistory,
     ]
 );
 
@@ -73,6 +76,9 @@ pub fn init(
     cx.observe_new(|workspace: &mut Workspace, _window, _cx| {
         workspace.register_action(|_, _: &SignIn, window, cx| sign_in(window, cx));
         workspace.register_action(|_, _: &SignOut, _, cx| sign_out(cx));
+        workspace.register_action(|workspace, _: &ShowHistory, window, cx| {
+            history_picker::toggle(workspace, window, cx)
+        });
         workspace
             .register_action(|_, _: &SyncNow, _, cx| update_sync(cx, |sync, cx| sync.sync(cx)));
         workspace.register_action(|_, _: &TurnOnSync, _, cx| {

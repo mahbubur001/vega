@@ -10,7 +10,8 @@ use ui::{Avatar, ContextMenu, Indicator, Tooltip, prelude::*};
 use crate::account::{AccountStatus, GitHubAccount};
 use crate::engine::{SettingsSync, SyncStatus};
 use crate::{
-    SignIn, SignOut, SyncNow, TurnOffSync, TurnOnSync, UseLocalSettings, UseSyncedSettings,
+    ShowHistory, SignIn, SignOut, SyncNow, TurnOffSync, TurnOnSync, UseLocalSettings,
+    UseSyncedSettings,
 };
 
 /// Shows Sign In, or progress while signing in. Renders nothing once signed
@@ -135,7 +136,8 @@ pub fn add_account_entries(menu: ContextMenu, cx: &App) -> ContextMenu {
         _ => menu,
     };
     let menu = if sync_enabled {
-        menu.action("Turn Off Settings Sync", TurnOffSync.boxed_clone())
+        menu.action("Sync History…", ShowHistory.boxed_clone())
+            .action("Turn Off Settings Sync", TurnOffSync.boxed_clone())
     } else {
         menu.action("Turn On Settings Sync", TurnOnSync.boxed_clone())
     };

@@ -12,7 +12,7 @@ use http_client::HttpClient;
 use serde_json::json;
 
 use crate::account::{AccountStatus, GitHubAccount};
-use crate::gist::{self, Fetched, MARKER_FILE};
+use crate::gist::{self, Fetched, GistVersion, MARKER_FILE};
 use crate::merge::{Prefer, SettingsMerge, merge_settings};
 use crate::reconcile::{Outcome, is_untouched, reconcile};
 use crate::resources::{SyncState, resources, state_dir, watched_paths};
@@ -189,6 +189,53 @@ impl SettingsSync {
                 } else {
                     this.sync_task = None;
                     this.status = SyncStatus::Off;
+                    cx.notify();
+                }
+            })
+            .ok();
+        })
+        .detach();
+    }
+
+    /// The signed-in token and login, if sync can run.
+    fn credentials(&self, cx: &App) -> Option<(String, String)> {
+        let account = self.account.read(cx);
+        Some((account.token()?.to_string(), account.user()?.login.clone()))
+    }
+
+    /// The sync gist's saved versions, newest first.
+    pub(crate) fn history(&self, cx: &App) -> Task<Result<Vec<GistVersion>>> {
+        let Some((token, login)) = self.credentials(cx) else {
+            return Task::ready(Err(anyhow::anyhow!(
+                "Sign in with GitHub to see the sync history."
+            )));
+        };
+        let fs = self.fs.clone();
+        let http_client = self.http_client.clone();
+        cx.background_spawn(async move {
+            let state = SyncState::load(&fs).await?.for_account(&login);
+            let id = state.gist_id.context("Nothing has been synced yet.")?;
+            gist::list_versions(&http_client, &token, &id).await
+        })
+    }
+
+    /// Makes `version` the current settings on GitHub, then syncs, which
+    /// applies it here (backing up this machine's files first).
+    pub(crate) fn restore(&mut self, version: String, cx: &mut Context<Self>) {
+        let Some((token, login)) = self.credentials(cx) else {
+            return;
+        };
+        let fs = self.fs.clone();
+        let http_client = self.http_client.clone();
+        self.status = SyncStatus::Syncing;
+        cx.notify();
+        cx.spawn(async move |this, cx| {
+            let result = restore_version(&fs, &http_client, &token, &login, &version).await;
+            this.update(cx, |this, cx| match result {
+                Ok(()) => this.run(None, cx),
+                Err(error) => {
+                    log::error!("restoring synced settings failed: {error:#}");
+                    this.status = SyncStatus::Error(error.to_string().into());
                     cx.notify();
                 }
             })
@@ -450,6 +497,48 @@ async fn sync_once(
     Ok(conflicts)
 }
 
+/// Writes the gist's files from `version` back as its newest version. Files
+/// added since are removed; the marker file is kept.
+async fn restore_version(
+    fs: &Arc<dyn Fs>,
+    http_client: &Arc<dyn HttpClient>,
+    token: &str,
+    login: &str,
+    version: &str,
+) -> Result<()> {
+    let mut state = SyncState::load(fs).await?.for_account(login);
+    let id = state
+        .gist_id
+        .clone()
+        .context("Nothing has been synced yet.")?;
+    let old = gist::fetch_gist_version(http_client, token, &id, version).await?;
+    let Fetched::Found(current) = gist::fetch_gist(http_client, token, &id, None).await? else {
+        anyhow::bail!("The sync gist is gone from GitHub.");
+    };
+
+    let mut changes = BTreeMap::new();
+    for name in current.files.keys() {
+        if name != MARKER_FILE && !old.files.contains_key(name) {
+            changes.insert(name.clone(), None);
+        }
+    }
+    for (name, content) in &old.files {
+        if name != MARKER_FILE && current.files.get(name) != Some(content) {
+            changes.insert(name.clone(), Some(content.clone()));
+        }
+    }
+    if changes.is_empty() {
+        return Ok(());
+    }
+
+    let updated = gist::update_gist(http_client, token, &id, &changes).await?;
+    // The next sync sees GitHub changed while this machine didn't, so it pulls.
+    state.remote = updated.files;
+    state.version = updated.version;
+    state.etag = None;
+    state.save(fs).await
+}
+
 /// Another machine wrote `other` between this machine's read and its write of
 /// `written`, so `written` replaced it. Merges each file both wrote against the
 /// base this machine merged with, and returns the gist edits that make the gist
@@ -672,6 +761,19 @@ mod tests {
                             let id = parts.next().unwrap_or_default().to_string();
                             let version = parts.next().map(str::to_string);
                             match (method, version, github.gists.contains_key(&id)) {
+                                ("GET", Some(version), true) if version == "commits" => {
+                                    let list: Vec<_> = github.history[&id]
+                                        .iter()
+                                        .rev()
+                                        .map(|(version, _)| {
+                                            json!({
+                                                "version": version,
+                                                "committed_at": "2026-11-19T08:03:12Z",
+                                            })
+                                        })
+                                        .collect();
+                                    (200, json!(list))
+                                }
                                 ("GET", Some(version), true) => {
                                     let files = github.history[&id]
                                         .iter()
@@ -1019,6 +1121,52 @@ mod tests {
             .await
             .unwrap();
         assert_eq!(settings(&machine_a).await, json!({ "vim_mode": true }));
+    }
+
+    #[gpui::test]
+    async fn test_restoring_an_earlier_version(cx: &mut TestAppContext) {
+        let (github, http_client) = fake_github();
+        let machine_a = machine(cx, "{ \"tab_size\": 4 }").await;
+        sync_once(&machine_a, &http_client, "token", "octocat", None)
+            .await
+            .unwrap();
+        let first_version = github.lock().unwrap().history["gist1"][0].0.clone();
+
+        machine_a
+            .atomic_write(paths::settings_file().clone(), "{ \"tab_size\": 2 }".into())
+            .await
+            .unwrap();
+        machine_a
+            .atomic_write(paths::tasks_file().clone(), "[{ \"label\": \"x\" }]".into())
+            .await
+            .unwrap();
+        sync_once(&machine_a, &http_client, "token", "octocat", None)
+            .await
+            .unwrap();
+        assert!(github.lock().unwrap().gists["gist1"].contains_key("tasks.json"));
+
+        let versions = gist::list_versions(&http_client, "token", "gist1")
+            .await
+            .unwrap();
+        assert_eq!(versions.len(), 2, "newest first");
+        assert_eq!(versions[1].version, first_version);
+
+        restore_version(&machine_a, &http_client, "token", "octocat", &first_version)
+            .await
+            .unwrap();
+        let conflicts = sync_once(&machine_a, &http_client, "token", "octocat", None)
+            .await
+            .unwrap();
+
+        assert!(conflicts.is_empty(), "{conflicts:?}");
+        assert_eq!(settings(&machine_a).await, json!({ "tab_size": 4 }));
+        assert!(
+            !machine_a.is_file(paths::tasks_file()).await,
+            "added later, so removed"
+        );
+        let gist = github.lock().unwrap().gists["gist1"].clone();
+        assert!(!gist.contains_key("tasks.json"));
+        assert!(gist.contains_key(MARKER_FILE));
     }
 
     #[gpui::test]

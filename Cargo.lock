@@ -17523,6 +17523,7 @@ dependencies = [
  "log",
  "menu",
  "paths",
+ "picker",
  "serde",
  "serde_json",
  "settings_json",
