@@ -229,6 +229,7 @@ pub struct TitleBar {
     _subscriptions: Vec<Subscription>,
     banner: Option<Entity<OnboardingBanner>>,
     update_version: Entity<UpdateVersion>,
+    github_account_button: Entity<settings_sync::AccountButton>,
     screen_share_popover_handle: PopoverMenuHandle<ContextMenu>,
     _diagnostics_subscription: Option<gpui::Subscription>,
 }
@@ -380,11 +381,6 @@ impl Render for TitleBar {
                     | client::Status::Authenticated
                     | client::Status::Connecting
             );
-        let is_signed_out_or_auth_error = user.is_none()
-            && matches!(
-                status,
-                client::Status::SignedOut | client::Status::AuthenticationError
-            );
 
         children.push(
             h_flex()
@@ -394,12 +390,10 @@ impl Render for TitleBar {
                 .child(self.render_call_controls(window, cx))
                 .children(self.render_connection_status(status, cx))
                 .child(self.update_version.clone())
-                .when(
-                    user.is_none()
-                        && is_signed_out_or_auth_error
-                        && TitleBarSettings::get_global(cx).show_sign_in,
-                    |this| this.child(self.render_sign_in_button(cx)),
-                )
+                // VEGA signs in with GitHub (for Settings Sync) instead of a zed.dev account.
+                .when(TitleBarSettings::get_global(cx).show_sign_in, |this| {
+                    this.child(self.github_account_button.clone())
+                })
                 .when(is_signing_in, |this| {
                     this.child(
                         Label::new("Signing in…")
@@ -522,6 +516,7 @@ impl TitleBar {
         }
 
         let update_version = cx.new(|cx| UpdateVersion::new(cx));
+        let github_account_button = cx.new(settings_sync::AccountButton::new);
         let platform_titlebar = cx.new(|cx| {
             let mut titlebar = PlatformTitleBar::new(id, cx).without_system_window_tabs();
             if let Some(mw) = multi_workspace.clone() {
@@ -543,6 +538,7 @@ impl TitleBar {
             _subscriptions: subscriptions,
             banner,
             update_version,
+            github_account_button,
             screen_share_popover_handle: PopoverMenuHandle::default(),
             _diagnostics_subscription: None,
         };

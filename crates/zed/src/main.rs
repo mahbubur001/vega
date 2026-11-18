@@ -164,9 +164,7 @@ fn fail_to_open_window_async(e: anyhow::Error, cx: &mut AsyncApp) {
 }
 
 fn fail_to_open_window(e: anyhow::Error, _cx: &mut App) {
-    eprintln!(
-        "VEGA failed to open a window: {e:?}"
-    );
+    eprintln!("VEGA failed to open a window: {e:?}");
     #[cfg(not(any(target_os = "linux", target_os = "freebsd")))]
     {
         process::exit(1);
@@ -693,6 +691,11 @@ fn main() {
                 .clone(),
         };
         let credentials_provider = zed_credentials_provider::global(cx);
+        settings_sync::init(
+            app_state.client.http_client(),
+            credentials_provider.clone(),
+            cx,
+        );
         copilot_chat::init(
             app_state.client.http_client(),
             credentials_provider,
