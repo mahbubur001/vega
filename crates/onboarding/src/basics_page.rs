@@ -26,10 +26,12 @@ use crate::{
     theme_preview::{ThemePreviewStyle, ThemePreviewTile},
 };
 
+// VEGA: the first family is VEGA (VEGA Dark, with One Light until there is a VEGA Light).
+// One Dark stays available in the theme selector.
 const LIGHT_THEMES: [&str; 3] = ["One Light", "Ayu Light", "Gruvbox Light"];
-const DARK_THEMES: [&str; 3] = ["One Dark", "Ayu Dark", "Gruvbox Dark"];
+const DARK_THEMES: [&str; 3] = ["VEGA Dark", "Ayu Dark", "Gruvbox Dark"];
 const FAMILY_NAMES: [SharedString; 3] = [
-    SharedString::new_static("One"),
+    SharedString::new_static("VEGA"),
     SharedString::new_static("Ayu"),
     SharedString::new_static("Gruvbox"),
 ];

@@ -20207,7 +20207,7 @@ mod tests {
             serde_json::json!({
                 "mode": "system",
                 "light": "One Light",
-                "dark": "One Dark"
+                "dark": settings::DEFAULT_DARK_THEME
             })
         );
 

@@ -13,7 +13,7 @@ Status keys: `[ ]` todo · `[~]` in progress · `[x]` done. Each item maps to a 
 - [x] Rebrand app name, bundle IDs, URL scheme, icons (P03) — bundled .app check pending (P11)
 - [x] Disable telemetry, crash upload, auto-update against zed.dev (P04) — release-asset lookups (incl. the SSH/WSL/Docker remote-server download) now refuse zed.dev too; P10 gives them a real host
 - [x] Remove/hide Zed sign-in, Zed AI plan, collab UI (P05)
-- [ ] Default "VEGA Dark" theme (P06)
+- [~] Default "VEGA Dark" theme (P06) — `assets/themes/vega/vega.json`, default dark theme and first onboarding family; syntax colors ≥ WCAG AA on `#101018` (tested in `theme_settings`). Not yet looked at in the running app
 
 ## Phase 2 — AI-first
 - [ ] Onboarding: pick a BYOK provider (Anthropic, OpenAI, Ollama, …) (P07)

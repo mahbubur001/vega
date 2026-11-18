@@ -7,6 +7,8 @@
 
 mod schema;
 mod settings;
+#[cfg(test)]
+mod vega_theme_tests;
 
 use std::sync::Arc;
 
