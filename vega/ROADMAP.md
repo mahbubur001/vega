@@ -16,7 +16,7 @@ Status keys: `[ ]` todo · `[~]` in progress · `[x]` done. Each item maps to a 
 - [~] Default "VEGA Dark" theme (P06) — `assets/themes/vega/vega.json`, default dark theme and first onboarding family; syntax colors ≥ WCAG AA on `#101018` (tested in `theme_settings`). Not yet looked at in the running app
 
 ## Phase 2 — AI-first
-- [ ] Onboarding: pick a BYOK provider (Anthropic, OpenAI, Ollama, …) (P07)
+- [~] Onboarding: pick a BYOK provider (Anthropic, OpenAI, Ollama, …) (P07) — "AI Provider" section on the welcome page (`crates/onboarding/src/ai_provider_setup.rs`): Anthropic, OpenAI, Google, OpenRouter, Ollama, LM Studio; key saved to the OS keychain by the provider itself; Ollama/LM Studio use their own detection view; default-model picker writes `agent.default_model`. Not yet looked at in the running app (`onboarding: open`)
 - [x] Sensible default agent + edit-prediction settings without Zed cloud (P08) — see "Changed defaults" below. Onboarding picking the provider is P07
 - [ ] VEGA-specific AI features (P09)
 - [ ] Settings Sync via GitHub sign-in + secret Gist — see `SETTINGS_SYNC.md`

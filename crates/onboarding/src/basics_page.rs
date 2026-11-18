@@ -719,7 +719,11 @@ fn render_ai_section(user_store: &Entity<UserStore>, cx: &mut App) -> impl IntoE
         .child(grid)
 }
 
-pub(crate) fn render_basics_page(user_store: &Entity<UserStore>, cx: &mut App) -> impl IntoElement {
+pub(crate) fn render_basics_page(
+    user_store: &Entity<UserStore>,
+    ai_provider_setup: &Entity<crate::ai_provider_setup::AiProviderSetup>,
+    cx: &mut App,
+) -> impl IntoElement {
     let mut tab_index = 0;
 
     v_flex()
@@ -727,6 +731,7 @@ pub(crate) fn render_basics_page(user_store: &Entity<UserStore>, cx: &mut App) -
         .gap_6()
         .child(render_theme_section(&mut tab_index, cx))
         .child(render_base_keymap_section(&mut tab_index, cx))
+        .child(ai_provider_setup.clone())
         .child(render_ai_section(user_store, cx))
         .child(render_import_settings_section(&mut tab_index, cx))
         .child(render_vim_mode_switch(&mut tab_index, cx))

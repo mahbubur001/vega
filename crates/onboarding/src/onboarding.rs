@@ -30,6 +30,7 @@ use workspace::{
 };
 use zed_actions::OpenOnboarding;
 
+mod ai_provider_setup;
 mod base_keymap_picker;
 mod basics_page;
 pub mod multibuffer_hint;
@@ -209,6 +210,7 @@ struct Onboarding {
     workspace: WeakEntity<Workspace>,
     focus_handle: FocusHandle,
     user_store: Entity<UserStore>,
+    ai_provider_setup: Entity<ai_provider_setup::AiProviderSetup>,
     scroll_handle: ScrollHandle,
     _settings_subscription: Subscription,
 }
@@ -267,6 +269,10 @@ impl Onboarding {
                 focus_handle: cx.focus_handle(),
                 scroll_handle: ScrollHandle::new(),
                 user_store: workspace.user_store().clone(),
+                ai_provider_setup: {
+                    let fs = workspace.app_state().fs.clone();
+                    cx.new(|cx| ai_provider_setup::AiProviderSetup::new(fs, cx))
+                },
                 _settings_subscription: cx
                     .observe_global::<SettingsStore>(move |_, cx| cx.notify()),
             }
@@ -297,7 +303,8 @@ impl Onboarding {
     }
 
     fn render_page(&mut self, cx: &mut Context<Self>) -> AnyElement {
-        crate::basics_page::render_basics_page(&self.user_store, cx).into_any_element()
+        crate::basics_page::render_basics_page(&self.user_store, &self.ai_provider_setup, cx)
+            .into_any_element()
     }
 }
 
@@ -435,6 +442,7 @@ impl Item for Onboarding {
         Task::ready(Some(cx.new(|cx| Onboarding {
             workspace: self.workspace.clone(),
             user_store: self.user_store.clone(),
+            ai_provider_setup: self.ai_provider_setup.clone(),
             scroll_handle: ScrollHandle::new(),
             focus_handle: cx.focus_handle(),
             _settings_subscription: cx.observe_global::<SettingsStore>(move |_, cx| cx.notify()),

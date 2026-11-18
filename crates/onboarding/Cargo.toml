@@ -10,7 +10,6 @@ workspace = true
 
 [lib]
 path = "src/onboarding.rs"
-test = false
 doctest = false
 
 [features]
@@ -27,6 +26,8 @@ documented.workspace = true
 fs.workspace = true
 fuzzy.workspace = true
 gpui.workspace = true
+ui_input.workspace = true
+language_model.workspace = true
 menu.workspace = true
 notifications.workspace = true
 picker.workspace = true
