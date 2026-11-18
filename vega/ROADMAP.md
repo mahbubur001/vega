@@ -22,7 +22,7 @@ Status keys: `[ ]` todo · `[~]` in progress · `[x]` done. Each item maps to a 
 - [ ] Settings Sync via GitHub sign-in + secret Gist — see `SETTINGS_SYNC.md`
   - [x] M1 Sign in with GitHub
   - [x] M2 Gist backend + whole-file sync (verified live)
-  - [x] M3 Smart merge + never-sync rules (user `ignored_settings` list still to do)
+  - [x] M3 Smart merge + never-sync rules
   - [ ] M4 All resources, history, settings page
 - [ ] Deployment & Remote Host (built-in iRemote) — see `DEPLOYMENT.md`
   - [x] D0 Vendor the core (63 tests incl. real SFTP/FTP/WebDAV servers)

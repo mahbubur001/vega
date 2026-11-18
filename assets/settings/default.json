@@ -643,6 +643,15 @@
     // The layout of window control buttons in the title bar (Linux only).
     "button_layout": "platform_default",
   },
+  // VEGA: Settings Sync (sign in with GitHub to sync settings across machines).
+  // This block itself is never synced, so each machine keeps its own.
+  "settings_sync": {
+    // Settings this machine never uploads to GitHub or takes from it, as
+    // top-level keys or dotted paths, e.g. "buffer_font_size" or "terminal.font_size".
+    // API keys, tokens, passwords, `env` blocks, `ssh_connections`, `proxy` and
+    // `server_url` are never synced anyway.
+    "ignored_settings": [],
+  },
   "audio": {
     // Select specific output audio device.
     // `null` means use system default.

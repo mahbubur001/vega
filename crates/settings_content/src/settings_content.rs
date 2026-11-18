@@ -8,6 +8,7 @@ mod language_model;
 pub mod merge_from;
 mod project;
 mod serde_helper;
+mod settings_sync;
 mod terminal;
 mod theme;
 mod title_bar;
@@ -28,6 +29,7 @@ pub use serde_helper::{
     serialize_f32_with_two_decimal_places, serialize_optional_f32_with_two_decimal_places,
 };
 use settings_json::parse_json_with_comments;
+pub use settings_sync::*;
 pub use terminal::*;
 pub use theme::*;
 pub use title_bar::*;
@@ -309,6 +311,9 @@ pub struct SettingsContent {
 
     pub title_bar: Option<TitleBarSettingsContent>,
 
+    /// VEGA: Settings Sync. Never synced itself.
+    pub settings_sync: Option<SettingsSyncContent>,
+
     /// Whether or not to enable Vim mode.
     ///
     /// Default: false
@@ -412,7 +417,7 @@ fallible_options::flattened_deserialize!(SettingsContent {
         global_lsp_settings, image_viewer, markdown_preview, repl, helix_mode, hide_mouse,
         journal, log, line_indicator_format, language_models, copilot, outline_panel, project_panel,
         node, proxy, reduce_motion, server_url, credentials_url, session, telemetry, terminal,
-        title_bar, vim_mode, calls, which_key, vim, modeline_lines, feature_flags,
+        title_bar, settings_sync, vim_mode, calls, which_key, vim, modeline_lines, feature_flags,
         instrumentation,
     },
     defaults: {},

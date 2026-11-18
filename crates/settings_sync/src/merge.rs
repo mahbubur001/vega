@@ -72,51 +72,133 @@ pub(crate) fn is_private_key(key: &str, top_level: bool) -> bool {
         || (top_level && PRIVATE_TOP_LEVEL_KEYS.contains(&key.as_str()))
 }
 
-/// The settings with every never-sync value removed.
-pub(crate) fn public_view(value: &Value) -> Value {
-    fn strip(value: &Value, top_level: bool) -> Value {
-        match value {
-            Value::Object(map) => Value::Object(
-                map.iter()
-                    .filter(|(key, _)| !is_private_key(key, top_level))
-                    .map(|(key, value)| (key.clone(), strip(value, false)))
-                    .collect(),
-            ),
-            Value::Array(items) => Value::Array(items.iter().map(|v| strip(v, false)).collect()),
-            other => other.clone(),
-        }
-    }
-    strip(value, true)
+/// This machine's never-sync rules: the built-in ones plus its own
+/// `settings_sync.ignored_settings` (top-level keys or dotted paths).
+#[derive(Default)]
+pub(crate) struct Rules {
+    ignored: Vec<Vec<String>>,
 }
 
-/// `public` (a value from the merge) with the never-sync entries of this
-/// machine's `local` value put back, at any depth.
-fn restore_private(public: Option<&Value>, local: Option<&Value>) -> Option<Value> {
-    match (public, local) {
-        (Some(Value::Object(public)), Some(Value::Object(local))) => {
-            let mut merged = public.clone();
-            for (key, local_value) in local {
-                if is_private_key(key, false) {
-                    merged.insert(key.clone(), local_value.clone());
-                } else if let Some(value) = restore_private(public.get(key), Some(local_value))
-                    && public.contains_key(key)
-                {
-                    merged.insert(key.clone(), value);
-                }
-            }
-            Some(Value::Object(merged))
-        }
-        (Some(public), _) => Some(public.clone()),
-        // The key is gone from the merge: keep only this machine's private entries.
-        (None, Some(Value::Object(local))) => {
-            let private: Map<String, Value> = local
+impl Rules {
+    pub(crate) fn for_settings(settings: &Map<String, Value>) -> Self {
+        let ignored = settings
+            .get("settings_sync")
+            .and_then(|sync| sync.get("ignored_settings"))
+            .and_then(Value::as_array)
+            .into_iter()
+            .flatten()
+            .filter_map(Value::as_str)
+            .map(|path| path.split('.').map(str::to_string).collect())
+            .collect();
+        Self { ignored }
+    }
+
+    fn is_private(&self, path: &[String]) -> bool {
+        let Some(key) = path.last() else {
+            return false;
+        };
+        let top_level = path.len() == 1;
+        is_private_key(key, top_level)
+            || (top_level && key == "settings_sync")
+            || self
+                .ignored
                 .iter()
-                .filter(|(key, _)| is_private_key(key, false))
-                .map(|(key, value)| (key.clone(), value.clone()))
-                .collect();
-            (!private.is_empty()).then_some(Value::Object(private))
+                .any(|ignored| ignored.as_slice() == path)
+    }
+
+    /// `value` with everything these rules keep private removed.
+    pub(crate) fn public_view(&self, value: &Map<String, Value>) -> Map<String, Value> {
+        fn strip(rules: &Rules, value: &Value, path: &mut Vec<String>) -> Value {
+            match value {
+                Value::Object(map) => Value::Object(strip_map(rules, map, path)),
+                Value::Array(items) => {
+                    Value::Array(items.iter().map(|item| strip(rules, item, path)).collect())
+                }
+                other => other.clone(),
+            }
         }
-        (None, _) => None,
+        fn strip_map(
+            rules: &Rules,
+            map: &Map<String, Value>,
+            path: &mut Vec<String>,
+        ) -> Map<String, Value> {
+            let mut public = Map::new();
+            for (key, value) in map {
+                path.push(key.clone());
+                if !rules.is_private(path) {
+                    public.insert(key.clone(), strip(rules, value, path));
+                }
+                path.pop();
+            }
+            public
+        }
+        strip_map(self, value, &mut Vec::new())
+    }
+
+    /// `public` (a value from the merge, at `path`) with the private entries of
+    /// `source` (the same key in a full copy of the settings) put back.
+    fn restore(
+        &self,
+        public: Option<&Value>,
+        source: Option<&Value>,
+        path: &mut Vec<String>,
+    ) -> Option<Value> {
+        match (public, source) {
+            (Some(Value::Object(public)), Some(Value::Object(source))) => {
+                let mut merged = public.clone();
+                for (key, source_value) in source {
+                    path.push(key.clone());
+                    if self.is_private(path) {
+                        merged.insert(key.clone(), source_value.clone());
+                    } else if public.contains_key(key)
+                        && let Some(value) = self.restore(public.get(key), Some(source_value), path)
+                    {
+                        merged.insert(key.clone(), value);
+                    }
+                    path.pop();
+                }
+                Some(Value::Object(merged))
+            }
+            (Some(public), _) => Some(public.clone()),
+            // The key is gone from the merge: keep only the private entries.
+            (None, Some(Value::Object(source))) => {
+                let mut private = Map::new();
+                for (key, value) in source {
+                    path.push(key.clone());
+                    if self.is_private(path) {
+                        private.insert(key.clone(), value.clone());
+                    } else if let Some(value) = self.restore(None, Some(value), path) {
+                        private.insert(key.clone(), value);
+                    }
+                    path.pop();
+                }
+                (!private.is_empty()).then_some(Value::Object(private))
+            }
+            (None, _) => None,
+        }
+    }
+
+    /// `public` with every top-level key's private entries from `source` put back.
+    fn restore_map(
+        &self,
+        public: &Map<String, Value>,
+        source: &Map<String, Value>,
+    ) -> Map<String, Value> {
+        let keys: std::collections::BTreeSet<&String> =
+            public.keys().chain(source.keys()).collect();
+        let mut result = Map::new();
+        for key in keys {
+            let mut path = vec![key.clone()];
+            let value = if self.is_private(&path) {
+                source.get(key).cloned()
+            } else {
+                self.restore(public.get(key), source.get(key), &mut path)
+            };
+            if let Some(value) = value {
+                result.insert(key.clone(), value);
+            }
+        }
+        result
     }
 }
 
@@ -178,15 +260,18 @@ pub(crate) fn merge_settings(
     prefer: Option<Prefer>,
 ) -> Result<SettingsMerge> {
     let local_map = parse_object(local, "this machine's settings")?;
-    let Value::Object(local_public) = public_view(&Value::Object(local_map.clone())) else {
-        unreachable!("the public view of an object is an object");
-    };
-    let remote = remote
+    let rules = Rules::for_settings(&local_map);
+    let local_public = rules.public_view(&local_map);
+    let remote_full = remote
         .map(|remote| parse_object(remote, "the settings on GitHub"))
         .transpose()?;
+    // Compare only what this machine syncs, so its ignored settings are
+    // neither overwritten here nor removed from GitHub.
+    let remote = remote_full.as_ref().map(|remote| rules.public_view(remote));
     let base = base
         .map(|base| parse_object(base, "the last synced settings"))
-        .transpose()?;
+        .transpose()?
+        .map(|base| rules.public_view(&base));
 
     let merged = match &remote {
         None => local_public.clone(),
@@ -241,20 +326,27 @@ pub(crate) fn merge_settings(
     }
 
     let local = (merged != local_public)
-        .then(|| apply_to_local(local, &local_map, &local_public, &merged))
+        .then(|| apply_to_local(&rules, local, &local_map, &local_public, &merged))
         .transpose()?;
-    let upload = (remote.as_ref() != Some(&merged) && !(remote.is_none() && merged.is_empty()))
-        .then(|| to_text(&merged));
+    // GitHub keeps what this machine ignores (other machines' values).
+    let gist = match &remote_full {
+        Some(remote_full) => rules.restore_map(&merged, remote_full),
+        None => merged,
+    };
+    let upload = (remote_full.as_ref() != Some(&gist)
+        && !(remote_full.is_none() && gist.is_empty()))
+    .then(|| to_text(&gist));
 
     Ok(SettingsMerge::Merged {
         local,
         upload,
-        base: to_text(&merged),
+        base: to_text(&gist),
     })
 }
 
 /// Edits the local JSONC text key by key so its comments and formatting survive.
 fn apply_to_local(
+    rules: &Rules,
     text: &str,
     local: &Map<String, Value>,
     local_public: &Map<String, Value>,
@@ -274,7 +366,7 @@ fn apply_to_local(
         if merged.get(key) == local_public.get(key) {
             continue;
         }
-        let new_value = restore_private(merged.get(key), local.get(key));
+        let new_value = rules.restore(merged.get(key), local.get(key), &mut vec![key.clone()]);
         let (range, replacement) = settings_json::replace_value_in_json_text(
             &text,
             &[key.as_str()],
@@ -438,6 +530,51 @@ mod tests {
         );
         assert_eq!(value(&local.unwrap()), json!({ "vim_mode": true }));
         assert_eq!(upload, None);
+    }
+
+    #[test]
+    fn ignored_settings_stay_as_they_are_on_both_sides() {
+        let local = r#"{
+  "settings_sync": { "ignored_settings": ["buffer_font_size", "terminal.font_size"] },
+  "buffer_font_size": 12,
+  "terminal": { "font_size": 12, "shell": "zsh" }
+}"#;
+        let remote =
+            r#"{ "buffer_font_size": 16, "terminal": { "font_size": 16, "shell": "fish" } }"#;
+        let base = r#"{ "buffer_font_size": 16, "terminal": { "font_size": 16, "shell": "zsh" } }"#;
+        let (local_out, upload, base_out) =
+            merged(merge_settings(local, Some(remote), Some(base), None).unwrap());
+
+        // The shell change arrives; this machine's ignored sizes stay.
+        assert_eq!(
+            value(&local_out.unwrap()),
+            json!({
+                "settings_sync": { "ignored_settings": ["buffer_font_size", "terminal.font_size"] },
+                "buffer_font_size": 12,
+                "terminal": { "font_size": 12, "shell": "fish" }
+            })
+        );
+        // GitHub keeps the other machines' sizes, so nothing is uploaded.
+        assert_eq!(upload, None);
+        assert_eq!(value(&base_out), value(remote));
+    }
+
+    #[test]
+    fn ignored_settings_are_not_uploaded_and_not_removed_from_github() {
+        let local = r#"{
+  "settings_sync": { "ignored_settings": ["buffer_font_size"] },
+  "buffer_font_size": 12,
+  "vim_mode": true
+}"#;
+        let remote = r#"{ "buffer_font_size": 16, "vim_mode": false }"#;
+        let (local_out, upload, _) =
+            merged(merge_settings(local, Some(remote), Some(remote), None).unwrap());
+        assert_eq!(local_out, None);
+        assert_eq!(
+            value(&upload.unwrap()),
+            json!({ "buffer_font_size": 16, "vim_mode": true }),
+            "vim_mode goes up; GitHub's buffer_font_size is kept and the sync block isn't uploaded"
+        );
     }
 
     #[test]

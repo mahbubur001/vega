@@ -240,6 +240,7 @@ impl VsCodeSettings {
             terminal: self.terminal_settings_content(),
             theme: Box::new(self.theme_settings_content()),
             title_bar: None,
+            settings_sync: None,
             vim: None,
             vim_mode: None,
             workspace: self.workspace_settings_content(),
