@@ -23,7 +23,7 @@ Status keys: `[ ]` todo · `[~]` in progress · `[x]` done. Each item maps to a 
   - [x] M1 Sign in with GitHub
   - [x] M2 Gist backend + whole-file sync (verified live)
   - [x] M3 Smart merge + never-sync rules
-  - [~] M4 All resources, history, settings page — tasks, debug, AGENTS.md, snippets, themes done
+  - [x] M4 All resources, history, settings page — extensions list waits for the extension catalogue
 - [ ] Deployment & Remote Host (built-in iRemote) — see `DEPLOYMENT.md`
   - [x] D0 Vendor the core (63 tests incl. real SFTP/FTP/WebDAV servers)
   - [~] D1 Upload on save + actions — code written, not built yet (see DEPLOYMENT.md "Next session")

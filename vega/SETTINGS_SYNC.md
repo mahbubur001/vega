@@ -69,7 +69,8 @@ Limits: GitHub keeps ≤10 tokens per user per app (an 11th machine revokes the 
   - The account menu's status line shows when this machine last synced ("Settings are synced · 5 min ago").
   - History and restore: `settings_sync: show history` (also "Sync History…" in the account menu) lists the gist's saved versions, newest first. Picking one writes its files back as the newest version (files added since are removed, the marker file stays), then syncs, so this machine's files are backed up before they change and other machines pick it up on their next sync.
   - User docs: `docs/src/settings-sync.md` (Customization > Settings Sync).
-- **Not yet (M4):** a Settings Sync page in the settings UI. The installed-extensions list waits for the extension catalogue (installing missing extensions would call Zed's registry on its own).
+  - Settings window: General > Settings Sync has Sign In, Sync Now and Show History (dispatched by action name, so `settings_ui` doesn't depend on this crate; a test pins the names).
+- **M4 done**, except the installed-extensions list, which waits for an extension catalogue that doesn't use zed.dev (see ROADMAP). The installed-extensions list waits for the extension catalogue (installing missing extensions would call Zed's registry on its own).
 
 ## Code layout
 

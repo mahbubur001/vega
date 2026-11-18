@@ -167,3 +167,18 @@ fn notify_on_conflict(sync: &Entity<SettingsSync>, cx: &mut App) {
     })
     .detach();
 }
+
+#[cfg(test)]
+mod tests {
+    use gpui::Action as _;
+
+    use super::*;
+
+    /// `settings_ui` dispatches these by name (it doesn't depend on this crate).
+    #[test]
+    fn action_names_used_by_the_settings_page() {
+        assert_eq!(SignIn.name(), "settings_sync::SignIn");
+        assert_eq!(SyncNow.name(), "settings_sync::SyncNow");
+        assert_eq!(ShowHistory.name(), "settings_sync::ShowHistory");
+    }
+}

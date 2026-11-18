@@ -497,6 +497,61 @@ fn general_page(cx: &App) -> SettingsPage {
         ]
     }
 
+    /// VEGA: Settings Sync lives in its own crate; its actions are dispatched
+    /// by name so this crate doesn't depend on it.
+    fn settings_sync_section() -> [SettingsPageItem; 4] {
+        fn link(
+            title: &'static str,
+            description: &'static str,
+            button_text: &'static str,
+            action: &'static str,
+        ) -> SettingsPageItem {
+            SettingsPageItem::ActionLink(ActionLink {
+                title: title.into(),
+                description: Some(description.into()),
+                button_text: button_text.into(),
+                on_click: Arc::new(move |settings_window, window, cx| {
+                    let Some(original_window) = settings_window.original_window else {
+                        return;
+                    };
+                    let Some(action) = cx.build_action(action, None).ok() else {
+                        return;
+                    };
+                    original_window
+                        .update(cx, |_workspace, original_window, cx| {
+                            original_window.dispatch_action(action, cx);
+                            original_window.activate_window();
+                        })
+                        .ok();
+                    window.remove_window();
+                }),
+                files: USER,
+            })
+        }
+
+        [
+            SettingsPageItem::SectionHeader("Settings Sync"),
+            link(
+                "GitHub Account",
+                "Sign in with GitHub to sync settings, keymap, tasks, snippets, themes and AGENTS.md through a secret gist.",
+                "Sign In",
+                "settings_sync::SignIn",
+            ),
+            link(
+                "Sync Now",
+                "Sync with GitHub now instead of waiting for the next change or check.",
+                "Sync Now",
+                "settings_sync::SyncNow",
+            ),
+            link(
+                "History",
+                "Restore an earlier version of your synced settings.",
+                "Show History",
+                "settings_sync::ShowHistory",
+            ),
+        ]
+    }
+
     fn auto_update_section() -> [SettingsPageItem; 2] {
         [
             SettingsPageItem::SectionHeader("Auto Update"),
@@ -547,6 +602,7 @@ fn general_page(cx: &App) -> SettingsPage {
             scoped_settings_section(),
             privacy_section(),
             auto_update_section(),
+            settings_sync_section(),
             extensions_section(),
         )
         .into(),
