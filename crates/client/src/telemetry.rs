@@ -90,11 +90,13 @@ static ZED_CLIENT_CHECKSUM_SEED: LazyLock<Option<Vec<u8>>> = LazyLock::new(|| {
         })
 });
 
-pub static MINIDUMP_ENDPOINT: LazyLock<Option<String>> = LazyLock::new(|| {
-    option_env!("ZED_MINIDUMP_ENDPOINT")
-        .map(str::to_string)
-        .or_else(|| env::var("ZED_MINIDUMP_ENDPOINT").ok())
-});
+/// VEGA never uploads crash reports, so there is no minidump endpoint even if
+/// `ZED_MINIDUMP_ENDPOINT` is set.
+pub static MINIDUMP_ENDPOINT: LazyLock<Option<String>> = LazyLock::new(|| None);
+
+/// VEGA never uploads telemetry events; they are only written to the local
+/// telemetry log.
+const UPLOAD_EVENTS: bool = false;
 
 pub fn should_install_crash_handler(channel: ReleaseChannel) -> bool {
     matches!(
@@ -733,6 +735,10 @@ impl Telemetry {
             )
         };
 
+        if !UPLOAD_EVENTS {
+            return Ok(());
+        }
+
         let request = self.build_request(json_bytes, &request_body)?;
         let response = self.http_client.send(request).await?;
         if response.status() != 200 {
@@ -1095,7 +1101,11 @@ mod tests {
 
     fn init_test(cx: &mut TestAppContext) {
         cx.update(|cx| {
-            let settings_store = SettingsStore::test(cx);
+            let mut settings_store = SettingsStore::test(cx);
+            // VEGA turns metrics off by default; these tests exercise the event queue.
+            settings_store.update_user_settings(cx, |content| {
+                content.telemetry.get_or_insert_default().metrics = Some(true);
+            });
             cx.set_global(settings_store);
         });
     }

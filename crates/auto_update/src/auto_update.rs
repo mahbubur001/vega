@@ -252,7 +252,7 @@ struct AutoUpdateSetting(bool);
 
 /// Whether or not to automatically check for updates.
 ///
-/// Default: true
+/// Default: false
 impl Settings for AutoUpdateSetting {
     fn from_settings(content: &settings::SettingsContent) -> Self {
         Self(content.auto_update.unwrap())
@@ -326,6 +326,13 @@ pub fn check(_: &Check, window: &mut Window, cx: &mut App) {
         .map(|channel| channel.poll_for_updates())
         .unwrap_or(false)
     {
+        drop(window.prompt(
+            gpui::PromptLevel::Info,
+            "Automatic updates aren't available yet.",
+            Some("Download new VEGA versions from the project's releases page."),
+            &["OK"],
+            cx,
+        ));
         return;
     }
 
@@ -1384,7 +1391,7 @@ mod tests {
     impl Global for InstallOverride {}
 
     #[gpui::test]
-    fn test_auto_update_defaults_to_true(cx: &mut TestAppContext) {
+    fn test_auto_update_defaults_to_false(cx: &mut TestAppContext) {
         cx.update(|cx| {
             let mut store = SettingsStore::new(cx, &settings::default_settings());
             store
@@ -1394,11 +1401,12 @@ mod tests {
                 .set_user_settings("{}", cx)
                 .expect("Unable to set user settings");
             cx.set_global(store);
-            assert!(AutoUpdateSetting::get_global(cx).0);
+            assert!(!AutoUpdateSetting::get_global(cx).0);
         });
     }
 
     #[gpui::test]
+    #[ignore = "VEGA disables update polling until it has its own update server (P10)"]
     async fn test_auto_update_downloads(cx: &mut TestAppContext) {
         cx.background_executor.allow_parking();
         zlog::init_test();
