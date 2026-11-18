@@ -1242,8 +1242,8 @@
       //
       // To set parameters for a specific provider and model:
       // {
-      //   "provider": "zed.dev",
-      //   "model": "claude-sonnet-4",
+      //   "provider": "anthropic",
+      //   "model": "claude-sonnet-5-5",
       //   "temperature": 1.0
       // }
     ],

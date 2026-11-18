@@ -1010,6 +1010,15 @@ fn update_active_language_model_from_settings(cx: &mut App) {
         .is_none();
 
     let default = settings.default_model.as_ref().map(to_selected_model);
+    // VEGA: there's no signed-in cloud model to fall back on, so when the
+    // user hasn't picked a default and the built-in one has no key, use the
+    // first provider that has one.
+    let registry = LanguageModelRegistry::read_global(cx);
+    let default = built_in_default_or_fallback(default, should_use_fallback, |provider| {
+        registry
+            .provider(provider)
+            .is_some_and(|provider| provider.is_authenticated(cx))
+    });
     let inline_assistant = settings
         .inline_assistant_model
         .as_ref()
@@ -1040,9 +1049,63 @@ fn update_active_language_model_from_settings(cx: &mut App) {
     });
 }
 
+/// The default model to select. `None` lets the registry fall back to the first
+/// authenticated provider, which happens only when the user hasn't chosen a
+/// default (`user_chose_nothing`) and the built-in default's provider has no key.
+fn built_in_default_or_fallback(
+    default: Option<language_model::SelectedModel>,
+    user_chose_nothing: bool,
+    is_authenticated: impl Fn(&LanguageModelProviderId) -> bool,
+) -> Option<language_model::SelectedModel> {
+    default.filter(|selected| !user_chose_nothing || is_authenticated(&selected.provider))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    fn selected(provider: &str) -> language_model::SelectedModel {
+        language_model::SelectedModel {
+            provider: LanguageModelProviderId::from(provider.to_string()),
+            model: LanguageModelId::from("model".to_string()),
+        }
+    }
+
+    fn chosen(
+        user_chose_nothing: bool,
+        is_authenticated: impl Fn(&LanguageModelProviderId) -> bool,
+    ) -> Option<String> {
+        built_in_default_or_fallback(
+            Some(selected("anthropic")),
+            user_chose_nothing,
+            is_authenticated,
+        )
+        .map(|model| model.provider.0.to_string())
+    }
+
+    #[test]
+    fn built_in_default_without_a_key_falls_back() {
+        let only_openai = |provider: &LanguageModelProviderId| provider.0.as_ref() == "openai";
+        assert_eq!(
+            chosen(true, only_openai),
+            None,
+            "the built-in default has no key, so the registry falls back"
+        );
+        assert_eq!(
+            chosen(true, |_| true).as_deref(),
+            Some("anthropic"),
+            "the built-in default is used once it has a key"
+        );
+    }
+
+    #[test]
+    fn users_choice_is_kept_even_without_a_key() {
+        assert_eq!(
+            chosen(false, |_| false).as_deref(),
+            Some("anthropic"),
+            "a model the user picked is never replaced"
+        );
+    }
     use agent_settings::{AgentProfileId, AgentSettings};
     use command_palette_hooks::CommandPaletteFilter;
     use db::kvp::KeyValueStore;
