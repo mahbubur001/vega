@@ -28,7 +28,7 @@ crates/deployment_ui   (GPUI)    Remote Host panel, transfers status item, serve
 
 - **Engine per worktree.** A `DeploymentStore` entity per workspace holds one `Engine` per local worktree root. SSH/remote projects are out of scope at first.
 - **Upload on save.** Subscribe to `BufferStore` → `BufferEvent::Saved`, then call `Engine::on_saved`. Worktree entry updates replace iRemote's own file watcher for external changes, deletes and renames.
-- **Config.** Same schema as iRemote, in VEGA's own files: `.zed/deployment.json` per project and shared servers in `~/.config/vega/deployment_servers.json`. A project's existing `.zed/iremote.json` is imported once (the original is left untouched).
+- **Config.** Same schema as iRemote, in VEGA's own files: `.zed/deployment.json` per project and shared servers in `~/.config/vega/deployment/servers.json`. A project's existing `.zed/iremote.json` is imported once (the original is left untouched).
 - **Secrets.** In the OS keychain only, never in JSON or logs. See decision 2.
 - **Security.** Unchanged from iRemote: `known_hosts` checks with strict-host-key modes, TLS verified against the system store, explicit fingerprint trust.
 
@@ -61,6 +61,10 @@ crates/deployment_ui   (GPUI)    Remote Host panel, transfers status item, serve
 
 D0–D1 is the smallest useful slice: upload on save and the menu actions working with existing `.zed/iremote.json` files.
 
+## Status
+
+- **D0 done (2026-11-18).** `crates/deployment` holds iremote-core, renamed and trimmed: no IPC, dialog subprocess, tray, Zed CLI shell-outs or own file watcher (`Engine::on_fs_event` takes VEGA's events instead). Uses VEGA's library versions (zed reqwest fork, rustls with aws-lc-rs, sha/hmac 0.10/0.12, `log`); paths live in VEGA's config/data dirs (`VEGA_DEPLOYMENT_HOME` overrides them). 52 tests pass; the Docker server tests (`--features integration`) still need a run. Keychain access is still iRemote's (`iremote` service) until D1 moves it to VEGA's credentials provider.
+
 ## Upstream seams (kept small for merges)
 
 `Cargo.toml`, `crates/zed/{Cargo.toml, src/main.rs, src/zed.rs, src/zed/app_menus.rs}` (init, panel and status item registration, menu), one `.when(…)` block each in the project panel, editor and tab context menus, one `ActionLink` in `settings_ui`, and panel settings in `settings_content` + `default.json`. Everything else lives in the two new crates.
@@ -75,7 +79,7 @@ D0–D1 is the smallest useful slice: upload on save and the menu actions workin
 
 ## Decisions (owner, 2026-11-18)
 
-1. **Config:** new VEGA files (`.zed/deployment.json`, `~/.config/vega/deployment_servers.json`), with a one-time import of `.zed/iremote.json`.
+1. **Config:** new VEGA files (`.zed/deployment.json`, `~/.config/vega/deployment/servers.json`), with a one-time import of `.zed/iremote.json`.
 2. **Passwords:** VEGA's credentials provider, reading iRemote's `iremote` keychain entries once as a fallback.
 3. **Source:** iremote-core is vendored into `crates/deployment` and evolves in VEGA.
 4. **First slice:** D0–D1.

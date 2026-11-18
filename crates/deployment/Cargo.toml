@@ -1,0 +1,61 @@
+[package]
+name = "deployment"
+version = "0.1.0"
+edition.workspace = true
+publish.workspace = true
+license = "GPL-3.0-or-later"
+
+[lints]
+workspace = true
+
+[lib]
+path = "src/deployment.rs"
+doctest = false
+
+[features]
+# Tests against the Docker servers in tests/servers (`docker compose -f tests/servers/compose.yml up`).
+integration = []
+
+[dependencies]
+async-trait.workspace = true
+base64.workspace = true
+bytes.workspace = true
+dirs.workspace = true
+filetime.workspace = true
+futures.workspace = true
+globset.workspace = true
+hex.workspace = true
+hmac.workspace = true
+httpdate.workspace = true
+keyring-core.workspace = true
+log.workspace = true
+md-5.workspace = true
+paths.workspace = true
+quick-xml.workspace = true
+reqwest.workspace = true
+russh.workspace = true
+russh-sftp.workspace = true
+rustls.workspace = true
+rustls-platform-verifier.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+sha1.workspace = true
+sha2.workspace = true
+suppaftp.workspace = true
+thiserror.workspace = true
+tokio = { workspace = true, features = ["fs", "io-util", "sync", "time", "macros", "rt", "rt-multi-thread", "net", "process"] }
+tokio-rustls = { workspace = true, features = ["aws_lc_rs", "tls12"] }
+url.workspace = true
+
+[target.'cfg(target_os = "macos")'.dependencies]
+apple-native-keyring-store.workspace = true
+
+[target.'cfg(windows)'.dependencies]
+windows-native-keyring-store.workspace = true
+
+[target.'cfg(target_os = "linux")'.dependencies]
+zbus-secret-service-keyring-store.workspace = true
+
+[dev-dependencies]
+tempfile.workspace = true
+tokio = { workspace = true, features = ["macros", "rt-multi-thread", "test-util", "time"] }

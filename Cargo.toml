@@ -54,6 +54,7 @@ members = [
     "crates/debugger_tools",
     "crates/debugger_ui",
     "crates/deepseek",
+    "crates/deployment",
     "crates/dev_container",
     "crates/diagnostics",
     "crates/docs_preprocessor",
@@ -339,6 +340,7 @@ debug_adapter_extension = { path = "crates/debug_adapter_extension" }
 debugger_tools = { path = "crates/debugger_tools" }
 debugger_ui = { path = "crates/debugger_ui" }
 deepseek = { path = "crates/deepseek" }
+deployment = { path = "crates/deployment" }
 derive_refineable = { path = "crates/refineable/derive_refineable" }
 dev_container = { path = "crates/dev_container" }
 diagnostics = { path = "crates/diagnostics" }
@@ -544,6 +546,7 @@ aho-corasick = "1.1"
 alacritty_terminal = { git = "https://github.com/zed-industries/alacritty", rev = "4c129667ce56611becdc82de6e28218c80e2e88f" }
 any_vec = "0.14"
 anyhow = "1.0.86"
+apple-native-keyring-store = { version = "1.0.2", features = ["keychain"] }
 arc-swap = "1.9.0"
 ashpd = { version = "0.13", default-features = false, features = [
     "async-io",
@@ -617,6 +620,11 @@ coreaudio-rs = { version = "0.12", default-features = false }
 cpal = { git = "https://github.com/RustAudio/cpal", rev = "e1612d5d98152f8dc2a62e1b51ef7cbf4f7f26b7" }
 crash-handler = "0.8"
 criterion = { version = "0.8.2", features = ["html_reports"] }
+filetime = "0.2.29"
+hmac = "0.12"
+httpdate = "1.0.3"
+keyring-core = "1.0.1"
+md-5 = "0.10"
 perf-event = { package = "perf-event2", version = "0.7.4" }
 crossbeam-queue = "0.3.12"
 ctor = "1.0.12"
@@ -888,6 +896,8 @@ rsa = { version = "0.9", default-features = false, features = ["std", "u64_digit
 jupyter-zmq-client = { version = "3.0.0", default-features = false, features = [
     "async-dispatcher-runtime", "aws-lc-rs"
 ] }
+russh = "0.65"
+russh-sftp = "3"
 rust-embed = { version = "8.11", features = ["include-exclude", "compression"] }
 rustc-hash = "2.1.0"
 rustix = { version = "1.1", features = ["fs"] }
@@ -909,6 +919,7 @@ serde_path_to_error = "0.1.17"
 serde_urlencoded = "0.7"
 serde_yaml = { package = "serde_yaml_ng", version = "0.10" }
 serde_yaml_ng = "0.10"
+sha1 = "0.10"
 sha2 = "0.10"
 shellexpand = "3.1"
 shlex = "2.0"
@@ -924,6 +935,7 @@ stacksafe = "1.0"
 streaming-iterator = "0.1"
 strsim = "0.11"
 strum = { version = "0.28", features = ["derive"] }
+suppaftp = { version = "12", features = ["tokio-rustls-aws-lc-rs", "deprecated"] }
 swash = "0.2.6"
 syn = { version = "2.0", default-features = false, features = ["proc-macro"] }
 sys-locale = "0.3.1"
@@ -1012,10 +1024,12 @@ webrtc-sys = "0.3.23"
 wgpu = { git = "https://github.com/gfx-rs/wgpu", rev = "cddb2f5d80dc0009b2ef6767635140cacf90a007", default-features = false }
 which = "8"
 windows-core = "0.62"
+windows-native-keyring-store = "1.1.0"
 windows-registry = "0.6.0"
 xkbcommon = { version = "0.8", default-features = false }
 yaml-rust2 = { version = "0.8", default-features = false }
 yawc = { version = "0.4", default-features = false }
+zbus-secret-service-keyring-store = { version = "1.0.1", features = ["crypto-rust"] }
 zeroize = "1.8"
 zstd = { version = "0.13", default-features = false, features = ["legacy", "arrays"] }
 

@@ -25,7 +25,7 @@ Status keys: `[ ]` todo · `[~]` in progress · `[x]` done. Each item maps to a 
   - [ ] M3 Smart merge + never-sync rules
   - [ ] M4 All resources, history, settings page
 - [ ] Deployment & Remote Host (built-in iRemote) — see `DEPLOYMENT.md`
-  - [ ] D0 Vendor the core
+  - [x] D0 Vendor the core (Docker server tests pending)
   - [ ] D1 Upload on save + actions
   - [ ] D2 Deployment Servers UI
   - [ ] D3 Remote Host panel
