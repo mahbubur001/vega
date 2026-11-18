@@ -20,8 +20,8 @@ Status keys: `[ ]` todo · `[~]` in progress · `[x]` done. Each item maps to a 
 - [ ] Sensible default agent + edit-prediction settings without Zed cloud (P08)
 - [ ] VEGA-specific AI features (P09)
 - [ ] Settings Sync via GitHub sign-in + secret Gist — see `SETTINGS_SYNC.md`
-  - [~] M1 Sign in with GitHub — built; needs the OAuth App Client ID to go live
-  - [~] M2 Gist backend + whole-file sync — built and tested with a fake GitHub; needs a live test once M1 has the Client ID
+  - [x] M1 Sign in with GitHub
+  - [x] M2 Gist backend + whole-file sync (verified live)
   - [ ] M3 Smart merge + never-sync rules
   - [ ] M4 All resources, history, settings page
 
