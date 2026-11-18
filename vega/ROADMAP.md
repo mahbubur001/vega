@@ -36,7 +36,7 @@ Status keys: `[ ]` todo · `[~]` in progress · `[x]` done. Each item maps to a 
 - [ ] Own update server / GitHub Releases auto-update (P10) — must also serve `zed-remote-server` for SSH/WSL/Docker projects (`AutoUpdater::get_release_asset`), release notes (`auto_update_ui`, menu item removed), and the Linux build the WSL sandbox helper downloads (`sandbox::windows_wsl::PROVISION_HELPER_FROM_ZED_CLOUD`)
 - [ ] Signed + notarized macOS bundle (P11)
 - [ ] Linux + Windows builds in CI (P12)
-- [ ] Website, docs, README rewrite (P13)
+- [~] Website, docs, README rewrite (P13) — README rewritten; Settings Sync user docs added
   - [ ] Host VEGA's OAuth client metadata (CIMD) and point `crates/context_server/src/oauth.rs` `CIMD_URL` at it — MCP OAuth currently identifies as Zed via `zed.dev/oauth/client-metadata.json`
   - [ ] Repoint ~60 in-app `zed.dev/docs` links (error toasts, help menu, status/merch links) at VEGA docs
 - [ ] Extension catalogue without zed.dev — the Extensions page and installs still use `api.zed.dev` (`extension_host::fetch_extensions_from_api`, `install_latest_extension`); only user-initiated, never on startup

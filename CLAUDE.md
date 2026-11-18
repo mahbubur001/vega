@@ -52,7 +52,7 @@ Full details: `docs/src/development/macos.md`.
 
 ## Licensing — must respect
 
-Zed is GPL-3.0-or-later (editor), AGPL-3.0 (collab server), Apache-2.0 (GPUI and some crates). VEGA must stay open source under the same terms: keep `LICENSE-*` files and upstream copyright notices, and don't relicense upstream code. Run `script/check-licenses` after adding dependencies.
+Zed is GPL-3.0-or-later (editor, including the collab server) with Apache-2.0 for GPUI and some crates; each crate's `Cargo.toml` states its licence. VEGA must stay open source under the same terms: keep `LICENSE-*` files and upstream copyright notices, and don't relicense upstream code. Run `script/check-licenses` after adding dependencies.
 
 ## Rules for this fork
 
