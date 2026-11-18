@@ -13,6 +13,7 @@ use serde_json::json;
 
 use crate::account::{AccountStatus, GitHubAccount};
 use crate::gist::{self, Fetched, MARKER_FILE};
+use crate::merge::{Prefer, SettingsMerge, merge_settings};
 use crate::reconcile::{Outcome, is_untouched, reconcile};
 use crate::resources::{SyncState, resources, state_dir};
 
@@ -249,6 +250,7 @@ async fn sync_once(
             Fetched::NotModified => remote = Some(state.remote.clone()),
             Fetched::Found(found) => {
                 state.etag = found.etag;
+                state.version = found.version;
                 state.remote = found.files.clone();
                 remote = Some(found.files);
             }
@@ -264,6 +266,7 @@ async fn sync_once(
             if let Fetched::Found(found) = gist::fetch_gist(http_client, token, &id, None).await? {
                 state.gist_id = Some(found.id);
                 state.etag = found.etag;
+                state.version = found.version;
                 state.remote = found.files.clone();
                 remote = Some(found.files);
             }
@@ -275,22 +278,33 @@ async fn sync_once(
         let mut files = BTreeMap::new();
         for resource in resources() {
             let local = load_local(fs, &resource.local_path, resource.empty_contents).await?;
-            if !is_untouched(&local) {
+            let upload = if resource.merge_keys {
+                // Never-sync values are removed before anything is uploaded.
+                match merge_settings(&local, None, None, None)? {
+                    SettingsMerge::Merged { upload, .. } => upload,
+                    SettingsMerge::Conflict(_) => None,
+                }
+            } else {
+                (!is_untouched(&local)).then_some(local)
+            };
+            if let Some(upload) = upload {
                 state
                     .bases
-                    .insert(resource.gist_file.clone(), local.clone());
-                files.insert(resource.gist_file, local);
+                    .insert(resource.gist_file.clone(), upload.clone());
+                files.insert(resource.gist_file, upload);
             }
         }
         files.insert(MARKER_FILE.to_string(), manifest());
         let created = gist::create_gist(http_client, token, &files).await?;
         state.gist_id = Some(created.id);
         state.remote = created.files;
+        state.version = created.version;
         state.etag = None;
         state.save(fs).await?;
         return Ok(Vec::new());
     };
 
+    let bases_before = state.bases.clone();
     let mut changes = BTreeMap::new();
     let mut conflicts = Vec::new();
     let mut backup_dir = None;
@@ -298,6 +312,43 @@ async fn sync_once(
         let local = load_local(fs, &resource.local_path, resource.empty_contents).await?;
         let remote_file = remote.get(&resource.gist_file).map(String::as_str);
         let base = state.bases.get(&resource.gist_file).map(String::as_str);
+
+        if resource.merge_keys {
+            let prefer = resolution.map(|resolution| match resolution {
+                Resolution::UseLocal => Prefer::Local,
+                Resolution::UseRemote => Prefer::Remote,
+            });
+            match merge_settings(&local, remote_file, base, prefer)? {
+                SettingsMerge::Conflict(keys) => {
+                    conflicts.push(format!("{} ({})", resource.label, keys.join(", ")).into());
+                }
+                SettingsMerge::Merged {
+                    local: new_local,
+                    upload,
+                    base,
+                } => {
+                    if let Some(new_local) = new_local {
+                        if !is_untouched(&local) {
+                            let backup_dir = backup_dir.get_or_insert_with(new_backup_dir);
+                            fs.create_dir(backup_dir).await?;
+                            fs.atomic_write(backup_dir.join(&resource.gist_file), local)
+                                .await
+                                .context("backing up before applying synced changes")?;
+                        }
+                        fs.atomic_write(resource.local_path.clone(), new_local)
+                            .await
+                            .with_context(|| {
+                                format!("writing {}", resource.local_path.display())
+                            })?;
+                    }
+                    if let Some(upload) = upload {
+                        changes.insert(resource.gist_file.clone(), Some(upload));
+                    }
+                    state.bases.insert(resource.gist_file, base);
+                }
+            }
+            continue;
+        }
 
         let outcome = match (reconcile(&local, remote_file, base), resolution) {
             (Outcome::Conflict, Some(Resolution::UseLocal)) => Outcome::Push,
@@ -337,13 +388,122 @@ async fn sync_once(
     if !changes.is_empty() {
         let gist_id = state.gist_id.clone().context("no sync gist to write to")?;
         changes.insert(MARKER_FILE.to_string(), Some(manifest()));
-        let updated = gist::update_gist(http_client, token, &gist_id, &changes).await?;
+        let merged_against = state.version.clone();
+        let mut updated = gist::update_gist(http_client, token, &gist_id, &changes).await?;
+
+        // Gists can't refuse a write that's based on an old version, so check
+        // afterwards whether another machine wrote between our read and write.
+        if let (Some(expected), Some(previous)) =
+            (merged_against.as_ref(), updated.previous_version.clone())
+            && *expected != previous
+        {
+            log::info!("another machine wrote to the sync gist while this one synced; merging");
+            let other = gist::fetch_gist_version(http_client, token, &gist_id, &previous).await?;
+            let fixes = merge_race(
+                fs,
+                &changes,
+                &other.files,
+                &bases_before,
+                &mut state,
+                &mut conflicts,
+                &mut backup_dir,
+            )
+            .await?;
+            if !fixes.is_empty() {
+                updated = gist::update_gist(http_client, token, &gist_id, &fixes).await?;
+            }
+        }
+
         state.remote = updated.files;
+        state.version = updated.version;
         state.etag = None;
     }
 
     state.save(fs).await?;
     Ok(conflicts)
+}
+
+/// Another machine wrote `other` between this machine's read and its write of
+/// `written`, so `written` replaced it. Merges each file both wrote against the
+/// base this machine merged with, and returns the gist edits that make the gist
+/// hold both machines' changes. Files both changed incompatibly get the other
+/// machine's copy back and are reported as conflicts, so nothing is lost.
+async fn merge_race(
+    fs: &Arc<dyn Fs>,
+    written: &BTreeMap<String, Option<String>>,
+    other: &BTreeMap<String, String>,
+    bases: &BTreeMap<String, String>,
+    state: &mut SyncState,
+    conflicts: &mut Vec<SharedString>,
+    backup_dir: &mut Option<std::path::PathBuf>,
+) -> Result<BTreeMap<String, Option<String>>> {
+    let mut fixes = BTreeMap::new();
+    for resource in resources() {
+        let Some(Some(ours)) = written.get(&resource.gist_file) else {
+            continue;
+        };
+        let theirs = other.get(&resource.gist_file);
+        let base = bases.get(&resource.gist_file);
+        if theirs == base || theirs == Some(ours) {
+            // The other machine didn't touch this file.
+            continue;
+        }
+        let restore_theirs = |fixes: &mut BTreeMap<String, Option<String>>| {
+            fixes.insert(resource.gist_file.clone(), theirs.cloned());
+        };
+
+        if resource.merge_keys {
+            let local = load_local(fs, &resource.local_path, resource.empty_contents).await?;
+            match merge_settings(
+                &local,
+                theirs.map(String::as_str),
+                base.map(String::as_str),
+                None,
+            )? {
+                SettingsMerge::Merged {
+                    local: new_local,
+                    upload,
+                    base,
+                } => {
+                    if let Some(new_local) = new_local {
+                        let backup_dir = backup_dir.get_or_insert_with(new_backup_dir);
+                        fs.create_dir(backup_dir).await?;
+                        fs.atomic_write(backup_dir.join(&resource.gist_file), local)
+                            .await
+                            .context("backing up before applying synced changes")?;
+                        fs.atomic_write(resource.local_path.clone(), new_local)
+                            .await
+                            .with_context(|| {
+                                format!("writing {}", resource.local_path.display())
+                            })?;
+                    }
+                    // `upload` is relative to `theirs`; without it the gist must go back to it.
+                    match upload {
+                        Some(upload) => {
+                            fixes.insert(resource.gist_file.clone(), Some(upload));
+                        }
+                        None => restore_theirs(&mut fixes),
+                    }
+                    state.bases.insert(resource.gist_file.clone(), base);
+                }
+                SettingsMerge::Conflict(keys) => {
+                    restore_theirs(&mut fixes);
+                    if let Some(base) = base {
+                        state.bases.insert(resource.gist_file.clone(), base.clone());
+                    }
+                    conflicts.push(format!("{} ({})", resource.label, keys.join(", ")).into());
+                }
+            }
+        } else {
+            // Whole files can't be merged: give the other machine's copy back and ask.
+            restore_theirs(&mut fixes);
+            if let Some(base) = base {
+                state.bases.insert(resource.gist_file.clone(), base.clone());
+            }
+            conflicts.push(resource.label.into());
+        }
+    }
+    Ok(fixes)
 }
 
 /// Reads a synced file, treating a missing or blank file as empty.
@@ -401,6 +561,45 @@ mod tests {
     #[derive(Default)]
     struct FakeGitHub {
         gists: BTreeMap<String, BTreeMap<String, String>>,
+        /// Each gist's versions, oldest first.
+        history: BTreeMap<String, Vec<(String, BTreeMap<String, String>)>>,
+        next_version: usize,
+        /// Files another machine writes just before the next PATCH lands.
+        concurrent_write: Option<BTreeMap<String, String>>,
+    }
+
+    impl FakeGitHub {
+        fn commit(&mut self, id: &str) {
+            self.next_version += 1;
+            let version = format!("v{}", self.next_version);
+            let files = self.gists[id].clone();
+            self.history
+                .entry(id.to_string())
+                .or_default()
+                .push((version, files));
+        }
+
+        fn gist_json(&self, id: &str, files: &BTreeMap<String, String>) -> serde_json::Value {
+            let files: serde_json::Map<_, _> = files
+                .iter()
+                .map(|(name, content)| (name.clone(), json!({ "content": content })))
+                .collect();
+            let history: Vec<_> = self
+                .history
+                .get(id)
+                .into_iter()
+                .flatten()
+                .rev()
+                .map(|(version, _)| json!({ "version": version }))
+                .collect();
+            json!({
+                "id": id,
+                "public": false,
+                "updated_at": "2026-11-18T00:00:00Z",
+                "files": files,
+                "history": history,
+            })
+        }
     }
 
     fn fake_github() -> (Arc<Mutex<FakeGitHub>>, Arc<dyn HttpClient>) {
@@ -417,20 +616,12 @@ mod tests {
                     let body: serde_json::Value = serde_json::from_slice(&body).unwrap_or_default();
                     let mut github = github.lock().unwrap();
 
-                    let gist_json = |id: &str, files: &BTreeMap<String, String>| {
-                        let files: serde_json::Map<_, _> = files
-                            .iter()
-                            .map(|(name, content)| (name.clone(), json!({ "content": content })))
-                            .collect();
-                        json!({ "id": id, "public": false, "updated_at": "2026-11-18T00:00:00Z", "files": files })
-                    };
-
                     let (status, response) = match (method.as_str(), path.as_str()) {
                         ("GET", "/gists") => {
                             let list: Vec<_> = github
                                 .gists
                                 .iter()
-                                .map(|(id, files)| gist_json(id, files))
+                                .map(|(id, files)| github.gist_json(id, files))
                                 .collect();
                             (200, json!(list))
                         }
@@ -446,13 +637,31 @@ mod tests {
                                 })
                                 .collect();
                             github.gists.insert(id.clone(), files);
-                            (201, gist_json(&id, &github.gists[&id]))
+                            github.commit(&id);
+                            (201, github.gist_json(&id, &github.gists[&id]))
                         }
                         (method, path) => {
-                            let id = path.trim_start_matches("/gists/").to_string();
-                            match (method, github.gists.get_mut(&id)) {
-                                ("GET", Some(files)) => (200, gist_json(&id, files)),
-                                ("PATCH", Some(files)) => {
+                            let mut parts = path.trim_start_matches("/gists/").split('/');
+                            let id = parts.next().unwrap_or_default().to_string();
+                            let version = parts.next().map(str::to_string);
+                            match (method, version, github.gists.contains_key(&id)) {
+                                ("GET", Some(version), true) => {
+                                    let files = github.history[&id]
+                                        .iter()
+                                        .find(|(v, _)| *v == version)
+                                        .map(|(_, files)| files.clone())
+                                        .unwrap();
+                                    (200, github.gist_json(&id, &files))
+                                }
+                                ("GET", None, true) => {
+                                    (200, github.gist_json(&id, &github.gists[&id]))
+                                }
+                                ("PATCH", None, true) => {
+                                    if let Some(write) = github.concurrent_write.take() {
+                                        github.gists.get_mut(&id).unwrap().extend(write);
+                                        github.commit(&id);
+                                    }
+                                    let files = github.gists.get_mut(&id).unwrap();
                                     for (name, file) in body["files"].as_object().unwrap() {
                                         match file["content"].as_str() {
                                             Some(content) => {
@@ -463,7 +672,8 @@ mod tests {
                                             }
                                         }
                                     }
-                                    (200, gist_json(&id, files))
+                                    github.commit(&id);
+                                    (200, github.gist_json(&id, &github.gists[&id]))
                                 }
                                 _ => (404, json!({ "message": "Not Found" })),
                             }
@@ -486,8 +696,14 @@ mod tests {
         fs
     }
 
-    async fn settings(fs: &Arc<dyn Fs>) -> String {
-        fs.load(paths::settings_file()).await.unwrap()
+    /// This machine's settings, parsed, so formatting doesn't matter.
+    async fn settings(fs: &Arc<dyn Fs>) -> serde_json::Value {
+        settings_json::parse_json_with_comments(&fs.load(paths::settings_file()).await.unwrap())
+            .unwrap()
+    }
+
+    fn parsed(text: &str) -> serde_json::Value {
+        settings_json::parse_json_with_comments(text).unwrap()
     }
 
     #[gpui::test]
@@ -502,14 +718,14 @@ mod tests {
             .unwrap();
         assert!(conflicts.is_empty());
         let gist = github.lock().unwrap().gists["gist1"].clone();
-        assert_eq!(gist["settings.json"], "{ \"vim_mode\": true }");
+        assert_eq!(parsed(&gist["settings.json"]), json!({ "vim_mode": true }));
         assert!(gist.contains_key(MARKER_FILE));
 
         // A fresh machine finds the gist and takes its settings.
         sync_once(&machine_b, &http_client, "token", "octocat", None)
             .await
             .unwrap();
-        assert_eq!(settings(&machine_b).await, "{ \"vim_mode\": true }");
+        assert_eq!(settings(&machine_b).await, json!({ "vim_mode": true }));
 
         // A change on one machine reaches the other.
         machine_b
@@ -525,7 +741,7 @@ mod tests {
         sync_once(&machine_a, &http_client, "token", "octocat", None)
             .await
             .unwrap();
-        assert_eq!(settings(&machine_a).await, "{ \"vim_mode\": false }");
+        assert_eq!(settings(&machine_a).await, json!({ "vim_mode": false }));
 
         // Changes on both machines are a conflict, and nothing is overwritten.
         machine_a
@@ -548,8 +764,8 @@ mod tests {
         let conflicts = sync_once(&machine_b, &http_client, "token", "octocat", None)
             .await
             .unwrap();
-        assert_eq!(conflicts, vec![SharedString::from("Settings")]);
-        assert_eq!(settings(&machine_b).await, "{ \"theme\": \"B\" }");
+        assert_eq!(conflicts, vec![SharedString::from("Settings (theme)")]);
+        assert_eq!(settings(&machine_b).await, json!({ "theme": "B" }));
 
         // Taking GitHub's copy backs up this machine's settings first.
         let conflicts = sync_once(
@@ -562,7 +778,7 @@ mod tests {
         .await
         .unwrap();
         assert!(conflicts.is_empty());
-        assert_eq!(settings(&machine_b).await, "{ \"theme\": \"A\" }");
+        assert_eq!(settings(&machine_b).await, json!({ "theme": "A" }));
         let backups = machine_b
             .read_dir(&state_dir().join("backups"))
             .await
@@ -570,6 +786,136 @@ mod tests {
             .count()
             .await;
         assert_eq!(backups, 1);
+    }
+
+    #[gpui::test]
+    async fn test_edits_to_different_settings_merge_and_secrets_stay_local(
+        cx: &mut TestAppContext,
+    ) {
+        let (github, http_client) = fake_github();
+        let machine_a = machine(
+            cx,
+            "// A\n{\n  \"tab_size\": 4,\n  \"vim_mode\": false,\n  \"proxy\": \"http://a\"\n}\n",
+        )
+        .await;
+        let machine_b = machine(cx, "{}\n").await;
+        sync_once(&machine_a, &http_client, "token", "octocat", None)
+            .await
+            .unwrap();
+        sync_once(&machine_b, &http_client, "token", "octocat", None)
+            .await
+            .unwrap();
+        let gist = github.lock().unwrap().gists["gist1"].clone();
+        assert!(
+            !gist["settings.json"].contains("proxy"),
+            "never-sync values stay local"
+        );
+
+        // Each machine changes a different setting.
+        machine_a
+            .atomic_write(
+                paths::settings_file().clone(),
+                "// A\n{\n  \"tab_size\": 2,\n  \"vim_mode\": false,\n  \"proxy\": \"http://a\"\n}\n"
+                    .into(),
+            )
+            .await
+            .unwrap();
+        machine_b
+            .atomic_write(
+                paths::settings_file().clone(),
+                "{ \"tab_size\": 4, \"vim_mode\": true }".into(),
+            )
+            .await
+            .unwrap();
+        for machine in [&machine_a, &machine_b, &machine_a] {
+            let conflicts = sync_once(machine, &http_client, "token", "octocat", None)
+                .await
+                .unwrap();
+            assert!(conflicts.is_empty(), "{conflicts:?}");
+        }
+
+        assert_eq!(
+            settings(&machine_a).await,
+            json!({ "tab_size": 2, "vim_mode": true, "proxy": "http://a" })
+        );
+        assert_eq!(
+            settings(&machine_b).await,
+            json!({ "tab_size": 2, "vim_mode": true })
+        );
+        let text = machine_a.load(paths::settings_file()).await.unwrap();
+        assert!(text.starts_with("// A\n"), "comments survive: {text}");
+    }
+
+    #[gpui::test]
+    async fn test_concurrent_writes_from_two_machines_both_survive(cx: &mut TestAppContext) {
+        let (github, http_client) = fake_github();
+        let machine_a = machine(cx, "{ \"tab_size\": 4, \"vim_mode\": false }").await;
+        sync_once(&machine_a, &http_client, "token", "octocat", None)
+            .await
+            .unwrap();
+
+        // Machine A changes tab_size. Between A's read and A's write, another
+        // machine writes vim_mode, which A's write would otherwise replace.
+        machine_a
+            .atomic_write(
+                paths::settings_file().clone(),
+                "{ \"tab_size\": 2, \"vim_mode\": false }".into(),
+            )
+            .await
+            .unwrap();
+        github.lock().unwrap().concurrent_write = Some(BTreeMap::from([(
+            "settings.json".to_string(),
+            "{ \"tab_size\": 4, \"vim_mode\": true }".to_string(),
+        )]));
+        let conflicts = sync_once(&machine_a, &http_client, "token", "octocat", None)
+            .await
+            .unwrap();
+
+        assert!(conflicts.is_empty(), "{conflicts:?}");
+        let gist = github.lock().unwrap().gists["gist1"].clone();
+        assert_eq!(
+            parsed(&gist["settings.json"]),
+            json!({ "tab_size": 2, "vim_mode": true }),
+            "the gist keeps both machines' changes"
+        );
+        assert_eq!(
+            settings(&machine_a).await,
+            json!({ "tab_size": 2, "vim_mode": true })
+        );
+    }
+
+    #[gpui::test]
+    async fn test_conflicting_concurrent_write_gives_the_other_machines_copy_back(
+        cx: &mut TestAppContext,
+    ) {
+        let (github, http_client) = fake_github();
+        let machine_a = machine(cx, "{ \"tab_size\": 4 }").await;
+        sync_once(&machine_a, &http_client, "token", "octocat", None)
+            .await
+            .unwrap();
+
+        machine_a
+            .atomic_write(paths::settings_file().clone(), "{ \"tab_size\": 2 }".into())
+            .await
+            .unwrap();
+        github.lock().unwrap().concurrent_write = Some(BTreeMap::from([(
+            "settings.json".to_string(),
+            "{ \"tab_size\": 8 }".to_string(),
+        )]));
+        let conflicts = sync_once(&machine_a, &http_client, "token", "octocat", None)
+            .await
+            .unwrap();
+
+        assert_eq!(conflicts, vec![SharedString::from("Settings (tab_size)")]);
+        let gist = github.lock().unwrap().gists["gist1"].clone();
+        assert_eq!(parsed(&gist["settings.json"]), json!({ "tab_size": 8 }));
+        assert_eq!(settings(&machine_a).await, json!({ "tab_size": 2 }));
+
+        // The next sync asks again, and nothing is lost on either side.
+        let conflicts = sync_once(&machine_a, &http_client, "token", "octocat", None)
+            .await
+            .unwrap();
+        assert_eq!(conflicts, vec![SharedString::from("Settings (tab_size)")]);
     }
 
     #[gpui::test]

@@ -17,6 +17,9 @@ pub(crate) struct Resource {
     pub empty_contents: &'static str,
     /// Shown to the user.
     pub label: &'static str,
+    /// Merged per top-level key with never-sync values kept local
+    /// (`settings.json`); otherwise the whole file syncs.
+    pub merge_keys: bool,
 }
 
 pub(crate) fn resources() -> Vec<Resource> {
@@ -26,6 +29,7 @@ pub(crate) fn resources() -> Vec<Resource> {
             local_path: paths::settings_file().clone(),
             empty_contents: "{}\n",
             label: "Settings",
+            merge_keys: true,
         },
         // Keymaps differ between platforms (cmd vs ctrl), so each OS has its own.
         Resource {
@@ -33,6 +37,7 @@ pub(crate) fn resources() -> Vec<Resource> {
             local_path: paths::keymap_file().clone(),
             empty_contents: "[]\n",
             label: "Keymap",
+            merge_keys: false,
         },
     ]
 }
@@ -50,6 +55,8 @@ pub(crate) struct SyncState {
     pub account: Option<String>,
     pub gist_id: Option<String>,
     pub etag: Option<String>,
+    /// The gist commit `remote` came from.
+    pub version: Option<String>,
     /// The gist's files as last seen.
     pub remote: BTreeMap<String, String>,
     /// Per gist file, the content both sides had after the last sync.
@@ -63,6 +70,7 @@ impl Default for SyncState {
             account: None,
             gist_id: None,
             etag: None,
+            version: None,
             remote: BTreeMap::new(),
             bases: BTreeMap::new(),
         }

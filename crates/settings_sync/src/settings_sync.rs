@@ -6,6 +6,7 @@ mod account_button;
 mod engine;
 mod gist;
 mod github;
+mod merge;
 mod reconcile;
 mod resources;
 mod sign_in_window;

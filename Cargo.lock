@@ -17525,6 +17525,7 @@ dependencies = [
  "paths",
  "serde",
  "serde_json",
+ "settings_json",
  "ui",
  "util",
  "workspace",

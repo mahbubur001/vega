@@ -23,6 +23,11 @@ pub(crate) struct Gist {
     pub id: String,
     pub files: BTreeMap<String, String>,
     pub etag: Option<String>,
+    /// The commit this content is (newest first in the gist's history).
+    pub version: Option<String>,
+    /// The commit before `version`. After a write, this tells whether another
+    /// machine wrote between our read and our write.
+    pub previous_version: Option<String>,
 }
 
 pub(crate) enum Fetched {
@@ -38,6 +43,13 @@ struct GistResponse {
     id: String,
     public: bool,
     files: BTreeMap<String, GistFileResponse>,
+    #[serde(default)]
+    history: Vec<GistHistoryEntry>,
+}
+
+#[derive(Deserialize)]
+struct GistHistoryEntry {
+    version: String,
 }
 
 #[derive(Deserialize)]
@@ -117,6 +129,25 @@ pub(crate) async fn fetch_gist(
     Ok(Fetched::Found(gist))
 }
 
+/// Fetches the gist as it was at `version`.
+pub(crate) async fn fetch_gist_version(
+    http_client: &Arc<dyn HttpClient>,
+    token: &str,
+    id: &str,
+    version: &str,
+) -> Result<Gist> {
+    let request = api_request(Method::GET, &format!("/gists/{id}/{version}"), token)
+        .body(AsyncBody::empty())?;
+    let mut response = http_client.send(request).await?;
+    let body = read_body(&mut response).await?;
+    check_status(
+        &response,
+        &body,
+        "reading an earlier version of the sync gist",
+    )?;
+    parse_gist(http_client, token, &body).await
+}
+
 /// Creates a new secret sync gist holding `files`.
 pub(crate) async fn create_gist(
     http_client: &Arc<dyn HttpClient>,
@@ -185,6 +216,8 @@ async fn parse_gist(http_client: &Arc<dyn HttpClient>, token: &str, body: &[u8])
         id: response.id,
         files,
         etag: None,
+        version: response.history.first().map(|entry| entry.version.clone()),
+        previous_version: response.history.get(1).map(|entry| entry.version.clone()),
     })
 }
 

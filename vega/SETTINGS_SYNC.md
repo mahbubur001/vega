@@ -57,8 +57,14 @@ Limits: GitHub keeps ≤10 tokens per user per app (an 11th machine revokes the 
 
 ## Status
 
-- **M1/M2 built.** `settings.json` and the per-OS keymap sync whole-file with base tracking, conflict prompts (Keep This Machine's / Use GitHub's) and backups in `<data>/settings_sync/backups/`. Local state is `<data>/settings_sync/state.json`.
-- **Not yet:** the post-PATCH history check for writes racing between machines (M3), per-key merge (M3), never-sync rules (M3).
+- **M1/M2 built.** `settings.json` and the per-OS keymap sync with base tracking, conflict prompts (Keep This Machine's / Use GitHub's) and backups in `<data>/settings_sync/backups/`. Local state is `<data>/settings_sync/state.json`.
+- **M3 built** (`merge.rs`, `engine.rs`):
+  - `settings.json` merges per top-level key against the base, so different settings changed on two machines merge silently; only keys changed differently on both sides conflict, and the prompt names them. The local file is edited key by key with `settings_json`, so comments and formatting survive. The keymap stays whole-file.
+  - Never-sync rules: key names containing the words `token`, `secret`, `password`, `passphrase`, `auth`, `credential(s)` or `api_key`, any `env` object, and top-level `ssh_connections`, `proxy`, `server_url` are removed before comparing or uploading, and kept on each machine when its file is updated. Words are matched whole, so `max_tokens` still syncs.
+  - Secret scan: a value that looks like a key (`sk-`, `ghp_`, `github_pat_`, `xox…`, `AKIA`, `AIza`, PEM private keys) stops the sync with the path of the value; nothing is uploaded.
+  - First sync on a machine with its own settings: keys only one side has merge; keys both have with different values are asked about (Keep This Machine's / Use GitHub's), with a backup first.
+  - Writes racing between machines: after each PATCH, the response's previous history version must be the one this machine merged against. If not, the other machine's version is fetched and merged in with a second PATCH; incompatible changes give the other machine's copy back and are asked about.
+- **Not yet:** the user's `settings_sync.ignored_settings` list (needs a settings schema entry), M4.
 
 ## Code layout
 
