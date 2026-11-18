@@ -504,9 +504,9 @@
     "semantic_hash": "4cd385763a696f14d59d93267927cf3e"
   },
   "assets/settings/default.json": {
-    "mtime": 1795022343.6212182,
-    "seen": 1795022478.5474792,
-    "ast_hash": "52c0ae960b6159d53ad83a13aed855b0",
+    "mtime": 1795025063.4323359,
+    "seen": 1795025253.748568,
+    "ast_hash": "072762d769b5e9fbe0c28d06a06683be",
     "semantic_hash": ""
   },
   "assets/settings/default_semantic_token_rules.json": {
@@ -1260,10 +1260,10 @@
     "semantic_hash": "6f2e37a28a407e3727fcfcb734c3d7bc"
   },
   "crates/agent_ui/src/agent_ui.rs": {
-    "mtime": 1795011961.8802319,
-    "seen": 1795016968.6239932,
-    "ast_hash": "66927115807317051bdb05925ecbe084",
-    "semantic_hash": "66927115807317051bdb05925ecbe084"
+    "mtime": 1795024870.5697486,
+    "seen": 1795025253.751071,
+    "ast_hash": "f14b97b01a72efbbf74950fe6cf49a5c",
+    "semantic_hash": ""
   },
   "crates/agent_ui/src/buffer_codegen.rs": {
     "mtime": 1795011961.8803716,
@@ -16146,9 +16146,9 @@
     "semantic_hash": "65fea850c2b8904e668699f328fc57a1"
   },
   "crates/workspace/src/workspace.rs": {
-    "mtime": 1795022343.6239583,
-    "seen": 1795022478.6030521,
-    "ast_hash": "1fb7a14494afd1d838d23dda0495c394",
+    "mtime": 1795022582.418966,
+    "seen": 1795025253.797479,
+    "ast_hash": "efce1129f1f5ed458c79eb6063bf55a3",
     "semantic_hash": ""
   },
   "crates/workspace/src/workspace_error.rs": {
@@ -19800,9 +19800,9 @@
     "semantic_hash": "c28d81d3006f29e314d94e46abcae829"
   },
   "vega/ROADMAP.md": {
-    "mtime": 1795022385.2952285,
-    "seen": 1795022478.620415,
-    "ast_hash": "a40bebc533b04f297d5b49020dbfe093",
+    "mtime": 1795025072.9833293,
+    "seen": 1795025253.808225,
+    "ast_hash": "a7ce3f1c0075e31cbefe8970f1943b8b",
     "semantic_hash": ""
   },
   "vega/SETTINGS_SYNC.md": {
