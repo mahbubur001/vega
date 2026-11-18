@@ -11712,10 +11712,10 @@
     "semantic_hash": "e7b601e8ab11611725e497477d21c4a3"
   },
   "crates/settings_sync/Cargo.toml": {
-    "mtime": 1795011962.1413908,
-    "seen": 1795016968.624952,
-    "ast_hash": "582f9da958917d56ed02e28809ac508b",
-    "semantic_hash": "582f9da958917d56ed02e28809ac508b"
+    "mtime": 1795025971.5997963,
+    "seen": 1795026327.8380291,
+    "ast_hash": "011190b63c61ce58bd41bbd13ad8ae86",
+    "semantic_hash": ""
   },
   "crates/settings_sync/src/account.rs": {
     "mtime": 1795011962.1415246,
@@ -11730,16 +11730,16 @@
     "semantic_hash": "02fbfd3c36b9d7da72c19e2ef54ab19a"
   },
   "crates/settings_sync/src/engine.rs": {
-    "mtime": 1795011962.1419156,
-    "seen": 1795016968.624953,
-    "ast_hash": "6f45c8e31f0590df8d2ca2a0b0b1920e",
-    "semantic_hash": "6f45c8e31f0590df8d2ca2a0b0b1920e"
+    "mtime": 1795026192.0281968,
+    "seen": 1795026327.838067,
+    "ast_hash": "eadbd56b2ac3a5a245e17d2708b3b2de",
+    "semantic_hash": ""
   },
   "crates/settings_sync/src/gist.rs": {
-    "mtime": 1795011962.1420305,
-    "seen": 1795016968.6249542,
-    "ast_hash": "b9226f4ec2abd86ca3f0a83b5adfa926",
-    "semantic_hash": "b9226f4ec2abd86ca3f0a83b5adfa926"
+    "mtime": 1795026192.029204,
+    "seen": 1795026327.838068,
+    "ast_hash": "01f400161edc63a726f17996d6a124e7",
+    "semantic_hash": ""
   },
   "crates/settings_sync/src/github.rs": {
     "mtime": 1795011962.1420999,
@@ -11754,16 +11754,16 @@
     "semantic_hash": "b3786364fc6102b79f9d84aa8ad3ebe9"
   },
   "crates/settings_sync/src/resources.rs": {
-    "mtime": 1795011962.1422157,
-    "seen": 1795016968.624956,
-    "ast_hash": "99faa8519c8b8e3ff63679d407c50064",
-    "semantic_hash": "99faa8519c8b8e3ff63679d407c50064"
+    "mtime": 1795026101.8709843,
+    "seen": 1795026327.8381062,
+    "ast_hash": "93150684945b43c9b9295f723fce99ff",
+    "semantic_hash": ""
   },
   "crates/settings_sync/src/settings_sync.rs": {
-    "mtime": 1795011962.14232,
-    "seen": 1795016968.624956,
-    "ast_hash": "109dc1e779e5726324feb54ece03019e",
-    "semantic_hash": "109dc1e779e5726324feb54ece03019e"
+    "mtime": 1795025974.8432565,
+    "seen": 1795026327.8381062,
+    "ast_hash": "fccb821d04cb2f21ecdcfd2c435175d9",
+    "semantic_hash": ""
   },
   "crates/settings_sync/src/sign_in_window.rs": {
     "mtime": 1795011962.1423874,
@@ -19800,16 +19800,16 @@
     "semantic_hash": "c28d81d3006f29e314d94e46abcae829"
   },
   "vega/ROADMAP.md": {
-    "mtime": 1795025746.8494406,
-    "seen": 1795025831.346853,
-    "ast_hash": "1be52f54894d18359d8372cbec8cc1bb",
+    "mtime": 1795026243.5014088,
+    "seen": 1795026327.8620732,
+    "ast_hash": "1d43ea2f6028ecaeefe2a0a6787f831e",
     "semantic_hash": ""
   },
   "vega/SETTINGS_SYNC.md": {
-    "mtime": 1795011962.2830415,
-    "seen": 1795016968.6256828,
-    "ast_hash": "80d9450609e49892e61ed4acc606ad18",
-    "semantic_hash": "80d9450609e49892e61ed4acc606ad18"
+    "mtime": 1795026243.5011995,
+    "seen": 1795026327.8620732,
+    "ast_hash": "a9caeabb27c963e4de93ed3c9e24e76a",
+    "semantic_hash": ""
   },
   "assets/icons/acp_registry.svg": {
     "mtime": 1795011961.828626,
@@ -22473,6 +22473,12 @@
     "mtime": 1795025731.6844692,
     "seen": 1795025831.315815,
     "ast_hash": "03a87f858bb765d628f053edd0d923cd",
+    "semantic_hash": ""
+  },
+  "crates/settings_sync/src/merge.rs": {
+    "mtime": 1795025974.841612,
+    "seen": 1795026327.8380868,
+    "ast_hash": "b919c73801a24f6000a12fa90c36bf32",
     "semantic_hash": ""
   },
   "script/danger/pnpm-lock.yaml": {
