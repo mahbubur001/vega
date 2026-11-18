@@ -64,6 +64,10 @@ static ZED_SERVER_URL: LazyLock<Option<String>> =
     LazyLock::new(|| std::env::var("ZED_SERVER_URL").ok());
 static ZED_RPC_URL: LazyLock<Option<String>> = LazyLock::new(|| std::env::var("ZED_RPC_URL").ok());
 
+/// VEGA never signs in to zed.dev, even when a Zed login is stored in the
+/// keychain. Tests keep the upstream behavior.
+const ZED_ACCOUNTS_ENABLED: bool = cfg!(any(test, feature = "test-support"));
+
 pub static IMPERSONATE_LOGIN: LazyLock<Option<String>> = LazyLock::new(|| {
     std::env::var("ZED_IMPERSONATE")
         .ok()
@@ -871,6 +875,9 @@ impl Client {
     }
 
     pub async fn has_credentials(&self, cx: &AsyncApp) -> bool {
+        if !ZED_ACCOUNTS_ENABLED {
+            return false;
+        }
         self.credentials_provider
             .read_credentials(cx)
             .await
@@ -882,6 +889,7 @@ impl Client {
         try_provider: bool,
         cx: &AsyncApp,
     ) -> Result<Credentials> {
+        anyhow::ensure!(ZED_ACCOUNTS_ENABLED, "VEGA doesn't use zed.dev accounts");
         let is_reauthenticating = if self.status().borrow().is_signed_out() {
             self.set_status(Status::Authenticating, cx);
             false

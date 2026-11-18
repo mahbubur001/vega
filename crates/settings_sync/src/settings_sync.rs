@@ -24,7 +24,9 @@ use workspace::notifications::{
 };
 
 pub use account::{AccountStatus, GitHubAccount};
-pub use account_button::AccountButton;
+pub use account_button::{
+    AccountButton, account_avatar, add_account_entries, add_sign_out_entry, observe_account,
+};
 pub use engine::{SettingsSync, SyncStatus};
 pub use github::GitHubUser;
 
