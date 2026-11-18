@@ -62,3 +62,8 @@ crates/docs_preprocessor/actions.json
 
 .local*
 .cache
+
+# graphify local state
+graphify-out/.graphify_python
+graphify-out/cache/
+graphify-out/graph.json
