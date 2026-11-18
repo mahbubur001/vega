@@ -24,6 +24,13 @@ Status keys: `[ ]` todo · `[~]` in progress · `[x]` done. Each item maps to a 
   - [x] M2 Gist backend + whole-file sync (verified live)
   - [ ] M3 Smart merge + never-sync rules
   - [ ] M4 All resources, history, settings page
+- [ ] Deployment & Remote Host (built-in iRemote) — see `DEPLOYMENT.md`
+  - [ ] D0 Vendor the core
+  - [ ] D1 Upload on save + actions
+  - [ ] D2 Deployment Servers UI
+  - [ ] D3 Remote Host panel
+  - [ ] D4 Compare & Sync
+  - [ ] D5 Extras (SSH, agent tools)
 
 ## Phase 3 — Ship
 - [ ] Own update server / GitHub Releases auto-update (P10)
