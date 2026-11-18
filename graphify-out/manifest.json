@@ -9660,10 +9660,10 @@
     "semantic_hash": "6271760331b8ba920850d47d531b08b9"
   },
   "crates/onboarding/Cargo.toml": {
-    "mtime": 1795011962.0883331,
-    "seen": 1795016968.624774,
-    "ast_hash": "86fd6339c6ff2954056de53c89f6640e",
-    "semantic_hash": "86fd6339c6ff2954056de53c89f6640e"
+    "mtime": 1795025583.1343615,
+    "seen": 1795025831.3158138,
+    "ast_hash": "7c73ee5610ead6eae4d89905dfc3a64d",
+    "semantic_hash": ""
   },
   "crates/onboarding/src/base_keymap_picker.rs": {
     "mtime": 1795011962.0885406,
@@ -9672,9 +9672,9 @@
     "semantic_hash": "31b166c40677c69f77e9e76dd75e50cf"
   },
   "crates/onboarding/src/basics_page.rs": {
-    "mtime": 1795022343.6216547,
-    "seen": 1795022478.578478,
-    "ast_hash": "63f874aa3dab070a35d1c90e643b03e4",
+    "mtime": 1795025544.5715528,
+    "seen": 1795025831.315836,
+    "ast_hash": "3a0e808e402445f2c16e2b61a7fe4b4a",
     "semantic_hash": ""
   },
   "crates/onboarding/src/multibuffer_hint.rs": {
@@ -9684,10 +9684,10 @@
     "semantic_hash": "2d609ddffb63e6719bb4236c4eb022e4"
   },
   "crates/onboarding/src/onboarding.rs": {
-    "mtime": 1795011962.0888488,
-    "seen": 1795016968.624776,
-    "ast_hash": "34e6882028199d838ee76e4bbba16bf3",
-    "semantic_hash": "34e6882028199d838ee76e4bbba16bf3"
+    "mtime": 1795025583.1340332,
+    "seen": 1795025831.315855,
+    "ast_hash": "7e2b5dd6cc2ec7c1c98390c043b17df4",
+    "semantic_hash": ""
   },
   "crates/onboarding/src/theme_preview.rs": {
     "mtime": 1795011962.088941,
@@ -19800,9 +19800,9 @@
     "semantic_hash": "c28d81d3006f29e314d94e46abcae829"
   },
   "vega/ROADMAP.md": {
-    "mtime": 1795025072.9833293,
-    "seen": 1795025253.808225,
-    "ast_hash": "a7ce3f1c0075e31cbefe8970f1943b8b",
+    "mtime": 1795025746.8494406,
+    "seen": 1795025831.346853,
+    "ast_hash": "1be52f54894d18359d8372cbec8cc1bb",
     "semantic_hash": ""
   },
   "vega/SETTINGS_SYNC.md": {
@@ -22467,6 +22467,12 @@
     "mtime": 1795022244.5929008,
     "seen": 1795022478.588923,
     "ast_hash": "7d8b6aee85d375ddb1fce3070039258c",
+    "semantic_hash": ""
+  },
+  "crates/onboarding/src/ai_provider_setup.rs": {
+    "mtime": 1795025731.6844692,
+    "seen": 1795025831.315815,
+    "ast_hash": "03a87f858bb765d628f053edd0d923cd",
     "semantic_hash": ""
   },
   "script/danger/pnpm-lock.yaml": {
