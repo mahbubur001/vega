@@ -998,3 +998,39 @@ pub mod git_panel {
         ]
     );
 }
+
+pub mod deployment {
+    use std::collections::HashSet;
+    use std::path::{Path, PathBuf};
+
+    use gpui::{App, Global, actions};
+
+    actions!(
+        deployment,
+        [
+            /// Uploads the current file or the selected files to the default deployment server.
+            UploadToDefaultServer,
+            /// Downloads the current file or the selected files from the default deployment server.
+            DownloadFromDefaultServer,
+            /// Compares the current file with its version on the default deployment server.
+            CompareWithDeployedVersion,
+            /// Opens this project's deployment configuration, creating it if needed.
+            OpenDeploymentConfig,
+            /// Cancels running and queued deployment transfers.
+            CancelTransfers,
+        ]
+    );
+
+    /// Project roots that have a deployment configuration. Menus use it to only
+    /// show deployment entries where they apply.
+    #[derive(Default)]
+    pub struct ConfiguredRoots(pub HashSet<PathBuf>);
+
+    impl Global for ConfiguredRoots {}
+
+    /// Whether `path` is inside a project root with a deployment configuration.
+    pub fn is_configured(path: &Path, cx: &App) -> bool {
+        cx.try_global::<ConfiguredRoots>()
+            .is_some_and(|roots| roots.0.iter().any(|root| path.starts_with(root)))
+    }
+}

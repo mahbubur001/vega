@@ -65,6 +65,20 @@ D0–D1 is the smallest useful slice: upload on save and the menu actions workin
 
 - **D0 done (2026-11-18).** `crates/deployment` holds iremote-core, renamed and trimmed: no IPC, dialog subprocess, tray, Zed CLI shell-outs or own file watcher (`Engine::on_fs_event` takes VEGA's events instead). Uses VEGA's library versions (zed reqwest fork, rustls with aws-lc-rs, sha/hmac 0.10/0.12, `log`); paths live in VEGA's config/data dirs (`VEGA_DEPLOYMENT_HOME` overrides them). All 63 tests pass, including the Docker server tests for SFTP, FTP/FTPS and WebDAV. Keychain access is still iRemote's (`iremote` service) until D1 moves it to VEGA's credentials provider.
 
+- **D1 in progress (stopped 2026-11-18).** Written but **not compiled yet**:
+  - `zed_actions::deployment`: actions `UploadToDefaultServer`, `DownloadFromDefaultServer`, `CompareWithDeployedVersion`, `OpenDeploymentConfig`, `CancelTransfers` and the `ConfiguredRoots` global (compiles).
+  - `crates/deployment_ui/src/`: `deployment_ui.rs` (init, actions, prompts, starter config), `store.rs` (engine per worktree, upload on save, worktree change events, transfer status), `prompter.rs` (engine questions → VEGA dialogs), `secret_modal.rs` (password dialog), `transfers_indicator.rs` (status bar).
+
+### Next session
+
+1. Check disk space first (`df -h /`); `~/dev/vega/target` filled the disk once. `rm -r target/debug/incremental` frees most of it.
+2. Add `crates/deployment_ui/Cargo.toml` (deps: anyhow, async-trait, collections, deployment, futures, git_ui_core, gpui, gpui_tokio, language, menu, project, project_panel, tokio, ui, ui_input, util, workspace, zed_actions) and a `LICENSE-GPL` symlink; add the crate to the workspace members/deps and to `crates/zed` (`deployment_ui::init(cx)` in `main.rs`).
+3. `cargo check -p deployment_ui`, fix compile errors, then clippy.
+4. Try it: `deployment: open deployment config`, point it at the Docker SFTP server (`localhost:2222`, `tester`/`pass`), save a file, check the upload, Upload/Download/Compare and the transfers indicator.
+5. Add menu entries (project panel, editor, tab) gated by `zed_actions::deployment::is_configured`.
+6. Move secrets from iRemote's `iremote` keychain service to VEGA's credentials provider with a one-time fallback (decision 2).
+7. Commit and mark D1 done.
+
 ### Running the server tests
 
 ```sh
