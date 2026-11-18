@@ -11,7 +11,7 @@ use gpui::{Context, DismissEvent, Entity, Focusable as _, Pixels, Point, Subscri
 use project::DisableAiSettings;
 use std::ops::Range;
 use text::PointUtf16;
-use workspace::OpenInTerminal;
+use workspace::{DeploymentMenuExt as _, OpenInTerminal};
 use zed_actions::agent::AddSelectionToThread;
 use zed_actions::preview::{
     markdown::OpenPreview as OpenMarkdownPreview, svg::OpenPreview as OpenSvgPreview,
@@ -243,7 +243,15 @@ pub fn deploy_context_menu(
                     .is_some_and(|ext| ext.eq_ignore_ascii_case("svg"))
             });
 
-        ui::ContextMenu::build(window, cx, |menu, _window, _cx| {
+        let deployable_path = editor
+            .buffer()
+            .read(cx)
+            .as_singleton()
+            .and_then(|buffer| buffer.read(cx).file())
+            .and_then(|file| file.as_local())
+            .map(|file| file.abs_path(cx));
+
+        ui::ContextMenu::build(window, cx, |menu, _window, cx| {
             let builder = menu
                 .on_blur_subscription(Subscription::new(|| {}))
                 .when(run_to_cursor, |builder| {
@@ -325,7 +333,8 @@ pub fn deploy_context_menu(
                     !has_git_repo,
                     "View File History",
                     Box::new(git::FileHistory),
-                );
+                )
+                .deployment_submenu(deployable_path.as_deref(), true, focus.clone(), cx);
             match focus {
                 Some(focus) => builder.context(focus),
                 None => builder,

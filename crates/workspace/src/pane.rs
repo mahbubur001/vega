@@ -1,7 +1,7 @@
 use crate::{
-    CloseWindow, NewCenterTerminal, NewFile, NewTerminal, OpenInTerminal, OpenOptions,
-    OpenTerminal, OpenVisible, SplitDirection, ToggleFileFinder, ToggleProjectSymbols, ToggleZoom,
-    Workspace, WorkspaceItemBuilder, ZoomIn, ZoomOut,
+    CloseWindow, DeploymentMenuExt as _, NewCenterTerminal, NewFile, NewTerminal, OpenInTerminal,
+    OpenOptions, OpenTerminal, OpenVisible, SplitDirection, ToggleFileFinder, ToggleProjectSymbols,
+    ToggleZoom, Workspace, WorkspaceItemBuilder, ZoomIn, ZoomOut,
     focus_follows_mouse::FocusFollowsMouse as _,
     invalid_item_view::InvalidItemView,
     item::{
@@ -3324,6 +3324,11 @@ impl Pane {
                             });
 
                             let entry_abs_path = pane.read(cx).entry_abs_path(entry, cx);
+                            // Deployment actions act on the active item, so only offer
+                            // them on the active tab.
+                            let deployable_path = entry_abs_path
+                                .clone()
+                                .filter(|_| pane.read(cx).active_item_index() == ix);
                             let reveal_path = entry_abs_path.clone();
                             let parent_abs_path = entry_abs_path
                                 .as_deref()
@@ -3483,7 +3488,13 @@ impl Pane {
                                             );
                                         }),
                                     )
-                                });
+                                })
+                                .deployment_submenu(
+                                    deployable_path.as_deref(),
+                                    true,
+                                    Some(menu_context.clone()),
+                                    cx,
+                                );
                         } else {
                             menu = menu.map(pin_tab_entries);
                         }

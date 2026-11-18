@@ -1033,4 +1033,29 @@ pub mod deployment {
         cx.try_global::<ConfiguredRoots>()
             .is_some_and(|roots| roots.0.iter().any(|root| path.starts_with(root)))
     }
+
+    /// Label of the "Deployment" context submenu (project panel, editor, tab).
+    pub const MENU_LABEL: &str = "Deployment";
+
+    /// Entries of the "Deployment" context submenu, in order, following
+    /// PhpStorm's wording. `None` is a separator. Folders can't be compared,
+    /// so `is_file` leaves that entry out for them.
+    pub fn menu_items(is_file: bool) -> Vec<Option<(&'static str, Box<dyn gpui::Action>)>> {
+        let mut items: Vec<Option<(&'static str, Box<dyn gpui::Action>)>> = vec![
+            Some(("Upload to Default Server", Box::new(UploadToDefaultServer))),
+            Some((
+                "Download from Default Server",
+                Box::new(DownloadFromDefaultServer),
+            )),
+        ];
+        if is_file {
+            items.push(Some((
+                "Compare with Deployed Version",
+                Box::new(CompareWithDeployedVersion),
+            )));
+        }
+        items.push(None);
+        items.push(Some(("Configuration…", Box::new(OpenDeploymentConfig))));
+        items
+    }
 }

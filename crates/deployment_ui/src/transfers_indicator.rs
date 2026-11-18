@@ -2,7 +2,7 @@
 
 use gpui::{Entity, Subscription};
 use ui::{CommonAnimationExt as _, Tooltip, prelude::*};
-use workspace::{ItemHandle, StatusItemView, status_bar::HideStatusItem};
+use workspace::{HideStatusItem, ItemHandle, StatusItemView};
 use zed_actions::deployment::CancelTransfers;
 
 use crate::store::DeploymentStore;

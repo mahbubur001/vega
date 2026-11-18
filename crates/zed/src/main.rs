@@ -739,6 +739,7 @@ fn main() {
         repl::init(app_state.fs.clone(), cx);
         recent_projects::init(cx);
         dev_container::init(cx);
+        deployment_ui::init(cx);
 
         load_embedded_fonts(cx);
         #[cfg(target_os = "linux")]

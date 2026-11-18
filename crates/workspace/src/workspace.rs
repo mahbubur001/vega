@@ -1,4 +1,5 @@
 pub mod active_file_name;
+mod deployment_menu;
 pub mod dock;
 pub mod history_manager;
 pub mod invalid_item_view;
@@ -118,6 +119,7 @@ use settings::{
     update_settings_file,
 };
 
+pub use deployment_menu::DeploymentMenuExt;
 use sqlez::{
     bindable::{Bind, Column, StaticColumnCount},
     statement::Statement,

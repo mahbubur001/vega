@@ -16,7 +16,7 @@ use deployment::prompt::Level;
 use futures::StreamExt as _;
 use futures::channel::mpsc;
 use git_ui_core::file_diff_view::FileDiffView;
-use gpui::{App, AppContext as _, Entity, PromptLevel, Window};
+use gpui::{App, AppContext as _, Entity, Focusable as _, PromptLevel, Window};
 use gpui_tokio::Tokio;
 use project_panel::ProjectPanel;
 use ui::prelude::*;
@@ -102,10 +102,8 @@ fn register_actions(workspace: &mut Workspace, store: Entity<DeploymentStore>) {
             run_on_selection(workspace, &store, Operation::Compare, window, cx);
         }
     });
-    workspace.register_action({
-        let store = store.clone();
-        move |_, _: &CancelTransfers, _, cx| store.read(cx).cancel_transfers()
-    });
+    workspace
+        .register_action(move |_, _: &CancelTransfers, _, cx| store.read(cx).cancel_transfers());
     workspace.register_action(|workspace, _: &OpenDeploymentConfig, window, cx| {
         open_config(workspace, window, cx);
     });
@@ -270,6 +268,7 @@ fn show_request(
                 Level::Warning => PromptLevel::Warning,
                 Level::Error => PromptLevel::Critical,
             };
+            let answers: Vec<&str> = answers.iter().map(String::as_str).collect();
             let answer = window.prompt(level, &message, Some(&detail), &answers, cx);
             cx.background_spawn(async move {
                 if let Ok(index) = answer.await {

@@ -14,7 +14,7 @@ use gpui::{App, AppContext as _, Context, Entity, SharedString, Task, WeakEntity
 use gpui_tokio::Tokio;
 use language::BufferEvent;
 use project::buffer_store::BufferStoreEvent;
-use project::{Project, PathChange, WorktreeId};
+use project::{PathChange, Project, WorktreeId};
 use util::ResultExt as _;
 use zed_actions::deployment::ConfiguredRoots;
 
@@ -88,11 +88,6 @@ impl DeploymentStore {
             .cloned()
     }
 
-    /// The engine for a worktree root, if any project has deployment set up.
-    pub fn first_engine(&self) -> Option<Arc<Engine>> {
-        self.engines.values().next().cloned()
-    }
-
     fn worktree_root(&self, worktree_id: WorktreeId, cx: &App) -> Option<PathBuf> {
         let worktree = self
             .project
@@ -146,9 +141,9 @@ impl DeploymentStore {
                     .filter_map(|(path, _, change)| {
                         let removed = match change {
                             PathChange::Removed => true,
-                            PathChange::Added | PathChange::Updated | PathChange::AddedOrUpdated => {
-                                false
-                            }
+                            PathChange::Added
+                            | PathChange::Updated
+                            | PathChange::AddedOrUpdated => false,
                             PathChange::Loaded => return None,
                         };
                         Some((root.join(path.as_std_path()), removed))
