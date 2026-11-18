@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#151526"/>
+      <stop offset="1" stop-color="#0B0B1A"/>
+    </linearGradient>
+    <linearGradient id="brand" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7C3AED"/>
+      <stop offset="0.5" stop-color="#A855F7"/>
+      <stop offset="1" stop-color="#00D4FF"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#00D4FF" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#00D4FF" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect x="100" y="100" width="824" height="824" rx="185" fill="url(#bg)"/>
+
+  <ellipse cx="512" cy="540" rx="330" ry="120" fill="none" stroke="url(#brand)"
+           stroke-width="14" stroke-opacity="0.55" transform="rotate(-18 512 540)"/>
+
+  <path d="M282 300 H392 L512 610 L632 300 H742 L568 742 H456 Z" fill="url(#brand)"/>
+
+  <circle cx="760" cy="282" r="90" fill="url(#glow)"/>
+  <path d="M760 222 L774 268 L820 282 L774 296 L760 342 L746 296 L700 282 L746 268 Z"
+        fill="#E6E9FF"/>
+</svg>
