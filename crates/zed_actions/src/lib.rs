@@ -1016,6 +1016,9 @@ pub mod deployment {
             DownloadFromDefaultServer,
             /// Compares the current file with its version on the default deployment server.
             CompareWithDeployedVersion,
+            /// Compares the selected folder (or the whole project) with the deployment server and
+            /// lets you choose which way each file goes before synchronizing.
+            SyncWithDeployed,
             /// Opens this project's deployment configuration, creating it if needed.
             OpenDeploymentConfig,
             /// Opens the Deployment Servers dialog to add, edit, test and remove servers.
@@ -1060,6 +1063,7 @@ pub mod deployment {
                 Box::new(CompareWithDeployedVersion),
             )));
         }
+        items.push(Some(("Sync with Deployed…", Box::new(SyncWithDeployed))));
         items.push(None);
         items.push(Some(("Configuration…", Box::new(OpenDeploymentServers))));
         items

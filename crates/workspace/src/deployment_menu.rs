@@ -67,6 +67,7 @@ mod tests {
                 "Upload to Default Server",
                 "Download from Default Server",
                 "Compare with Deployed Version",
+                "Sync with Deployed…",
                 "---",
                 "Configuration…",
             ]

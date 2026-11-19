@@ -352,3 +352,64 @@ async fn remote_host_operations_and_editing() {
         .unwrap();
     assert!(!f.remote.join("www/dir").exists());
 }
+
+#[tokio::test]
+async fn remote_host_copy_chmod_and_exclude() {
+    let f = fixture(|_, _| {});
+    write(&f.remote.join("www/dir/a.txt"), "a");
+    std::fs::create_dir_all(f.remote.join("www/dir/empty")).unwrap();
+    let root = slash(&f.remote.join("www"));
+
+    let summary = f
+        .engine
+        .remote_copy(
+            "local",
+            &[
+                (format!("{root}/dir"), format!("{root}/dir copy")),
+                (format!("{root}/dir/a.txt"), format!("{root}/b.txt")),
+            ],
+        )
+        .await
+        .unwrap();
+    assert!(summary.failed.is_empty());
+    assert_eq!(
+        std::fs::read_to_string(f.remote.join("www/dir copy/a.txt")).unwrap(),
+        "a"
+    );
+    assert!(f.remote.join("www/dir copy/empty").is_dir());
+    assert_eq!(
+        std::fs::read_to_string(f.remote.join("www/b.txt")).unwrap(),
+        "a"
+    );
+
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::PermissionsExt as _;
+        f.engine
+            .remote_chmod("local", &format!("{root}/b.txt"), 0o600, false)
+            .await
+            .unwrap();
+        let mode = std::fs::metadata(f.remote.join("www/b.txt"))
+            .unwrap()
+            .permissions()
+            .mode();
+        assert_eq!(mode & 0o777, 0o600);
+    }
+
+    let dir = format!("{root}/dir");
+    f.engine.exclude_remote("local", &dir, true).unwrap();
+    let excluded = |items: Vec<deployment::engine::RemoteItem>| {
+        items
+            .into_iter()
+            .find(|item| item.path == dir)
+            .unwrap()
+            .excluded
+    };
+    assert!(excluded(
+        f.engine.remote_list("local", &root).await.unwrap()
+    ));
+    f.engine.exclude_remote("local", &dir, false).unwrap();
+    assert!(!excluded(
+        f.engine.remote_list("local", &root).await.unwrap()
+    ));
+}

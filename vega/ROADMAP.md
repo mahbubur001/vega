@@ -29,7 +29,7 @@ Status keys: `[ ]` todo · `[~]` in progress · `[x]` done. Each item maps to a 
   - [~] D1 Upload on save + actions — built and unit-tested; waiting for a check in the running app (see `HANDOFF.md`)
   - [~] D2 Deployment Servers UI — dialog with Connection / Mappings / Excluded / Advanced tabs, settings-window link; not tried in the app yet
   - [~] D3 Remote Host panel — built (browse, open/edit on server with save-back, new/rename/delete, upload here, download to project, cut/copy/paste, chmod, exclude path, drag and drop from Finder and the project panel, keyboard navigation, remembered dock position); not tried in the app yet
-  - [ ] D4 Compare & Sync
+  - [~] D4 Compare & Sync — Sync with Deployed view built (per-file directions, bulk/mirror directions, compare modes, per-file diff); not tried in the app yet. Transfers list with retry still to do
   - [ ] D5 Extras (SSH, agent tools)
 
 ## Phase 3 — Ship

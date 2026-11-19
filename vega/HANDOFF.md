@@ -21,7 +21,7 @@ _Last updated: 2026-11-19, end of day. Branch `vega`, everything committed and p
 
 ## Where things stand
 
-Done and pushed today: D3 second pass (cut/copy/paste, chmod, Exclude Path, drag and drop, keyboard navigation, remembered dock position; see `DEPLOYMENT.md`). Earlier: Linux-only CI (`.github/workflows/vega_ci.yml`, green, about 22 minutes uncached), MCP OAuth without Zed's CIMD document, every zed.dev link VEGA opens now goes to VEGA's docs or repo (`crates/release_channel/src/vega_docs.rs` + `gpui::OpenUrlRewriter`), Help menu feedback to VEGA's GitHub, Deployment Servers dialog Advanced tab and settings link, `script/vega-dev-app`, and the first version of the **Remote Host panel (D3)**.
+Done and pushed today: D4 Sync with Deployed view (`deployment: sync with deployed`, see `DEPLOYMENT.md`); D3 second pass (cut/copy/paste, chmod, Exclude Path, drag and drop, keyboard navigation, remembered dock position; see `DEPLOYMENT.md`). Earlier: Linux-only CI (`.github/workflows/vega_ci.yml`, green, about 22 minutes uncached), MCP OAuth without Zed's CIMD document, every zed.dev link VEGA opens now goes to VEGA's docs or repo (`crates/release_channel/src/vega_docs.rs` + `gpui::OpenUrlRewriter`), Help menu feedback to VEGA's GitHub, Deployment Servers dialog Advanced tab and settings link, `script/vega-dev-app`, and the first version of the **Remote Host panel (D3)**.
 
 Built but **not yet checked in the running app** (owner's manual check, screenshots welcome):
 
@@ -32,6 +32,7 @@ Built but **not yet checked in the running app** (owner's manual check, screensh
 | D1 upload on save, Deployment submenu | See `DEPLOYMENT.md` "Next session" (Docker SFTP test server) |
 | D2 Deployment Servers dialog | Right-click → Deployment → Configuration…, or Settings → General → Deployment |
 | D3 Remote Host panel | Server icon in the right dock (shown once a server is configured), or `deployment: toggle remote host`. Browse, open a file, edit and save (should upload), right-click menu, cut/copy/paste, Change Permissions…, Exclude Path, arrow keys, drag rows onto folders, drag files from Finder and the project panel, move the dock and restart |
+| D4 Sync with Deployed | Deployment → Sync with Deployed… on a folder (or `deployment: sync with deployed`). Change some files on both sides, check the states, flip directions, Compare, Synchronize |
 | Settings Sync page | Settings → General → Settings Sync |
 | App icon | Launch with `script/vega-dev-app` and look at the Dock |
 
@@ -41,7 +42,7 @@ Docker SFTP test server: `crates/deployment/tests/servers` (see `DEPLOYMENT.md` 
 
 1. Fix whatever the owner's app check turns up (D1, D2, D3, P06, P07).
 2. D3 leftovers (small): multi-select, recursive chmod, copy between servers.
-3. D4 Compare & Sync (`Engine::sync_compare` / `sync_execute` exist; needs a sync view with a multi-file diff preview).
+3. D4 leftovers: Transfers list with retry; maybe an inline multi-file diff in the Sync view.
 4. Branding sweep of user-facing "Zed" strings (e.g. "Update Zed" error actions), keeping internal crate names.
 5. Periodic upstream sync (P14 checklist in `ROADMAP.md`).
 

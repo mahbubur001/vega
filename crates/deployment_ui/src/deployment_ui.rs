@@ -1,5 +1,5 @@
 //! Deployment in VEGA: upload on save, Upload/Download/Compare actions,
-//! transfer progress and the Remote Host panel, on top of the `deployment`
+//! transfer progress, the Remote Host panel and Sync with Deployed, on top of the `deployment`
 //! engine.
 
 mod name_modal;
@@ -9,6 +9,7 @@ mod secret_modal;
 mod secrets;
 mod servers_modal;
 mod store;
+mod sync_view;
 mod transfers_indicator;
 
 use std::path::PathBuf;
@@ -30,7 +31,7 @@ use workspace::notifications::NotificationId;
 use workspace::{OpenOptions, Toast, Workspace};
 use zed_actions::deployment::{
     CancelTransfers, CompareWithDeployedVersion, DownloadFromDefaultServer, OpenDeploymentConfig,
-    OpenDeploymentServers, ToggleRemoteHost, UploadToDefaultServer,
+    OpenDeploymentServers, SyncWithDeployed, ToggleRemoteHost, UploadToDefaultServer,
 };
 
 use crate::prompter::{Request, WindowPrompter};
@@ -110,6 +111,12 @@ fn register_actions(workspace: &mut Workspace, store: Entity<DeploymentStore>) {
         let store = store.clone();
         move |workspace, _: &CompareWithDeployedVersion, window, cx| {
             run_on_selection(workspace, &store, Operation::Compare, window, cx);
+        }
+    });
+    workspace.register_action({
+        let store = store.clone();
+        move |workspace, _: &SyncWithDeployed, window, cx| {
+            sync_with_deployed(workspace, &store, window, cx);
         }
     });
     workspace.register_action({
@@ -201,6 +208,34 @@ async fn run(
         // The engine opens the diff through the prompter.
         Operation::Compare => engine.compare(None, &path).await.map(|_| None),
     }
+}
+
+/// Opens a Sync view for the selected file or folder, or for the whole
+/// project when the selection is the project root or there is none.
+fn sync_with_deployed(
+    workspace: &mut Workspace,
+    store: &Entity<DeploymentStore>,
+    window: &mut Window,
+    cx: &mut Context<Workspace>,
+) {
+    let selected = selected_path(workspace, window, cx);
+    let engine = selected
+        .as_ref()
+        .and_then(|path| store.read(cx).engine_for_path(path))
+        .or_else(|| store.read(cx).engines().into_iter().next());
+    let Some(engine) = engine else {
+        show_message(
+            workspace,
+            "This project has no deployment servers. Run \"deployment: open deployment servers\" to add one.",
+            cx,
+        );
+        return;
+    };
+    let roots = selected
+        .filter(|path| path.starts_with(engine.root()) && path != engine.root())
+        .into_iter()
+        .collect();
+    sync_view::open(workspace, engine, roots, window, cx);
 }
 
 fn selected_path(workspace: &Workspace, window: &Window, cx: &App) -> Option<PathBuf> {
