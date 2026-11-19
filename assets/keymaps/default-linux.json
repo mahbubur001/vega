@@ -1059,6 +1059,15 @@
     },
   },
   {
+    "context": "DeploymentSync",
+    "use_key_equivalents": true,
+    "bindings": {
+      "space": "deployment_sync::CycleAction",
+      "enter": "deployment_sync::SynchronizeSelected",
+      "ctrl-enter": "deployment_sync::SynchronizeAll",
+    },
+  },
+  {
     "context": "DeploymentWindow",
     "use_key_equivalents": true,
     "bindings": {

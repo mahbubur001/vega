@@ -777,7 +777,8 @@ impl Engine {
     // ---- compare ---------------------------------------------------------------------------------------------
 
     /// "Compare with Deployed Version": fetches the server copy and shows a diff.
-    pub async fn compare(
+    /// Downloads the server's version of `local` to a cache file (for diffs) and returns its path.
+    pub async fn fetch_deployed_copy(
         self: &Arc<Self>,
         server_id: Option<&str>,
         local: &Path,
@@ -794,7 +795,26 @@ impl Engine {
             )
         })?;
         let pool = self.manager.pool(&t.server);
-        let copy = with_client!(pool, |c| deploy::fetch_for_compare(c, &t, &remote))?;
+        with_client!(pool, |c| deploy::fetch_for_compare(c, &t, &remote))
+    }
+
+    pub async fn compare(
+        self: &Arc<Self>,
+        server_id: Option<&str>,
+        local: &Path,
+    ) -> Result<PathBuf> {
+        let t = self
+            .targets(server_id)?
+            .into_iter()
+            .next()
+            .expect("targets is non-empty");
+        let remote = t.mapper.to_remote(local).ok_or_else(|| {
+            RemoteError::new(
+                ErrorCode::Config,
+                format!("{} is not mapped on {}.", local.display(), t.server.name),
+            )
+        })?;
+        let copy = self.fetch_deployed_copy(server_id, local).await?;
         self.prompter
             .show_diff(
                 &copy,

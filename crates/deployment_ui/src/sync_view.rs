@@ -1,20 +1,44 @@
-//! Sync with Deployed (D4): compares project files with a deployment server and
-//! lets the user choose, file by file, which way each one goes before anything
-//! is transferred. Compare opens the side-by-side diff for one file.
+//! Sync with Deployed (D4): a folder comparison like PhpStorm's. A table lists
+//! the files of both sides with an action each (→ ← × = ≠, click or Space to
+//! change), filters by kind and name, and the selected file's diff below.
 
 use std::ops::Range;
 use std::path::PathBuf;
 use std::sync::Arc;
 
+use deployment::config::ServerType;
 use deployment::engine::{Engine, Summary};
 use deployment::sync::{CompareMode, SyncAction, SyncItem, SyncState, default_action};
+use file_icons::FileIcons;
+use git_ui_core::file_diff_view::{FileDiffView, build_buffer_diff};
 use gpui::{
-    App, Context, Entity, EventEmitter, FocusHandle, Focusable, ListSizingBehavior, Render, Task,
-    UniformListScrollHandle, Window, px, uniform_list,
+    App, Context, DismissEvent, Entity, EventEmitter, FocusHandle, Focusable, Pixels, Point,
+    Render, ScrollStrategy, Subscription, Task, UniformListScrollHandle, WeakEntity, Window,
+    actions, anchored, deferred, px, relative, uniform_list,
 };
 use gpui_tokio::Tokio;
-use ui::{Checkbox, ContextMenu, DropdownMenu, Tooltip, prelude::*};
+use time::UtcOffset;
+use ui::{
+    ButtonLike, CommonAnimationExt as _, ContextMenu, ContextMenuEntry, DropdownMenu, IconPosition,
+    KeyBinding, TintColor, Tooltip, prelude::*,
+};
+use ui_input::{ErasedEditorEvent, InputField};
+use workspace::Workspace;
 use workspace::item::{Item, ItemEvent};
+
+use crate::servers_modal::server_type_icon;
+
+actions!(
+    deployment_sync,
+    [
+        /// Changes what happens to the selected file (upload, download, delete, nothing).
+        CycleAction,
+        /// Synchronizes the selected file.
+        SynchronizeSelected,
+        /// Runs every chosen action.
+        SynchronizeAll,
+    ]
+);
 
 /// Directions the toolbar can apply to every file at once.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -110,25 +134,6 @@ fn action_label(action: SyncAction) -> &'static str {
     }
 }
 
-fn action_color(action: SyncAction) -> Color {
-    match action {
-        SyncAction::Upload | SyncAction::Download => Color::Accent,
-        SyncAction::DeleteRemote | SyncAction::DeleteLocal => Color::Error,
-        SyncAction::Skip => Color::Muted,
-    }
-}
-
-fn state_label(state: SyncState) -> (&'static str, Color) {
-    match state {
-        SyncState::Same => ("Identical", Color::Muted),
-        SyncState::LocalOnly => ("Only in project", Color::Created),
-        SyncState::RemoteOnly => ("Only on server", Color::Created),
-        SyncState::LocalNewer => ("Changed in project", Color::Modified),
-        SyncState::RemoteNewer => ("Changed on server", Color::Modified),
-        SyncState::Conflict => ("Changed on both sides", Color::Conflict),
-    }
-}
-
 const MODES: [(CompareMode, &str); 5] = [
     (CompareMode::Smart, "Changes since last transfer"),
     (CompareMode::SizeAndTimestamp, "Size and timestamp"),
@@ -152,8 +157,90 @@ enum Status {
     Failed(SharedString),
 }
 
+/// The four groups the filter chips show and hide (PhpStorm's folder diff filters).
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum Category {
+    NewInProject,
+    Different,
+    Equal,
+    NewOnServer,
+}
+
+impl Category {
+    const ALL: [Category; 4] = [
+        Category::NewInProject,
+        Category::Different,
+        Category::Equal,
+        Category::NewOnServer,
+    ];
+
+    pub(crate) fn of(state: SyncState) -> Self {
+        match state {
+            SyncState::LocalOnly => Category::NewInProject,
+            SyncState::RemoteOnly => Category::NewOnServer,
+            SyncState::Same => Category::Equal,
+            SyncState::LocalNewer | SyncState::RemoteNewer | SyncState::Conflict => {
+                Category::Different
+            }
+        }
+    }
+
+    fn label(self) -> &'static str {
+        match self {
+            Category::NewInProject => "New in project",
+            Category::Different => "Different",
+            Category::Equal => "Equal",
+            Category::NewOnServer => "New on server",
+        }
+    }
+}
+
+/// Whether `path` matches the filter: words that must all appear, where `*`
+/// stands for any characters (e.g. `*.php`).
+pub(crate) fn matches_filter(path: &str, filter: &str) -> bool {
+    let path = path.to_lowercase();
+    filter.split_whitespace().all(|word| {
+        let word = word.to_lowercase();
+        let parts: Vec<&str> = word.split('*').collect();
+        if parts.len() == 1 {
+            return path.contains(&word);
+        }
+        let mut rest = path.as_str();
+        for (index, part) in parts.iter().enumerate() {
+            if part.is_empty() {
+                continue;
+            }
+            let last = index == parts.len() - 1;
+            if last {
+                return rest.ends_with(part);
+            }
+            match rest.find(part) {
+                Some(at) => rest = &rest[at + part.len()..],
+                None => return false,
+            }
+        }
+        true
+    })
+}
+
+/// The action column's symbol: → upload, ← download, × delete, = equal, ≠ different.
+fn action_symbol(state: SyncState, action: SyncAction) -> (&'static str, Color) {
+    match action {
+        SyncAction::Upload => ("→", Color::Created),
+        SyncAction::Download => ("←", Color::Accent),
+        SyncAction::DeleteRemote | SyncAction::DeleteLocal => ("×", Color::Error),
+        SyncAction::Skip if state == SyncState::Same => ("=", Color::Muted),
+        SyncAction::Skip => ("≠", Color::Warning),
+    }
+}
+
+fn format_size(size: u64) -> String {
+    crate::remote_host_panel::format_size(size)
+}
+
 pub(crate) struct SyncView {
     engine: Arc<Engine>,
+    workspace: WeakEntity<Workspace>,
     roots: Vec<PathBuf>,
     title: SharedString,
     /// The server compared with; `None` until the first comparison picks the default.
@@ -162,17 +249,27 @@ pub(crate) struct SyncView {
     items: Vec<SyncItem>,
     /// Indices into `items` that are shown.
     visible: Vec<usize>,
-    show_identical: bool,
+    shown: [bool; 4],
+    filter: Entity<InputField>,
+    selected: Option<usize>,
+    /// The diff of the selected file: item index and the view (None while loading).
+    diff: Option<(usize, Option<Entity<FileDiffView>>)>,
+    diff_message: Option<SharedString>,
+    local_offset: UtcOffset,
     status: Status,
     focus_handle: FocusHandle,
     scroll_handle: UniformListScrollHandle,
+    context_menu: Option<(Entity<ContextMenu>, Point<Pixels>, Subscription)>,
     _task: Option<Task<()>>,
+    _diff_task: Option<Task<()>>,
+    _subscriptions: Vec<Subscription>,
 }
 
 impl SyncView {
-    /// Compares `roots` (all mapped folders when empty) with the default server.
+    /// Compares `roots` (all mapped folders when empty) with `server_id` or the default server.
     pub(crate) fn new(
         engine: Arc<Engine>,
+        workspace: WeakEntity<Workspace>,
         roots: Vec<PathBuf>,
         server_id: Option<String>,
         window: &mut Window,
@@ -197,19 +294,45 @@ impl SyncView {
         };
         let server_id =
             server_id.or_else(|| engine.default_server().map(|server| server.server.id));
+        let filter = cx.new(|cx| InputField::new(window, cx, "Filter, e.g. *.php"));
+        let this_entity = cx.weak_entity();
+        let editor = filter.read(cx).editor().clone();
+        let filter_subscription = editor.subscribe(
+            Box::new(move |event, _, cx| {
+                if matches!(event, ErasedEditorEvent::BufferEdited) {
+                    this_entity
+                        .update(cx, |this, cx| {
+                            this.update_visible(cx);
+                            cx.notify();
+                        })
+                        .ok();
+                }
+            }),
+            window,
+            cx,
+        );
         let mut this = Self {
             engine,
+            workspace,
             roots,
             title: title.into(),
             server_id,
             mode: CompareMode::default(),
             items: Vec::new(),
             visible: Vec::new(),
-            show_identical: false,
+            shown: [true, true, false, true],
+            filter,
+            selected: None,
+            diff: None,
+            diff_message: None,
+            local_offset: UtcOffset::current_local_offset().unwrap_or(UtcOffset::UTC),
             status: Status::Comparing,
             focus_handle: cx.focus_handle(),
             scroll_handle: UniformListScrollHandle::new(),
+            context_menu: None,
             _task: None,
+            _diff_task: None,
+            _subscriptions: vec![filter_subscription],
         };
         this.compare(window, cx);
         this
@@ -226,10 +349,26 @@ impl SyncView {
             .into()
     }
 
-    fn update_visible(&mut self) {
+    fn update_visible(&mut self, cx: &App) {
+        let filter = self.filter.read(cx).text(cx);
         self.visible = (0..self.items.len())
-            .filter(|&index| self.show_identical || self.items[index].state != SyncState::Same)
+            .filter(|&index| {
+                let item = &self.items[index];
+                let category = Category::of(item.state);
+                let shown = Category::ALL
+                    .iter()
+                    .position(|candidate| *candidate == category)
+                    .is_some_and(|position| self.shown[position]);
+                shown && matches_filter(&item.rel_path, &filter)
+            })
             .collect();
+    }
+
+    fn count(&self, category: Category) -> usize {
+        self.items
+            .iter()
+            .filter(|item| Category::of(item.state) == category)
+            .count()
     }
 
     fn compare(&mut self, window: &mut Window, cx: &mut Context<Self>) {
@@ -243,7 +382,7 @@ impl SyncView {
         });
         self._task = Some(cx.spawn_in(window, async move |this, cx| {
             let result = task.await;
-            this.update(cx, |this, cx| {
+            this.update_in(cx, |this, window, cx| {
                 match result {
                     Ok(Ok((server_id, items))) => {
                         this.server_id = Some(server_id);
@@ -253,7 +392,9 @@ impl SyncView {
                     Ok(Err(error)) => this.status = Status::Failed(error.to_string().into()),
                     Err(error) => this.status = Status::Failed(error.to_string().into()),
                 }
-                this.update_visible();
+                this.update_visible(cx);
+                let first = this.visible.first().copied();
+                this.select(first, window, cx);
                 cx.notify();
             })
             .ok();
@@ -261,16 +402,30 @@ impl SyncView {
         cx.notify();
     }
 
-    fn synchronize(&mut self, window: &mut Window, cx: &mut Context<Self>) {
+    /// Runs the chosen actions of `indices` (all items when None).
+    fn synchronize(
+        &mut self,
+        indices: Option<Vec<usize>>,
+        window: &mut Window,
+        cx: &mut Context<Self>,
+    ) {
         let Some(server_id) = self.server_id.clone() else {
             return;
         };
-        let items: Vec<SyncItem> = self
-            .items
-            .iter()
-            .filter(|item| item.action != SyncAction::Skip)
-            .cloned()
-            .collect();
+        let items: Vec<SyncItem> = match indices {
+            Some(indices) => indices
+                .into_iter()
+                .filter_map(|index| self.items.get(index))
+                .filter(|item| item.action != SyncAction::Skip)
+                .cloned()
+                .collect(),
+            None => self
+                .items
+                .iter()
+                .filter(|item| item.action != SyncAction::Skip)
+                .cloned()
+                .collect(),
+        };
         if items.is_empty() {
             return;
         }
@@ -322,55 +477,236 @@ impl SyncView {
         }
     }
 
-    fn show_diff(&mut self, index: usize, cx: &mut Context<Self>) {
-        let Some(item) = self.items.get(index) else {
-            return;
-        };
-        let engine = self.engine.clone();
-        let (server_id, local) = (self.server_id.clone(), item.local_path.clone());
-        let task = Tokio::spawn(cx, async move {
-            engine.compare(server_id.as_deref(), &local).await
-        });
-        cx.spawn(async move |this, cx| {
-            let error = match task.await {
-                Ok(Ok(_)) => return,
-                Ok(Err(error)) => error.to_string(),
-                Err(error) => error.to_string(),
-            };
-            this.update(cx, |this, cx| {
-                this.status = Status::Failed(error.into());
-                cx.notify();
-            })
-            .ok();
-        })
-        .detach();
+    fn set_action(&mut self, index: usize, action: SyncAction, cx: &mut Context<Self>) {
+        if let Some(item) = self.items.get_mut(index)
+            && allowed_actions(item.state).contains(&action)
+        {
+            item.action = action;
+            cx.notify();
+        }
     }
 
     fn busy(&self) -> bool {
         matches!(self.status, Status::Comparing | Status::Synchronizing)
     }
 
+    /// Selects an item and shows its diff below the table.
+    fn select(&mut self, index: Option<usize>, window: &mut Window, cx: &mut Context<Self>) {
+        self.selected = index;
+        if let Some(row) = index.and_then(|index| self.visible.iter().position(|i| *i == index)) {
+            self.scroll_handle
+                .scroll_to_item(row, ScrollStrategy::Nearest);
+        }
+        self.load_diff(window, cx);
+        cx.notify();
+    }
+
+    fn load_diff(&mut self, window: &mut Window, cx: &mut Context<Self>) {
+        self.diff_message = None;
+        let Some(index) = self.selected else {
+            self.diff = None;
+            return;
+        };
+        if self.diff.as_ref().is_some_and(|(shown, _)| *shown == index) {
+            return;
+        }
+        let Some(item) = self.items.get(index) else {
+            return;
+        };
+        if item.local.is_none() || item.remote.is_none() {
+            self.diff = None;
+            self.diff_message = Some(
+                if item.local.is_none() {
+                    "Only on the server — choose ← to download it or × to delete it."
+                } else {
+                    "Only in the project — choose → to upload it or × to delete it."
+                }
+                .into(),
+            );
+            return;
+        }
+        self.diff = Some((index, None));
+        let engine = self.engine.clone();
+        let (server_id, local) = (self.server_id.clone(), item.local_path.clone());
+        let fetch = Tokio::spawn(cx, {
+            let local = local.clone();
+            async move {
+                engine
+                    .fetch_deployed_copy(server_id.as_deref(), &local)
+                    .await
+            }
+        });
+        let workspace = self.workspace.clone();
+        self._diff_task = Some(cx.spawn_in(window, async move |this, cx| {
+            let remote = match fetch.await {
+                Ok(Ok(remote)) => remote,
+                Ok(Err(error)) => {
+                    this.update(cx, |this, cx| {
+                        this.diff = None;
+                        this.diff_message = Some(error.to_string().into());
+                        cx.notify();
+                    })
+                    .ok();
+                    return;
+                }
+                Err(_) => return,
+            };
+            let Some(workspace) = workspace.upgrade() else {
+                return;
+            };
+            let project = workspace.read_with(cx, |workspace, _| workspace.project().clone());
+            let old = project.update(cx, |project, cx| project.open_local_buffer(&remote, cx));
+            let new = project.update(cx, |project, cx| project.open_local_buffer(&local, cx));
+            let (Ok(old), Ok(new)) = (old.await, new.await) else {
+                return;
+            };
+            let Ok(diff) = build_buffer_diff(&old, &new, cx).await else {
+                return;
+            };
+            this.update_in(cx, |this, window, cx| {
+                if this.selected != Some(index) {
+                    return;
+                }
+                let view =
+                    cx.new(|cx| FileDiffView::new(old, new, diff, project, workspace, window, cx));
+                this.diff = Some((index, Some(view)));
+                cx.notify();
+            })
+            .ok();
+        }));
+    }
+
+    fn selected_row(&self) -> Option<usize> {
+        let selected = self.selected?;
+        self.visible.iter().position(|index| *index == selected)
+    }
+
+    fn select_next(&mut self, _: &menu::SelectNext, window: &mut Window, cx: &mut Context<Self>) {
+        let next = self.selected_row().map_or(0, |row| row + 1);
+        if let Some(index) = self.visible.get(next).copied() {
+            self.select(Some(index), window, cx);
+        }
+    }
+
+    fn select_previous(
+        &mut self,
+        _: &menu::SelectPrevious,
+        window: &mut Window,
+        cx: &mut Context<Self>,
+    ) {
+        let previous = self.selected_row().map_or(0, |row| row.saturating_sub(1));
+        if let Some(index) = self.visible.get(previous).copied() {
+            self.select(Some(index), window, cx);
+        }
+    }
+
+    fn cycle_selected(&mut self, _: &CycleAction, _: &mut Window, cx: &mut Context<Self>) {
+        if let Some(index) = self.selected {
+            self.cycle_action(index, cx);
+        }
+    }
+
+    fn synchronize_selected(
+        &mut self,
+        _: &SynchronizeSelected,
+        window: &mut Window,
+        cx: &mut Context<Self>,
+    ) {
+        if let Some(index) = self.selected {
+            self.synchronize(Some(vec![index]), window, cx);
+        }
+    }
+
+    fn synchronize_all(&mut self, _: &SynchronizeAll, window: &mut Window, cx: &mut Context<Self>) {
+        self.synchronize(None, window, cx);
+    }
+
+    fn deploy_row_menu(
+        &mut self,
+        index: usize,
+        position: Point<Pixels>,
+        window: &mut Window,
+        cx: &mut Context<Self>,
+    ) {
+        self.select(Some(index), window, cx);
+        let Some(state) = self.items.get(index).map(|item| item.state) else {
+            return;
+        };
+        let this = cx.weak_entity();
+        let menu = ContextMenu::build(window, cx, move |mut menu, _, _| {
+            for action in allowed_actions(state) {
+                let this = this.clone();
+                let action = *action;
+                let label = match action {
+                    SyncAction::Upload => "Copy to Server  →",
+                    SyncAction::Download => "Copy to Project  ←",
+                    SyncAction::DeleteRemote => "Delete on Server",
+                    SyncAction::DeleteLocal => "Delete in Project",
+                    SyncAction::Skip => "Do Nothing",
+                };
+                menu = menu.entry(label, None, move |_, cx| {
+                    this.update(cx, |view, cx| view.set_action(index, action, cx))
+                        .ok();
+                });
+            }
+            menu.separator().entry("Synchronize This File", None, {
+                let this = this.clone();
+                move |window, cx| {
+                    this.update(cx, |view, cx| {
+                        view.synchronize(Some(vec![index]), window, cx)
+                    })
+                    .ok();
+                }
+            })
+        });
+        window.focus(&menu.focus_handle(cx), cx);
+        let subscription = cx.subscribe(&menu, |this, _, _: &DismissEvent, cx| {
+            this.context_menu.take();
+            cx.notify();
+        });
+        self.context_menu = Some((menu, position, subscription));
+        cx.notify();
+    }
+
     fn render_toolbar(&self, window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
         let this = cx.weak_entity();
-        let servers: Vec<(String, String)> = self
+        let servers: Vec<(String, String, ServerType)> = self
             .engine
             .servers()
             .into_iter()
             .filter(|resolved| resolved.server.kind.transfers())
-            .map(|resolved| (resolved.server.id, resolved.server.name))
+            .map(|resolved| {
+                (
+                    resolved.server.id,
+                    resolved.server.name,
+                    resolved.server.kind,
+                )
+            })
             .collect();
+        let server_kind = servers
+            .iter()
+            .find(|(id, ..)| Some(id) == self.server_id.as_ref())
+            .map(|(.., kind)| *kind);
         let server_menu = ContextMenu::build(window, cx, {
             let this = this.clone();
             move |mut menu, _, _| {
-                for (id, name) in servers.clone() {
+                for (id, name, kind) in servers.clone() {
                     let this = this.clone();
-                    menu = menu.entry(name, None, move |window, cx| {
-                        this.update(cx, |view, cx| {
-                            view.server_id = Some(id.clone());
-                            view.compare(window, cx);
-                        })
-                        .ok();
-                    });
+                    let (icon, color) = server_type_icon(kind);
+                    menu = menu.item(
+                        ContextMenuEntry::new(name)
+                            .icon(icon)
+                            .icon_color(color)
+                            .icon_position(IconPosition::Start)
+                            .handler(move |window, cx| {
+                                this.update(cx, |view, cx| {
+                                    view.server_id = Some(id.clone());
+                                    view.diff = None;
+                                    view.compare(window, cx);
+                                })
+                                .ok();
+                            }),
+                    );
                 }
                 menu
             }
@@ -406,63 +742,114 @@ impl SyncView {
             .filter(|item| item.action != SyncAction::Skip)
             .count();
         let busy = self.busy();
+        let focus = self.focus_handle.clone();
 
-        h_flex()
-            .flex_wrap()
-            .gap_2()
-            .px_3()
-            .py_2()
+        v_flex()
             .border_b_1()
             .border_color(cx.theme().colors().border_variant)
-            .child(Label::new("Server").color(Color::Muted))
-            .child(DropdownMenu::new(
-                "sync-server",
-                self.server_name(),
-                server_menu,
-            ))
-            .child(Label::new("Compare by").color(Color::Muted))
-            .child(DropdownMenu::new(
-                "sync-mode",
-                mode_label(self.mode),
-                mode_menu,
-            ))
-            .child(DropdownMenu::new(
-                "sync-directions",
-                "Set Directions",
-                direction_menu,
-            ))
             .child(
-                Checkbox::new("sync-show-identical", self.show_identical.into())
-                    .label("Show identical")
-                    .on_click(cx.listener(|this, state: &ToggleState, _, cx| {
-                        this.show_identical = state.selected();
-                        this.update_visible();
-                        cx.notify();
-                    })),
-            )
-            .child(div().flex_1())
-            .child(
-                IconButton::new("sync-refresh", IconName::RotateCw)
-                    .icon_size(IconSize::Small)
-                    .tooltip(Tooltip::text("Compare Again"))
-                    .disabled(busy)
-                    .on_click(cx.listener(|this, _, window, cx| this.compare(window, cx))),
-            )
-            .child(
-                Button::new(
-                    "sync-run",
-                    if pending == 0 {
-                        "Synchronize".to_string()
-                    } else {
-                        format!(
-                            "Synchronize {pending} File{}",
-                            if pending == 1 { "" } else { "s" }
+                h_flex()
+                    .flex_wrap()
+                    .gap_2()
+                    .px_3()
+                    .pt_2()
+                    .pb_1()
+                    .child(
+                        h_flex()
+                            .gap_1()
+                            .children(server_kind.map(|kind| {
+                                let (icon, color) = server_type_icon(kind);
+                                Icon::new(icon).size(IconSize::Small).color(color)
+                            }))
+                            .child(DropdownMenu::new(
+                                "sync-server",
+                                self.server_name(),
+                                server_menu,
+                            )),
+                    )
+                    .child(DropdownMenu::new(
+                        "sync-mode",
+                        format!("Compare: {}", mode_label(self.mode)),
+                        mode_menu,
+                    ))
+                    .child(DropdownMenu::new(
+                        "sync-directions",
+                        "Set Directions",
+                        direction_menu,
+                    ))
+                    .child(div().flex_1())
+                    .child(
+                        IconButton::new("sync-refresh", IconName::RotateCw)
+                            .icon_size(IconSize::Small)
+                            .tooltip(Tooltip::text("Compare Again"))
+                            .disabled(busy)
+                            .on_click(cx.listener(|this, _, window, cx| this.compare(window, cx))),
+                    )
+                    .child(
+                        Button::new("sync-selected", "Synchronize Selected")
+                            .style(ButtonStyle::Outlined)
+                            .disabled(busy || self.selected.is_none())
+                            .key_binding(
+                                KeyBinding::for_action_in(&SynchronizeSelected, &focus, cx)
+                                    .map(|binding| binding.size(rems_from_px(12_f32))),
+                            )
+                            .on_click(cx.listener(|this, _, window, cx| {
+                                this.synchronize_selected(&SynchronizeSelected, window, cx)
+                            })),
+                    )
+                    .child(
+                        Button::new(
+                            "sync-all",
+                            if pending == 0 {
+                                "Synchronize All".to_string()
+                            } else {
+                                format!("Synchronize All ({pending})")
+                            },
                         )
-                    },
-                )
-                .style(ButtonStyle::Filled)
-                .disabled(busy || pending == 0)
-                .on_click(cx.listener(|this, _, window, cx| this.synchronize(window, cx))),
+                        .style(ButtonStyle::Tinted(TintColor::Accent))
+                        .disabled(busy || pending == 0)
+                        .key_binding(
+                            KeyBinding::for_action_in(&SynchronizeAll, &focus, cx)
+                                .map(|binding| binding.size(rems_from_px(12_f32))),
+                        )
+                        .on_click(
+                            cx.listener(|this, _, window, cx| this.synchronize(None, window, cx)),
+                        ),
+                    ),
+            )
+            .child(
+                h_flex()
+                    .gap_1()
+                    .px_3()
+                    .pb_2()
+                    .children(
+                        Category::ALL
+                            .iter()
+                            .enumerate()
+                            .map(|(position, category)| {
+                                let shown = self.shown[position];
+                                Button::new(
+                                    ("sync-filter", position),
+                                    format!("{} · {}", category.label(), self.count(*category)),
+                                )
+                                .style(if shown {
+                                    ButtonStyle::Tinted(TintColor::Accent)
+                                } else {
+                                    ButtonStyle::Subtle
+                                })
+                                .label_size(LabelSize::Small)
+                                .toggle_state(shown)
+                                .on_click(cx.listener(
+                                    move |this, _, _, cx| {
+                                        this.shown[position] = !this.shown[position];
+                                        this.update_visible(cx);
+                                        cx.notify();
+                                    },
+                                ))
+                            }),
+                    )
+                    .child(div().flex_1())
+                    .child(div().w(rems(14.)).child(self.filter.clone())),
             )
     }
 
@@ -475,8 +862,10 @@ impl SyncView {
             Status::Ready if self.visible.is_empty() => {
                 let text = if self.items.is_empty() {
                     "No files to compare."
-                } else {
+                } else if self.count(Category::Equal) == self.items.len() {
                     "Everything is in sync."
+                } else {
+                    "Nothing matches the filters."
                 };
                 (text.into(), Color::Muted)
             }
@@ -490,13 +879,73 @@ impl SyncView {
         )
     }
 
+    fn render_header(&self, cx: &mut Context<Self>) -> impl IntoElement {
+        let label =
+            |text: &'static str| Label::new(text).size(LabelSize::Small).color(Color::Muted);
+        h_flex()
+            .px_3()
+            .py_1()
+            .gap_2()
+            .border_b_1()
+            .border_color(cx.theme().colors().border_variant)
+            .child(div().flex_1().child(label("Project")))
+            .child(div().w(px(70.)).child(label("Size")))
+            .child(div().w(px(120.)).child(label("Date")))
+            .child(
+                div()
+                    .w(px(44.))
+                    .flex()
+                    .justify_center()
+                    .child(label("Action")),
+            )
+            .child(div().w(px(70.)).child(label("Size")))
+            .child(div().w(px(120.)).child(label("Date")))
+            .child(div().flex_1().child(label("Server")))
+    }
+
     fn render_rows(&mut self, range: Range<usize>, cx: &mut Context<Self>) -> Vec<AnyElement> {
+        let now = time::OffsetDateTime::now_utc();
+        let offset = self.local_offset;
+        let date = |mtime: i64| {
+            if mtime > 0 {
+                crate::remote_host_panel::format_mtime(mtime, now, offset)
+            } else {
+                String::new()
+            }
+        };
         range
             .filter_map(|row| {
                 let index = *self.visible.get(row)?;
                 let item = self.items.get(index)?;
-                let (state, state_color) = state_label(item.state);
-                let both_sides = item.local.is_some() && item.remote.is_some();
+                let (symbol, symbol_color) = action_symbol(item.state, item.action);
+                let selected = self.selected == Some(index);
+                let local_size = item.local.as_ref().map(|local| format_size(local.size));
+                let local_date = item.local.as_ref().map(|local| date(local.mtime));
+                let remote_size = item.remote.as_ref().map(|remote| format_size(remote.size));
+                let remote_date = item.remote.as_ref().map(|remote| date(remote.mtime));
+                let icon = FileIcons::get_icon(std::path::Path::new(&item.rel_path), cx)
+                    .map(Icon::from_path)
+                    .unwrap_or_else(|| Icon::new(IconName::File))
+                    .size(IconSize::Small)
+                    .color(Color::Muted);
+                let name = |present: bool| {
+                    if present {
+                        h_flex()
+                            .gap_1p5()
+                            .min_w_0()
+                            .child(icon.clone())
+                            .child(Label::new(item.rel_path.clone()).truncate())
+                            .into_any_element()
+                    } else {
+                        Label::new("—").color(Color::Disabled).into_any_element()
+                    }
+                };
+                let small = |text: Option<String>| {
+                    Label::new(text.unwrap_or_default())
+                        .size(LabelSize::Small)
+                        .color(Color::Muted)
+                        .single_line()
+                };
                 Some(
                     h_flex()
                         .id(("sync-row", index))
@@ -504,43 +953,97 @@ impl SyncView {
                         .gap_2()
                         .px_3()
                         .py_0p5()
+                        .when(selected, |row| row.bg(cx.theme().colors().element_selected))
                         .hover(|style| style.bg(cx.theme().colors().element_hover))
-                        .child(
-                            div()
-                                .w(px(150.))
-                                .flex_none()
-                                .child(Label::new(state).size(LabelSize::Small).color(state_color)),
+                        .on_click(cx.listener(move |this, _, window, cx| {
+                            window.focus(&this.focus_handle, cx);
+                            this.select(Some(index), window, cx)
+                        }))
+                        .on_mouse_down(
+                            gpui::MouseButton::Right,
+                            cx.listener(move |this, event: &gpui::MouseDownEvent, window, cx| {
+                                cx.stop_propagation();
+                                this.deploy_row_menu(index, event.position, window, cx)
+                            }),
                         )
+                        .child(div().flex_1().min_w_0().child(name(item.local.is_some())))
+                        .child(div().w(px(70.)).child(small(local_size)))
+                        .child(div().w(px(120.)).child(small(local_date)))
                         .child(
-                            div()
-                                .flex_1()
-                                .min_w_0()
-                                .child(Label::new(item.rel_path.clone()).truncate()),
-                        )
-                        .child(
-                            IconButton::new(("sync-diff", index), IconName::Diff)
-                                .icon_size(IconSize::Small)
-                                .disabled(!both_sides)
-                                .tooltip(Tooltip::text("Compare with Server"))
-                                .on_click(
-                                    cx.listener(move |this, _, _, cx| this.show_diff(index, cx)),
-                                ),
-                        )
-                        .child(
-                            div().w(px(140.)).flex_none().child(
-                                Button::new(("sync-action", index), action_label(item.action))
-                                    .label_size(LabelSize::Small)
-                                    .color(action_color(item.action))
-                                    .tooltip(Tooltip::text("Click to change"))
+                            div().w(px(44.)).flex().justify_center().child(
+                                ButtonLike::new(("sync-action", index))
+                                    .child(
+                                        Label::new(symbol)
+                                            .color(symbol_color)
+                                            .weight(gpui::FontWeight::BOLD),
+                                    )
+                                    .tooltip(Tooltip::text(format!(
+                                        "{} — click or Space to change",
+                                        action_label(item.action)
+                                    )))
                                     .on_click(cx.listener(move |this, _, _, cx| {
                                         this.cycle_action(index, cx)
                                     })),
                             ),
                         )
+                        .child(div().w(px(70.)).child(small(remote_size)))
+                        .child(div().w(px(120.)).child(small(remote_date)))
+                        .child(div().flex_1().min_w_0().child(name(item.remote.is_some())))
                         .into_any_element(),
                 )
             })
             .collect()
+    }
+
+    fn render_diff(&self, cx: &mut Context<Self>) -> AnyElement {
+        let body = match (&self.diff, &self.diff_message) {
+            (Some((_, Some(view))), _) => view.clone().into_any_element(),
+            (Some((_, None)), _) => h_flex()
+                .p_3()
+                .gap_2()
+                .child(
+                    Icon::new(IconName::ArrowCircle)
+                        .size(IconSize::Small)
+                        .color(Color::Muted)
+                        .with_rotate_animation(2),
+                )
+                .child(Label::new("Loading the server's version…").color(Color::Muted))
+                .into_any_element(),
+            (None, Some(message)) => h_flex()
+                .p_3()
+                .child(Label::new(message.clone()).color(Color::Muted))
+                .into_any_element(),
+            (None, None) => h_flex()
+                .p_3()
+                .child(Label::new("Select a file to see its differences.").color(Color::Muted))
+                .into_any_element(),
+        };
+        let path = self
+            .selected
+            .and_then(|index| self.items.get(index))
+            .map(|item| item.rel_path.clone())
+            .unwrap_or_default();
+        v_flex()
+            .h(relative(0.45))
+            .border_t_1()
+            .border_color(cx.theme().colors().border)
+            .child(
+                h_flex()
+                    .px_3()
+                    .py_1()
+                    .gap_2()
+                    .border_b_1()
+                    .border_color(cx.theme().colors().border_variant)
+                    .child(Label::new(path).size(LabelSize::Small))
+                    .child(div().flex_1())
+                    .child(
+                        Label::new(format!("Server ({}) ↔ Project", self.server_name()))
+                            .size(LabelSize::Small)
+                            .color(Color::Muted),
+                    ),
+            )
+            .child(div().flex_1().min_h_0().child(body))
+            .into_any_element()
     }
 }
 
@@ -579,18 +1082,33 @@ impl Render for SyncView {
             .track_focus(&self.focus_handle)
             .size_full()
             .bg(cx.theme().colors().editor_background)
+            .on_action(cx.listener(Self::select_next))
+            .on_action(cx.listener(Self::select_previous))
+            .on_action(cx.listener(Self::cycle_selected))
+            .on_action(cx.listener(Self::synchronize_selected))
+            .on_action(cx.listener(Self::synchronize_all))
             .child(self.render_toolbar(window, cx))
             .children(self.render_status())
+            .child(self.render_header(cx))
             .child(
                 uniform_list(
                     "sync-rows",
                     self.visible.len(),
                     cx.processor(|this, range: Range<usize>, _, cx| this.render_rows(range, cx)),
                 )
-                .with_sizing_behavior(ListSizingBehavior::Auto)
                 .flex_1()
                 .track_scroll(&self.scroll_handle),
             )
+            .child(self.render_diff(cx))
+            .children(self.context_menu.as_ref().map(|(menu, position, _)| {
+                deferred(
+                    anchored()
+                        .position(*position)
+                        .anchor(gpui::Anchor::TopLeft)
+                        .child(menu.clone()),
+                )
+                .with_priority(1)
+            }))
     }
 }
 
@@ -602,7 +1120,7 @@ impl Item for SyncView {
     }
 
     fn tab_icon(&self, _window: &Window, _cx: &App) -> Option<Icon> {
-        Some(Icon::new(IconName::ArrowCircle))
+        Some(Icon::new(IconName::ArrowRightLeft))
     }
 
     fn tab_tooltip_text(&self, _: &App) -> Option<SharedString> {
@@ -623,7 +1141,8 @@ pub(crate) fn open(
     window: &mut Window,
     cx: &mut Context<workspace::Workspace>,
 ) -> Entity<SyncView> {
-    let view = cx.new(|cx| SyncView::new(engine, roots, server_id, window, cx));
+    let weak = cx.weak_entity();
+    let view = cx.new(|cx| SyncView::new(engine, weak, roots, server_id, window, cx));
     workspace.add_item_to_active_pane(Box::new(view.clone()), None, true, window, cx);
     view
 }
@@ -640,6 +1159,29 @@ mod tests {
         SyncState::RemoteNewer,
         SyncState::Conflict,
     ];
+
+    #[test]
+    fn filters_by_words_and_wildcards() {
+        assert!(matches_filter("includes/class-plugin.php", ""));
+        assert!(matches_filter("includes/class-plugin.php", "*.php"));
+        assert!(matches_filter(
+            "includes/class-plugin.php",
+            "INCLUDES plugin"
+        ));
+        assert!(matches_filter("includes/class-plugin.php", "inc*plugin*"));
+        assert!(!matches_filter("assets/app.css", "*.php"));
+        assert!(!matches_filter("includes/class-plugin.php", "*.php.bak"));
+    }
+
+    #[test]
+    fn states_fall_into_the_filter_groups() {
+        assert_eq!(Category::of(SyncState::LocalOnly), Category::NewInProject);
+        assert_eq!(Category::of(SyncState::RemoteOnly), Category::NewOnServer);
+        assert_eq!(Category::of(SyncState::Same), Category::Equal);
+        assert_eq!(Category::of(SyncState::Conflict), Category::Different);
+        assert_eq!(action_symbol(SyncState::Same, SyncAction::Skip).0, "=");
+        assert_eq!(action_symbol(SyncState::Conflict, SyncAction::Skip).0, "≠");
+    }
 
     #[test]
     fn bulk_directions() {
