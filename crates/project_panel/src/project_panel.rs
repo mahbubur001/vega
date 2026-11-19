@@ -1,3 +1,4 @@
+mod extra_rows;
 pub mod project_panel_settings;
 mod undo;
 mod utils;
@@ -87,6 +88,9 @@ use zed_actions::{
     workspace::OpenWithSystem,
 };
 
+pub use crate::extra_rows::{
+    ExtraRowState, ProjectPanelExtraRows, extra_row_container, extra_row_item,
+};
 use crate::{
     project_panel_settings::ProjectPanelScrollbarProxy,
     undo::{Change, UndoManager, already_exists_error, project_path_display},
@@ -168,6 +172,8 @@ pub struct ProjectPanel {
     update_visible_entries_task: UpdateVisibleEntriesTask,
     undo_manager: UndoManager,
     state: State,
+    /// VEGA: add-on rows below the project tree (see `extra_rows.rs`).
+    extra_rows: Vec<extra_rows::ExtraRows>,
 }
 
 struct UpdateVisibleEntriesTask {
@@ -929,6 +935,7 @@ impl ProjectPanel {
                     project.read(cx).is_via_collab(),
                     &cx,
                 ),
+                extra_rows: Vec::new(),
             };
             this.update_visible_entries(None, false, false, window, cx);
 
@@ -7572,7 +7579,9 @@ impl Render for ProjectPanel {
                 .visible_entries
                 .iter()
                 .map(|worktree| worktree.entries.len())
-                .sum();
+                .sum::<usize>();
+            let tree_rows = item_count;
+            let item_count = item_count + self.extra_row_count(cx);
 
             fn handle_drag_move<T: 'static>(
                 this: &mut ProjectPanel,
@@ -7738,13 +7747,13 @@ impl Render for ProjectPanel {
                     v_flex()
                         .child(
                             uniform_list("entries", item_count, {
-                                cx.processor(|this, range: Range<usize>, window, cx| {
+                                cx.processor(move |this, range: Range<usize>, window, cx| {
                                     this.rendered_entries_len = range.end - range.start;
                                     let mut items = Vec::with_capacity(this.rendered_entries_len);
                                     let marked_selections: Arc<[SelectedEntry]> =
                                         Arc::from(this.marked_entries.clone());
                                     this.for_each_visible_entry(
-                                        range,
+                                        range.clone(),
                                         window,
                                         cx,
                                         &mut |id, details, window, cx| {
@@ -7757,6 +7766,9 @@ impl Render for ProjectPanel {
                                             ));
                                         },
                                     );
+                                    items.extend(
+                                        this.render_extra_rows(range, tree_rows, window, cx),
+                                    );
                                     items
                                 })
                             })
@@ -7768,11 +7780,11 @@ impl Render for ProjectPanel {
                                     )
                                     .with_compute_indents_fn(
                                         cx.entity(),
-                                        |this, range, window, cx| {
+                                        move |this, range, window, cx| {
                                             let mut items =
                                                 SmallVec::with_capacity(range.end - range.start);
                                             this.iter_visible_entries(
-                                                range,
+                                                range.clone(),
                                                 window,
                                                 cx,
                                                 &mut |entry, _, entries, _, _| {
@@ -7782,6 +7794,9 @@ impl Render for ProjectPanel {
                                                         );
                                                     items.push(depth);
                                                 },
+                                            );
+                                            items.extend(
+                                                this.extra_row_depths(range, tree_rows, cx),
                                             );
                                             items
                                         },

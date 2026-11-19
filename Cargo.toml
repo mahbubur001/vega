@@ -194,6 +194,7 @@ members = [
     "crates/sandbox_linux",
     "crates/scheduler",
     "crates/schema_generator",
+    "crates/scratches",
     "crates/search",
     "crates/session",
     "crates/settings",
@@ -238,6 +239,7 @@ members = [
     "crates/ui_prompt",
     "crates/util",
     "crates/util_macros",
+    "crates/vega_dialog",
     "crates/vim",
     "crates/vim_mode_setting",
     "crates/watch",
@@ -474,6 +476,7 @@ rpc = { path = "crates/rpc" }
 sandbox = { path = "crates/sandbox" }
 sandbox_linux = { path = "crates/sandbox_linux" }
 scheduler = { path = "crates/scheduler" }
+scratches = { path = "crates/scratches" }
 search = { path = "crates/search" }
 session = { path = "crates/session" }
 settings = { path = "crates/settings" }
@@ -517,6 +520,7 @@ ui_macros = { path = "crates/ui_macros" }
 ui_prompt = { path = "crates/ui_prompt" }
 util = { path = "crates/util" }
 util_macros = { path = "crates/util_macros" }
+vega_dialog = { path = "crates/vega_dialog" }
 vim = { path = "crates/vim" }
 vim_mode_setting = { path = "crates/vim_mode_setting" }
 watch = { path = "crates/watch" }

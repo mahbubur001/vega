@@ -1056,6 +1056,7 @@
     "bindings": {
       "ctrl-alt-u": "deployment::UploadToDefaultServer",
       "ctrl-alt-shift-u": "deployment::UploadTo",
+      "ctrl-alt-shift-insert": "scratches::NewScratchFile",
     },
   },
   {

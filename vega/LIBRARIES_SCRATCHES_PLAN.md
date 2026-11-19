@@ -1,6 +1,6 @@
 # External Libraries and Scratches: plan (2026-11-19)
 
-PhpStorm/IntelliJ parity for two Project-view features. Based on the JetBrains docs and a survey of VEGA's project panel, worktrees and language servers. Preview: `vega/mockups/libraries-scratches.html`. Nothing is built yet.
+PhpStorm/IntelliJ parity for two Project-view features. Based on the JetBrains docs and a survey of VEGA's project panel, worktrees and language servers. Preview: `vega/mockups/libraries-scratches.html`. Owner chose "go" on 2026-11-19 → option A (nodes inside the project panel). L1 built 2026-11-19.
 
 ## What PhpStorm does (summary)
 

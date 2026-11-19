@@ -1100,6 +1100,9 @@
     "bindings": {
       "alt-cmd-u": "deployment::UploadToDefaultServer",
       "alt-shift-cmd-u": "deployment::UploadTo",
+      // PhpStorm: New Scratch File (takes over New Window, which stays in the File menu).
+      "cmd-shift-n": "scratches::NewScratchFile",
+      "ctrl-shift-r": "scratches::RunScratch",
     },
   },
   {

@@ -1,4 +1,4 @@
-//! Asks for a file or folder name (Remote Host New File, New Folder, Rename).
+//! Asks for a file or folder name (New File, New Folder, Rename…).
 
 use gpui::{App, DismissEvent, Entity, EventEmitter, FocusHandle, Focusable, Render, Window};
 use ui::{Modal, ModalHeader, Section, prelude::*};
@@ -9,35 +9,62 @@ use crate::dialog;
 
 type OnConfirm = Box<dyn FnOnce(String, &mut Window, &mut App)>;
 
-pub(crate) struct NameModal {
+pub struct NameModal {
     title: SharedString,
     input: Entity<InputField>,
+    validate: fn(&str) -> Option<&'static str>,
     on_confirm: Option<OnConfirm>,
 }
 
 impl NameModal {
-    pub(crate) fn new(
+    /// Asks for a single file or folder name.
+    pub fn new(
         title: impl Into<SharedString>,
         initial: &str,
         on_confirm: impl FnOnce(String, &mut Window, &mut App) + 'static,
         window: &mut Window,
         cx: &mut Context<Self>,
     ) -> Self {
+        Self::build(title, "Name", initial, name_problem, on_confirm, window, cx)
+    }
+
+    /// Asks for a relative path (folders separated by `/`).
+    pub fn new_path(
+        title: impl Into<SharedString>,
+        label: &'static str,
+        initial: &str,
+        on_confirm: impl FnOnce(String, &mut Window, &mut App) + 'static,
+        window: &mut Window,
+        cx: &mut Context<Self>,
+    ) -> Self {
+        Self::build(title, label, initial, path_problem, on_confirm, window, cx)
+    }
+
+    fn build(
+        title: impl Into<SharedString>,
+        label: &'static str,
+        initial: &str,
+        validate: fn(&str) -> Option<&'static str>,
+        on_confirm: impl FnOnce(String, &mut Window, &mut App) + 'static,
+        window: &mut Window,
+        cx: &mut Context<Self>,
+    ) -> Self {
         let input = cx.new(|cx| {
-            let field = InputField::new(window, cx, "Name").label("Name");
+            let field = InputField::new(window, cx, label).label(label);
             field.set_text(initial, window, cx);
             field
         });
         Self {
             title: title.into(),
             input,
+            validate,
             on_confirm: Some(Box::new(on_confirm)),
         }
     }
 
     fn confirm(&mut self, _: &menu::Confirm, window: &mut Window, cx: &mut Context<Self>) {
         let name = self.input.read(cx).text(cx).trim().to_string();
-        if let Some(problem) = name_problem(&name) {
+        if let Some(problem) = (self.validate)(&name) {
             self.input
                 .update(cx, |input, cx| input.set_error(Some(problem), cx));
             return;
@@ -50,13 +77,29 @@ impl NameModal {
 }
 
 /// Why `name` can't be used as a single file or folder name, if it can't.
-pub(crate) fn name_problem(name: &str) -> Option<&'static str> {
+pub fn name_problem(name: &str) -> Option<&'static str> {
     if name.is_empty() {
         Some("Enter a name.")
     } else if name == "." || name == ".." {
         Some("Choose another name.")
     } else if name.contains('/') || name.contains('\\') {
         Some("A name can't contain slashes.")
+    } else {
+        None
+    }
+}
+
+/// Why `path` can't be used as a relative path, if it can't.
+pub fn path_problem(path: &str) -> Option<&'static str> {
+    if path.is_empty() {
+        Some("Enter a path.")
+    } else if path.starts_with('/') || path.starts_with('\\') {
+        Some("Enter a path relative to the project.")
+    } else if path
+        .split(['/', '\\'])
+        .any(|part| part.is_empty() || part == "." || part == "..")
+    {
+        Some("Each part of the path needs a name.")
     } else {
         None
     }
@@ -75,13 +118,13 @@ impl Render for NameModal {
     fn render(&mut self, _window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
         let focus = self.input.focus_handle(cx);
         v_flex()
-            .key_context("RemoteHostName")
+            .key_context("VegaNameModal")
             .w(rems(26.))
             .elevation_3(cx)
             .on_action(cx.listener(Self::confirm))
             .on_action(cx.listener(|_, _: &menu::Cancel, _, cx| cx.emit(DismissEvent)))
             .child(
-                Modal::new("remote-host-name", None)
+                Modal::new("vega-name-modal", None)
                     .header(ModalHeader::new().headline(self.title.clone()))
                     .section(Section::new().child(self.input.clone()))
                     .footer(dialog::footer(
@@ -106,5 +149,16 @@ mod tests {
         assert!(name_problem("").is_some());
         assert!(name_problem("..").is_some());
         assert!(name_problem("a/b").is_some());
+    }
+
+    #[test]
+    fn paths_must_stay_inside_the_project() {
+        assert_eq!(path_problem("src/scratch.php"), None);
+        assert_eq!(path_problem("scratch.php"), None);
+        assert!(path_problem("").is_some());
+        assert!(path_problem("/etc/hosts").is_some());
+        assert!(path_problem("../outside.php").is_some());
+        assert!(path_problem("src//a.php").is_some());
+        assert!(path_problem("src/").is_some());
     }
 }

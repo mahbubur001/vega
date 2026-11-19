@@ -5084,6 +5084,7 @@ dependencies = [
  "ui",
  "ui_input",
  "util",
+ "vega_dialog",
  "workspace",
  "zed_actions",
  "zed_credentials_provider",
@@ -16933,6 +16934,33 @@ name = "scratch"
 version = "1.0.9"
 
 [[package]]
+name = "scratches"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "db",
+ "editor",
+ "file_icons",
+ "fs",
+ "futures 0.3.34",
+ "gpui",
+ "language",
+ "log",
+ "paths",
+ "picker",
+ "project",
+ "project_panel",
+ "settings",
+ "task",
+ "ui",
+ "util",
+ "vega_dialog",
+ "workspace",
+ "worktree",
+ "zed_actions",
+]
+
+[[package]]
 name = "scroll"
 version = "0.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -20913,6 +20941,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "accd4ea62f7bb7a82fe23066fb0957d48ef677f6eeb8215f372f52e48bb32426"
 
 [[package]]
+name = "vega_dialog"
+version = "0.1.0"
+dependencies = [
+ "gpui",
+ "menu",
+ "ui",
+ "ui_input",
+ "workspace",
+]
+
+[[package]]
 name = "version-compare"
 version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -23906,6 +23945,7 @@ dependencies = [
  "rope",
  "sandbox",
  "sandbox_linux",
+ "scratches",
  "search",
  "semver",
  "serde",

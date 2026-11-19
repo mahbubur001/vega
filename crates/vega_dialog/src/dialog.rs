@@ -6,7 +6,7 @@ use gpui::{App, ClickEvent, Entity, FocusHandle, Rems, Stateful};
 use ui::{ButtonLike, ContextMenu, ModalFooter, PopoverMenu, prelude::*};
 
 /// The dialog's main button (OK, Connect, Apply…): solid accent. Enter runs it.
-pub(crate) fn primary_button(
+pub fn primary_button(
     id: &'static str,
     label: impl Into<SharedString>,
     _focus: &FocusHandle,
@@ -23,7 +23,7 @@ pub(crate) fn primary_button(
 }
 
 /// The candidate with the highest contrast against `background` (WCAG relative luminance).
-pub(crate) fn readable_on(background: gpui::Hsla, candidates: [gpui::Hsla; 2]) -> gpui::Hsla {
+pub fn readable_on(background: gpui::Hsla, candidates: [gpui::Hsla; 2]) -> gpui::Hsla {
     fn luminance(color: gpui::Hsla) -> f32 {
         let rgba = color.to_rgb();
         let channel = |c: f32| {
@@ -48,12 +48,12 @@ pub(crate) fn readable_on(background: gpui::Hsla, candidates: [gpui::Hsla; 2]) -
 }
 
 /// The dialog's Cancel button. Escape runs it.
-pub(crate) fn cancel_button(id: &'static str, _focus: &FocusHandle, cx: &App) -> DialogButton {
+pub fn cancel_button(id: &'static str, _focus: &FocusHandle, cx: &App) -> DialogButton {
     secondary_button(id, "Cancel", cx)
 }
 
 /// An outlined button (Cancel, Apply…), the same size as [`primary_button`].
-pub(crate) fn secondary_button(
+pub fn secondary_button(
     id: &'static str,
     label: impl Into<SharedString>,
     cx: &App,
@@ -67,7 +67,7 @@ pub(crate) fn secondary_button(
 
 /// A footer button: fixed height and padding so primary and secondary buttons line up.
 #[derive(IntoElement)]
-pub(crate) struct DialogButton {
+pub struct DialogButton {
     element: Stateful<Div>,
     label: SharedString,
     color: Color,
@@ -112,7 +112,7 @@ impl DialogButton {
         self
     }
 
-    pub(crate) fn on_click(
+    pub fn on_click(
         mut self,
         handler: impl Fn(&ClickEvent, &mut Window, &mut App) + 'static,
     ) -> Self {
@@ -129,12 +129,12 @@ impl RenderOnce for DialogButton {
 }
 
 /// A footer with Cancel and the primary button on the right.
-pub(crate) fn footer(cancel: DialogButton, primary: DialogButton) -> ModalFooter {
+pub fn footer(cancel: DialogButton, primary: DialogButton) -> ModalFooter {
     ModalFooter::new().end_slot(h_flex().gap_2().child(cancel).child(primary))
 }
 
 /// PhpStorm's round "?" help button.
-pub(crate) fn help_button(id: &'static str, cx: &App) -> Stateful<Div> {
+pub fn help_button(id: &'static str, cx: &App) -> Stateful<Div> {
     let colors = cx.theme().colors();
     let hover = colors.element_hover;
     div()
@@ -153,7 +153,7 @@ pub(crate) fn help_button(id: &'static str, cx: &App) -> Stateful<Div> {
 
 /// A PhpStorm-style combo box: a bordered box with the choice's icon and label
 /// on the left and an arrow on the right; `menu` builds the list of choices.
-pub(crate) fn combo_box(
+pub fn combo_box(
     id: impl Into<SharedString>,
     icon: Option<(IconName, Color)>,
     label: impl Into<SharedString>,

@@ -3,8 +3,6 @@
 //! engine.
 
 mod deployment_window;
-mod dialog;
-mod name_modal;
 mod permissions_modal;
 mod prompter;
 mod remote_edit_bar;
@@ -17,6 +15,8 @@ mod store;
 mod sync_view;
 mod transfers_indicator;
 mod transfers_panel;
+
+pub(crate) use vega_dialog::{dialog, name_modal};
 
 use std::path::PathBuf;
 use std::sync::Arc;

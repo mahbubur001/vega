@@ -1001,6 +1001,27 @@ pub mod git_panel {
     );
 }
 
+/// VEGA: scratch files, kept outside projects (PhpStorm's Scratches and Consoles).
+pub mod scratches {
+    use gpui::actions;
+
+    actions!(
+        scratches,
+        [
+            /// Creates a scratch file in a language you choose (from the selection, when there is one).
+            NewScratchFile,
+            /// Creates a plain-text scratch buffer (buffer1.txt to buffer5.txt, then reused).
+            NewScratchBuffer,
+            /// Lists the scratch files, most recently changed first.
+            ShowScratchFiles,
+            /// Runs the scratch file in the active editor in a terminal.
+            RunScratch,
+            /// Shows the scratch files folder in Finder.
+            RevealScratchesFolder,
+        ]
+    );
+}
+
 pub mod deployment {
     use std::collections::HashSet;
     use std::path::{Path, PathBuf};

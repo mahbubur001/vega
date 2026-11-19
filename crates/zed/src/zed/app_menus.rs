@@ -118,6 +118,15 @@ pub fn app_menus(cx: &mut App) -> Vec<Menu> {
             items: vec![
                 MenuItem::action("New", workspace::NewFile),
                 MenuItem::action("New Window", workspace::NewWindow),
+                MenuItem::action("New Scratch File…", zed_actions::scratches::NewScratchFile),
+                MenuItem::action(
+                    "New Scratch Buffer",
+                    zed_actions::scratches::NewScratchBuffer,
+                ),
+                MenuItem::action(
+                    "Show Scratch Files…",
+                    zed_actions::scratches::ShowScratchFiles,
+                ),
                 MenuItem::separator(),
                 #[cfg(not(target_os = "macos"))]
                 MenuItem::action("Open File...", workspace::OpenFiles),

@@ -33,6 +33,11 @@ Status keys: `[ ]` todo · `[~]` in progress · `[x]` done. Each item maps to a 
   - [~] D3 Remote Host panel — built (browse, open/edit on server with save-back, new/rename/delete, upload here, download to project, cut/copy/paste, chmod, exclude path, drag and drop from Finder and the project panel, keyboard navigation, remembered dock position); not tried in the app yet
   - [~] D4 Compare & Sync — folder-diff Sync view, File Transfers panel with Retry, remote-change warnings; PhpStorm parity plan P1–P6 done (DEPLOYMENT_PLAN.md). Owner's in-app check ongoing
   - [ ] D5 Extras (SSH, agent tools)
+- [ ] External Libraries & Scratches (PhpStorm parity) — see `LIBRARIES_SCRATCHES_PLAN.md`
+  - [~] L1 Scratches — "Scratches and Consoles" node at the bottom of the project panel (project-panel seam `crates/project_panel/src/extra_rows.rs`), crate `scratches`: New Scratch File (⇧⌘N, language picker, recent languages, from selection), New Scratch Buffer, Show Scratch Files, Run (⌃⇧R, terminal), Change Language, Rename, Copy, Move to Project, Delete, New File/Directory, empty scratches deleted on close. Waiting for the owner's check
+  - [ ] L2 External Libraries (browse)
+  - [ ] L3 Settings › PHP page
+  - [ ] L4 Scopes
 
 ## Phase 3 — Ship
 - [ ] Own update server / GitHub Releases auto-update (P10) — must also serve `zed-remote-server` for SSH/WSL/Docker projects (`AutoUpdater::get_release_asset`), release notes (`auto_update_ui`, menu item removed), and the Linux build the WSL sandbox helper downloads (`sandbox::windows_wsl::PROVISION_HELPER_FROM_ZED_CLOUD`)

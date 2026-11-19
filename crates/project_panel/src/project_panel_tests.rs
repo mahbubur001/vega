@@ -13782,3 +13782,67 @@ fn entry_row_bounds(panel: &ProjectPanel, entry_id: ProjectEntryId) -> Bounds<Pi
         size(viewport.size.width, row_height),
     )
 }
+
+/// VEGA: add-on rows listed after the project tree (`extra_rows.rs`).
+#[gpui::test]
+async fn test_extra_rows_follow_the_project_tree(cx: &mut gpui::TestAppContext) {
+    struct Rows(Vec<usize>);
+
+    impl ProjectPanelExtraRows for Rows {
+        fn row_count(&self, _: &App) -> usize {
+            self.0.len()
+        }
+
+        fn row_depth(&self, index: usize, _: &App) -> usize {
+            self.0[index]
+        }
+
+        fn render_row(
+            &mut self,
+            index: usize,
+            _: ExtraRowState,
+            _: &mut Window,
+            _: &mut Context<Self>,
+        ) -> AnyElement {
+            div().child(format!("row {index}")).into_any_element()
+        }
+    }
+
+    init_test(cx);
+    let fs = FakeFs::new(cx.executor());
+    fs.insert_tree("/root", json!({ "a.txt": "", "b.txt": "" }))
+        .await;
+    let project = Project::test(fs.clone(), ["/root".as_ref()], cx).await;
+    let window = cx.add_window(|window, cx| MultiWorkspace::test_new(project.clone(), window, cx));
+    let workspace = window
+        .read_with(cx, |mw, _| mw.workspace().clone())
+        .unwrap();
+    let cx = &mut VisualTestContext::from_window(window.into(), cx);
+    let panel = workspace.update_in(cx, ProjectPanel::new);
+    cx.run_until_parked();
+
+    let first = cx.new(|_| Rows(vec![0, 1]));
+    let second = cx.new(|_| Rows(vec![0, 1, 2]));
+    panel.update(cx, |panel, cx| {
+        panel.add_extra_rows(first, cx);
+        panel.add_extra_rows(second, cx);
+        assert_eq!(panel.extra_row_count(cx), 5);
+        // Three project rows (root, a.txt, b.txt), then the add-on rows.
+        assert_eq!(panel.extra_row_depths(0..8, 3, cx), [0, 1, 0, 1, 2]);
+        assert_eq!(panel.extra_row_depths(4..6, 3, cx), [1, 0]);
+        assert!(panel.extra_row_depths(0..3, 3, cx).is_empty());
+    });
+    let rendered = panel.update_in(cx, |panel, window, cx| {
+        panel.render_extra_rows(2..7, 3, window, cx).len()
+    });
+    assert_eq!(rendered, 4);
+
+    panel.update(cx, |panel, cx| {
+        panel.selection = panel.selection.or(Some(SelectedEntry {
+            worktree_id: project.read(cx).worktrees(cx).next().unwrap().read(cx).id(),
+            entry_id: ProjectEntryId::from_proto(1),
+        }));
+        panel.clear_selection(cx);
+        assert!(panel.selection.is_none());
+    });
+}
