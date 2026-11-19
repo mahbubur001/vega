@@ -1213,7 +1213,11 @@ impl RemoteHostPanel {
                     .spacing(ListItemSpacing::Dense)
                     .toggle_state(self.selected.as_deref() == Some(row.path.as_str()))
                     .when(row.is_dir, |item| item.toggle(Some(expanded)))
-                    .start_slot(icon.size(IconSize::Small).color(Color::Muted))
+                    .start_slot(if is_root {
+                        icon.size(IconSize::Small)
+                    } else {
+                        icon.size(IconSize::Small).color(Color::Muted)
+                    })
                     .child(
                         h_flex()
                             .gap_2()
@@ -1313,11 +1317,7 @@ impl RemoteHostPanel {
                     move |_, _| {
                         h_flex()
                             .gap_1p5()
-                            .child(
-                                server_icon(Some(kind))
-                                    .size(IconSize::Small)
-                                    .color(Color::Muted),
-                            )
+                            .child(server_icon(Some(kind)).size(IconSize::Small))
                             .child(Label::new(label.clone()))
                             .into_any_element()
                     },
@@ -1569,9 +1569,11 @@ fn menu_entry(
 
 fn server_icon(kind: Option<ServerType>) -> Icon {
     match kind {
-        Some(ServerType::Local) => Icon::new(IconName::Folder),
-        Some(ServerType::Sftp) => Icon::new(IconName::Lock),
-        _ => Icon::new(IconName::Server),
+        Some(kind) => {
+            let (icon, color) = crate::servers_modal::server_type_icon(kind);
+            Icon::new(icon).color(color)
+        }
+        None => Icon::new(IconName::Server),
     }
 }
 
