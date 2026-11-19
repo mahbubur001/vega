@@ -1362,8 +1362,8 @@ fn set_http_context_server_configuration(server_id: &ContextServerId, cx: &mut T
     );
 }
 
-/// A fake HTTP client that serves the OAuth discovery documents (CIMD-capable,
-/// so no dynamic client registration is needed) and routes MCP endpoint POSTs
+/// A fake HTTP client that serves the OAuth discovery documents (CIMD and DCR
+/// capable) and routes MCP endpoint POSTs
 /// to `respond_to_mcp_message` by the JSON-RPC message in the request body.
 fn set_fake_mcp_http_client(
     cx: &mut TestAppContext,
@@ -1389,7 +1389,9 @@ fn set_fake_mcp_http_client(
                     "authorization_endpoint": "https://auth.example.com/authorize",
                     "token_endpoint": "https://auth.example.com/token",
                     "code_challenge_methods_supported": ["S256"],
-                    "client_id_metadata_document_supported": true
+                    "client_id_metadata_document_supported": true,
+                    // VEGA hosts no CIMD document and registers with DCR.
+                    "registration_endpoint": "https://auth.example.com/register"
                 }))
             } else {
                 None

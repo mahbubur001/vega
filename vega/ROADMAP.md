@@ -37,7 +37,8 @@ Status keys: `[ ]` todo · `[~]` in progress · `[x]` done. Each item maps to a 
 - [ ] Signed + notarized macOS bundle (P11)
 - [~] CI (P12): Linux only for now (`.github/workflows/vega_ci.yml`: fmt + tests of the VEGA crates on `ubuntu-latest`). macOS/Windows CI deferred: 10x/2x minutes on a private repo
 - [~] Website, docs, README rewrite (P13) — README rewritten; Settings Sync user docs added
-  - [ ] Host VEGA's OAuth client metadata (CIMD) and point `crates/context_server/src/oauth.rs` `CIMD_URL` at it — MCP OAuth currently identifies as Zed via `zed.dev/oauth/client-metadata.json`
+  - [x] MCP OAuth no longer offers Zed's CIMD document (`zed.dev/oauth/client-metadata.json`): `VEGA_CIMD_URL = None` in `crates/context_server/src/oauth.rs`, so VEGA registers via DCR or a pre-registered `client_id`
+  - [ ] Optional: host VEGA's own client metadata document and set `VEGA_CIMD_URL` (needed only for CIMD-only auth servers)
   - [ ] Repoint ~60 in-app `zed.dev/docs` links (error toasts, help menu, status/merch links) at VEGA docs
 - [ ] Extension catalogue without zed.dev — the Extensions page and installs still use `api.zed.dev` (`extension_host::fetch_extensions_from_api`, `install_latest_extension`); only user-initiated, never on startup
 

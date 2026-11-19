@@ -36,6 +36,12 @@ use url::Url;
 /// The CIMD URL where Zed's OAuth client metadata document is hosted.
 pub const CIMD_URL: &str = "https://zed.dev/oauth/client-metadata.json";
 
+/// VEGA: the client metadata document VEGA offers auth servers for CIMD.
+/// VEGA doesn't host one, and the upstream document lives on zed.dev (VEGA must
+/// never point anything there), so VEGA registers with DCR or a pre-registered
+/// `client_id` instead. Set this once VEGA hosts its own document.
+pub const VEGA_CIMD_URL: Option<&str> = None;
+
 /// Validate that a URL is safe to use as an OAuth endpoint.
 ///
 /// OAuth endpoints carry sensitive material (authorization codes, PKCE
@@ -512,9 +518,18 @@ pub enum ClientRegistrationStrategy {
 pub fn determine_registration_strategy(
     auth_server_metadata: &AuthServerMetadata,
 ) -> ClientRegistrationStrategy {
-    if auth_server_metadata.client_id_metadata_document_supported {
+    determine_registration_strategy_with(auth_server_metadata, VEGA_CIMD_URL)
+}
+
+fn determine_registration_strategy_with(
+    auth_server_metadata: &AuthServerMetadata,
+    cimd_url: Option<&str>,
+) -> ClientRegistrationStrategy {
+    if let Some(cimd_url) = cimd_url
+        && auth_server_metadata.client_id_metadata_document_supported
+    {
         ClientRegistrationStrategy::Cimd {
-            client_id: CIMD_URL.to_string(),
+            client_id: cimd_url.to_string(),
         }
     } else if let Some(ref endpoint) = auth_server_metadata.registration_endpoint {
         ClientRegistrationStrategy::Dcr {
@@ -1679,9 +1694,31 @@ mod tests {
             grant_types_supported: None,
         };
         assert_eq!(
-            determine_registration_strategy(&metadata),
+            determine_registration_strategy_with(&metadata, Some(CIMD_URL)),
             ClientRegistrationStrategy::Cimd {
                 client_id: CIMD_URL.to_string(),
+            }
+        );
+    }
+
+    #[test]
+    fn test_vega_registers_with_dcr_even_when_cimd_is_supported() {
+        let reg_endpoint = Url::parse("https://auth.example.com/register").unwrap();
+        let metadata = AuthServerMetadata {
+            issuer: Url::parse("https://auth.example.com").unwrap(),
+            authorization_endpoint: Url::parse("https://auth.example.com/authorize").unwrap(),
+            token_endpoint: Url::parse("https://auth.example.com/token").unwrap(),
+            registration_endpoint: Some(reg_endpoint.clone()),
+            scopes_supported: None,
+            code_challenge_methods_supported: Some(vec!["S256".into()]),
+            client_id_metadata_document_supported: true,
+            grant_types_supported: None,
+        };
+        assert_eq!(VEGA_CIMD_URL, None);
+        assert_eq!(
+            determine_registration_strategy(&metadata),
+            ClientRegistrationStrategy::Dcr {
+                registration_endpoint: reg_endpoint,
             }
         );
     }
@@ -2319,13 +2356,13 @@ mod tests {
             };
 
             let discovery = discover(&client, &server_url, &www_auth).await.unwrap();
+            // VEGA hosts no CIMD document, so a CIMD-only server can't be
+            // registered with automatically.
             let registration =
                 resolve_client_registration(&client, &discovery, "http://127.0.0.1:12345/callback")
-                    .await
-                    .unwrap();
+                    .await;
 
-            assert_eq!(registration.client_id, CIMD_URL);
-            assert_eq!(registration.client_secret, None);
+            assert!(registration.is_err());
             assert_eq!(discovery.scopes, vec!["mcp:read"]);
         });
     }
