@@ -3396,9 +3396,9 @@
     "semantic_hash": "a8fae5c7304469bc0d78824d599e95be"
   },
   "crates/deployment/src/mapper.rs": {
-    "mtime": 1795056795.4296932,
-    "seen": 1795057323.6805692,
-    "ast_hash": "31bfa3ccf20249973832a529adea3811",
+    "mtime": 1795076094.154763,
+    "seen": 1795076216.384456,
+    "ast_hash": "75474cb885bf64ffe001d66a26bfb273",
     "semantic_hash": ""
   },
   "crates/deployment/src/pool.rs": {
