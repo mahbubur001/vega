@@ -1010,6 +1010,8 @@ pub mod php {
         [
             /// Opens the project's PHP settings: language level, CLI interpreter, include paths, stubs.
             OpenPhpSettings,
+            /// Asks phpactor to rebuild its index (after adding include paths, or when symbols are missing).
+            Reindex,
         ]
     );
 }

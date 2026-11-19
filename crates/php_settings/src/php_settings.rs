@@ -5,22 +5,43 @@
 
 pub mod config;
 pub mod interpreters;
+mod phpactor;
 pub mod store;
 pub mod stubs;
 mod window;
 
 use gpui::App;
+use workspace::Toast;
 use workspace::Workspace;
-use zed_actions::php::OpenPhpSettings;
+use workspace::notifications::NotificationId;
+use zed_actions::php::{OpenPhpSettings, Reindex};
 
 pub use config::PhpConfig;
 pub use store::{PhpSettingsStore, cached_config, config_for_project, project_root};
 
+struct PhpToast;
+
 pub fn init(cx: &mut App) {
-    cx.observe_new(|workspace: &mut Workspace, _, _| {
-        workspace.register_action(|workspace, _: &OpenPhpSettings, _, cx| {
-            open_for_workspace(workspace, cx)
-        });
+    cx.observe_new(|workspace: &mut Workspace, _, cx| {
+        workspace
+            .register_action(|workspace, _: &OpenPhpSettings, _, cx| {
+                open_for_workspace(workspace, cx)
+            })
+            .register_action(|workspace, _: &Reindex, _, cx| {
+                let count = phpactor::reindex(&workspace.project().clone(), cx);
+                let message = if count == 0 {
+                    "phpactor isn't running for this project; open a PHP file first.".to_string()
+                } else {
+                    "phpactor is rebuilding its index.".to_string()
+                };
+                workspace.show_toast(
+                    Toast::new(NotificationId::unique::<PhpToast>(), message).autohide(),
+                    cx,
+                );
+            });
+        if workspace.project().read(cx).is_local() {
+            phpactor::watch(workspace.project().clone(), cx);
+        }
     })
     .detach();
 }
