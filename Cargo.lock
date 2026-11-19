@@ -11176,6 +11176,24 @@ dependencies = [
 ]
 
 [[package]]
+name = "markdown_layout"
+version = "0.1.0"
+dependencies = [
+ "db",
+ "editor",
+ "fs",
+ "gpui",
+ "language",
+ "markdown_preview",
+ "project",
+ "serde_json",
+ "settings",
+ "ui",
+ "util",
+ "workspace",
+]
+
+[[package]]
 name = "markdown_preview"
 version = "0.1.0"
 dependencies = [
@@ -23967,6 +23985,7 @@ dependencies = [
  "lsp_command_selector",
  "lsp_locations",
  "markdown",
+ "markdown_layout",
  "markdown_preview",
  "menu",
  "migrator",

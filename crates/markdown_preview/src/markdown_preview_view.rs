@@ -240,6 +240,25 @@ impl MarkdownPreviewView {
         });
     }
 
+    /// VEGA: lets another crate put a source editor back in a pane without the
+    /// `open_markdown_files_in_preview` hook replacing it with a preview again.
+    pub fn suppress_auto_preview_for(editor: &Entity<Editor>, cx: &mut App) {
+        let editor_entity_id = editor.entity_id();
+        if !cx
+            .default_global::<SuppressedAutoPreviews>()
+            .0
+            .insert(editor_entity_id)
+        {
+            return;
+        }
+        cx.observe_release(editor, move |_, cx| {
+            cx.default_global::<SuppressedAutoPreviews>()
+                .0
+                .remove(&editor_entity_id);
+        })
+        .detach();
+    }
+
     pub fn open_preview_in_pane(
         workspace: &mut Workspace,
         editor: Entity<Editor>,

@@ -1494,6 +1494,9 @@ fn initialize_pane(
             let quick_action_bar =
                 cx.new(|cx| QuickActionBar::new(buffer_search_bar, workspace, cx));
             toolbar.add_item(quick_action_bar, window, cx);
+            let markdown_layout_toolbar =
+                cx.new(|cx| markdown_layout::MarkdownLayoutToolbar::new(workspace, cx));
+            toolbar.add_item(markdown_layout_toolbar, window, cx);
             let diagnostic_editor_controls = cx.new(|_| diagnostics::ToolbarControls::new());
             toolbar.add_item(diagnostic_editor_controls, window, cx);
             let project_search_bar = cx.new(|_| ProjectSearchBar::new());
