@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>VEGA — External Libraries & Scratches preview</title>
+<style>
+  /* Gruvbox Dark Hard, the owner's active theme */
+  :root {
+    --window: #4c4642; --panel: #393634; --editor: #1d2021; --raised: #494340; --selected: #5b524c;
+    --border: #5b534d; --border-v: #494340; --text: #fbf1c7; --muted: #c5b597; --faint: #9a8b74;
+    --accent: #83a598; --green: #b8bb26; --yellow: #fabd2f; --orange: #fe8019; --red: #fb4934; --purple: #d3869b; --aqua: #8ec07c;
+    --mono: "JetBrains Mono", "SF Mono", Menlo, monospace;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #282828; color: var(--text); font: 13px/1.45 -apple-system, BlinkMacSystemFont, "Inter", sans-serif; }
+  header { padding: 16px 24px; border-bottom: 1px solid var(--border-v); display: flex; gap: 14px; align-items: baseline; }
+  header h1 { margin: 0; font-size: 15px; } header span { color: var(--muted); }
+  nav { display: flex; gap: 6px; padding: 12px 24px 0; flex-wrap: wrap; }
+  nav button { background: transparent; border: 1px solid var(--border); color: var(--muted); padding: 5px 12px; border-radius: 999px; cursor: pointer; font: inherit; }
+  nav button.on { color: var(--editor); background: var(--accent); border-color: var(--accent); }
+  main { padding: 18px 24px 60px; }
+  .screen { display: none; } .screen.on { display: block; }
+  .note { color: var(--muted); max-width: 1000px; margin: 0 0 12px; } .note b { color: var(--text); }
+  .win { width: 1100px; height: 640px; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; display: grid; grid-template-rows: 34px 1fr 24px; background: var(--window); box-shadow: 0 24px 70px rgba(0,0,0,.5); }
+  .title { display: flex; align-items: center; gap: 8px; padding: 0 12px; background: var(--panel); border-bottom: 1px solid var(--border-v); color: var(--muted); }
+  .lights i { width: 12px; height: 12px; border-radius: 50%; display: inline-block; margin-right: 6px; } .lights i:nth-child(1){background:#ff5f57}.lights i:nth-child(2){background:#febc2e}.lights i:nth-child(3){background:#28c840}
+  .body { display: grid; grid-template-columns: 300px 1fr; min-height: 0; }
+  .side { background: var(--panel); border-right: 1px solid var(--border-v); overflow: auto; padding: 4px 0; font-size: 12.5px; }
+  .tr { display: flex; align-items: center; gap: 5px; height: 22px; padding-right: 8px; white-space: nowrap; cursor: default; position: relative; }
+  .tr:hover { background: var(--raised); } .tr.sel { background: var(--selected); }
+  .tr .ch { width: 14px; color: var(--faint); text-align: center; font-size: 10px; }
+  .tr .ic { width: 16px; text-align: center; }
+  .tr .ver { color: var(--faint); margin-left: 6px; font-size: 11.5px; }
+  .tr.dim { color: var(--faint); }
+  .tr.root { font-weight: 600; }
+  .tr.lib { background: rgba(131,165,152,.06); }
+  .d1{padding-left:6px}.d2{padding-left:22px}.d3{padding-left:38px}.d4{padding-left:54px}
+  .new { font-size: 9.5px; background: rgba(131,165,152,.25); color: var(--accent); border-radius: 999px; padding: 0 6px; margin-left: 6px; }
+  .folder{color:var(--yellow)} .php{color:var(--purple)} .js{color:var(--yellow)} .ts{color:var(--accent)} .lib{color:var(--aqua)} .json{color:var(--orange)} .txt{color:var(--muted)} .stub{color:var(--accent)}
+  .editor { background: var(--editor); display: flex; flex-direction: column; min-width: 0; }
+  .tabs { display: flex; background: var(--panel); border-bottom: 1px solid var(--border-v); }
+  .tab { padding: 6px 12px; color: var(--muted); border-right: 1px solid var(--border-v); font-size: 12.5px; }
+  .tab.on { background: var(--editor); color: var(--text); }
+  .tab .lock { color: var(--faint); margin-left: 6px; }
+  .code { padding: 12px 18px; font: 12.5px/1.75 var(--mono); color: #ebdbb2; flex: 1; }
+  .k{color:var(--red)} .s{color:var(--green)} .c{color:var(--faint)} .f{color:var(--aqua)} .v{color:var(--accent)} .n{color:var(--purple)}
+  .bar { display: flex; align-items: center; gap: 10px; padding: 6px 14px; background: rgba(250,189,47,.10); border-bottom: 1px solid rgba(250,189,47,.35); font-size: 12.5px; }
+  .bar.info { background: rgba(131,165,152,.12); border-color: rgba(131,165,152,.4); }
+  .btn { border: 1px solid var(--border); background: transparent; color: var(--text); border-radius: 6px; padding: 3px 10px; font: inherit; font-size: 12px; cursor: pointer; }
+  .btn:hover { background: var(--raised); } .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--editor); font-weight: 600; }
+  .status { display: flex; gap: 14px; align-items: center; padding: 0 10px; background: var(--panel); border-top: 1px solid var(--border-v); color: var(--muted); font-size: 11.5px; }
+  .menu { position: absolute; background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 4px; min-width: 260px; box-shadow: 0 16px 40px rgba(0,0,0,.5); z-index: 10; font-size: 12.5px; }
+  .mi { display: flex; gap: 8px; align-items: center; padding: 4px 8px; border-radius: 5px; } .mi:hover, .mi.hl { background: var(--selected); }
+  .mi .sc { margin-left: auto; color: var(--faint); font: 11px var(--mono); } .ms { height: 1px; background: var(--border-v); margin: 4px 6px; }
+  .popup { position: absolute; left: 50%; top: 70px; transform: translateX(-50%); width: 420px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px; box-shadow: 0 20px 50px rgba(0,0,0,.55); z-index: 10; }
+  .popup .head { padding: 10px 12px 6px; color: var(--muted); font-size: 12px; }
+  .input { margin: 0 10px 8px; background: var(--editor); border: 1px solid var(--accent); border-radius: 6px; padding: 6px 10px; }
+  .opt { display: flex; gap: 8px; align-items: center; padding: 5px 14px; } .opt.hl { background: var(--selected); } .opt .ext { margin-left: auto; color: var(--faint); font: 11px var(--mono); }
+  .sep { height: 1px; background: var(--border-v); margin: 4px 0; }
+  .term { border-top: 1px solid var(--border-v); background: var(--editor); height: 170px; font: 12px/1.6 var(--mono); padding: 8px 14px; color: #ebdbb2; }
+  .term .t { color: var(--faint); font-family: -apple-system; font-size: 11.5px; margin-bottom: 4px; }
+  /* settings window */
+  .settings { width: 1000px; height: 600px; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; display: grid; grid-template-rows: 34px 1fr 52px; background: var(--window); box-shadow: 0 24px 70px rgba(0,0,0,.5); }
+  .sbody { display: grid; grid-template-columns: 230px 1fr; min-height: 0; }
+  .snav { background: var(--panel); border-right: 1px solid var(--border-v); padding: 8px; }
+  .snav .it { padding: 5px 10px; border-radius: 6px; color: var(--muted); } .snav .it.on { background: var(--selected); color: var(--text); } .snav .sub { padding-left: 24px; }
+  .scontent { background: var(--editor); padding: 18px 24px; overflow: auto; }
+  .row { display: grid; grid-template-columns: 170px 1fr; gap: 10px; align-items: center; margin-bottom: 10px; }
+  .row label { color: var(--muted); }
+  .combo { display: flex; align-items: center; gap: 8px; border: 1px solid var(--border-v); background: var(--editor); border-radius: 6px; padding: 5px 10px; width: 360px; }
+  .combo::after { content: "⌄"; margin-left: auto; color: var(--faint); }
+  .stabs { display: flex; gap: 18px; border-bottom: 1px solid var(--border-v); margin: 16px 0 10px; }
+  .stab { padding: 6px 0; color: var(--muted); } .stab.on { color: var(--text); border-bottom: 2px solid var(--accent); font-weight: 600; }
+  .list { border: 1px solid var(--border-v); border-radius: 8px; overflow: hidden; }
+  .list .tb { display: flex; gap: 4px; padding: 4px 6px; background: var(--panel); border-bottom: 1px solid var(--border-v); }
+  .list .tb span { width: 24px; text-align: center; border-radius: 4px; cursor: pointer; } .list .tb span:hover { background: var(--raised); }
+  .li { padding: 5px 10px; display: flex; gap: 8px; font: 12px var(--mono); } .li:nth-child(odd) { background: rgba(255,255,255,.015); } .li .k2 { margin-left: auto; color: var(--faint); font-family: -apple-system; }
+  .cb { display: inline-grid; place-items: center; width: 14px; height: 14px; border: 1px solid var(--border); border-radius: 3px; font-size: 10px; } .cb.on { background: var(--accent); border-color: var(--accent); color: var(--editor); }
+  .sfoot { display: flex; align-items: center; justify-content: flex-end; gap: 8px; padding: 0 14px; background: var(--panel); border-top: 1px solid var(--border-v); }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .card-title { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .6px; margin: 0 0 6px; }
+</style>
+</head>
+<body>
+<header><h1>VEGA · External Libraries &amp; Scratches</h1><span>Design preview in your theme (Gruvbox Dark Hard). Nothing here is built yet.</span></header>
+<nav id="nav"></nav>
+<main>
+
+<!-- 1 project panel -->
+<section class="screen" data-name="1 · Project panel">
+  <p class="note"><b>Option A:</b> the two nodes sit at the bottom of the project tree, like PhpStorm. Library roots have a faint tint; library files open read-only. Click ▸/▾ to expand.</p>
+  <div class="win">
+    <div class="title"><span class="lights"><i></i><i></i><i></i></span>vega-test-site</div>
+    <div class="body">
+      <div class="side" id="tree">
+        <div class="tr root d1"><span class="ch">▾</span><span class="ic folder">▣</span>vega-test-site</div>
+        <div class="tr d2"><span class="ch">▸</span><span class="ic folder">▣</span>assets</div>
+        <div class="tr d2"><span class="ch">▸</span><span class="ic folder">▣</span>includes</div>
+        <div class="tr d2 dim"><span class="ch">▸</span><span class="ic folder">▣</span>vendor</div>
+        <div class="tr d2"><span class="ch"></span><span class="ic json">{}</span>composer.json</div>
+        <div class="tr d2 sel"><span class="ch"></span><span class="ic php">php</span>index.php</div>
+        <div class="tr root d1" style="margin-top:6px"><span class="ch">▾</span><span class="ic lib">❖</span>External Libraries <span class="new">new</span></div>
+        <div class="tr d2 lib"><span class="ch">▾</span><span class="ic stub">◆</span>PHP Runtime<span class="ver">8.3</span></div>
+        <div class="tr d3 lib"><span class="ch">▸</span><span class="ic stub">◇</span>Core</div>
+        <div class="tr d3 lib"><span class="ch">▸</span><span class="ic stub">◇</span>standard</div>
+        <div class="tr d3 lib"><span class="ch">▸</span><span class="ic stub">◇</span>pdo</div>
+        <div class="tr d3 lib"><span class="ch">▸</span><span class="ic stub">◇</span>mbstring</div>
+        <div class="tr d2 lib"><span class="ch">▸</span><span class="ic folder">▣</span>~/dev/wordpress-core<span class="ver">include path</span></div>
+        <div class="tr d2 lib"><span class="ch">▾</span><span class="ic lib">❖</span>Composer<span class="ver">3 packages</span></div>
+        <div class="tr d3 lib"><span class="ch">▸</span><span class="ic folder">▣</span>guzzlehttp/guzzle<span class="ver">7.9.2</span></div>
+        <div class="tr d3 lib"><span class="ch">▸</span><span class="ic folder">▣</span>monolog/monolog<span class="ver">3.7.0</span></div>
+        <div class="tr d3 lib"><span class="ch">▸</span><span class="ic folder">▣</span>psr/log<span class="ver">3.0.2</span></div>
+        <div class="tr d2 lib"><span class="ch">▾</span><span class="ic js">⬢</span>Node.js<span class="ver">2 packages</span></div>
+        <div class="tr d3 lib"><span class="ch">▸</span><span class="ic folder">▣</span>lodash<span class="ver">4.17.21</span></div>
+        <div class="tr d3 lib"><span class="ch">▸</span><span class="ic ts">TS</span>@types/node<span class="ver">22.9.0</span></div>
+        <div class="tr root d1" style="margin-top:6px"><span class="ch">▾</span><span class="ic txt">✎</span>Scratches and Consoles <span class="new">new</span></div>
+        <div class="tr d2"><span class="ch">▾</span><span class="ic folder">▣</span>Scratches</div>
+        <div class="tr d3"><span class="ch"></span><span class="ic txt">≡</span>buffer1.txt</div>
+        <div class="tr d3"><span class="ch"></span><span class="ic php">php</span>scratch.php</div>
+        <div class="tr d3"><span class="ch"></span><span class="ic php">php</span>scratch_1.php</div>
+        <div class="tr d3"><span class="ch"></span><span class="ic js">js</span>scratch.js</div>
+        <div class="tr d3"><span class="ch">▸</span><span class="ic folder">▣</span>experiments</div>
+      </div>
+      <div class="editor">
+        <div class="tabs"><span class="tab on">index.php</span></div>
+        <div class="code"><span class="k">&lt;?php</span><br><span class="k">require</span> <span class="v">__DIR__</span> . <span class="s">'/vendor/autoload.php'</span>;<br><br><span class="v">$client</span> = <span class="k">new</span> <span class="f">\GuzzleHttp\Client</span>();<br><span class="v">$log</span> = <span class="k">new</span> <span class="f">\Monolog\Logger</span>(<span class="s">'site'</span>);</div>
+      </div>
+    </div>
+    <div class="status"><span>PHP 8.3</span><span>UTF-8</span><span style="margin-left:auto">Ln 1, Col 1</span></div>
+  </div>
+  <p class="note" style="margin-top:14px"><b>Option B</b> (no change to the project panel): the same two trees in their own "Libraries &amp; Scratches" side panel, next to Remote Host. Same content and actions.</p>
+</section>
+
+<!-- 2 new scratch -->
+<section class="screen" data-name="2 · New Scratch File (⇧⌘N)">
+  <p class="note">The language picker: the four languages you used last on top, type to filter, Enter creates <b>scratch.php</b> (then scratch_1.php…). With text selected, the scratch starts with that code. <b>New Scratch Buffer</b> makes plain text buffer1.txt…buffer5.txt (then reuses buffer1).</p>
+  <div class="win" style="position:relative">
+    <div class="title"><span class="lights"><i></i><i></i><i></i></span>vega-test-site</div>
+    <div class="body"><div class="side"></div><div class="editor"><div class="code" style="opacity:.35"><span class="k">&lt;?php</span> …</div></div></div>
+    <div class="status"></div>
+    <div class="popup">
+      <div class="head">New Scratch File</div>
+      <div class="input">ph<span style="opacity:.5">|</span></div>
+      <div class="opt hl"><span class="php">php</span>PHP<span class="ext">.php</span></div>
+      <div class="opt"><span class="js">js</span>JavaScript<span class="ext">.js</span></div>
+      <div class="opt"><span class="json">{}</span>JSON<span class="ext">.json</span></div>
+      <div class="opt"><span class="txt">≡</span>Plain Text<span class="ext">.txt</span></div>
+      <div class="sep"></div>
+      <div class="opt"><span class="ts">TS</span>TypeScript<span class="ext">.ts</span></div>
+      <div class="opt"><span class="aqua">sh</span>Shell Script<span class="ext">.sh</span></div>
+      <div class="opt"><span style="color:var(--yellow)">py</span>Python<span class="ext">.py</span></div>
+      <div class="opt"><span style="color:var(--orange)">md</span>Markdown<span class="ext">.md</span></div>
+      <div class="opt"><span style="color:var(--green)">sql</span>SQL<span class="ext">.sql</span></div>
+      <div style="height:6px"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 3 scratch menu + run -->
+<section class="screen" data-name="3 · Scratch actions & Run">
+  <p class="note">Right-click a scratch: Run, Change Language, Rename, Copy, <b>Move to Project</b>, Delete, New Directory, Reveal in Finder. <b>Run</b> uses the PHP interpreter from Settings › PHP (node / npx tsx / python3 / bash for other languages) and shows output in the terminal.</p>
+  <div class="win" style="position:relative; grid-template-rows: 34px 1fr 24px;">
+    <div class="title"><span class="lights"><i></i><i></i><i></i></span>vega-test-site</div>
+    <div class="body">
+      <div class="side">
+        <div class="tr root d1"><span class="ch">▾</span><span class="ic txt">✎</span>Scratches and Consoles</div>
+        <div class="tr d2"><span class="ch">▾</span><span class="ic folder">▣</span>Scratches</div>
+        <div class="tr d3"><span class="ch"></span><span class="ic txt">≡</span>buffer1.txt</div>
+        <div class="tr d3 sel"><span class="ch"></span><span class="ic php">php</span>scratch.php</div>
+        <div class="tr d3"><span class="ch"></span><span class="ic js">js</span>scratch.js</div>
+        <div class="menu" style="left:120px; top:84px">
+          <div class="mi hl">▶ Run 'scratch.php'<span class="sc">⌃R</span></div>
+          <div class="ms"></div>
+          <div class="mi">Change Language (PHP)…</div>
+          <div class="mi">Rename…<span class="sc">⇧F6</span></div>
+          <div class="mi">Copy…<span class="sc">F5</span></div>
+          <div class="mi">Move to Project…<span class="sc">F6</span></div>
+          <div class="mi">Delete<span class="sc">⌫</span></div>
+          <div class="ms"></div>
+          <div class="mi">New ▸<span class="sc">Scratch File, Directory</span></div>
+          <div class="mi">Reveal in Finder</div>
+          <div class="mi">Copy Path<span class="sc">⇧⌘C</span></div>
+        </div>
+      </div>
+      <div class="editor">
+        <div class="tabs"><span class="tab on">scratch.php <span class="lock">· Scratch</span></span></div>
+        <div class="code"><span class="k">&lt;?php</span><br><br><span class="v">$items</span> = [<span class="n">3</span>, <span class="n">1</span>, <span class="n">2</span>];<br><span class="f">sort</span>(<span class="v">$items</span>);<br><span class="k">echo</span> <span class="f">implode</span>(<span class="s">', '</span>, <span class="v">$items</span>), <span class="s">"\n"</span>;</div>
+        <div class="term"><div class="t">▶ Run scratch.php — php 8.3.12 (/opt/homebrew/bin/php)</div>$ php ~/.config/vega/scratches/scratch.php<br>1, 2, 3<br><span style="color:var(--green)">Process finished with exit code 0</span></div>
+      </div>
+    </div>
+    <div class="status"><span>Scratch · PHP</span></div>
+  </div>
+</section>
+
+<!-- 4 read-only library file -->
+<section class="screen" data-name="4 · Library file (read-only)">
+  <p class="note">Library files open read-only (lock on the tab). Typing shows the <b>Non-project file</b> bar, as in PhpStorm's Non-Project Files Protection; the choice lasts for this session. Completion and Go to Definition work into libraries.</p>
+  <div class="win">
+    <div class="title"><span class="lights"><i></i><i></i><i></i></span>vega-test-site</div>
+    <div class="body">
+      <div class="side">
+        <div class="tr root d1"><span class="ch">▾</span><span class="ic lib">❖</span>External Libraries</div>
+        <div class="tr d2 lib"><span class="ch">▾</span><span class="ic lib">❖</span>Composer</div>
+        <div class="tr d3 lib"><span class="ch">▾</span><span class="ic folder">▣</span>guzzlehttp/guzzle<span class="ver">7.9.2</span></div>
+        <div class="tr d4 lib"><span class="ch">▾</span><span class="ic folder">▣</span>src</div>
+        <div class="tr d4 lib sel" style="padding-left:70px"><span class="ch"></span><span class="ic php">php</span>Client.php</div>
+      </div>
+      <div class="editor">
+        <div class="tabs"><span class="tab">index.php</span><span class="tab on">Client.php <span class="lock">🔒</span></span></div>
+        <div class="bar"><span style="color:var(--yellow)">⚠</span><span><b>Non-project file</b> — guzzlehttp/guzzle 7.9.2 (Composer). Changes here are overwritten by <code>composer install</code>.</span><span style="flex:1"></span><button class="btn">Edit this file</button><button class="btn">Edit files in this folder</button><button class="btn">Edit any non-project file</button></div>
+        <div class="code"><span class="k">namespace</span> <span class="f">GuzzleHttp</span>;<br><br><span class="c">/** @final */</span><br><span class="k">class</span> <span class="f">Client</span> <span class="k">implements</span> <span class="f">ClientInterface</span>, <span class="f">\Psr\Http\Client\ClientInterface</span><br>{<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">use</span> <span class="f">ClientTrait</span>;</div>
+      </div>
+    </div>
+    <div class="status"><span>Read-only · Composer library</span></div>
+  </div>
+</section>
+
+<!-- 5 settings php -->
+<section class="screen" data-name="5 · Settings › PHP">
+  <p class="note">New <b>Settings › Languages › PHP</b> page (saved per project in <code>.vega/settings.json</code>, passed to the PHP language server): language level, CLI interpreter, <b>Include Path</b> and <b>PHP Runtime</b> tabs. A <b>Composer</b> sub-page has "Add packages as libraries".</p>
+  <div class="settings">
+    <div class="title"><span class="lights"><i></i><i></i><i></i></span>VEGA — Settings</div>
+    <div class="sbody">
+      <div class="snav"><div class="it">General</div><div class="it">Appearance</div><div class="it">Editor</div><div class="it">Languages</div><div class="it sub on">PHP</div><div class="it sub">Composer</div><div class="it sub">JavaScript Libraries</div><div class="it">Deployment</div></div>
+      <div class="scontent">
+        <div class="row"><label>PHP language level</label><div class="combo">8.3 (readonly classes, typed constants)</div></div>
+        <div class="row"><label>CLI interpreter</label><div style="display:flex;gap:8px"><div class="combo">PHP 8.3.12 · /opt/homebrew/bin/php</div><button class="btn">…</button></div></div>
+        <div class="stabs"><span class="stab on">Include Path</span><span class="stab">PHP Runtime</span></div>
+        <div class="grid2">
+          <div>
+            <div class="list">
+              <div class="tb"><span title="Add">＋</span><span title="Remove" style="color:var(--red)">−</span><span title="Exclude Under This Path">⊘</span></div>
+              <div class="li">~/dev/wordpress-core<span class="k2">manual</span></div>
+              <div class="li">vendor/guzzlehttp/guzzle<span class="k2">Composer</span></div>
+              <div class="li">vendor/monolog/monolog<span class="k2">Composer</span></div>
+              <div class="li">vendor/psr/log<span class="k2">Composer</span></div>
+            </div>
+            <p class="note" style="margin-top:8px;font-size:12px">Composer packages are added automatically and come back when the project reopens. "Exclude Under This Path" removes one from analysis.</p>
+          </div>
+          <div>
+            <p class="card-title">PHP Runtime (stubs)</p>
+            <div class="list">
+              <div class="li"><span class="cb on">✓</span>Core</div>
+              <div class="li"><span class="cb on">✓</span>standard</div>
+              <div class="li"><span class="cb on">✓</span>pdo</div>
+              <div class="li"><span class="cb on">✓</span>mbstring</div>
+              <div class="li"><span class="cb">　</span>xdebug</div>
+              <div class="li"><span class="cb">　</span>swoole</div>
+            </div>
+            <div style="margin-top:8px"><button class="btn">Sync Extensions with Interpreter</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="sfoot"><button class="btn">Cancel</button><button class="btn">Apply</button><button class="btn primary">OK</button></div>
+  </div>
+</section>
+
+</main>
+<script>
+  const screens=[...document.querySelectorAll('.screen')], nav=document.getElementById('nav');
+  screens.forEach((s,i)=>{const b=document.createElement('button');b.textContent=s.dataset.name;b.onclick=()=>{screens.forEach(x=>x.classList.remove('on'));nav.querySelectorAll('button').forEach(x=>x.classList.remove('on'));s.classList.add('on');b.classList.add('on')};nav.appendChild(b);if(!i)b.click();});
+  document.querySelectorAll('.tr .ch').forEach(ch=>ch.addEventListener('click',()=>{if(!ch.textContent.trim())return;const row=ch.parentElement;const open=ch.textContent==='▾';ch.textContent=open?'▸':'▾';const pad=parseInt(getComputedStyle(row).paddingLeft);let n=row.nextElementSibling;while(n&&n.classList.contains('tr')&&parseInt(getComputedStyle(n).paddingLeft)>pad){n.style.display=open?'none':'';n=n.nextElementSibling;}}));
+</script>
+</body>
+</html>
