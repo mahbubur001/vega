@@ -12,7 +12,7 @@ _Last updated: 2026-11-19, end of day. Branch `vega`, everything committed and p
 
 ## Setting up a new computer
 
-1. `git clone https://github.com/mahbubur001/vega && cd vega && git checkout vega`, then `git remote add upstream https://github.com/zed-industries/zed`.
+1. `git clone https://github.com/mahbubur001/vega && cd vega && git checkout vega`, then `git remote add upstream https://github.com/zed-industries/zed`. Before the first `git fetch upstream`, limit it to `main` with no tags, so Zed's ~1,800 branches and ~1,500 tags stay out of the clone: `git config remote.upstream.fetch '+refs/heads/main:refs/remotes/upstream/main' && git config remote.upstream.tagOpt --no-tags`.
 2. Rust via rustup (the toolchain comes from `rust-toolchain.toml`), `brew install cmake`.
 3. With full Xcode, plain `cargo run` works. Without Xcode, add `--features gpui_platform/runtime_shaders` to every build, check, test and clippy command that compiles the app (for crate tests: `cargo test -p <crate> -p gpui_platform --features gpui_platform/runtime_shaders`).
 4. Run the app as "VEGA Dev.app" so the Dock shows the VEGA icon: `script/vega-dev-app --build ~/some/test/project` (it picks runtime shaders itself when Xcode is missing). Don't open this repo itself in VEGA.
