@@ -23,10 +23,12 @@ use gpui::{
     UniformListScrollHandle, WeakEntity, Window, actions, anchored, deferred, px, uniform_list,
 };
 use gpui_tokio::Tokio;
+use project_panel::project_panel_settings::ProjectPanelSettings;
+use settings::{ProjectPanelEntrySpacing, Settings as _, ShowIndentGuides};
 use time::{OffsetDateTime, UtcOffset};
 use ui::{
-    ContextMenu, ContextMenuEntry, DropdownMenu, IconPosition, ListItem, ListItemSpacing, Tooltip,
-    prelude::*,
+    ContextMenu, ContextMenuEntry, DropdownMenu, IconPosition, IndentGuideColors, ListItem,
+    ListItemSpacing, Tooltip, prelude::*,
 };
 use util::ResultExt as _;
 use workspace::dock::{DockPosition, Panel, PanelEvent};
@@ -45,8 +47,18 @@ actions!(
         EditRemoteFile,
         /// Opens the project file the selected server file is mapped to.
         EditLocalFile,
-        /// Downloads the selected file or folder to its mapped project path.
+        /// Downloads the selected files or folders to their mapped project paths.
         DownloadToProject,
+        /// Compares the selected server file with its project version.
+        CompareWithLocal,
+        /// Compares the selected server folder with its project folder before synchronizing.
+        SyncWithLocal,
+        /// Opens the selected item's web URL in the browser.
+        OpenInBrowser,
+        /// Opens an SSH session in the terminal, in the selected folder (SFTP servers).
+        StartSshSession,
+        /// Reveals the file open in the editor in the tree.
+        SelectOpenedFile,
         /// Uploads local files or folders into the selected folder.
         UploadHere,
         /// Creates a file in the selected folder.
@@ -234,6 +246,8 @@ pub struct RemoteHostPanel {
     loading: HashSet<String>,
     rows: Vec<Row>,
     selected: Option<String>,
+    /// Extra rows picked with ⌘-click or ⇧-click (multi-select).
+    marked: Vec<String>,
     clipboard: Option<Clipboard>,
     options: ViewOptions,
     local_offset: UtcOffset,
@@ -276,6 +290,7 @@ impl RemoteHostPanel {
             loading: HashSet::default(),
             rows: Vec::new(),
             selected: None,
+            marked: Vec::new(),
             clipboard: None,
             options,
             local_offset: UtcOffset::current_local_offset().unwrap_or(UtcOffset::UTC),
@@ -376,7 +391,7 @@ impl RemoteHostPanel {
         };
         let mut rows = vec![Row {
             path: root.clone(),
-            name: format!("{} ({})", choice.label, choice.address),
+            name: choice.label.to_string(),
             depth: 0,
             is_dir: true,
         }];
@@ -490,11 +505,78 @@ impl RemoteHostPanel {
         cx.notify();
     }
 
-    fn click_row(&mut self, row: &Row, window: &mut Window, cx: &mut Context<Self>) {
-        self.selected = Some(row.path.clone());
+    fn click_row(
+        &mut self,
+        row: &Row,
+        modifiers: gpui::Modifiers,
+        window: &mut Window,
+        cx: &mut Context<Self>,
+    ) {
         window.focus(&self.focus_handle, cx);
-        self.activate(row, window, cx);
+        if self.is_root(&row.path) {
+            self.marked.clear();
+            self.selected = Some(row.path.clone());
+            self.activate(row, window, cx);
+        } else if modifiers.secondary(cx) {
+            if let Some(selected) = self.selected.clone().filter(|_| self.marked.is_empty())
+                && !self.is_root(&selected)
+            {
+                self.marked.push(selected);
+            }
+            match self.marked.iter().position(|path| *path == row.path) {
+                Some(index) => {
+                    self.marked.remove(index);
+                }
+                None => self.marked.push(row.path.clone()),
+            }
+            self.selected = Some(row.path.clone());
+        } else if modifiers.shift
+            && let (Some(from), Some(to)) = (
+                self.selected_index(),
+                self.rows
+                    .iter()
+                    .position(|candidate| candidate.path == row.path),
+            )
+        {
+            let (start, end) = if from <= to { (from, to) } else { (to, from) };
+            self.marked = self.rows[start..=end]
+                .iter()
+                .filter(|candidate| !self.is_root(&candidate.path))
+                .map(|candidate| candidate.path.clone())
+                .collect();
+        } else {
+            self.marked.clear();
+            self.selected = Some(row.path.clone());
+            self.activate(row, window, cx);
+        }
         cx.notify();
+    }
+
+    /// The rows an action applies to: the multi-selection when the selected row
+    /// is part of it, else the selected row (never the root node).
+    fn selected_paths(&self) -> Vec<String> {
+        let selected = self.selected_entry().map(|row| row.path);
+        match &selected {
+            Some(path) if self.marked.contains(path) => self
+                .rows
+                .iter()
+                .filter(|row| self.marked.contains(&row.path))
+                .map(|row| row.path.clone())
+                .collect(),
+            _ => selected.into_iter().collect(),
+        }
+    }
+
+    /// The parent folders of `paths`, each once (to reload after a change).
+    fn parents_of(paths: &[String]) -> Vec<String> {
+        let mut parents = Vec::new();
+        for path in paths {
+            let parent = remote_parent(path);
+            if !parents.contains(&parent) {
+                parents.push(parent);
+            }
+        }
+        parents
     }
 
     fn activate(&mut self, row: &Row, window: &mut Window, cx: &mut Context<Self>) {
@@ -832,12 +914,12 @@ impl RemoteHostPanel {
         _: &mut Window,
         cx: &mut Context<Self>,
     ) {
-        let Some(row) = self.selected_entry() else {
+        let paths = self.selected_paths();
+        if paths.is_empty() {
             return;
-        };
-        let paths = vec![row.path.clone()];
+        }
         self.run(
-            vec![remote_parent(&row.path)],
+            Self::parents_of(&paths),
             move |engine, id| {
                 async move { summary_result(engine.remote_download(&id, &paths).await?) }.boxed()
             },
@@ -902,12 +984,13 @@ impl RemoteHostPanel {
     }
 
     fn delete(&mut self, _: &Delete, _: &mut Window, cx: &mut Context<Self>) {
-        let Some(row) = self.selected_entry() else {
+        let paths = self.selected_paths();
+        if paths.is_empty() {
             return;
-        };
-        let paths = vec![row.path.clone()];
+        }
+        self.marked.clear();
         self.run(
-            vec![remote_parent(&row.path)],
+            Self::parents_of(&paths),
             move |engine, id| {
                 async move { summary_result(engine.remote_delete(&id, &paths).await?) }.boxed()
             },
@@ -916,16 +999,15 @@ impl RemoteHostPanel {
     }
 
     fn mark_for_paste(&mut self, cut: bool, cx: &mut Context<Self>) {
-        let (Some(row), Some(server)) =
-            (self.selected_entry(), self.server().map(ServerChoice::key))
+        let paths = self.selected_paths();
+        let Some(server) = self
+            .server()
+            .map(ServerChoice::key)
+            .filter(|_| !paths.is_empty())
         else {
             return;
         };
-        self.clipboard = Some(Clipboard {
-            server,
-            paths: vec![row.path],
-            cut,
-        });
+        self.clipboard = Some(Clipboard { server, paths, cut });
         cx.notify();
     }
 
@@ -1053,6 +1135,158 @@ impl RemoteHostPanel {
         }
     }
 
+    /// The mapped project path of the selected entry, with the server it is on.
+    fn selected_local(&self) -> Option<(Arc<Engine>, String, PathBuf, Row)> {
+        let row = self.selected_entry()?;
+        let local = self.item(&row.path)?.local.clone()?;
+        let choice = self.server()?;
+        Some((choice.engine.clone(), choice.id.clone(), local, row))
+    }
+
+    fn compare_with_local(&mut self, _: &CompareWithLocal, _: &mut Window, cx: &mut Context<Self>) {
+        let Some((engine, id, local, row)) = self.selected_local().filter(|(.., row)| !row.is_dir)
+        else {
+            return;
+        };
+        if !local.is_file() {
+            self.show_error(format!("{} has no project copy yet.", row.name), cx);
+            return;
+        }
+        let compare = Tokio::spawn(cx, async move { engine.compare(Some(&id), &local).await });
+        self._tasks.push(cx.spawn(async move |this, cx| {
+            if let Ok(Err(error)) = compare.await {
+                this.update(cx, |this, cx| this.show_error(error, cx)).ok();
+            }
+        }));
+    }
+
+    fn sync_with_local(&mut self, _: &SyncWithLocal, window: &mut Window, cx: &mut Context<Self>) {
+        let Some((engine, id, local, _)) = self.selected_local() else {
+            return;
+        };
+        self.workspace
+            .update(cx, |workspace, cx| {
+                crate::sync_view::open(workspace, engine, vec![local], Some(id), window, cx);
+            })
+            .ok();
+    }
+
+    fn open_in_browser(&mut self, _: &OpenInBrowser, _: &mut Window, cx: &mut Context<Self>) {
+        let Some((engine, id, local, _)) = self.selected_local() else {
+            return;
+        };
+        match engine.web_url(Some(&id), &local) {
+            Ok(url) => cx.open_url(&url),
+            Err(error) => self.show_error(error, cx),
+        }
+    }
+
+    /// Opens `ssh` in a terminal tab and changes to the selected folder.
+    fn start_ssh_session(
+        &mut self,
+        _: &StartSshSession,
+        window: &mut Window,
+        cx: &mut Context<Self>,
+    ) {
+        let Some(choice) = self.server() else {
+            return;
+        };
+        let Some(server) = choice
+            .engine
+            .servers()
+            .into_iter()
+            .map(|resolved| resolved.server)
+            .find(|server| server.id == choice.id)
+        else {
+            return;
+        };
+        let dir = self
+            .selected_row()
+            .map(|row| dir_of(&row))
+            .or_else(|| self.root.clone())
+            .unwrap_or_else(|| "~".into());
+        let args = ssh_args(&server, &dir);
+        let label = format!("SSH: {}", server.name);
+        let command_label = format!("ssh {}", args.join(" "));
+        let spawn = task::SpawnInTerminal {
+            id: task::TaskId(format!("vega-ssh-{}", server.id)),
+            full_label: label.clone(),
+            label,
+            command: Some("ssh".into()),
+            args,
+            command_label,
+            use_new_terminal: true,
+            allow_concurrent_runs: true,
+            show_command: true,
+            reveal: task::RevealStrategy::Always,
+            ..Default::default()
+        };
+        self.workspace
+            .update(cx, |workspace, cx| {
+                workspace.spawn_in_terminal(spawn, window, cx).detach();
+            })
+            .ok();
+    }
+
+    /// Reveals the file open in the editor (when it is mapped to this server).
+    fn select_opened_file(&mut self, _: &SelectOpenedFile, _: &mut Window, cx: &mut Context<Self>) {
+        let Some(choice) = self.server().cloned() else {
+            return;
+        };
+        let local = self.workspace.upgrade().and_then(|workspace| {
+            let workspace = workspace.read(cx);
+            let project_path = workspace.active_item(cx)?.project_path(cx)?;
+            workspace
+                .project()
+                .read(cx)
+                .absolute_path(&project_path, cx)
+        });
+        let remote = local.and_then(|local| {
+            let targets = choice.engine.targets(Some(&choice.id)).ok()?;
+            targets.first()?.mapper.to_remote(&local)
+        });
+        let (Some(remote), Some(root)) = (remote, self.root.clone()) else {
+            self.show_error("The open file isn't mapped to this server.", cx);
+            return;
+        };
+        let folders = folders_between(&root, &remote);
+        let missing: Vec<String> = folders
+            .iter()
+            .filter(|folder| !self.children.contains_key(*folder))
+            .cloned()
+            .collect();
+        let list = Tokio::spawn(cx, async move {
+            let mut listed = Vec::new();
+            for folder in missing {
+                let items = choice.engine.remote_list(&choice.id, &folder).await?;
+                listed.push((folder, items));
+            }
+            Ok::<_, RemoteError>(listed)
+        });
+        self._tasks.push(cx.spawn(async move |this, cx| {
+            let result = list.await;
+            this.update(cx, |this, cx| {
+                match result {
+                    Ok(Ok(listed)) => {
+                        this.children.extend(listed);
+                        this.expanded.extend(folders);
+                        this.update_rows();
+                        this.marked.clear();
+                        this.selected = Some(remote.clone());
+                        if let Some(index) = this.rows.iter().position(|row| row.path == remote) {
+                            this.scroll_handle
+                                .scroll_to_item(index, ScrollStrategy::Center);
+                        }
+                    }
+                    Ok(Err(error)) => this.show_error(error, cx),
+                    Err(error) => this.show_error(error, cx),
+                }
+                cx.notify();
+            })
+            .ok();
+        }));
+    }
+
     fn copy_path(&mut self, _: &CopyPath, _: &mut Window, cx: &mut Context<Self>) {
         if let Some(path) = self.selected.clone() {
             cx.write_to_clipboard(ClipboardItem::new_string(path));
@@ -1074,8 +1308,17 @@ impl RemoteHostPanel {
         cx: &mut Context<Self>,
     ) {
         self.selected = row.as_ref().map(|row| row.path.clone());
+        if row
+            .as_ref()
+            .is_none_or(|row| !self.marked.contains(&row.path))
+        {
+            self.marked.clear();
+        }
         let item = row.as_ref().and_then(|row| self.item(&row.path));
         let mapped = item.is_some_and(|item| item.local.is_some());
+        let is_sftp = self
+            .server()
+            .is_some_and(|choice| choice.kind == ServerType::Sftp);
         let excluded = item.is_some_and(|item| item.excluded);
         let explicitly_excluded = row
             .as_ref()
@@ -1124,15 +1367,32 @@ impl RemoteHostPanel {
             };
             let menu = menu
                 .when(!row.is_dir, |menu| {
-                    menu.item(entry("Edit Remote File", None, Box::new(EditRemoteFile)))
-                        .when(mapped, |menu| {
-                            menu.item(entry("Edit Local File", None, Box::new(EditLocalFile)))
-                        })
+                    menu.item(entry(
+                        "Edit Remote File",
+                        Some(IconName::Pencil),
+                        Box::new(EditRemoteFile),
+                    ))
+                    .when(mapped, |menu| {
+                        menu.item(entry("Edit Local File", None, Box::new(EditLocalFile)))
+                            .item(entry(
+                                "Compare with Local Version",
+                                Some(IconName::Diff),
+                                Box::new(CompareWithLocal),
+                            ))
+                    })
                 })
+                .when(row.is_dir && mapped, |menu| {
+                    menu.item(entry(
+                        "Sync with Local…",
+                        Some(IconName::ArrowRightLeft),
+                        Box::new(SyncWithLocal),
+                    ))
+                })
+                .separator()
                 .when(mapped, |menu| {
                     menu.item(entry(
-                        "Download to Project",
-                        None,
+                        "Download from Here",
+                        Some(IconName::Download),
                         Box::new(DownloadToProject),
                     ))
                 })
@@ -1152,6 +1412,20 @@ impl RemoteHostPanel {
                 .item(entry("Paste", None, Box::new(Paste)).disabled(!can_paste))
                 .item(entry("Copy Absolute Path", None, Box::new(CopyPath)))
                 .separator()
+                .when(mapped, |menu| {
+                    menu.item(entry(
+                        "Open in Browser",
+                        Some(IconName::ArrowUpRight),
+                        Box::new(OpenInBrowser),
+                    ))
+                })
+                .when(is_sftp, |menu| {
+                    menu.item(entry(
+                        "Start SSH Session Here",
+                        Some(IconName::Terminal),
+                        Box::new(StartSshSession),
+                    ))
+                })
                 .map(|menu| {
                     if explicitly_excluded {
                         menu.item(entry("Include Path", None, Box::new(ToggleExcluded)))
@@ -1187,6 +1461,22 @@ impl RemoteHostPanel {
         let options = self.options;
         let now = OffsetDateTime::now_utc().to_offset(self.local_offset);
         let server_kind = self.server().map(|choice| choice.kind);
+        let server_address = self
+            .server()
+            .map(|choice| choice.address.clone())
+            .unwrap_or_default();
+        let mapping_roots = self
+            .server()
+            .and_then(|choice| {
+                let targets = choice.engine.targets(Some(&choice.id)).ok()?;
+                Some(targets.first()?.mapper.remote_roots())
+            })
+            .unwrap_or_default();
+        let panel_settings = ProjectPanelSettings::get_global(cx);
+        let spacing = match panel_settings.entry_spacing {
+            ProjectPanelEntrySpacing::Comfortable => ListItemSpacing::Dense,
+            ProjectPanelEntrySpacing::Standard => ListItemSpacing::ExtraDense,
+        };
         range
             .filter_map(|index| {
                 let row = self.rows.get(index)?.clone();
@@ -1209,16 +1499,33 @@ impl RemoteHostPanel {
                                 IconName::Folder
                             })
                         })
+                        .color(Color::Muted)
                 } else {
                     FileIcons::get_icon(Path::new(&row.name), cx)
                         .map(Icon::from_path)
                         .unwrap_or_else(|| Icon::new(IconName::File))
+                        .color(Color::Muted)
                 };
+                // Like the project panel: a chevron for folders, the same space left empty
+                // for files so their icons line up.
+                let chevron = row.is_dir.then(|| {
+                    FileIcons::get_chevron_icon(expanded, cx)
+                        .map(|chevron| Icon::from_path(chevron).color(Color::Muted))
+                        .unwrap_or_else(|| {
+                            Icon::new(if expanded {
+                                IconName::ChevronDown
+                            } else {
+                                IconName::ChevronRight
+                            })
+                            .color(Color::Muted)
+                        })
+                });
                 let color = if excluded || cut_paths.contains(&row.path) {
                     Color::Disabled
                 } else if is_symlink && options.highlight_symlinks {
                     Color::Accent
-                } else if mapped && options.highlight_mappings {
+                } else if mapped && options.highlight_mappings && mapping_roots.contains(&row.path)
+                {
                     Color::Created
                 } else {
                     Color::Default
@@ -1231,37 +1538,65 @@ impl RemoteHostPanel {
                 let menu_row = (!is_root).then(|| row.clone());
                 let item = ListItem::new(("remote-host-row", index))
                     .indent_level(row.depth)
-                    .indent_step_size(px(12.))
-                    .spacing(ListItemSpacing::Dense)
-                    .toggle_state(self.selected.as_deref() == Some(row.path.as_str()))
-                    .when(row.is_dir, |item| item.toggle(Some(expanded)))
-                    .start_slot(if is_root {
-                        icon.size(IconSize::Small)
-                    } else {
-                        icon.size(IconSize::Small).color(Color::Muted)
-                    })
+                    .indent_step_size(px(panel_settings.indent_size))
+                    .spacing(spacing)
+                    .toggle_state(
+                        self.selected.as_deref() == Some(row.path.as_str())
+                            || self.marked.contains(&row.path),
+                    )
                     .child(
                         h_flex()
-                            .gap_2()
+                            .gap_0p5()
+                            .child(match chevron {
+                                Some(chevron) => chevron.into_any_element(),
+                                None => h_flex()
+                                    .size(IconSize::default().rems())
+                                    .flex_none()
+                                    .into_any_element(),
+                            })
+                            .child(icon),
+                    )
+                    .child(
+                        h_flex()
+                            .h_6()
+                            .gap_1p5()
                             .min_w_0()
                             .child(Label::new(row.name.clone()).color(color).truncate())
-                            .children(details.into_iter().map(|(text, color)| {
-                                Label::new(text)
-                                    .size(LabelSize::Small)
-                                    .color(color)
-                                    .single_line()
-                            })),
+                            .when(is_root, |row| {
+                                row.child(
+                                    Label::new(server_address.clone())
+                                        .size(LabelSize::Small)
+                                        .color(Color::Muted)
+                                        .single_line(),
+                                )
+                            }),
                     )
-                    .when(loading, |item| {
+                    .when(loading || !details.is_empty(), |item| {
                         item.end_slot(
-                            Icon::new(IconName::ArrowCircle)
-                                .size(IconSize::XSmall)
-                                .color(Color::Muted),
+                            h_flex()
+                                .gap_2()
+                                .flex_none()
+                                .pr_2()
+                                .children(details.into_iter().map(|(text, _)| {
+                                    Label::new(text)
+                                        .size(LabelSize::XSmall)
+                                        .color(Color::Muted)
+                                        .single_line()
+                                }))
+                                .when(loading, |row| {
+                                    row.child(
+                                        Icon::new(IconName::ArrowCircle)
+                                            .size(IconSize::XSmall)
+                                            .color(Color::Muted),
+                                    )
+                                }),
                         )
                     })
-                    .on_click(cx.listener(move |this, _, window, cx| {
-                        this.click_row(&click_row, window, cx)
-                    }))
+                    .on_click(
+                        cx.listener(move |this, event: &gpui::ClickEvent, window, cx| {
+                            this.click_row(&click_row, event.modifiers(), window, cx)
+                        }),
+                    )
                     .on_secondary_mouse_down(cx.listener(
                         move |this, event: &MouseDownEvent, window, cx| {
                             cx.stop_propagation();
@@ -1375,6 +1710,15 @@ impl RemoteHostPanel {
                     .on_click(|_, window, cx| {
                         window.dispatch_action(OpenDeploymentServers.boxed_clone(), cx)
                     }),
+            )
+            .child(
+                IconButton::new("remote-host-locate", IconName::Crosshair)
+                    .icon_size(IconSize::Small)
+                    .tooltip(Tooltip::text("Select Opened File"))
+                    .disabled(!has_server)
+                    .on_click(cx.listener(|this, _, window, cx| {
+                        this.select_opened_file(&SelectOpenedFile, window, cx)
+                    })),
             )
             .child(
                 IconButton::new("remote-host-collapse", IconName::ListCollapse)
@@ -1510,6 +1854,9 @@ impl RemoteHostPanel {
     /// The tree, plus the space below it, which takes drops and opens the root
     /// folder's context menu.
     fn render_tree(&self, cx: &mut Context<Self>) -> impl IntoElement {
+        let panel_settings = ProjectPanelSettings::get_global(cx);
+        let indent_size = panel_settings.indent_size;
+        let show_indent_guides = panel_settings.indent_guides.show == ShowIndentGuides::Always;
         let root = self.root.clone().unwrap_or_default();
         let drop_background = cx.theme().colors().drop_target_background;
         v_flex()
@@ -1525,6 +1872,17 @@ impl RemoteHostPanel {
                     }),
                 )
                 .with_sizing_behavior(ListSizingBehavior::Infer)
+                .when(show_indent_guides, |list| {
+                    list.with_decoration(
+                        ui::indent_guides(px(indent_size), IndentGuideColors::panel(cx))
+                            .with_compute_indents_fn(cx.entity(), |this, range, _, _| {
+                                this.rows
+                                    .get(range)
+                                    .map(|rows| rows.iter().map(|row| row.depth).collect())
+                                    .unwrap_or_default()
+                            }),
+                    )
+                })
                 .track_scroll(&self.scroll_handle),
             )
             .child(
@@ -1679,6 +2037,48 @@ pub(crate) fn format_permissions(mode: u32) -> String {
 /// Server types that have files to browse.
 fn browsable(kind: ServerType) -> bool {
     kind.transfers() && kind != ServerType::Group
+}
+
+/// The folders from `root` down to the parent of `path`, which must be inside `root`.
+pub(crate) fn folders_between(root: &str, path: &str) -> Vec<String> {
+    let mut folders = Vec::new();
+    let mut dir = remote_parent(path);
+    while dir.len() >= root.len() && dir.starts_with(root.trim_end_matches('/')) {
+        folders.push(dir.clone());
+        if dir == root || dir == "/" {
+            break;
+        }
+        dir = remote_parent(&dir);
+    }
+    folders.reverse();
+    folders
+}
+
+/// `ssh` arguments that log in to `server` and open a shell in `dir`.
+pub(crate) fn ssh_args(server: &deployment::config::Server, dir: &str) -> Vec<String> {
+    let mut args = Vec::new();
+    if let Some(port) = server.port.filter(|port| *port != 22) {
+        args.extend(["-p".to_string(), port.to_string()]);
+    }
+    if let Some(key) = server
+        .private_key_path
+        .as_ref()
+        .filter(|key| !key.is_empty())
+    {
+        args.extend(["-i".to_string(), key.clone()]);
+    }
+    if let Some(jump) = server.jump_host.as_ref().filter(|jump| !jump.is_empty()) {
+        args.extend(["-J".to_string(), jump.clone()]);
+    }
+    args.push("-t".into());
+    args.push(if server.username.is_empty() {
+        server.host.clone()
+    } else {
+        format!("{}@{}", server.username, server.host)
+    });
+    let quoted = dir.replace('\'', "'\\''");
+    args.push(format!("cd '{quoted}' && exec $SHELL -l"));
+    args
 }
 
 /// The folder a drop or paste on `row` goes into: the row itself for a folder, else its parent.
@@ -1885,6 +2285,11 @@ impl Render for RemoteHostPanel {
             .on_action(cx.listener(Self::confirm))
             .on_action(cx.listener(Self::edit_remote_file))
             .on_action(cx.listener(Self::edit_local_file))
+            .on_action(cx.listener(Self::compare_with_local))
+            .on_action(cx.listener(Self::sync_with_local))
+            .on_action(cx.listener(Self::open_in_browser))
+            .on_action(cx.listener(Self::start_ssh_session))
+            .on_action(cx.listener(Self::select_opened_file))
             .on_action(cx.listener(Self::expand_selected))
             .on_action(cx.listener(Self::collapse_selected))
             .on_action(cx.listener(Self::download_to_project))
@@ -2126,6 +2531,34 @@ mod tests {
                 highlight_symlinks: false,
                 highlight_mappings: false,
             }
+        );
+    }
+
+    #[test]
+    fn folders_to_reveal_a_file() {
+        assert_eq!(
+            folders_between("/site", "/site/a/b/c.php"),
+            ["/site", "/site/a", "/site/a/b"]
+        );
+        assert_eq!(folders_between("/site", "/site/c.php"), ["/site"]);
+        assert_eq!(folders_between("/", "/etc/hosts"), ["/", "/etc"]);
+    }
+
+    #[test]
+    fn ssh_session_arguments() {
+        let mut server = deployment::config::Server::new("s", "S", ServerType::Sftp);
+        server.host = "example.com".into();
+        server.username = "deploy".into();
+        server.port = Some(2222);
+        assert_eq!(
+            ssh_args(&server, "/var/www/it's"),
+            [
+                "-p",
+                "2222",
+                "-t",
+                "deploy@example.com",
+                "cd '/var/www/it'\\''s' && exec $SHELL -l"
+            ]
         );
     }
 

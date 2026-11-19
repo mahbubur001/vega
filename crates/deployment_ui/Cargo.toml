@@ -32,6 +32,7 @@ project.workspace = true
 project_panel.workspace = true
 release_channel.workspace = true
 settings.workspace = true
+task.workspace = true
 theme_settings.workspace = true
 time.workspace = true
 tokio = { workspace = true, features = ["sync"] }
