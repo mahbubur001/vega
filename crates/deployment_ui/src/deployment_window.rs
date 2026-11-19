@@ -53,9 +53,11 @@ pub(crate) struct DeploymentWindow {
 }
 
 /// Opens the Deployment window for the project of `store`, or brings the open one forward.
+/// `options` opens the Options page instead of the selected server.
 pub(crate) fn open(
     store: Entity<DeploymentStore>,
     workspace: Option<WindowHandle<MultiWorkspace>>,
+    options: bool,
     cx: &mut App,
 ) {
     let existing = cx
@@ -68,6 +70,10 @@ pub(crate) fn open(
                 this.workspace = workspace;
                 window.activate_window();
                 this.focus_handle.focus(window, cx);
+                if options {
+                    this.servers
+                        .update(cx, |servers, cx| servers.show_options(window, cx));
+                }
             })
             .ok();
         return;
@@ -135,6 +141,9 @@ pub(crate) fn open(
                     );
                     let requests = DeploymentWindow::handle_requests(requests, window, cx);
                     servers.focus_handle(cx).focus(window, cx);
+                    if options {
+                        servers.update(cx, |servers, cx| servers.show_options(window, cx));
+                    }
                     DeploymentWindow {
                         workspace,
                         servers,

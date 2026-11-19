@@ -1051,6 +1051,14 @@
     },
   },
   {
+    "context": "Workspace",
+    "use_key_equivalents": true,
+    "bindings": {
+      "ctrl-alt-u": "deployment::UploadToDefaultServer",
+      "ctrl-alt-shift-u": "deployment::UploadTo",
+    },
+  },
+  {
     "context": "DeploymentWindow",
     "use_key_equivalents": true,
     "bindings": {

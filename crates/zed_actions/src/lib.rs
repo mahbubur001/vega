@@ -1019,6 +1019,20 @@ pub mod deployment {
             /// Compares the selected folder (or the whole project) with the deployment server and
             /// lets you choose which way each file goes before synchronizing.
             SyncWithDeployed,
+            /// Uploads the current file or the selected files to a server you choose.
+            UploadTo,
+            /// Downloads the current file or the selected files from a server you choose.
+            DownloadFrom,
+            /// Compares the current file with its version on a server you choose.
+            CompareWithDeployedTo,
+            /// Compares the selected folder with a server you choose before synchronizing.
+            SyncWithDeployedTo,
+            /// Opens the server's copy of the current file (default server); saving uploads it.
+            EditRemoteFile,
+            /// Turns automatic upload of saved files to the default server on or off.
+            ToggleAutomaticUpload,
+            /// Opens Deployment › Options.
+            OpenDeploymentOptions,
             /// Opens this project's deployment configuration, creating it if needed.
             OpenDeploymentConfig,
             /// Opens the Deployment Servers dialog to add, edit, test and remove servers.
@@ -1052,18 +1066,32 @@ pub mod deployment {
     pub fn menu_items(is_file: bool) -> Vec<Option<(&'static str, Box<dyn gpui::Action>)>> {
         let mut items: Vec<Option<(&'static str, Box<dyn gpui::Action>)>> = vec![
             Some(("Upload to Default Server", Box::new(UploadToDefaultServer))),
+            Some(("Upload to…", Box::new(UploadTo))),
             Some((
                 "Download from Default Server",
                 Box::new(DownloadFromDefaultServer),
             )),
+            Some(("Download from…", Box::new(DownloadFrom))),
+            None,
         ];
         if is_file {
             items.push(Some((
                 "Compare with Deployed Version",
                 Box::new(CompareWithDeployedVersion),
             )));
+            items.push(Some((
+                "Compare with Deployed To…",
+                Box::new(CompareWithDeployedTo),
+            )));
         }
         items.push(Some(("Sync with Deployed…", Box::new(SyncWithDeployed))));
+        items.push(Some((
+            "Sync with Deployed To…",
+            Box::new(SyncWithDeployedTo),
+        )));
+        if is_file {
+            items.push(Some(("Edit Remote File", Box::new(EditRemoteFile))));
+        }
         items.push(None);
         items.push(Some(("Configuration…", Box::new(OpenDeploymentServers))));
         items

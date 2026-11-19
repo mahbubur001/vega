@@ -174,6 +174,7 @@ impl SyncView {
     pub(crate) fn new(
         engine: Arc<Engine>,
         roots: Vec<PathBuf>,
+        server_id: Option<String>,
         window: &mut Window,
         cx: &mut Context<Self>,
     ) -> Self {
@@ -194,7 +195,8 @@ impl SyncView {
                 .map(|name| name.to_string_lossy().into_owned())
                 .unwrap_or_default(),
         };
-        let server_id = engine.default_server().map(|server| server.server.id);
+        let server_id =
+            server_id.or_else(|| engine.default_server().map(|server| server.server.id));
         let mut this = Self {
             engine,
             roots,
@@ -617,10 +619,11 @@ pub(crate) fn open(
     workspace: &mut workspace::Workspace,
     engine: Arc<Engine>,
     roots: Vec<PathBuf>,
+    server_id: Option<String>,
     window: &mut Window,
     cx: &mut Context<workspace::Workspace>,
 ) -> Entity<SyncView> {
-    let view = cx.new(|cx| SyncView::new(engine, roots, window, cx));
+    let view = cx.new(|cx| SyncView::new(engine, roots, server_id, window, cx));
     workspace.add_item_to_active_pane(Box::new(view.clone()), None, true, window, cx);
     view
 }

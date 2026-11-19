@@ -65,9 +65,15 @@ mod tests {
             labels(true),
             [
                 "Upload to Default Server",
+                "Upload to…",
                 "Download from Default Server",
+                "Download from…",
+                "---",
                 "Compare with Deployed Version",
+                "Compare with Deployed To…",
                 "Sync with Deployed…",
+                "Sync with Deployed To…",
+                "Edit Remote File",
                 "---",
                 "Configuration…",
             ]

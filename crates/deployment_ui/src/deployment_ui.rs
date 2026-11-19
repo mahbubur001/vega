@@ -10,6 +10,7 @@ mod prompter;
 mod remote_host_panel;
 mod secret_modal;
 mod secrets;
+mod server_picker;
 mod servers_modal;
 mod store;
 mod sync_view;
@@ -19,6 +20,7 @@ use std::path::PathBuf;
 use std::sync::Arc;
 
 use anyhow::Context as _;
+use deployment::config::AutoUpload;
 use deployment::engine::Engine;
 use deployment::project::CONFIG_PATH;
 use deployment::prompt::Level;
@@ -33,9 +35,13 @@ use util::ResultExt as _;
 use workspace::notifications::NotificationId;
 use workspace::{MultiWorkspace, OpenOptions, Toast, Workspace};
 use zed_actions::deployment::{
-    CancelTransfers, CompareWithDeployedVersion, DownloadFromDefaultServer, OpenDeploymentConfig,
-    OpenDeploymentServers, SyncWithDeployed, ToggleRemoteHost, UploadToDefaultServer,
+    CancelTransfers, CompareWithDeployedTo, CompareWithDeployedVersion, DownloadFrom,
+    DownloadFromDefaultServer, EditRemoteFile, OpenDeploymentConfig, OpenDeploymentOptions,
+    OpenDeploymentServers, SyncWithDeployed, SyncWithDeployedTo, ToggleAutomaticUpload,
+    ToggleRemoteHost, UploadTo, UploadToDefaultServer,
 };
+
+use crate::server_picker::ServerPicker;
 
 use crate::prompter::{Request, WindowPrompter};
 use crate::remote_host_panel::RemoteHostPanel;
@@ -83,12 +89,13 @@ pub fn init(cx: &mut App) {
         let store = cx.new(|cx| DeploymentStore::new(project, Arc::new(prompter), cx));
         show_requests(requests, window, cx);
 
-        let indicator = cx.new(|cx| TransfersIndicator::new(store.clone(), cx));
+        let weak_workspace = cx.weak_entity();
+        let indicator =
+            cx.new(|cx| TransfersIndicator::new(store.clone(), weak_workspace.clone(), cx));
         workspace.status_bar().update(cx, |status_bar, cx| {
             status_bar.add_right_item(indicator, window, cx);
         });
 
-        let weak_workspace = cx.weak_entity();
         let panel = cx.new(|cx| RemoteHostPanel::new(store.clone(), weak_workspace, cx));
         workspace.add_panel(panel, window, cx);
 
@@ -101,25 +108,68 @@ fn register_actions(workspace: &mut Workspace, store: Entity<DeploymentStore>) {
     workspace.register_action({
         let store = store.clone();
         move |workspace, _: &UploadToDefaultServer, window, cx| {
-            run_on_selection(workspace, &store, Operation::Upload, window, cx);
+            run_on_selection(workspace, &store, Operation::Upload, None, window, cx);
         }
     });
     workspace.register_action({
         let store = store.clone();
         move |workspace, _: &DownloadFromDefaultServer, window, cx| {
-            run_on_selection(workspace, &store, Operation::Download, window, cx);
+            run_on_selection(workspace, &store, Operation::Download, None, window, cx);
         }
     });
     workspace.register_action({
         let store = store.clone();
         move |workspace, _: &CompareWithDeployedVersion, window, cx| {
-            run_on_selection(workspace, &store, Operation::Compare, window, cx);
+            run_on_selection(workspace, &store, Operation::Compare, None, window, cx);
         }
     });
     workspace.register_action({
         let store = store.clone();
         move |workspace, _: &SyncWithDeployed, window, cx| {
-            sync_with_deployed(workspace, &store, window, cx);
+            sync_with_deployed(workspace, &store, None, window, cx);
+        }
+    });
+    workspace.register_action({
+        let store = store.clone();
+        move |workspace, _: &UploadTo, window, cx| {
+            pick_server_for(workspace, &store, Operation::Upload, window, cx);
+        }
+    });
+    workspace.register_action({
+        let store = store.clone();
+        move |workspace, _: &DownloadFrom, window, cx| {
+            pick_server_for(workspace, &store, Operation::Download, window, cx);
+        }
+    });
+    workspace.register_action({
+        let store = store.clone();
+        move |workspace, _: &CompareWithDeployedTo, window, cx| {
+            pick_server_for(workspace, &store, Operation::Compare, window, cx);
+        }
+    });
+    workspace.register_action({
+        let store = store.clone();
+        move |workspace, _: &SyncWithDeployedTo, window, cx| {
+            pick_server_for(workspace, &store, Operation::Sync, window, cx);
+        }
+    });
+    workspace.register_action({
+        let store = store.clone();
+        move |workspace, _: &EditRemoteFile, window, cx| {
+            edit_remote_file(workspace, &store, window, cx);
+        }
+    });
+    workspace.register_action({
+        let store = store.clone();
+        move |workspace, _: &ToggleAutomaticUpload, window, cx| {
+            toggle_automatic_upload(workspace, &store, window, cx);
+        }
+    });
+    workspace.register_action({
+        let store = store.clone();
+        move |_, _: &OpenDeploymentOptions, window, cx| {
+            let handle = window.window_handle().downcast::<MultiWorkspace>();
+            deployment_window::open(store.clone(), handle, true, cx);
         }
     });
     workspace.register_action({
@@ -129,7 +179,7 @@ fn register_actions(workspace: &mut Workspace, store: Entity<DeploymentStore>) {
     workspace.register_action({
         move |_, _: &OpenDeploymentServers, window, cx| {
             let handle = window.window_handle().downcast::<MultiWorkspace>();
-            deployment_window::open(store.clone(), handle, cx);
+            deployment_window::open(store.clone(), handle, false, cx);
         }
     });
     workspace.register_action(|workspace, _: &ToggleRemoteHost, window, cx| {
@@ -140,11 +190,164 @@ fn register_actions(workspace: &mut Workspace, store: Entity<DeploymentStore>) {
     });
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq)]
 enum Operation {
     Upload,
     Download,
     Compare,
+    Sync,
+}
+
+impl Operation {
+    fn title(self) -> &'static str {
+        match self {
+            Operation::Upload => "Upload to",
+            Operation::Download => "Download from",
+            Operation::Compare => "Compare with",
+            Operation::Sync => "Sync with",
+        }
+    }
+}
+
+/// The engine of the selected file's project folder (or the first one), or a
+/// message when the project has no deployment servers.
+fn engine_for_selection(
+    workspace: &mut Workspace,
+    store: &Entity<DeploymentStore>,
+    window: &Window,
+    cx: &mut Context<Workspace>,
+) -> Option<(Option<PathBuf>, Arc<Engine>)> {
+    let selected = selected_path(workspace, window, cx);
+    let engine = selected
+        .as_ref()
+        .and_then(|path| store.read(cx).engine_for_path(path))
+        .or_else(|| store.read(cx).engines().into_iter().next());
+    match engine {
+        Some(engine) => Some((selected, engine)),
+        None => {
+            show_message(
+                workspace,
+                "This project has no deployment servers. Use Tools › Deployment › Configuration… to add one.",
+                cx,
+            );
+            None
+        }
+    }
+}
+
+/// "Upload to…" and friends: asks which server, then runs `operation` there.
+fn pick_server_for(
+    workspace: &mut Workspace,
+    store: &Entity<DeploymentStore>,
+    operation: Operation,
+    window: &mut Window,
+    cx: &mut Context<Workspace>,
+) {
+    let Some((_, engine)) = engine_for_selection(workspace, store, window, cx) else {
+        return;
+    };
+    // Groups can receive uploads and downloads, not comparisons.
+    let groups = matches!(operation, Operation::Upload | Operation::Download);
+    let entries = server_picker::entries(&engine, groups);
+    let store = store.clone();
+    let this = cx.weak_entity();
+    workspace.toggle_modal(window, cx, move |window, cx| {
+        ServerPicker::new(
+            operation.title(),
+            entries,
+            move |server_id, window, cx| {
+                this.update(cx, |workspace, cx| match operation {
+                    Operation::Sync => {
+                        sync_with_deployed(workspace, &store, Some(server_id), window, cx)
+                    }
+                    _ => {
+                        run_on_selection(workspace, &store, operation, Some(server_id), window, cx)
+                    }
+                })
+                .ok();
+            },
+            window,
+            cx,
+        )
+    });
+}
+
+/// Opens the default server's copy of the selected file; saving it uploads it back.
+fn edit_remote_file(
+    workspace: &mut Workspace,
+    store: &Entity<DeploymentStore>,
+    window: &mut Window,
+    cx: &mut Context<Workspace>,
+) {
+    let Some((Some(path), engine)) = engine_for_selection(workspace, store, window, cx) else {
+        return;
+    };
+    let target = engine
+        .targets(None)
+        .ok()
+        .and_then(|targets| targets.into_iter().next());
+    let Some((server_id, remote)) =
+        target.and_then(|target| Some((target.server.id.clone(), target.mapper.to_remote(&path)?)))
+    else {
+        show_message(
+            workspace,
+            "This file isn't mapped to the default server.",
+            cx,
+        );
+        return;
+    };
+    let open = Tokio::spawn(cx, async move {
+        engine.remote_open(&server_id, &remote, true).await
+    });
+    cx.spawn_in(window, async move |workspace, cx| {
+        let local = match open.await {
+            Ok(Ok(local)) => local,
+            Ok(Err(error)) => {
+                let message = error.to_string();
+                workspace
+                    .update(cx, |workspace, cx| show_message(workspace, &message, cx))
+                    .ok();
+                return;
+            }
+            Err(_) => return,
+        };
+        workspace
+            .update_in(cx, |workspace, window, cx| {
+                workspace.open_abs_path(local, OpenOptions::default(), window, cx)
+            })
+            .ok();
+    })
+    .detach();
+}
+
+/// Tools › Deployment › Automatic Upload: on save ↔ never.
+fn toggle_automatic_upload(
+    workspace: &mut Workspace,
+    store: &Entity<DeploymentStore>,
+    window: &mut Window,
+    cx: &mut Context<Workspace>,
+) {
+    let Some((_, engine)) = engine_for_selection(workspace, store, window, cx) else {
+        return;
+    };
+    let result = {
+        let mut config = engine.config_mut();
+        let mut options = config.options().clone();
+        options.auto_upload = match options.auto_upload {
+            AutoUpload::Never => AutoUpload::OnExplicitSave,
+            AutoUpload::Always | AutoUpload::OnExplicitSave => AutoUpload::Never,
+        };
+        let state = options.auto_upload;
+        config.set_options(options).map(|_| state)
+    };
+    let message = match result {
+        Ok(AutoUpload::Never) => "Automatic upload is off.".to_string(),
+        Ok(_) => "Automatic upload is on: saved files go to the default server.".to_string(),
+        Err(error) => format!("Couldn't change automatic upload: {error}"),
+    };
+    engine.reload_config();
+    store.update(cx, |_, cx| cx.notify());
+    show_message(workspace, &message, cx);
 }
 
 /// Runs `operation` on the project panel selection when it has focus,
@@ -153,6 +356,7 @@ fn run_on_selection(
     workspace: &mut Workspace,
     store: &Entity<DeploymentStore>,
     operation: Operation,
+    server_id: Option<String>,
     window: &mut Window,
     cx: &mut Context<Workspace>,
 ) {
@@ -169,7 +373,7 @@ fn run_on_selection(
         return;
     };
 
-    let task = Tokio::spawn(cx, run(engine, operation, path));
+    let task = Tokio::spawn(cx, run(engine, operation, server_id, path));
     cx.spawn_in(window, async move |workspace, cx| {
         let message = match task.await {
             Ok(Ok(Some(message))) => message,
@@ -188,23 +392,32 @@ fn run_on_selection(
 async fn run(
     engine: Arc<Engine>,
     operation: Operation,
+    server_id: Option<String>,
     path: PathBuf,
 ) -> deployment::Result<Option<String>> {
-    let server = engine
-        .default_server()
-        .map(|server| server.server.name)
-        .unwrap_or_else(|| "the server".to_string());
+    let server = match &server_id {
+        Some(id) => engine
+            .servers()
+            .into_iter()
+            .find(|resolved| resolved.server.id == *id)
+            .map(|resolved| resolved.server.name),
+        None => engine.default_server().map(|server| server.server.name),
+    }
+    .unwrap_or_else(|| "the server".to_string());
+    let server_id = server_id.as_deref();
     match operation {
         Operation::Upload => {
-            let summary = engine.upload(None, &[path], true).await?;
+            let summary = engine.upload(server_id, &[path], true).await?;
             Ok(Some(summary.describe("Uploaded", &server)))
         }
         Operation::Download => {
-            let summary = engine.download(None, &[path]).await?;
+            let summary = engine.download(server_id, &[path]).await?;
             Ok(Some(summary.describe("Downloaded", &server)))
         }
         // The engine opens the diff through the prompter.
-        Operation::Compare => engine.compare(None, &path).await.map(|_| None),
+        Operation::Compare => engine.compare(server_id, &path).await.map(|_| None),
+        // Sync opens its own view (see `sync_with_deployed`).
+        Operation::Sync => Ok(None),
     }
 }
 
@@ -213,6 +426,7 @@ async fn run(
 fn sync_with_deployed(
     workspace: &mut Workspace,
     store: &Entity<DeploymentStore>,
+    server_id: Option<String>,
     window: &mut Window,
     cx: &mut Context<Workspace>,
 ) {
@@ -233,7 +447,7 @@ fn sync_with_deployed(
         .filter(|path| path.starts_with(engine.root()) && path != engine.root())
         .into_iter()
         .collect();
-    sync_view::open(workspace, engine, roots, window, cx);
+    sync_view::open(workspace, engine, roots, server_id, window, cx);
 }
 
 fn selected_path(workspace: &Workspace, window: &Window, cx: &App) -> Option<PathBuf> {

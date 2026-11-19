@@ -292,6 +292,55 @@ pub fn app_menus(cx: &mut App) -> Vec<Menu> {
             ],
         },
         Menu {
+            name: "Tools".into(),
+            disabled: false,
+            items: vec![MenuItem::submenu(Menu::new("Deployment").items([
+                MenuItem::action(
+                    "Upload to Default Server",
+                    zed_actions::deployment::UploadToDefaultServer,
+                ),
+                MenuItem::action("Upload to…", zed_actions::deployment::UploadTo),
+                MenuItem::action(
+                    "Download from Default Server",
+                    zed_actions::deployment::DownloadFromDefaultServer,
+                ),
+                MenuItem::action("Download from…", zed_actions::deployment::DownloadFrom),
+                MenuItem::separator(),
+                MenuItem::action(
+                    "Compare with Deployed Version",
+                    zed_actions::deployment::CompareWithDeployedVersion,
+                ),
+                MenuItem::action(
+                    "Compare with Deployed To…",
+                    zed_actions::deployment::CompareWithDeployedTo,
+                ),
+                MenuItem::action(
+                    "Sync with Deployed…",
+                    zed_actions::deployment::SyncWithDeployed,
+                ),
+                MenuItem::action(
+                    "Sync with Deployed To…",
+                    zed_actions::deployment::SyncWithDeployedTo,
+                ),
+                MenuItem::separator(),
+                MenuItem::action("Edit Remote File", zed_actions::deployment::EditRemoteFile),
+                MenuItem::action(
+                    "Browse Remote Host",
+                    zed_actions::deployment::ToggleRemoteHost,
+                ),
+                MenuItem::action(
+                    "Automatic Upload",
+                    zed_actions::deployment::ToggleAutomaticUpload,
+                ),
+                MenuItem::separator(),
+                MenuItem::action(
+                    "Configuration…",
+                    zed_actions::deployment::OpenDeploymentServers,
+                ),
+                MenuItem::action("Options…", zed_actions::deployment::OpenDeploymentOptions),
+            ]))],
+        },
+        Menu {
             name: "Window".into(),
             disabled: false,
             items: vec![

@@ -40,10 +40,11 @@ use crate::store::DeploymentStore;
 actions!(
     remote_host,
     [
-        /// Opens the selected file, or expands or collapses the selected folder.
-        Open,
-        /// Opens the server's copy of the selected file, even when it is mapped to a project file.
-        OpenServerCopy,
+        /// Opens the server's copy of the selected file (saving uploads it), or
+        /// expands or collapses the selected folder.
+        EditRemoteFile,
+        /// Opens the project file the selected server file is mapped to.
+        EditLocalFile,
         /// Downloads the selected file or folder to its mapped project path.
         DownloadToProject,
         /// Uploads local files or folders into the selected folder.
@@ -500,7 +501,7 @@ impl RemoteHostPanel {
         if row.is_dir {
             self.toggle_dir(row.path.clone(), cx);
         } else {
-            self.open(row.path.clone(), false, window, cx);
+            self.open(row.path.clone(), true, window, cx);
         }
     }
 
@@ -749,21 +750,42 @@ impl RemoteHostPanel {
         }
     }
 
-    fn open_selected(&mut self, _: &Open, window: &mut Window, cx: &mut Context<Self>) {
+    fn edit_remote_file(
+        &mut self,
+        _: &EditRemoteFile,
+        window: &mut Window,
+        cx: &mut Context<Self>,
+    ) {
         if let Some(row) = self.selected_row() {
             self.activate(&row, window, cx);
         }
     }
 
-    fn open_server_copy(
-        &mut self,
-        _: &OpenServerCopy,
-        window: &mut Window,
-        cx: &mut Context<Self>,
-    ) {
-        if let Some(row) = self.selected_row().filter(|row| !row.is_dir) {
-            self.open(row.path, true, window, cx);
+    fn edit_local_file(&mut self, _: &EditLocalFile, window: &mut Window, cx: &mut Context<Self>) {
+        let Some(local) = self
+            .selected_entry()
+            .and_then(|row| self.item(&row.path))
+            .and_then(|item| item.local.clone())
+        else {
+            return;
+        };
+        if !local.is_file() {
+            self.show_error(
+                format!(
+                    "{} isn't in the project yet. Download it first.",
+                    local.display()
+                ),
+                cx,
+            );
+            return;
         }
+        self.workspace
+            .update(cx, |workspace, cx| {
+                workspace
+                    .open_abs_path(local, OpenOptions::default(), window, cx)
+                    .detach_and_log_err(cx);
+            })
+            .ok();
     }
 
     fn expand_selected(&mut self, _: &ExpandSelectedEntry, _: &mut Window, cx: &mut Context<Self>) {
@@ -1102,9 +1124,9 @@ impl RemoteHostPanel {
             };
             let menu = menu
                 .when(!row.is_dir, |menu| {
-                    menu.item(entry("Open", None, Box::new(Open)))
+                    menu.item(entry("Edit Remote File", None, Box::new(EditRemoteFile)))
                         .when(mapped, |menu| {
-                            menu.item(entry("Open Server Copy", None, Box::new(OpenServerCopy)))
+                            menu.item(entry("Edit Local File", None, Box::new(EditLocalFile)))
                         })
                 })
                 .when(mapped, |menu| {
@@ -1861,8 +1883,8 @@ impl Render for RemoteHostPanel {
             .on_action(cx.listener(Self::select_first))
             .on_action(cx.listener(Self::select_last))
             .on_action(cx.listener(Self::confirm))
-            .on_action(cx.listener(Self::open_selected))
-            .on_action(cx.listener(Self::open_server_copy))
+            .on_action(cx.listener(Self::edit_remote_file))
+            .on_action(cx.listener(Self::edit_local_file))
             .on_action(cx.listener(Self::expand_selected))
             .on_action(cx.listener(Self::collapse_selected))
             .on_action(cx.listener(Self::download_to_project))

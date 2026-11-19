@@ -515,7 +515,7 @@ impl ServersModal {
         server.max_connections = max_connections;
     }
 
-    fn show_options(&mut self, window: &mut Window, cx: &mut Context<Self>) {
+    pub(crate) fn show_options(&mut self, window: &mut Window, cx: &mut Context<Self>) {
         self.commit_form(cx);
         self.showing_options = true;
         if self.options_form.is_none() {
