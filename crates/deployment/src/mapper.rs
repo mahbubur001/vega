@@ -191,14 +191,12 @@ impl PathMapper {
             .iter()
             .map(|m| Resolved {
                 local: local_abs(&m.local),
-                remote: join_remote(
-                    base,
-                    if m.remote.is_empty() {
-                        "/"
-                    } else {
-                        m.remote.trim_start_matches('/')
-                    },
-                ),
+                // An empty deployment path is the root path itself.
+                remote: if m.remote.trim_matches('/').is_empty() {
+                    norm_remote(base)
+                } else {
+                    join_remote(base, m.remote.trim_start_matches('/'))
+                },
                 web: if m.web.is_empty() {
                     "/".into()
                 } else {
@@ -481,6 +479,17 @@ mod tests {
         assert_eq!(remote_parent("/a/b"), "/a");
         assert_eq!(remote_parent("/a"), "/");
         assert_eq!(remote_name("/a/b.txt"), "b.txt");
+    }
+
+    #[test]
+    fn empty_deployment_path_is_the_root_path() {
+        let s = server(&[("", "", "")]);
+        let m = PathMapper::with_platform("/p", &s, &[], false);
+        assert_eq!(m.remote_roots(), ["/var/www"]);
+        assert_eq!(
+            m.to_remote(Path::new("/p/index.php")).as_deref(),
+            Some("/var/www/index.php")
+        );
     }
 
     #[test]
