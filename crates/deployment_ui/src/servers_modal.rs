@@ -13,8 +13,8 @@ use std::sync::Arc;
 
 use anyhow::Result;
 use deployment::config::{
-    ConfigStore, DataProtection, HostKeyPolicy, Mapping, ResolvedServer, Server, ServerType,
-    SftpAuth, SshBackend, WebdavAuth,
+    AutoUpload, ConfigStore, DataProtection, HostKeyPolicy, LogLevel, Mapping, Options,
+    OverwriteCheck, ResolvedServer, Server, ServerType, SftpAuth, SshBackend, WebdavAuth,
 };
 use deployment::credentials::{Credentials, password_account};
 use deployment::engine::Engine;
@@ -89,6 +89,24 @@ const WEBDAV_AUTH: [(WebdavAuth, &str); 3] = [
     (WebdavAuth::None, "None"),
 ];
 
+const AUTO_UPLOAD: [(AutoUpload, &str); 3] = [
+    (AutoUpload::Always, "Always"),
+    (AutoUpload::OnExplicitSave, "On explicit save action (⌘S)"),
+    (AutoUpload::Never, "Never"),
+];
+
+const OVERWRITE_CHECKS: [(OverwriteCheck, &str); 3] = [
+    (OverwriteCheck::None, "No"),
+    (OverwriteCheck::TimestampAndSize, "Compare timestamp & size"),
+    (OverwriteCheck::Content, "Compare content"),
+];
+
+const LOG_LEVELS: [(LogLevel, &str); 3] = [
+    (LogLevel::Errors, "Errors only"),
+    (LogLevel::Brief, "Brief"),
+    (LogLevel::Details, "Details"),
+];
+
 /// FTP file name encodings the engine understands (UTF-8 is the default).
 const ENCODINGS: [(Option<&str>, &str); 2] = [
     (None, "UTF-8"),
@@ -127,6 +145,8 @@ fn optional_count(text: &str) -> Option<u32> {
 pub(crate) struct Draft {
     pub servers: Vec<ResolvedServer>,
     pub default_id: Option<String>,
+    /// Deployment › Options (project-wide).
+    pub options: Options,
 }
 
 impl Draft {
@@ -134,6 +154,7 @@ impl Draft {
         Self {
             servers: store.servers(),
             default_id: store.default_server_id().map(str::to_string),
+            options: store.options().clone(),
         }
     }
 
@@ -158,8 +179,19 @@ impl Draft {
             .filter(|id| kept.contains(id))
             .or_else(|| kept.first().copied());
         store.set_default_server(default_id)?;
+        if store.options() != &self.options {
+            store.set_options(self.options.clone())?;
+        }
         Ok(())
     }
+}
+
+/// Text fields of the Options page.
+struct OptionsForm {
+    exclude_names: Entity<InputField>,
+    file_permissions: Entity<InputField>,
+    folder_permissions: Entity<InputField>,
+    concurrency: Entity<InputField>,
 }
 
 /// Text fields for the selected server.
@@ -223,6 +255,9 @@ pub(crate) struct ServersModal {
     advanced_open: bool,
     /// Shown in the Deployment window rather than as a modal.
     hosted: bool,
+    /// The Options page is shown instead of a server.
+    showing_options: bool,
+    options_form: Option<OptionsForm>,
     /// Engine for Test Connection and Autodetect (see [`Self::test_engine`]).
     tester: Option<Arc<Engine>>,
     error: Option<SharedString>,
@@ -255,6 +290,8 @@ impl ServersModal {
             password_saved: None,
             advanced_open: false,
             hosted,
+            showing_options: false,
+            options_form: None,
             tester: None,
             error: None,
             focus_handle: cx.focus_handle(),
@@ -268,6 +305,7 @@ impl ServersModal {
 
     fn select(&mut self, index: usize, window: &mut Window, cx: &mut Context<Self>) {
         self.commit_form(cx);
+        self.showing_options = false;
         self.selected = Some(index);
         self.test_results = None;
         self.form = self
@@ -417,6 +455,7 @@ impl ServersModal {
 
     /// Copies the form's text into the draft.
     fn commit_form(&mut self, cx: &App) {
+        self.commit_options(cx);
         let Some(form) = &self.form else {
             return;
         };
@@ -474,6 +513,79 @@ impl ServersModal {
         server.keep_alive_command = keep_alive_command;
         server.trusted_certificate_fingerprint = trusted_fingerprint;
         server.max_connections = max_connections;
+    }
+
+    fn show_options(&mut self, window: &mut Window, cx: &mut Context<Self>) {
+        self.commit_form(cx);
+        self.showing_options = true;
+        if self.options_form.is_none() {
+            let options = &self.draft.options;
+            self.options_form = Some(OptionsForm {
+                exclude_names: input(
+                    ".git;node_modules",
+                    &options.exclude_names.join(";"),
+                    window,
+                    cx,
+                ),
+                file_permissions: input("644", &options.file_permissions, window, cx),
+                folder_permissions: input("755", &options.folder_permissions, window, cx),
+                concurrency: input("4", &options.concurrency.to_string(), window, cx),
+            });
+        }
+        cx.notify();
+    }
+
+    fn commit_options(&mut self, cx: &App) {
+        let Some(form) = &self.options_form else {
+            return;
+        };
+        let text = |field: &Entity<InputField>| field.read(cx).text(cx).trim().to_string();
+        let options = &mut self.draft.options;
+        options.exclude_names = text(&form.exclude_names)
+            .split(';')
+            .map(str::trim)
+            .filter(|name| !name.is_empty())
+            .map(str::to_string)
+            .collect();
+        options.file_permissions = text(&form.file_permissions);
+        options.folder_permissions = text(&form.folder_permissions);
+        if let Some(count) = optional_count(&text(&form.concurrency)) {
+            options.concurrency = count.min(16);
+        }
+    }
+
+    fn update_options(&mut self, cx: &mut Context<Self>, update: impl FnOnce(&mut Options)) {
+        self.commit_options(cx);
+        update(&mut self.draft.options);
+        cx.notify();
+    }
+
+    /// Turns a permission override on (with a usual default) or off.
+    fn set_permission_override(
+        &mut self,
+        folders: bool,
+        on: bool,
+        window: &mut Window,
+        cx: &mut Context<Self>,
+    ) {
+        let Some(form) = &self.options_form else {
+            return;
+        };
+        let field = if folders {
+            form.folder_permissions.clone()
+        } else {
+            form.file_permissions.clone()
+        };
+        let text = if !on {
+            ""
+        } else if folders {
+            "755"
+        } else {
+            "644"
+        };
+        field.update(cx, |field, cx| field.set_text(text, window, cx));
+        self.commit_options(cx);
+        cx.notify();
     }
 
     /// Changes the selected server from a toggle or dropdown.
@@ -826,11 +938,32 @@ impl ServersModal {
                                     server.kind,
                                     is_default,
                                 )
-                                .selected(self.selected == Some(index))
+                                .selected(!self.showing_options && self.selected == Some(index))
                                 .on_click(cx.listener(
                                     move |this, _, window, cx| this.select(index, window, cx),
                                 ))
                             }),
+                    ),
+            )
+            .child(
+                div()
+                    .p_1()
+                    .border_t_1()
+                    .border_color(cx.theme().colors().border_variant)
+                    .child(
+                        ListItem::new("deployment-options")
+                            .inset(true)
+                            .spacing(ListItemSpacing::Dense)
+                            .toggle_state(self.showing_options)
+                            .start_slot(
+                                Icon::new(IconName::Settings)
+                                    .size(IconSize::Small)
+                                    .color(Color::Muted),
+                            )
+                            .child(Label::new("Options"))
+                            .on_click(
+                                cx.listener(|this, _, window, cx| this.show_options(window, cx)),
+                            ),
                     ),
             )
     }
@@ -1059,6 +1192,270 @@ impl ServersModal {
                         column.child(self.render_advanced(server, form, window, cx))
                     })
             })
+            .into_any_element()
+    }
+
+    /// Deployment › Options: settings for every server of this project.
+    fn render_options(&self, window: &mut Window, cx: &mut Context<Self>) -> AnyElement {
+        let Some(form) = &self.options_form else {
+            return div().into_any_element();
+        };
+        let options = &self.draft.options;
+        let this = cx.weak_entity();
+        fn menu<T: Copy + 'static>(
+            this: WeakEntity<ServersModal>,
+            choices: &'static [(T, &'static str)],
+            set: fn(&mut Options, T),
+            window: &mut Window,
+            cx: &mut App,
+        ) -> Entity<ContextMenu> {
+            ContextMenu::build(window, cx, move |mut menu, _, _| {
+                for (value, label) in choices {
+                    let this = this.clone();
+                    let value = *value;
+                    menu = menu.entry(*label, None, move |_, cx| {
+                        this.update(cx, |this, cx| {
+                            this.update_options(cx, |options| set(options, value))
+                        })
+                        .ok();
+                    });
+                }
+                menu
+            })
+        }
+        let check = |id: &'static str,
+                     label: &'static str,
+                     checked: bool,
+                     disabled: bool,
+                     set: fn(&mut Options, bool),
+                     cx: &mut Context<Self>| {
+            Checkbox::new(id, ToggleState::from(checked))
+                .label(label)
+                .disabled(disabled)
+                .on_click(cx.listener(move |this, state: &ToggleState, _, cx| {
+                    let checked = state.selected();
+                    this.update_options(cx, |options| set(options, checked));
+                }))
+        };
+        let divider_color = cx.theme().colors().border_variant;
+        let section = move |title: &'static str| {
+            h_flex()
+                .mt_3()
+                .gap_2()
+                .child(Label::new(title).color(Color::Muted))
+                .child(div().flex_1().h_px().bg(divider_color))
+        };
+        let auto_off = options.auto_upload == AutoUpload::Never;
+        let no_overwrite_check = options.warn_on_newer_remote == OverwriteCheck::None;
+        let permission_row = |id: &'static str,
+                              label: &'static str,
+                              folders: bool,
+                              field: &Entity<InputField>,
+                              cx: &mut Context<Self>| {
+            let text = field.read(cx).text(cx);
+            let mode = deployment::config::parse_mode(&text);
+            let on = !text.trim().is_empty();
+            field_row(
+                label,
+                h_flex()
+                    .gap_2()
+                    .child(
+                        Checkbox::new(id, ToggleState::from(on))
+                            .label("Override")
+                            .on_click(cx.listener(move |this, state: &ToggleState, window, cx| {
+                                this.set_permission_override(folders, state.selected(), window, cx)
+                            })),
+                    )
+                    .when(on, |row| {
+                        row.child(div().w(rems(5.)).child(field.clone())).child(
+                            Label::new(
+                                mode.map(crate::remote_host_panel::format_permissions)
+                                    .unwrap_or_else(|| "invalid".into()),
+                            )
+                            .buffer_font(cx)
+                            .color(if mode.is_some() {
+                                Color::Muted
+                            } else {
+                                Color::Error
+                            }),
+                        )
+                    }),
+            )
+        };
+
+        v_flex()
+            .gap_2()
+            .max_w(rems(44.))
+            .child(Headline::new("Options").size(HeadlineSize::Small))
+            .child(
+                Label::new("These apply to every deployment server of this project.")
+                    .size(LabelSize::Small)
+                    .color(Color::Muted),
+            )
+            .child(section("Automatic upload"))
+            .child(wide_row(
+                "Upload changed files to the default server:",
+                DropdownMenu::new(
+                    "auto-upload",
+                    choice_label(&AUTO_UPLOAD, &options.auto_upload),
+                    menu(
+                        this.clone(),
+                        &AUTO_UPLOAD,
+                        |o, v| o.auto_upload = v,
+                        window,
+                        cx,
+                    ),
+                ),
+            ))
+            .child(check(
+                "skip-external",
+                "Skip external changes (git checkout, scripts, file watchers)",
+                options.skip_external_changes,
+                auto_off,
+                |o, v| o.skip_external_changes = v,
+                cx,
+            ))
+            .child(check(
+                "delete-remote-on-delete",
+                "Delete remote files when local ones are deleted",
+                options.delete_remote_on_local_delete,
+                auto_off,
+                |o, v| o.delete_remote_on_local_delete = v,
+                cx,
+            ))
+            .child(section("Transfers"))
+            .child(wide_row(
+                "Exclude items by name:",
+                form.exclude_names.clone(),
+            ))
+            .child(
+                Label::new("Separate names with ;  — * matches any characters, ? one character.")
+                    .size(LabelSize::XSmall)
+                    .color(Color::Muted),
+            )
+            .child(check(
+                "overwrite-up-to-date",
+                "Overwrite up-to-date files",
+                options.overwrite_up_to_date,
+                false,
+                |o, v| o.overwrite_up_to_date = v,
+                cx,
+            ))
+            .child(check(
+                "temp-file",
+                "Use a temporary file during upload",
+                options.use_temp_file,
+                false,
+                |o, v| o.use_temp_file = v,
+                cx,
+            ))
+            .child(check(
+                "preserve-timestamps",
+                "Preserve file timestamps",
+                options.preserve_timestamps,
+                false,
+                |o, v| o.preserve_timestamps = v,
+                cx,
+            ))
+            .child(check(
+                "delete-missing",
+                "Delete target items when source ones do not exist",
+                options.delete_missing_target,
+                false,
+                |o, v| o.delete_missing_target = v,
+                cx,
+            ))
+            .child(check(
+                "empty-dirs",
+                "Create empty directories",
+                options.create_empty_directories,
+                false,
+                |o, v| o.create_empty_directories = v,
+                cx,
+            ))
+            .child(wide_row(
+                "Parallel transfers (1–16):",
+                div().w(rems(5.)).child(form.concurrency.clone()),
+            ))
+            .child(section("Safety"))
+            .child(wide_row(
+                "Warn when uploading over newer file:",
+                DropdownMenu::new(
+                    "warn-newer",
+                    choice_label(&OVERWRITE_CHECKS, &options.warn_on_newer_remote),
+                    menu(
+                        this.clone(),
+                        &OVERWRITE_CHECKS,
+                        |o, v| o.warn_on_newer_remote = v,
+                        window,
+                        cx,
+                    ),
+                ),
+            ))
+            .child(check(
+                "notify-remote",
+                "Notify of remote changes",
+                options.notify_remote_changes,
+                no_overwrite_check,
+                |o, v| o.notify_remote_changes = v,
+                cx,
+            ))
+            .child(check(
+                "prompt-local",
+                "Prompt when overwriting or deleting local items",
+                options.prompt_overwrite_local,
+                false,
+                |o, v| o.prompt_overwrite_local = v,
+                cx,
+            ))
+            .child(check(
+                "confirm-upload",
+                "Confirm uploading files",
+                options.confirm_upload,
+                false,
+                |o, v| o.confirm_upload = v,
+                cx,
+            ))
+            .child(check(
+                "confirm-remote-delete",
+                "Confirm deleting on the server",
+                options.confirm_remote_delete,
+                false,
+                |o, v| o.confirm_remote_delete = v,
+                cx,
+            ))
+            .child(section("Permissions"))
+            .child(check(
+                "preserve-permissions",
+                "Preserve original file permissions (FTP)",
+                options.preserve_original_permissions,
+                false,
+                |o, v| o.preserve_original_permissions = v,
+                cx,
+            ))
+            .child(permission_row(
+                "override-file-permissions",
+                "Files:",
+                false,
+                &form.file_permissions,
+                cx,
+            ))
+            .child(permission_row(
+                "override-folder-permissions",
+                "Folders:",
+                true,
+                &form.folder_permissions,
+                cx,
+            ))
+            .child(section("Log"))
+            .child(wide_row(
+                "Operations logging:",
+                DropdownMenu::new(
+                    "logging",
+                    choice_label(&LOG_LEVELS, &options.logging),
+                    menu(this, &LOG_LEVELS, |o, v| o.logging = v, window, cx),
+                ),
+            ))
             .into_any_element()
     }
 
@@ -1571,6 +1968,14 @@ fn field_row(label: &'static str, field: impl IntoElement) -> impl IntoElement {
         .child(div().flex_1().min_w_0().child(field))
 }
 
+/// Like [`field_row`], with room for a long label (Options page).
+fn wide_row(label: &'static str, field: impl IntoElement) -> impl IntoElement {
+    h_flex()
+        .gap_2()
+        .child(div().w(rems(17.)).flex_none().child(Label::new(label)))
+        .child(div().flex_1().min_w_0().child(field))
+}
+
 /// The icon and color a server type gets in lists and menus.
 pub(crate) fn server_type_icon(kind: ServerType) -> (IconName, Color) {
     match kind {
@@ -1781,33 +2186,37 @@ impl Render for ServersModal {
                 cx,
             ));
 
-        let body = match (&server, self.form.take()) {
-            (Some(server), Some(form)) => {
-                let tab = if server.kind == ServerType::Group {
-                    Tab::Connection
-                } else {
-                    self.tab
-                };
-                let body = match tab {
-                    Tab::Connection => self.render_connection(server, &form, window, cx),
-                    Tab::Mappings => self.render_mappings(&form, cx),
-                    Tab::Excluded => self.render_excluded(&form, cx),
-                };
-                self.form = Some(form);
-                body
+        let body = if self.showing_options {
+            self.render_options(window, cx)
+        } else {
+            match (&server, self.form.take()) {
+                (Some(server), Some(form)) => {
+                    let tab = if server.kind == ServerType::Group {
+                        Tab::Connection
+                    } else {
+                        self.tab
+                    };
+                    let body = match tab {
+                        Tab::Connection => self.render_connection(server, &form, window, cx),
+                        Tab::Mappings => self.render_mappings(&form, cx),
+                        Tab::Excluded => self.render_excluded(&form, cx),
+                    };
+                    self.form = Some(form);
+                    body
+                }
+                _ => v_flex()
+                    .flex_1()
+                    .items_center()
+                    .justify_center()
+                    .gap_1()
+                    .child(Label::new("No servers yet.").color(Color::Muted))
+                    .child(
+                        Label::new("Click + to add one.")
+                            .size(LabelSize::Small)
+                            .color(Color::Muted),
+                    )
+                    .into_any_element(),
             }
-            _ => v_flex()
-                .flex_1()
-                .items_center()
-                .justify_center()
-                .gap_1()
-                .child(Label::new("No servers yet.").color(Color::Muted))
-                .child(
-                    Label::new("Click + to add one.")
-                        .size(LabelSize::Small)
-                        .color(Color::Muted),
-                )
-                .into_any_element(),
         };
 
         v_flex()
@@ -1859,9 +2268,10 @@ impl Render for ServersModal {
                             .px_3()
                             .gap_3()
                             .when(
-                                server
-                                    .as_ref()
-                                    .is_some_and(|server| server.kind != ServerType::Group),
+                                !self.showing_options
+                                    && server
+                                        .as_ref()
+                                        .is_some_and(|server| server.kind != ServerType::Group),
                                 |column| column.child(tabs),
                             )
                             .child(
@@ -1996,6 +2406,19 @@ mod tests {
             "changed.example.com"
         );
         assert_eq!(reloaded.default_server_id(), Some("c"));
+    }
+
+    #[test]
+    fn saving_a_draft_writes_changed_options() {
+        let dir = tempfile::tempdir().unwrap();
+        let mut config = store(dir.path());
+        let mut draft = Draft::load(&config);
+        draft.options.auto_upload = AutoUpload::OnExplicitSave;
+        draft.options.file_permissions = "640".into();
+        draft.apply(&mut config).unwrap();
+        let reloaded = store(dir.path());
+        assert_eq!(reloaded.options().auto_upload, AutoUpload::OnExplicitSave);
+        assert_eq!(reloaded.options().file_mode(), Some(0o640));
     }
 
     #[test]
