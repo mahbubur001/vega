@@ -13,10 +13,38 @@ pub(crate) fn primary_button(
     cx: &App,
 ) -> DialogButton {
     let background = cx.theme().status().info;
+    let colors = cx.theme().colors();
+    // The theme's text or background colour, whichever reads better on the accent.
+    let text = readable_on(background, [colors.text, colors.editor_background]);
     DialogButton::new(id, label, cx)
         .bg(background)
         .hover(move |style| style.bg(background.opacity(0.85)))
-        .text(Color::Custom(gpui::white()), gpui::FontWeight::SEMIBOLD)
+        .text(Color::Custom(text), gpui::FontWeight::SEMIBOLD)
+}
+
+/// The candidate with the highest contrast against `background` (WCAG relative luminance).
+pub(crate) fn readable_on(background: gpui::Hsla, candidates: [gpui::Hsla; 2]) -> gpui::Hsla {
+    fn luminance(color: gpui::Hsla) -> f32 {
+        let rgba = color.to_rgb();
+        let channel = |c: f32| {
+            if c <= 0.03928 {
+                c / 12.92
+            } else {
+                ((c + 0.055) / 1.055).powf(2.4)
+            }
+        };
+        0.2126 * channel(rgba.r) + 0.7152 * channel(rgba.g) + 0.0722 * channel(rgba.b)
+    }
+    let contrast = |a: gpui::Hsla, b: gpui::Hsla| {
+        let (la, lb) = (luminance(a), luminance(b));
+        (la.max(lb) + 0.05) / (la.min(lb) + 0.05)
+    };
+    let [first, second] = candidates;
+    if contrast(first, background) >= contrast(second, background) {
+        first
+    } else {
+        second
+    }
 }
 
 /// The dialog's Cancel button. Escape runs it.
@@ -131,12 +159,15 @@ pub(crate) fn combo_box(
     label: impl Into<SharedString>,
     width: Option<Rems>,
     menu: impl Fn(&mut Window, &mut App) -> Entity<ContextMenu> + 'static,
+    cx: &App,
 ) -> impl IntoElement {
+    let field_background = cx.theme().colors().editor_background;
+    let field_border = cx.theme().colors().border_variant;
     let id: SharedString = id.into();
     let label: SharedString = label.into();
     let trigger = ButtonLike::new(SharedString::from(format!("{id}-trigger")))
-        .style(ButtonStyle::Outlined)
-        .size(ButtonSize::Large)
+        .style(ButtonStyle::Transparent)
+        .size(ButtonSize::Medium)
         .full_width()
         .child(
             h_flex()
@@ -160,6 +191,11 @@ pub(crate) fn combo_box(
             Some(width) => container.w(width),
             None => container.w_full(),
         })
+        // Looks like the text fields next to it: same background and border.
+        .rounded_md()
+        .bg(field_background)
+        .border_1()
+        .border_color(field_border)
         .child(
             PopoverMenu::new(id)
                 .full_width(true)
@@ -167,4 +203,19 @@ pub(crate) fn combo_box(
                 .trigger(trigger)
                 .menu(move |window, cx| Some(menu(window, cx))),
         )
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn picks_the_more_readable_label_colour() {
+        let light_teal = gpui::rgb(0x83a598).into();
+        let dark = gpui::rgb(0x1d2021).into();
+        let cream = gpui::rgb(0xfbf1c7).into();
+        assert_eq!(readable_on(light_teal, [cream, dark]), dark);
+        let deep_blue = gpui::rgb(0x1e40af).into();
+        assert_eq!(readable_on(deep_blue, [cream, dark]), cream);
+    }
 }

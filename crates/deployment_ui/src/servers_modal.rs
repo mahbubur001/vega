@@ -1239,8 +1239,7 @@ impl ServersModal {
                     Some((kind_icon, kind_color)),
                     server.kind.label(),
                     Some(rems(16.)),
-                    kind_menu,
-                ),
+                    kind_menu, cx),
             ))
             .when(is_remote, |column| {
                 column
@@ -1284,8 +1283,7 @@ impl ServersModal {
                                 None,
                                 auth_label,
                                 Some(rems(16.)),
-                                auth_menu,
-                            ),
+                                auth_menu, cx),
                         ))
                     })
                     .when(is_sftp && auth == SftpAuth::Key, |column| {
@@ -1524,6 +1522,7 @@ impl ServersModal {
                             )
                         }
                     },
+                    cx,
                 ),
             ))
             .child(check(
@@ -1616,6 +1615,7 @@ impl ServersModal {
                             )
                         }
                     },
+                    cx,
                 ),
             ))
             .child(check(
@@ -1684,6 +1684,7 @@ impl ServersModal {
                     move |window, cx| {
                         menu(this.clone(), &LOG_LEVELS, |o, v| o.logging = v, window, cx)
                     },
+                    cx,
                 ),
             ))
             .into_any_element()
@@ -1986,6 +1987,7 @@ impl ServersModal {
                                     )
                                 }
                             },
+                            cx,
                         ),
                     ))
                     .child(field_row(
@@ -2007,6 +2009,7 @@ impl ServersModal {
                                     )
                                 }
                             },
+                            cx,
                         ),
                     ))
                     .child(field_row("Jump host:", form.jump_host.clone()))
@@ -2054,6 +2057,7 @@ impl ServersModal {
                                     )
                                 }
                             },
+                            cx,
                         ),
                     ))
                     .child(field_row(
@@ -2082,6 +2086,7 @@ impl ServersModal {
                                 )
                             }
                         },
+                        cx,
                     ),
                 ))
             })
@@ -2106,6 +2111,7 @@ impl ServersModal {
                                 )
                             }
                         },
+                        cx,
                     ),
                 ))
             })

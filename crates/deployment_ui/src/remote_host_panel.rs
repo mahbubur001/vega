@@ -27,8 +27,8 @@ use project_panel::project_panel_settings::ProjectPanelSettings;
 use settings::{ProjectPanelEntrySpacing, Settings as _, ShowIndentGuides};
 use time::{OffsetDateTime, UtcOffset};
 use ui::{
-    ButtonLike, ContextMenu, ContextMenuEntry, IconPosition, IndentGuideColors, ListItem,
-    ListItemSpacing, PopoverMenu, Tooltip, prelude::*,
+    ContextMenu, ContextMenuEntry, IconPosition, IndentGuideColors, ListItem, ListItemSpacing,
+    Tooltip, prelude::*,
 };
 use util::ResultExt as _;
 use workspace::dock::{DockPosition, Panel, PanelEvent};
@@ -1693,40 +1693,14 @@ impl RemoteHostPanel {
         let kind = self.server().map(|choice| choice.kind);
         let has_server = self.server().is_some();
         // PhpStorm-style combo box: the server's icon and name on the left, the arrow on the right.
-        let combo = PopoverMenu::new("remote-host-server-menu")
-            .full_width(true)
-            .anchor(gpui::Anchor::TopLeft)
-            .trigger(
-                ButtonLike::new("remote-host-server")
-                    .style(ButtonStyle::Outlined)
-                    .full_width()
-                    .child(
-                        h_flex()
-                            .w_full()
-                            .min_w_0()
-                            .gap_1p5()
-                            .px_1()
-                            .children(
-                                kind.map(|kind| server_icon(Some(kind)).size(IconSize::Small)),
-                            )
-                            .child(
-                                Label::new(label)
-                                    .color(if has_server {
-                                        Color::Default
-                                    } else {
-                                        Color::Muted
-                                    })
-                                    .truncate(),
-                            )
-                            .child(div().flex_1())
-                            .child(
-                                Icon::new(IconName::ChevronDown)
-                                    .size(IconSize::XSmall)
-                                    .color(Color::Muted),
-                            ),
-                    ),
-            )
-            .menu(move |_, _| Some(menu.clone()));
+        let combo = crate::dialog::combo_box(
+            "remote-host-server-menu",
+            kind.map(crate::servers_modal::server_type_icon),
+            label,
+            None,
+            move |_, _| menu.clone(),
+            cx,
+        );
         let tool = |id: &'static str, icon: IconName, tooltip: &'static str| {
             IconButton::new(id, icon)
                 .icon_size(IconSize::Small)
