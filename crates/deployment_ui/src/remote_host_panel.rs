@@ -3,7 +3,7 @@
 //! back (the store routes those saves to the engine that opened the copy).
 
 use std::ops::Range;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::sync::Arc;
 
 use collections::{HashMap, HashSet};
@@ -11,7 +11,9 @@ use db::kvp::KeyValueStore;
 use deployment::config::ServerType;
 use deployment::engine::{Engine, RemoteItem, Summary};
 use deployment::mapper::remote_name;
+use deployment::protocol::{EntryType, RemoteStat};
 use deployment::{ErrorCode, RemoteError};
+use file_icons::FileIcons;
 use futures::FutureExt as _;
 use futures::future::BoxFuture;
 use gpui::{
@@ -21,7 +23,8 @@ use gpui::{
     UniformListScrollHandle, WeakEntity, Window, actions, anchored, deferred, px, uniform_list,
 };
 use gpui_tokio::Tokio;
-use ui::{ContextMenu, DropdownMenu, ListItem, ListItemSpacing, Tooltip, prelude::*};
+use time::{OffsetDateTime, UtcOffset};
+use ui::{ContextMenu, DropdownMenu, IconPosition, ListItem, ListItemSpacing, Tooltip, prelude::*};
 use util::ResultExt as _;
 use workspace::dock::{DockPosition, Panel, PanelEvent};
 use workspace::{DraggedSelection, OpenOptions, Workspace};
@@ -73,6 +76,67 @@ actions!(
 /// Key-value store entry that remembers which dock the panel is in.
 const DOCK_POSITION_KEY: &str = "vega_remote_host_dock_position";
 
+/// Key-value store entry that remembers the panel's view options.
+const VIEW_OPTIONS_KEY: &str = "vega_remote_host_view_options";
+
+/// What the tree shows next to each name (PhpStorm's Remote Host options).
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub(crate) struct ViewOptions {
+    pub show_size: bool,
+    pub show_date: bool,
+    pub show_permissions: bool,
+    pub highlight_symlinks: bool,
+    pub highlight_mappings: bool,
+}
+
+impl Default for ViewOptions {
+    fn default() -> Self {
+        Self {
+            show_size: true,
+            show_date: true,
+            show_permissions: false,
+            highlight_symlinks: true,
+            highlight_mappings: true,
+        }
+    }
+}
+
+impl ViewOptions {
+    const FLAGS: [&'static str; 5] = ["size", "date", "permissions", "symlinks", "mappings"];
+
+    fn flags(&self) -> [bool; 5] {
+        [
+            self.show_size,
+            self.show_date,
+            self.show_permissions,
+            self.highlight_symlinks,
+            self.highlight_mappings,
+        ]
+    }
+
+    /// Stored as the enabled flags, comma-separated.
+    pub(crate) fn to_value(self) -> String {
+        Self::FLAGS
+            .iter()
+            .zip(self.flags())
+            .filter(|(_, on)| *on)
+            .map(|(flag, _)| *flag)
+            .collect::<Vec<_>>()
+            .join(",")
+    }
+
+    pub(crate) fn from_value(value: &str) -> Self {
+        let on: HashSet<&str> = value.split(',').map(str::trim).collect();
+        Self {
+            show_size: on.contains("size"),
+            show_date: on.contains("date"),
+            show_permissions: on.contains("permissions"),
+            highlight_symlinks: on.contains("symlinks"),
+            highlight_mappings: on.contains("mappings"),
+        }
+    }
+}
+
 /// A server the panel can browse: the engine (project folder) it belongs to
 /// and its id within that engine's config.
 #[derive(Clone)]
@@ -80,6 +144,9 @@ struct ServerChoice {
     engine: Arc<Engine>,
     id: String,
     label: SharedString,
+    /// Shown on the root node, e.g. "Live (example.com)".
+    address: SharedString,
+    kind: ServerType,
 }
 
 impl ServerChoice {
@@ -163,6 +230,8 @@ pub struct RemoteHostPanel {
     rows: Vec<Row>,
     selected: Option<String>,
     clipboard: Option<Clipboard>,
+    options: ViewOptions,
+    local_offset: UtcOffset,
     error: Option<SharedString>,
     scroll_handle: UniformListScrollHandle,
     context_menu: Option<(Entity<ContextMenu>, Point<Pixels>, Subscription)>,
@@ -183,6 +252,12 @@ impl RemoteHostPanel {
             .flatten()
             .and_then(|value| dock_position_from_str(&value))
             .unwrap_or(DockPosition::Right);
+        let options = KeyValueStore::global(cx)
+            .read_kvp(VIEW_OPTIONS_KEY)
+            .log_err()
+            .flatten()
+            .map(|value| ViewOptions::from_value(&value))
+            .unwrap_or_default();
         let mut this = Self {
             store,
             workspace,
@@ -197,6 +272,8 @@ impl RemoteHostPanel {
             rows: Vec::new(),
             selected: None,
             clipboard: None,
+            options,
+            local_offset: UtcOffset::current_local_offset().unwrap_or(UtcOffset::UTC),
             error: None,
             scroll_handle: UniformListScrollHandle::new(),
             context_menu: None,
@@ -230,10 +307,16 @@ impl RemoteHostPanel {
                         } else {
                             resolved.server.name.clone()
                         };
+                        let address = match resolved.server.kind {
+                            ServerType::Local => resolved.server.root_path.clone(),
+                            _ => resolved.server.host.clone(),
+                        };
                         ServerChoice {
                             engine: engine.clone(),
                             id: resolved.server.id,
                             label: label.into(),
+                            address: address.into(),
+                            kind: resolved.server.kind,
                         }
                     })
             })
@@ -268,10 +351,11 @@ impl RemoteHostPanel {
         self.root = self
             .server()
             .and_then(|choice| choice.engine.remote_start(&choice.id).ok());
-        self.update_rows();
         if let Some(root) = self.root.clone() {
+            self.expanded.insert(root.clone());
             self.load_dir(root, cx);
         }
+        self.update_rows();
         cx.notify();
     }
 
@@ -279,11 +363,39 @@ impl RemoteHostPanel {
         self.servers.get(self.selected_server?)
     }
 
+    /// The root node ("Server (host)") followed by the expanded tree.
     fn update_rows(&mut self) {
-        self.rows = match &self.root {
-            Some(root) => visible_rows(root, &self.children, &self.expanded),
-            None => Vec::new(),
+        let (Some(root), Some(choice)) = (&self.root, self.server()) else {
+            self.rows = Vec::new();
+            return;
         };
+        let mut rows = vec![Row {
+            path: root.clone(),
+            name: format!("{} ({})", choice.label, choice.address),
+            depth: 0,
+            is_dir: true,
+        }];
+        if self.expanded.contains(root) {
+            rows.extend(
+                visible_rows(root, &self.children, &self.expanded)
+                    .into_iter()
+                    .map(|row| Row {
+                        depth: row.depth + 1,
+                        ..row
+                    }),
+            );
+        }
+        self.rows = rows;
+    }
+
+    fn is_root(&self, path: &str) -> bool {
+        self.root.as_deref() == Some(path)
+    }
+
+    /// The selected row unless it is the root node, which can't be renamed,
+    /// deleted, copied and so on.
+    fn selected_entry(&self) -> Option<Row> {
+        self.selected_row().filter(|row| !self.is_root(&row.path))
     }
 
     fn item(&self, path: &str) -> Option<&RemoteItem> {
@@ -711,7 +823,7 @@ impl RemoteHostPanel {
         _: &mut Window,
         cx: &mut Context<Self>,
     ) {
-        let Some(row) = self.selected_row() else {
+        let Some(row) = self.selected_entry() else {
             return;
         };
         let paths = vec![row.path.clone()];
@@ -753,7 +865,7 @@ impl RemoteHostPanel {
     }
 
     fn rename(&mut self, _: &Rename, window: &mut Window, cx: &mut Context<Self>) {
-        let Some(row) = self.selected_row() else {
+        let Some(row) = self.selected_entry() else {
             return;
         };
         let this = cx.weak_entity();
@@ -782,7 +894,7 @@ impl RemoteHostPanel {
     }
 
     fn delete(&mut self, _: &Delete, _: &mut Window, cx: &mut Context<Self>) {
-        let Some(row) = self.selected_row() else {
+        let Some(row) = self.selected_entry() else {
             return;
         };
         let paths = vec![row.path.clone()];
@@ -796,7 +908,8 @@ impl RemoteHostPanel {
     }
 
     fn mark_for_paste(&mut self, cut: bool, cx: &mut Context<Self>) {
-        let (Some(row), Some(server)) = (self.selected_row(), self.server().map(ServerChoice::key))
+        let (Some(row), Some(server)) =
+            (self.selected_entry(), self.server().map(ServerChoice::key))
         else {
             return;
         };
@@ -845,7 +958,7 @@ impl RemoteHostPanel {
         window: &mut Window,
         cx: &mut Context<Self>,
     ) {
-        let Some(row) = self.selected_row() else {
+        let Some(row) = self.selected_entry() else {
             return;
         };
         let current = self
@@ -895,7 +1008,7 @@ impl RemoteHostPanel {
     }
 
     fn toggle_excluded(&mut self, _: &ToggleExcluded, _: &mut Window, cx: &mut Context<Self>) {
-        let (Some(row), Some(choice)) = (self.selected_row(), self.server().cloned()) else {
+        let (Some(row), Some(choice)) = (self.selected_entry(), self.server().cloned()) else {
             return;
         };
         let exclude = !self.explicitly_excluded(&row.path);
@@ -979,13 +1092,7 @@ impl RemoteHostPanel {
             .action("Copy Path", Box::new(CopyPath))
             .action("Refresh", Box::new(Refresh))
         });
-        window.focus(&menu.focus_handle(cx), cx);
-        let subscription = cx.subscribe(&menu, |this, _, _: &DismissEvent, cx| {
-            this.context_menu.take();
-            cx.notify();
-        });
-        self.context_menu = Some((menu, position, subscription));
-        cx.notify();
+        self.show_menu(menu, position, window, cx);
     }
 
     fn render_rows(
@@ -1002,33 +1109,70 @@ impl RemoteHostPanel {
             .map(|clipboard| clipboard.paths.clone())
             .unwrap_or_default();
         let drop_background = cx.theme().colors().drop_target_background;
+        let options = self.options;
+        let now = OffsetDateTime::now_utc().to_offset(self.local_offset);
+        let server_kind = self.server().map(|choice| choice.kind);
         range
             .filter_map(|index| {
                 let row = self.rows.get(index)?.clone();
+                let is_root = self.is_root(&row.path);
                 let expanded = self.expanded.contains(&row.path);
                 let loading = self.loading.contains(&row.path);
-                let excluded = self.item(&row.path).is_some_and(|item| item.excluded);
-                let icon = match (row.is_dir, expanded) {
-                    (true, true) => IconName::FolderOpen,
-                    (true, false) => IconName::Folder,
-                    (false, _) => IconName::File,
+                let item = self.item(&row.path);
+                let excluded = item.is_some_and(|item| item.excluded);
+                let is_symlink = item.is_some_and(|item| item.stat.kind == EntryType::Symlink);
+                let mapped = item.is_some_and(|item| item.local.is_some());
+                let icon = if is_root {
+                    server_icon(server_kind)
+                } else if row.is_dir {
+                    FileIcons::get_folder_icon(expanded, Path::new(&row.name), cx)
+                        .map(Icon::from_path)
+                        .unwrap_or_else(|| {
+                            Icon::new(if expanded {
+                                IconName::FolderOpen
+                            } else {
+                                IconName::Folder
+                            })
+                        })
+                } else {
+                    FileIcons::get_icon(Path::new(&row.name), cx)
+                        .map(Icon::from_path)
+                        .unwrap_or_else(|| Icon::new(IconName::File))
                 };
                 let color = if excluded || cut_paths.contains(&row.path) {
                     Color::Disabled
+                } else if is_symlink && options.highlight_symlinks {
+                    Color::Accent
+                } else if mapped && options.highlight_mappings {
+                    Color::Created
                 } else {
                     Color::Default
                 };
+                let details = item
+                    .map(|item| entry_details(&item.stat, options, now, self.local_offset))
+                    .unwrap_or_default();
                 let dir = dir_of(&row);
                 let click_row = row.clone();
-                let menu_row = row.clone();
+                let menu_row = (!is_root).then(|| row.clone());
                 let item = ListItem::new(("remote-host-row", index))
                     .indent_level(row.depth)
                     .indent_step_size(px(12.))
                     .spacing(ListItemSpacing::Dense)
                     .toggle_state(self.selected.as_deref() == Some(row.path.as_str()))
                     .when(row.is_dir, |item| item.toggle(Some(expanded)))
-                    .start_slot(Icon::new(icon).size(IconSize::Small).color(Color::Muted))
-                    .child(Label::new(row.name.clone()).color(color).truncate())
+                    .start_slot(icon.size(IconSize::Small).color(Color::Muted))
+                    .child(
+                        h_flex()
+                            .gap_2()
+                            .min_w_0()
+                            .child(Label::new(row.name.clone()).color(color).truncate())
+                            .children(details.into_iter().map(|(text, color)| {
+                                Label::new(text)
+                                    .size(LabelSize::Small)
+                                    .color(color)
+                                    .single_line()
+                            })),
+                    )
                     .when(loading, |item| {
                         item.end_slot(
                             Icon::new(IconName::ArrowCircle)
@@ -1042,18 +1186,16 @@ impl RemoteHostPanel {
                     .on_secondary_mouse_down(cx.listener(
                         move |this, event: &MouseDownEvent, window, cx| {
                             cx.stop_propagation();
-                            this.deploy_context_menu(
-                                event.position,
-                                Some(menu_row.clone()),
-                                window,
-                                cx,
-                            )
+                            this.deploy_context_menu(event.position, menu_row.clone(), window, cx)
                         },
                     ));
-                let dragged = server.clone().map(|server| DraggedRemote {
-                    server,
-                    path: row.path.clone(),
-                });
+                let dragged = server
+                    .clone()
+                    .filter(|_| !is_root)
+                    .map(|server| DraggedRemote {
+                        server,
+                        path: row.path.clone(),
+                    });
                 let (name, is_dir) = (SharedString::from(row.name.clone()), row.is_dir);
                 Some(
                     div()
@@ -1105,42 +1247,189 @@ impl RemoteHostPanel {
 
     fn render_header(&self, window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
         let this = cx.weak_entity();
-        let servers: Vec<(usize, SharedString)> = self
+        let servers: Vec<(usize, SharedString, ServerType)> = self
             .servers
             .iter()
             .enumerate()
-            .map(|(index, choice)| (index, choice.label.clone()))
+            .map(|(index, choice)| (index, choice.label.clone(), choice.kind))
             .collect();
         let menu = ContextMenu::build(window, cx, move |mut menu, _, _| {
-            for (index, label) in servers.clone() {
+            for (index, label, kind) in servers.clone() {
                 let this = this.clone();
-                menu = menu.entry(label, None, move |_, cx| {
-                    this.update(cx, |this, cx| this.select_server(Some(index), cx))
-                        .ok();
-                });
+                menu = menu.custom_entry(
+                    move |_, _| {
+                        h_flex()
+                            .gap_1p5()
+                            .child(
+                                server_icon(Some(kind))
+                                    .size(IconSize::Small)
+                                    .color(Color::Muted),
+                            )
+                            .child(Label::new(label.clone()))
+                            .into_any_element()
+                    },
+                    move |_, cx| {
+                        this.update(cx, |this, cx| this.select_server(Some(index), cx))
+                            .ok();
+                    },
+                );
             }
-            menu.separator()
-                .action("Deployment Servers…", OpenDeploymentServers.boxed_clone())
+            menu
         });
         let label = self
             .server()
             .map(|choice| choice.label.clone())
-            .unwrap_or_else(|| "No server".into());
+            .unwrap_or_else(|| "<None>".into());
+        let has_server = self.server().is_some();
         h_flex()
             .px_2()
             .py_1()
             .gap_1()
-            .justify_between()
             .border_b_1()
             .border_color(cx.theme().colors().border_variant)
-            .child(DropdownMenu::new("remote-host-server", label, menu))
+            .child(
+                div()
+                    .flex_1()
+                    .min_w_0()
+                    .child(DropdownMenu::new("remote-host-server", label, menu).full_width(true)),
+            )
+            .child(
+                Button::new("remote-host-servers", "…")
+                    .style(ButtonStyle::Outlined)
+                    .tooltip(Tooltip::text("Deployment Servers…"))
+                    .on_click(|_, window, cx| {
+                        window.dispatch_action(OpenDeploymentServers.boxed_clone(), cx)
+                    }),
+            )
+            .child(
+                IconButton::new("remote-host-collapse", IconName::ListCollapse)
+                    .icon_size(IconSize::Small)
+                    .tooltip(Tooltip::text("Collapse All"))
+                    .disabled(!has_server)
+                    .on_click(cx.listener(|this, _, _, cx| this.collapse_all(cx))),
+            )
             .child(
                 IconButton::new("remote-host-refresh", IconName::RotateCw)
                     .icon_size(IconSize::Small)
                     .tooltip(Tooltip::text("Refresh"))
-                    .disabled(self.server().is_none())
+                    .disabled(!has_server)
                     .on_click(cx.listener(|this, _, _, cx| this.refresh(cx))),
             )
+            .child(
+                IconButton::new("remote-host-disconnect", IconName::Close)
+                    .icon_size(IconSize::Small)
+                    .icon_color(Color::Error)
+                    .tooltip(Tooltip::text("Disconnect"))
+                    .disabled(!has_server)
+                    .on_click(cx.listener(|this, _, _, cx| this.disconnect(cx))),
+            )
+            .child(
+                IconButton::new("remote-host-options", IconName::Ellipsis)
+                    .icon_size(IconSize::Small)
+                    .tooltip(Tooltip::text("Options"))
+                    .on_click(cx.listener(|this, _, window, cx| {
+                        let position = window.mouse_position();
+                        this.deploy_options_menu(position, window, cx)
+                    })),
+            )
+    }
+
+    fn collapse_all(&mut self, cx: &mut Context<Self>) {
+        self.expanded.clear();
+        if let Some(root) = self.root.clone() {
+            self.expanded.insert(root);
+        }
+        self.update_rows();
+        cx.notify();
+    }
+
+    /// Closes the connections to this project's servers; the next action reconnects.
+    fn disconnect(&mut self, cx: &mut Context<Self>) {
+        let Some(choice) = self.server().cloned() else {
+            return;
+        };
+        let task = Tokio::spawn(cx, async move { choice.engine.disconnect_all().await });
+        self._tasks.push(cx.spawn(async move |this, cx| {
+            task.await.ok();
+            this.update(cx, |this, cx| {
+                this.error = Some("Disconnected.".into());
+                cx.notify();
+            })
+            .ok();
+        }));
+    }
+
+    fn set_options(&mut self, options: ViewOptions, cx: &mut Context<Self>) {
+        self.options = options;
+        let kvp = KeyValueStore::global(cx);
+        let value = options.to_value();
+        db::write_and_log(cx, move || async move {
+            kvp.write_kvp(VIEW_OPTIONS_KEY.into(), value).await
+        });
+        cx.notify();
+    }
+
+    fn deploy_options_menu(
+        &mut self,
+        position: Point<Pixels>,
+        window: &mut Window,
+        cx: &mut Context<Self>,
+    ) {
+        let this = cx.weak_entity();
+        let options = self.options;
+        let menu = ContextMenu::build(window, cx, move |menu, _, _| {
+            let toggle = |menu: ContextMenu,
+                          label: &'static str,
+                          on: bool,
+                          set: fn(&mut ViewOptions, bool)| {
+                let this = this.clone();
+                menu.toggleable_entry(label, on, IconPosition::Start, None, move |_, cx| {
+                    this.update(cx, |panel, cx| {
+                        let mut options = panel.options;
+                        set(&mut options, !on);
+                        panel.set_options(options, cx);
+                    })
+                    .ok();
+                })
+            };
+            let menu = toggle(menu, "Show Size", options.show_size, |o, v| o.show_size = v);
+            let menu = toggle(menu, "Show Date", options.show_date, |o, v| o.show_date = v);
+            let menu = toggle(
+                menu,
+                "Show Permissions",
+                options.show_permissions,
+                |o, v| o.show_permissions = v,
+            );
+            let menu = toggle(
+                menu,
+                "Highlight Symlinks",
+                options.highlight_symlinks,
+                |o, v| o.highlight_symlinks = v,
+            );
+            toggle(
+                menu,
+                "Highlight Mappings",
+                options.highlight_mappings,
+                |o, v| o.highlight_mappings = v,
+            )
+        });
+        self.show_menu(menu, position, window, cx);
+    }
+
+    fn show_menu(
+        &mut self,
+        menu: Entity<ContextMenu>,
+        position: Point<Pixels>,
+        window: &mut Window,
+        cx: &mut Context<Self>,
+    ) {
+        window.focus(&menu.focus_handle(cx), cx);
+        let subscription = cx.subscribe(&menu, |this, _, _: &DismissEvent, cx| {
+            this.context_menu.take();
+            cx.notify();
+        });
+        self.context_menu = Some((menu, position, subscription));
+        cx.notify();
     }
 
     /// The tree, plus the space below it, which takes drops and opens the root
@@ -1209,6 +1498,91 @@ impl RemoteHostPanel {
 enum NameModalKind {
     Name,
     Permissions,
+}
+
+fn server_icon(kind: Option<ServerType>) -> Icon {
+    match kind {
+        Some(ServerType::Local) => Icon::new(IconName::Folder),
+        Some(ServerType::Sftp) => Icon::new(IconName::Lock),
+        _ => Icon::new(IconName::Server),
+    }
+}
+
+/// The size, date and permissions shown after a name, per `options`.
+/// Folders get permissions only, like PhpStorm.
+fn entry_details(
+    stat: &RemoteStat,
+    options: ViewOptions,
+    now: OffsetDateTime,
+    offset: UtcOffset,
+) -> Vec<(String, Color)> {
+    let mut details = Vec::new();
+    if !stat.is_dir() {
+        if options.show_size {
+            details.push((format_size(stat.size), Color::Muted));
+        }
+        if options.show_date && stat.mtime > 0 {
+            details.push((format_mtime(stat.mtime, now, offset), Color::Default));
+        }
+    }
+    if options.show_permissions
+        && let Some(mode) = stat.mode
+    {
+        details.push((format_permissions(mode), Color::Muted));
+    }
+    details
+}
+
+/// PhpStorm-style sizes: "40 byte", "8.6 kB", "1.2 MB" (powers of 1000).
+pub(crate) fn format_size(bytes: u64) -> String {
+    const UNITS: [&str; 4] = ["kB", "MB", "GB", "TB"];
+    if bytes < 1000 {
+        return format!("{bytes} byte");
+    }
+    let mut value = bytes as f64 / 1000.0;
+    let mut unit = 0;
+    while value >= 1000.0 && unit < UNITS.len() - 1 {
+        value /= 1000.0;
+        unit += 1;
+    }
+    format!("{value:.1} {}", UNITS[unit])
+}
+
+/// "d/m/yy, h:mm AM" in local time, like PhpStorm's Remote Host.
+pub(crate) fn format_mtime(mtime_ms: i64, _now: OffsetDateTime, offset: UtcOffset) -> String {
+    let Ok(time) = OffsetDateTime::from_unix_timestamp_nanos(i128::from(mtime_ms) * 1_000_000)
+    else {
+        return String::new();
+    };
+    let time = time.to_offset(offset);
+    let (hour, am_pm) = match time.hour() {
+        0 => (12, "AM"),
+        hour @ 1..=11 => (hour, "AM"),
+        12 => (12, "PM"),
+        hour => (hour - 12, "PM"),
+    };
+    format!(
+        "{}/{}/{:02}, {}:{:02} {}",
+        time.day(),
+        u8::from(time.month()),
+        time.year().rem_euclid(100),
+        hour,
+        time.minute(),
+        am_pm
+    )
+}
+
+/// "rwxr-xr-x" for the permission bits of `mode`.
+pub(crate) fn format_permissions(mode: u32) -> String {
+    (0..9)
+        .map(|bit| {
+            if mode & (1 << (8 - bit)) == 0 {
+                '-'
+            } else {
+                ['r', 'w', 'x'][bit % 3]
+            }
+        })
+        .collect()
 }
 
 /// Server types that have files to browse.
@@ -1409,18 +1783,9 @@ impl Render for RemoteHostPanel {
                 )
                 .into_any_element()
         } else {
-            let root = self.root.clone().unwrap_or_default();
             v_flex()
                 .flex_1()
                 .size_full()
-                .child(
-                    h_flex().px_2().py_1().child(
-                        Label::new(root)
-                            .size(LabelSize::Small)
-                            .color(Color::Muted)
-                            .truncate(),
-                    ),
-                )
                 .when_some(self.error.clone(), |column, error| {
                     column.child(
                         h_flex()
@@ -1656,6 +2021,46 @@ mod tests {
         assert_eq!(parse_permissions("888"), None);
         assert_eq!(parse_permissions("12345"), None);
         assert_eq!(parse_permissions(""), None);
+    }
+
+    #[test]
+    fn details_are_formatted_like_phpstorm() {
+        assert_eq!(format_size(40), "40 byte");
+        assert_eq!(format_size(8_600), "8.6 kB");
+        assert_eq!(format_size(654_100), "654.1 kB");
+        assert_eq!(format_size(2_500_000), "2.5 MB");
+        assert_eq!(format_permissions(0o755), "rwxr-xr-x");
+        assert_eq!(format_permissions(0o100600), "rw-------");
+        let now = OffsetDateTime::now_utc();
+        // 2025-01-08 13:05 UTC
+        assert_eq!(
+            format_mtime(1_736_341_500_000, now, UtcOffset::UTC),
+            "8/1/25, 1:05 PM"
+        );
+        assert_eq!(
+            format_mtime(1_736_294_400_000, now, UtcOffset::UTC),
+            "8/1/25, 12:00 AM"
+        );
+    }
+
+    #[test]
+    fn view_options_round_trip() {
+        let options = ViewOptions {
+            show_permissions: true,
+            highlight_mappings: false,
+            ..ViewOptions::default()
+        };
+        assert_eq!(ViewOptions::from_value(&options.to_value()), options);
+        assert_eq!(
+            ViewOptions::from_value(""),
+            ViewOptions {
+                show_size: false,
+                show_date: false,
+                show_permissions: false,
+                highlight_symlinks: false,
+                highlight_mappings: false,
+            }
+        );
     }
 
     #[test]

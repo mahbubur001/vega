@@ -19,6 +19,7 @@ collections.workspace = true
 credentials_provider.workspace = true
 db.workspace = true
 deployment.workspace = true
+file_icons.workspace = true
 futures.workspace = true
 git_ui_core.workspace = true
 gpui.workspace = true
@@ -27,6 +28,7 @@ language.workspace = true
 menu.workspace = true
 project.workspace = true
 project_panel.workspace = true
+time.workspace = true
 tokio = { workspace = true, features = ["sync"] }
 ui.workspace = true
 ui_input.workspace = true
