@@ -6580,6 +6580,29 @@ dependencies = [
 ]
 
 [[package]]
+name = "external_libraries"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "async-compression",
+ "async-tar",
+ "db",
+ "editor",
+ "file_icons",
+ "fs",
+ "futures 0.3.34",
+ "gpui",
+ "http_client",
+ "paths",
+ "project",
+ "project_panel",
+ "serde_json",
+ "ui",
+ "util",
+ "workspace",
+]
+
+[[package]]
 name = "failspot"
 version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -23876,6 +23899,7 @@ dependencies = [
  "extension",
  "extension_host",
  "extensions_ui",
+ "external_libraries",
  "feature_flags",
  "feedback",
  "file_finder",

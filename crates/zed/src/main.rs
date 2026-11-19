@@ -744,6 +744,8 @@ fn main() {
         recent_projects::init(cx);
         dev_container::init(cx);
         deployment_ui::init(cx);
+        // External Libraries before Scratches: their nodes appear in this order.
+        external_libraries::init(cx);
         scratches::init(cx);
 
         load_embedded_fonts(cx);

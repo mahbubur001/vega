@@ -74,6 +74,7 @@ members = [
     "crates/eval_utils",
     "crates/explorer_command_injector",
     "crates/extension",
+    "crates/external_libraries",
     "crates/extension_api",
     "crates/extension_cli",
     "crates/extension_host",
@@ -360,6 +361,7 @@ env_var = { path = "crates/env_var" }
 etw_tracing = { path = "crates/etw_tracing" }
 eval_utils = { path = "crates/eval_utils" }
 extension = { path = "crates/extension" }
+external_libraries = { path = "crates/external_libraries" }
 extension_host = { path = "crates/extension_host" }
 extension_suggest = { path = "crates/extension_suggest" }
 extensions_ui = { path = "crates/extensions_ui" }
