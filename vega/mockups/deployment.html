@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>VEGA — Deployment preview</title>
+<style>
+  :root {
+    --bg: #0B0B1A; --editor: #101018; --surface: #151526; --panel: #131322; --raised: #1B1B30;
+    --border: #26263C; --border-strong: #34345A; --text: #E6E9FF; --muted: #9294AA; --faint: #6B6D85;
+    --accent: #7C3AED; --accent-2: #A855F7; --blue: #00D4FF; --ok: #34D399; --warn: #F59E0B; --err: #F43F5E;
+    --sftp: #F59E0B; --ftp: #2DD4BF; --ftps: #38BDF8; --dav: #FACC15;
+    --mono: "JetBrains Mono", "SF Mono", Menlo, monospace;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: radial-gradient(1200px 600px at 70% -10%, #1d1440 0%, var(--bg) 55%); color: var(--text);
+         font: 13px/1.45 -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", sans-serif; min-height: 100vh; }
+  header.page { display: flex; align-items: center; gap: 16px; padding: 18px 28px; border-bottom: 1px solid var(--border); }
+  header.page h1 { font-size: 15px; margin: 0; font-weight: 600; letter-spacing: .2px; }
+  header.page .tag { color: var(--muted); }
+  nav.screens { display: flex; gap: 6px; padding: 14px 28px 0; flex-wrap: wrap; }
+  nav.screens button { background: transparent; border: 1px solid var(--border); color: var(--muted); padding: 6px 12px; border-radius: 999px; cursor: pointer; font: inherit; }
+  nav.screens button.on { color: var(--text); border-color: var(--accent); background: rgba(124,58,237,.15); }
+  main { padding: 22px 28px 60px; }
+  .screen { display: none; } .screen.on { display: block; }
+  .note { color: var(--muted); max-width: 980px; margin: 0 0 14px; }
+  .note b { color: var(--text); font-weight: 600; }
+
+  /* window chrome */
+  .win { background: var(--surface); border: 1px solid var(--border-strong); border-radius: 12px; box-shadow: 0 30px 80px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.02) inset;
+         display: flex; flex-direction: column; overflow: hidden; resize: both; min-width: 720px; min-height: 420px; }
+  .titlebar { height: 38px; display: flex; align-items: center; gap: 8px; padding: 0 12px; border-bottom: 1px solid var(--border); background: var(--panel); user-select: none; }
+  .lights { display: flex; gap: 7px; } .lights i { width: 12px; height: 12px; border-radius: 50%; display: block; }
+  .lights i:nth-child(1) { background: #FF5F57; } .lights i:nth-child(2) { background: #FEBC2E; } .lights i:nth-child(3) { background: #28C840; }
+  .titlebar .title { flex: 1; text-align: center; color: var(--muted); font-weight: 600; margin-right: 52px; }
+  .grip { position: absolute; right: 6px; bottom: 4px; color: var(--faint); font-size: 11px; pointer-events: none; }
+
+  .split { display: flex; flex: 1; min-height: 0; }
+  .side { width: 250px; border-right: 1px solid var(--border); display: flex; flex-direction: column; background: var(--panel); }
+  .toolbar { display: flex; align-items: center; gap: 2px; padding: 6px 8px; border-bottom: 1px solid var(--border); }
+  .ib { width: 26px; height: 24px; border-radius: 6px; display: inline-grid; place-items: center; color: var(--muted); cursor: pointer; font-size: 14px; }
+  .ib:hover { background: var(--raised); color: var(--text); }
+  .ib.add { color: var(--accent-2); } .ib.del { color: var(--err); } .ib.def { color: var(--ok); }
+  .sep { width: 1px; height: 16px; background: var(--border); margin: 0 4px; }
+  .list { flex: 1; overflow: auto; padding: 6px; }
+  .row { display: flex; align-items: center; gap: 8px; padding: 5px 8px; border-radius: 6px; cursor: default; white-space: nowrap; }
+  .row:hover { background: var(--raised); }
+  .row.sel { background: rgba(124,58,237,.22); box-shadow: inset 0 0 0 1px rgba(124,58,237,.45); }
+  .row.group { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .6px; margin-top: 6px; }
+  .row .child { padding-left: 16px; }
+  .ty { font-size: 12px; width: 14px; text-align: center; }
+  .ty.sftp { color: var(--sftp); } .ty.ftp { color: var(--ftp); } .ty.ftps { color: var(--ftps); } .ty.dav { color: var(--dav); } .ty.local { color: var(--warn); }
+  .row b { font-weight: 650; } .row .badge { margin-left: auto; font-size: 10px; color: var(--ok); border: 1px solid rgba(52,211,153,.35); padding: 0 6px; border-radius: 999px; }
+  .side .foot { border-top: 1px solid var(--border); padding: 6px; }
+
+  .content { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+  .tabs { display: flex; gap: 2px; padding: 8px 16px 0; border-bottom: 1px solid var(--border); }
+  .tab { padding: 7px 12px; border-radius: 7px 7px 0 0; color: var(--muted); cursor: pointer; border: 1px solid transparent; border-bottom: none; margin-bottom: -1px; }
+  .tab.on { color: var(--text); background: var(--surface); border-color: var(--border); }
+  .body { padding: 16px 20px; overflow: auto; flex: 1; }
+  .form { display: grid; grid-template-columns: 140px 1fr; gap: 10px 14px; align-items: center; max-width: 720px; }
+  .form label.l { color: var(--muted); }
+  .in { background: var(--editor); border: 1px solid var(--border); border-radius: 7px; padding: 6px 10px; color: var(--text); font: inherit; width: 100%; }
+  .in.mono { font-family: var(--mono); font-size: 12px; }
+  .in:focus-within, .in.focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(124,58,237,.25); }
+  .h { display: flex; gap: 8px; align-items: center; }
+  .grow { flex: 1; }
+  .dd { display: inline-flex; align-items: center; gap: 8px; background: var(--editor); border: 1px solid var(--border); border-radius: 7px; padding: 5px 10px; min-width: 220px; }
+  .dd::after { content: "▾"; margin-left: auto; color: var(--faint); }
+  .cb { display: inline-flex; align-items: center; gap: 8px; color: var(--text); }
+  .cb i { width: 15px; height: 15px; border-radius: 4px; border: 1px solid var(--border-strong); display: inline-grid; place-items: center; font-style: normal; font-size: 11px; }
+  .cb.on i { background: var(--accent); border-color: var(--accent); color: white; }
+  .btn { border: 1px solid var(--border-strong); background: transparent; color: var(--text); border-radius: 7px; padding: 5px 12px; font: inherit; cursor: pointer; display: inline-flex; gap: 6px; align-items: center; }
+  .btn:hover { background: var(--raised); }
+  .btn.primary { background: linear-gradient(135deg, var(--accent), #6D28D9); border-color: transparent; color: white; box-shadow: 0 6px 18px rgba(124,58,237,.35); }
+  .btn.ghost { border-color: transparent; color: var(--accent-2); padding: 3px 6px; }
+  kbd { font: 10px var(--mono); color: var(--faint); border: 1px solid var(--border); border-radius: 4px; padding: 0 4px; margin-left: 4px; }
+  .callout { border-radius: 9px; padding: 10px 12px; border: 1px solid; display: flex; gap: 10px; }
+  .callout.ok { border-color: rgba(52,211,153,.35); background: rgba(52,211,153,.07); }
+  .callout.err { border-color: rgba(244,63,94,.35); background: rgba(244,63,94,.07); }
+  .callout.warn { border-color: rgba(245,158,11,.35); background: rgba(245,158,11,.07); }
+  .callout .t { font-weight: 600; } .callout small { color: var(--muted); display: block; }
+  .steps { margin-top: 4px; display: grid; gap: 2px; font-size: 12px; color: var(--muted); }
+  .steps span::before { content: "✓ "; color: var(--ok); }
+  .section { display: flex; align-items: center; gap: 8px; color: var(--muted); margin: 18px 0 10px; grid-column: 1 / -1; }
+  .section::after { content: ""; flex: 1; height: 1px; background: var(--border); }
+  .winfoot { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-top: 1px solid var(--border); background: var(--panel); }
+  .winfoot .msg { flex: 1; color: var(--muted); }
+  .help { width: 22px; height: 22px; border-radius: 50%; border: 1px solid var(--border-strong); display: grid; place-items: center; color: var(--muted); font-size: 11px; }
+
+  /* editor-like shell */
+  .shell { background: var(--editor); border: 1px solid var(--border-strong); border-radius: 12px; overflow: hidden; display: grid; height: 560px; box-shadow: 0 30px 80px rgba(0,0,0,.5); }
+  .shell.rh { grid-template-columns: 1fr 360px; }
+  .code { padding: 16px 20px; font: 12px/1.7 var(--mono); color: #b7bce0; position: relative; }
+  .code .k { color: #c792ea; } .code .s { color: #a6e3a1; } .code .c { color: #6b6d85; }
+  .dock { border-left: 1px solid var(--border); background: var(--panel); display: flex; flex-direction: column; position: relative; }
+  .dock .resize { position: absolute; left: -3px; top: 0; bottom: 0; width: 6px; cursor: col-resize; }
+  .dock .resize:hover { background: rgba(124,58,237,.35); }
+  .dockhead { display: flex; align-items: center; justify-content: space-between; padding: 8px 10px; border-bottom: 1px solid var(--border); font-weight: 600; }
+  .tree { padding: 6px; overflow: auto; flex: 1; font-size: 12.5px; }
+  .tr { display: flex; align-items: center; gap: 6px; padding: 3px 6px; border-radius: 5px; white-space: nowrap; }
+  .tr:hover { background: var(--raised); } .tr.sel { background: rgba(124,58,237,.22); }
+  .tr .meta { color: var(--faint); font-size: 11.5px; margin-left: 6px; }
+  .tr .perm { color: var(--faint); font: 11px var(--mono); margin-left: auto; }
+  .tr.link .n { color: var(--blue); } .tr.mapped .n { color: #86efac; }
+  .ind1 { padding-left: 20px; } .ind2 { padding-left: 34px; } .ind3 { padding-left: 48px; }
+  .menu { position: absolute; background: var(--raised); border: 1px solid var(--border-strong); border-radius: 9px; padding: 5px; min-width: 250px; box-shadow: 0 18px 50px rgba(0,0,0,.6); font-size: 12.5px; z-index: 5; }
+  .mi { display: flex; align-items: center; gap: 8px; padding: 5px 8px; border-radius: 6px; }
+  .mi:hover, .mi.hl { background: rgba(124,58,237,.28); }
+  .mi .ic { width: 16px; text-align: center; color: var(--muted); }
+  .mi .sc { margin-left: auto; color: var(--faint); font: 11px var(--mono); }
+  .mi.dis { color: var(--faint); }
+  .ms { height: 1px; background: var(--border); margin: 4px 6px; }
+  .new { position: absolute; background: #2a1f4d; color: #e9d5ff; font-size: 9.5px; border-radius: 4px; padding: 0 5px; margin-left: 6px; }
+  .pill-new { font-size: 9.5px; color: #e9d5ff; background: rgba(124,58,237,.35); border-radius: 999px; padding: 0 6px; margin-left: 6px; }
+
+  /* sync */
+  .sync { display: flex; flex-direction: column; height: 620px; }
+  .synctool { display: flex; gap: 6px; align-items: center; padding: 8px 12px; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+  .chip { border: 1px solid var(--border); border-radius: 999px; padding: 2px 9px; color: var(--muted); font-size: 12px; }
+  .chip.on { color: var(--text); border-color: var(--accent); background: rgba(124,58,237,.14); }
+  table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  th { text-align: left; color: var(--faint); font-weight: 500; padding: 6px 10px; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--editor); }
+  td { padding: 5px 10px; border-bottom: 1px solid rgba(38,38,60,.5); white-space: nowrap; }
+  td.mid { text-align: center; font-weight: 700; width: 56px; }
+  tr.sel td { background: rgba(124,58,237,.18); }
+  .up { color: var(--ftp); } .down { color: var(--ftps); } .eq { color: var(--faint); } .ne { color: var(--warn); } .x { color: var(--err); }
+  .diff { display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid var(--border); font: 12px/1.6 var(--mono); height: 230px; }
+  .diff > div { padding: 8px 12px; overflow: auto; } .diff > div + div { border-left: 1px solid var(--border); }
+  .dl { display: block; } .dl.a { background: rgba(52,211,153,.12); } .dl.r { background: rgba(244,63,94,.12); }
+  .dh { color: var(--faint); font-family: inherit; font-size: 11px; margin-bottom: 4px; }
+
+  /* transfers */
+  .bottom { border-top: 1px solid var(--border); background: var(--panel); display: flex; flex-direction: column; height: 250px; }
+  .log { flex: 1; overflow: auto; font: 12px/1.7 var(--mono); padding: 6px 12px; }
+  .lg .tm { color: var(--faint); } .lg.ok .st { color: var(--ok); } .lg.err .st { color: var(--err); } .lg.run .st { color: var(--blue); }
+  .bar { height: 4px; background: var(--border); border-radius: 999px; overflow: hidden; width: 160px; display: inline-block; vertical-align: middle; margin: 0 8px; }
+  .bar i { display: block; height: 100%; background: linear-gradient(90deg, var(--accent), var(--blue)); }
+  .statusbar { display: flex; gap: 14px; align-items: center; padding: 4px 12px; border-top: 1px solid var(--border); font-size: 11.5px; color: var(--muted); background: var(--panel); }
+  .statusbar .srv { color: var(--text); display: inline-flex; gap: 6px; align-items: center; border: 1px solid var(--border); border-radius: 6px; padding: 1px 8px; }
+  .banner { display: flex; gap: 10px; align-items: center; padding: 6px 14px; border-bottom: 1px solid var(--border); background: linear-gradient(90deg, rgba(124,58,237,.16), rgba(0,212,255,.06)); }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; align-items: start; }
+  .card-title { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .7px; margin: 0 0 8px; }
+</style>
+</head>
+<body>
+<header class="page">
+  <h1>VEGA · Deployment preview</h1>
+  <span class="tag">Design mockup for owner review — PhpStorm parity, VEGA look. Nothing here is built yet.</span>
+</header>
+<nav class="screens" id="nav"></nav>
+<main>
+
+<!-- 1. Deployment window: Connection -->
+<section class="screen" data-name="1 · Deployment window">
+  <p class="note"><b>Own window, resizable</b> (drag the bottom-right corner here — the real one is a normal macOS window with a minimum size, remembered size, ⌘W / Esc to close). Left: servers and groups with Add / Remove / Duplicate / Default / Rename. Footer adds <b>Apply</b>.</p>
+  <div style="position:relative; width: 1020px; height: 660px;">
+  <div class="win" style="width:100%;height:100%;">
+    <div class="titlebar"><div class="lights"><i></i><i></i><i></i></div><div class="title">Deployment</div></div>
+    <div class="split">
+      <aside class="side">
+        <div class="toolbar">
+          <span class="ib add" title="Add">＋</span><span class="ib del" title="Remove">−</span><span class="ib" title="Duplicate (⌘D)">⧉</span>
+          <span class="sep"></span><span class="ib def" title="Use as Default">✓</span><span class="ib" title="Rename (⇧F6)">✎</span>
+          <span class="grow"></span><span class="ib" title="Filter">⌕</span>
+        </div>
+        <div class="list">
+          <div class="row"><span class="ty sftp">➤</span>Docker SFTP</div>
+          <div class="row"><span class="ty ftp">➤</span>RT - comerciodbarrio.com</div>
+          <div class="row"><span class="ty sftp">➤</span>RT - Radiustheme.net</div>
+          <div class="row sel"><span class="ty ftp">➤</span><b>RT - radiustheme.net</b><span class="badge">default</span></div>
+          <div class="row"><span class="ty ftps">➤</span>RT - Soldjar.com</div>
+          <div class="row"><span class="ty dav">☁</span>Maps Central</div>
+          <div class="row group">▾ Group · Production</div>
+          <div class="row"><span class="child"></span><span class="ty sftp">➤</span>web-1.example.com</div>
+          <div class="row"><span class="child"></span><span class="ty sftp">➤</span>web-2.example.com</div>
+        </div>
+        <div class="foot"><div class="row" style="color:var(--muted)">⚙ Options <span class="pill-new">new</span></div></div>
+      </aside>
+      <div class="content">
+        <div class="tabs"><span class="tab on">Connection</span><span class="tab">Mappings</span><span class="tab">Excluded Paths</span></div>
+        <div class="body">
+          <div class="form">
+            <span></span><span class="cb"><i></i>Visible only for this project</span>
+            <label class="l">Name</label><div class="in">RT - radiustheme.net</div>
+            <label class="l">Type</label><div><span class="dd"><span class="ty ftp">➤</span>FTP</span></div>
+            <label class="l">Host</label><div class="h"><div class="in grow">ftp.radiustheme.net</div><span class="l" style="color:var(--muted)">Port</span><div class="in" style="width:80px">21</div></div>
+            <label class="l">Username</label><div class="h"><div class="in grow focus">u108808658</div><span class="cb"><i></i>Login as anonymous</span></div>
+            <label class="l">Password</label><div class="h"><span style="color:var(--muted)">🔒 Saved in Keychain</span><span class="btn ghost">Reset</span></div>
+            <span></span>
+            <div>
+              <div class="h"><span class="btn">⇄ Test Connection</span></div>
+              <div class="callout ok" style="margin-top:8px"><span style="color:var(--ok)">●</span><div><span class="t">Connected to ftp.radiustheme.net</span><div class="steps"><span>Resolve host · 104.21.4.5</span><span>Login as u108808658</span><span>List / · 14 items</span></div></div></div>
+            </div>
+            <label class="l">Root path</label><div class="h"><div class="in grow mono">/</div><span class="ib" title="Browse server…">📁</span><span class="btn">Autodetect</span></div>
+            <label class="l">Web server URL</label><div class="h"><div class="in grow mono">http://ftp.radiustheme.net</div><span class="ib" title="Open in browser">↗</span></div>
+            <div class="section">▾ Advanced</div>
+            <span></span><span class="cb on"><i>✓</i>Passive mode</span>
+            <span></span><span class="cb"><i></i>Show and process hidden files</span>
+            <label class="l">LIST command</label><div class="h"><span class="cb"><i></i>Compatible with old servers</span><span class="cb"><i></i>Instead of MLSD</span></div>
+            <label class="l">Connections</label><div class="h"><div class="in" style="width:80px">5</div><span style="color:var(--faint)">parallel transfers</span></div>
+            <label class="l">Keep-alive</label><div class="h"><span class="cb"><i></i>Every</span><div class="in" style="width:70px">30</div><span style="color:var(--muted)">seconds, using</span><span class="dd" style="min-width:110px">NOOP</span></div>
+            <label class="l">Encoding</label><div><span class="dd">UTF-8</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="winfoot"><span class="help">?</span><span class="msg"></span><span class="btn">Cancel<kbd>esc</kbd></span><span class="btn">Apply</span><span class="btn primary">OK<kbd>↵</kbd></span></div>
+  </div>
+  <span class="grip">⇲ resizable</span>
+  </div>
+</section>
+
+<!-- 2. Options -->
+<section class="screen" data-name="2 · Options">
+  <p class="note"><b>Deployment › Options</b> — a page in the same window (selected from “⚙ Options” under the server list). Every engine option gets a control; today they only exist in <code>.vega/deployment.json</code>.</p>
+  <div class="win" style="width:1020px;height:700px;">
+    <div class="titlebar"><div class="lights"><i></i><i></i><i></i></div><div class="title">Deployment</div></div>
+    <div class="split">
+      <aside class="side">
+        <div class="toolbar"><span class="ib add">＋</span><span class="ib del">−</span><span class="ib">⧉</span><span class="sep"></span><span class="ib def">✓</span><span class="ib">✎</span></div>
+        <div class="list"><div class="row"><span class="ty sftp">➤</span>Docker SFTP</div><div class="row"><span class="ty ftp">➤</span><b>RT - radiustheme.net</b></div><div class="row"><span class="ty ftps">➤</span>RT - Soldjar.com</div></div>
+        <div class="foot"><div class="row sel">⚙ Options</div></div>
+      </aside>
+      <div class="content">
+        <div class="body">
+          <div class="form" style="grid-template-columns: 260px 1fr;">
+            <div class="section" style="margin-top:0">Automatic upload</div>
+            <label class="l">Upload changed files to the default server</label><div><span class="dd">On explicit save (⌘S)</span></div>
+            <span></span><span class="cb on"><i>✓</i>Skip external changes (git checkout, scripts)</span>
+            <span></span><span class="cb"><i></i>Delete remote files when local ones are deleted</span>
+            <div class="section">Transfers</div>
+            <label class="l">Exclude items by name</label><div class="in mono">.svn;.cvs;.idea;.DS_Store;.git;.hg;.vega;node_modules</div>
+            <span></span><span class="cb"><i></i>Overwrite up-to-date files</span>
+            <span></span><span class="cb"><i></i>Use a temporary file during upload</span>
+            <span></span><span class="cb on"><i>✓</i>Preserve file timestamps</span>
+            <span></span><span class="cb"><i></i>Delete target items when source ones do not exist</span>
+            <span></span><span class="cb"><i></i>Create empty directories</span>
+            <label class="l">Parallel transfers</label><div class="in" style="width:80px">4</div>
+            <div class="section">Safety</div>
+            <label class="l">Warn when uploading over newer file</label><div><span class="dd">Compare timestamp &amp; size</span></div>
+            <span></span><span class="cb on"><i>✓</i>Notify of remote changes</span>
+            <span></span><span class="cb on"><i>✓</i>Prompt when overwriting or deleting local items</span>
+            <span></span><span class="cb"><i></i>Confirm uploading files</span>
+            <span></span><span class="cb on"><i>✓</i>Confirm deleting on the server</span>
+            <div class="section">Permissions</div>
+            <span></span><span class="cb"><i></i>Preserve original file permissions (FTP)</span>
+            <label class="l">Files</label><div class="h"><span class="cb on"><i>✓</i>Override</span><div class="in mono" style="width:90px">644</div><span style="color:var(--faint);font-family:var(--mono)">rw-r--r--</span><span class="btn">Edit…</span></div>
+            <label class="l">Folders</label><div class="h"><span class="cb on"><i>✓</i>Override</span><div class="in mono" style="width:90px">755</div><span style="color:var(--faint);font-family:var(--mono)">rwxr-xr-x</span><span class="btn">Edit…</span></div>
+            <div class="section">Log</div>
+            <label class="l">Operations logging</label><div><span class="dd">Brief</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="winfoot"><span class="help">?</span><span class="msg"></span><span class="btn">Cancel</span><span class="btn">Apply</span><span class="btn primary">OK</span></div>
+  </div>
+</section>
+
+<!-- 3. Remote Host -->
+<section class="screen" data-name="3 · Remote Host">
+  <p class="note"><b>Remote Host panel</b>: drag the panel's edge to resize (already works); new toolbar button <b>Select Opened File</b>, multi-select, and the full PhpStorm context menu (new items marked). Size/date/permissions columns come from the ⋯ options.</p>
+  <div class="shell rh">
+    <div class="code"><span class="c">// includes/class-plugin.php</span><br><span class="k">namespace</span> Radius\Plugin;<br><br><span class="k">final class</span> Plugin {<br>&nbsp;&nbsp;<span class="k">public function</span> boot(): void {<br>&nbsp;&nbsp;&nbsp;&nbsp;add_action(<span class="s">'init'</span>, [$this, <span class="s">'register'</span>]);<br>&nbsp;&nbsp;}<br>}</div>
+    <div class="dock">
+      <div class="resize" title="drag to resize"></div>
+      <div class="dockhead"><span>Remote Host</span><span class="h"><span class="ib">⋯</span><span class="ib">—</span></span></div>
+      <div class="toolbar" style="gap:4px">
+        <span class="dd" style="min-width:0;flex:1"><span class="ty ftp">➤</span>RT - radiustheme.net</span>
+        <span class="btn" style="padding:3px 8px">…</span><span class="ib" title="Select Opened File">◎</span><span class="ib" title="Collapse All">⊟</span><span class="ib" title="Refresh">↻</span><span class="ib del" title="Disconnect">✕</span>
+      </div>
+      <div class="tree" style="position:relative">
+        <div class="tr">▾ <span class="ty ftp">➤</span><b>RT - radiustheme.net</b><span class="meta">(ftp.radiustheme.net)</span></div>
+        <div class="tr ind1">▸ 📁 <span class="n">.config</span><span class="perm">rwxr-xr-x</span></div>
+        <div class="tr ind1 link">▸ 📁 <span class="n">bin</span><span class="perm">rwxr-xr-x</span></div>
+        <div class="tr ind1">▾ 📁 <span class="n">domains</span><span class="perm">rwxr-xr-x</span></div>
+        <div class="tr ind2 sel mapped">▸ 📁 <span class="n">radiustheme.net</span><span class="perm">rwxr-xr-x</span></div>
+        <div class="tr ind2">▸ 📁 <span class="n">shoshitrip.com</span><span class="perm">rwxr-xr-x</span></div>
+        <div class="tr ind1">✱ <span class="n">.bash_history</span><span class="meta">8.6 kB · 24/9/26, 11:42 AM</span></div>
+        <div class="tr ind1">📄 <span class="n">error_log</span><span class="meta">654.1 kB · 30/7/26, 1:31 PM</span></div>
+        <div class="menu" style="left:92px; top:108px;">
+          <div class="mi"><span class="ic">✎</span>Edit Remote File<span class="sc">↵</span></div>
+          <div class="mi"><span class="ic">◧</span>Edit Local File<span class="pill-new">new</span></div>
+          <div class="mi"><span class="ic">⇆</span>Compare with Local Version<span class="pill-new">new</span></div>
+          <div class="mi"><span class="ic">⟳</span>Sync with Local…<span class="pill-new">new</span></div>
+          <div class="ms"></div>
+          <div class="mi"><span class="ic">⇩</span>Download from Here<span class="pill-new">new</span></div>
+          <div class="mi"><span class="ic">⇧</span>Upload Here…</div>
+          <div class="mi hl"><span class="ic">＋</span>New<span class="sc">▸</span></div>
+          <div class="ms"></div>
+          <div class="mi"><span class="ic">🔒</span>Change Permissions…</div>
+          <div class="mi"><span class="ic"></span>Rename…<span class="sc">⇧F6</span></div>
+          <div class="mi"><span class="ic">🗑</span>Delete…<span class="sc">⌫</span></div>
+          <div class="ms"></div>
+          <div class="mi"><span class="ic">✂</span>Cut<span class="sc">⌘X</span></div>
+          <div class="mi"><span class="ic">⧉</span>Copy<span class="sc">⌘C</span></div>
+          <div class="mi dis"><span class="ic"></span>Paste<span class="sc">⌘V</span></div>
+          <div class="mi"><span class="ic"></span>Copy Absolute Path<span class="sc">⇧⌘C</span></div>
+          <div class="ms"></div>
+          <div class="mi"><span class="ic">↗</span>Open in Browser<span class="pill-new">new</span></div>
+          <div class="mi"><span class="ic">⌨</span>Start SSH Session Here<span class="pill-new">new</span></div>
+          <div class="mi"><span class="ic">⊘</span>Exclude Path</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 4. Sync -->
+<section class="screen" data-name="4 · Sync with Deployed">
+  <p class="note"><b>Folder diff</b> like PhpStorm's: filters, filter field, table with an action column (click or Space to cycle → ← = ≠ ×), and the selected file's diff underneath. <b>Synchronize Selected</b> / <b>Synchronize All</b>.</p>
+  <div class="shell" style="height:auto">
+    <div class="sync">
+      <div class="synctool">
+        <span class="dd" style="min-width:200px"><span class="ty ftp">➤</span>RT - radiustheme.net</span>
+        <span class="dd" style="min-width:170px">Compare: Size &amp; timestamp</span>
+        <span class="sep"></span>
+        <span class="chip on">New in project · 3</span><span class="chip on">Different · 5</span><span class="chip">Equal · 212</span><span class="chip on">New on server · 2</span><span class="chip">Hide excluded</span>
+        <div class="in" style="width:170px;margin-left:auto">⌕ *.php</div>
+        <span class="btn">Synchronize Selected<kbd>↵</kbd></span><span class="btn primary">Synchronize All<kbd>⌘↵</kbd></span>
+      </div>
+      <div style="flex:1; overflow:auto">
+        <table>
+          <tr><th>Project</th><th>Size</th><th>Date</th><th style="text-align:center">Action</th><th>Server</th><th>Size</th><th>Date</th></tr>
+          <tr class="sel"><td>📄 includes/class-plugin.php</td><td>4.1 kB</td><td>19/11/26 11:02</td><td class="mid up">→</td><td>includes/class-plugin.php</td><td>3.9 kB</td><td>02/11/26 09:40</td></tr>
+          <tr><td>📄 assets/app.css</td><td>12.8 kB</td><td>19/11/26 10:55</td><td class="mid up">→</td><td>assets/app.css</td><td>12.6 kB</td><td>01/11/26 16:12</td></tr>
+          <tr><td>📄 index.php</td><td>89 byte</td><td>03/11/26 15:31</td><td class="mid ne">≠</td><td>index.php</td><td>41 byte</td><td>19/11/26 09:21</td></tr>
+          <tr><td>📄 includes/helpers.php</td><td>2.2 kB</td><td>19/11/26 11:05</td><td class="mid up">→</td><td style="color:var(--faint)">—</td><td></td><td></td></tr>
+          <tr><td style="color:var(--faint)">—</td><td></td><td></td><td class="mid down">←</td><td>server-only/readme.txt</td><td>19 byte</td><td>19/11/26 09:21</td></tr>
+          <tr><td style="color:var(--faint)">—</td><td></td><td></td><td class="mid x">×</td><td>server-only/nested/a.txt</td><td>7 byte</td><td>19/11/26 09:21</td></tr>
+        </table>
+      </div>
+      <div class="diff">
+        <div><div class="dh">Project · includes/class-plugin.php</div><span class="dl">final class Plugin {</span><span class="dl a">  public const VERSION = '6.1.0';</span><span class="dl">  public function boot(): void {</span><span class="dl a">    add_action('init', [$this, 'register']);</span><span class="dl">  }</span></div>
+        <div><div class="dh">Server · includes/class-plugin.php (read-only)</div><span class="dl">final class Plugin {</span><span class="dl r">  public const VERSION = '6.0.0';</span><span class="dl">  public function boot(): void {</span><span class="dl r">    add_action('plugins_loaded', [$this, 'register']);</span><span class="dl">  }</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 5. File transfers + remote edit -->
+<section class="screen" data-name="5 · Transfers & remote edit">
+  <p class="note"><b>File Transfers</b> panel in the bottom dock: live log (Errors / Brief / Details), progress, <b>Retry</b> on failures, cancel per item. A banner on files edited on the server. Status bar: default server picker and auto-upload state.</p>
+  <div class="shell" style="grid-template-rows: auto 1fr auto auto; height: 600px;">
+    <div class="banner"><span class="ty ftp">➤</span><span><b>includes/class-plugin.php</b> on RT - radiustheme.net · <span style="color:var(--warn)">modified, not uploaded</span></span><span class="grow"></span><span class="btn">⇆ Compare</span><span class="btn">↶ Revert</span><span class="btn primary">Upload<kbd>⌥⇧Q</kbd></span></div>
+    <div class="code"><span class="k">final class</span> Plugin {<br>&nbsp;&nbsp;<span class="k">public const</span> VERSION = <span class="s">'6.1.0'</span>;<br>}</div>
+    <div class="bottom">
+      <div class="dockhead"><span>File Transfers</span><span class="h"><span class="dd" style="min-width:110px">Brief</span><span class="btn">Retry failed (1)</span><span class="btn">Clear</span></span></div>
+      <div class="log">
+        <div class="lg ok"><span class="tm">11:42:08</span> <span class="st">✓</span> Uploaded includes/class-plugin.php → RT - radiustheme.net (4.1 kB, 0.3 s)</div>
+        <div class="lg run"><span class="tm">11:42:09</span> <span class="st">↑</span> Uploading assets/app.css <span class="bar"><i style="width:62%"></i></span>62% · <span class="btn ghost">Cancel</span></div>
+        <div class="lg err"><span class="tm">11:42:10</span> <span class="st">✕</span> includes/helpers.php: 550 Permission denied · <span class="btn ghost">Retry</span> <span class="btn ghost">Details</span></div>
+        <div class="lg ok"><span class="tm">11:42:11</span> <span class="st">✓</span> Synchronized 4 files with RT - radiustheme.net, 1 failed</div>
+      </div>
+    </div>
+    <div class="statusbar"><span class="srv"><span class="ty ftp">➤</span>RT - radiustheme.net ▾</span><span>Auto-upload: on save</span><span class="grow"></span><span>↑ 1 transfer</span></div>
+  </div>
+</section>
+
+<!-- 6. Menus -->
+<section class="screen" data-name="6 · Menus & server picker">
+  <p class="note"><b>Tools › Deployment</b> in the menu bar, the same submenu in the project panel / editor / tab menus, and a <b>server picker</b> for “Upload to…”, “Download from…”, “Compare with Deployed To…”, “Sync with Deployed To…”.</p>
+  <div class="grid2">
+    <div>
+      <p class="card-title">Tools › Deployment</p>
+      <div class="menu" style="position:relative">
+        <div class="mi"><span class="ic">⇧</span>Upload to RT - radiustheme.net<span class="sc">⌥⌘U</span></div>
+        <div class="mi hl"><span class="ic"></span>Upload to…<span class="sc">⌥⇧⌘U</span></div>
+        <div class="mi"><span class="ic">⇩</span>Download from RT - radiustheme.net</div>
+        <div class="mi"><span class="ic"></span>Download from…</div>
+        <div class="ms"></div>
+        <div class="mi"><span class="ic">⇆</span>Compare with Deployed Version</div>
+        <div class="mi"><span class="ic"></span>Compare with Deployed To…</div>
+        <div class="mi"><span class="ic">⟳</span>Sync with Deployed to RT - radiustheme.net…</div>
+        <div class="mi"><span class="ic"></span>Sync with Deployed To…</div>
+        <div class="ms"></div>
+        <div class="mi"><span class="ic">✎</span>Edit Remote File</div>
+        <div class="mi"><span class="ic">🖥</span>Browse Remote Host</div>
+        <div class="mi"><span class="ic">✓</span>Automatic Upload</div>
+        <div class="ms"></div>
+        <div class="mi"><span class="ic">⚙</span>Configuration…</div>
+        <div class="mi"><span class="ic"></span>Options…</div>
+      </div>
+    </div>
+    <div>
+      <p class="card-title">Upload to… (server picker)</p>
+      <div class="win" style="resize:none;min-width:0;min-height:0;width:440px;">
+        <div style="padding:10px"><div class="in focus">⌕ Search servers…</div></div>
+        <div class="list" style="padding:0 8px 10px">
+          <div class="row sel"><span class="ty ftp">➤</span><b>RT - radiustheme.net</b><span class="badge">default</span></div>
+          <div class="row"><span class="ty sftp">➤</span>Docker SFTP<span style="margin-left:auto;color:var(--faint)">localhost</span></div>
+          <div class="row"><span class="ty ftps">➤</span>RT - Soldjar.com<span style="margin-left:auto;color:var(--faint)">ftp.soldjar.com</span></div>
+          <div class="row"><span class="ty sftp">▤</span>Group · Production<span style="margin-left:auto;color:var(--faint)">2 servers</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+<script>
+  const screens = [...document.querySelectorAll('.screen')];
+  const nav = document.getElementById('nav');
+  screens.forEach((s, i) => {
+    const b = document.createElement('button');
+    b.textContent = s.dataset.name;
+    b.onclick = () => { screens.forEach(x => x.classList.remove('on')); nav.querySelectorAll('button').forEach(x => x.classList.remove('on')); s.classList.add('on'); b.classList.add('on'); };
+    nav.appendChild(b);
+    if (i === 0) b.click();
+  });
+  document.querySelectorAll('.tabs .tab').forEach(t => t.onclick = () => { t.parentNode.querySelectorAll('.tab').forEach(x => x.classList.remove('on')); t.classList.add('on'); });
+  document.querySelectorAll('.cb').forEach(c => c.onclick = () => { c.classList.toggle('on'); c.querySelector('i').textContent = c.classList.contains('on') ? '✓' : ''; });
+  document.querySelectorAll('.chip').forEach(c => c.onclick = () => c.classList.toggle('on'));
+  document.querySelectorAll('td.mid').forEach(td => td.onclick = () => { const seq = ['→','←','×','≠']; const cls = {'→':'up','←':'down','×':'x','≠':'ne'}; const n = seq[(seq.indexOf(td.textContent)+1)%seq.length]; td.textContent = n; td.className = 'mid ' + cls[n]; });
+</script>
+</body>
+</html>

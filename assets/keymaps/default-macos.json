@@ -1095,6 +1095,14 @@
     },
   },
   {
+    "context": "DeploymentWindow",
+    "use_key_equivalents": true,
+    "bindings": {
+      "cmd-w": "workspace::CloseWindow",
+      "escape": "menu::Cancel",
+    },
+  },
+  {
     "context": "RemoteHostPanel",
     "use_key_equivalents": true,
     "bindings": {

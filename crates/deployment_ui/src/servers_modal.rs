@@ -36,15 +36,27 @@ use workspace::ModalView;
 
 use crate::dialog;
 
-/// The server types offered when adding a server. Groups and "in place"
-/// servers are still available by editing the config file.
-const ADDABLE_TYPES: [ServerType; 6] = [
+/// The server types offered when adding a server, in PhpStorm's order.
+const ADDABLE_TYPES: [ServerType; 8] = [
     ServerType::Sftp,
     ServerType::Ftp,
     ServerType::Ftps,
     ServerType::FtpsImplicit,
     ServerType::Webdav,
     ServerType::Local,
+    ServerType::InPlace,
+    ServerType::Group,
+];
+
+/// The types a server's Type dropdown can switch between (groups stay groups).
+const SWITCHABLE_TYPES: [ServerType; 7] = [
+    ServerType::Sftp,
+    ServerType::Ftp,
+    ServerType::Ftps,
+    ServerType::FtpsImplicit,
+    ServerType::Webdav,
+    ServerType::Local,
+    ServerType::InPlace,
 ];
 
 const SFTP_AUTH: [(SftpAuth, &str); 4] = [
@@ -209,6 +221,10 @@ pub(crate) struct ServersModal {
     /// Whether the keychain has the selected server's password (None while checking).
     password_saved: Option<bool>,
     advanced_open: bool,
+    /// Shown in the Deployment window rather than as a modal.
+    hosted: bool,
+    /// Engine for Test Connection and Autodetect (see [`Self::test_engine`]).
+    tester: Option<Arc<Engine>>,
     error: Option<SharedString>,
     focus_handle: FocusHandle,
     _tasks: Vec<Task<()>>,
@@ -220,6 +236,7 @@ impl ServersModal {
         engine: Option<Arc<Engine>>,
         prompter: Arc<dyn Prompter>,
         credentials: Arc<Credentials>,
+        hosted: bool,
         window: &mut Window,
         cx: &mut Context<Self>,
     ) -> Self {
@@ -237,6 +254,8 @@ impl ServersModal {
             testing: None,
             password_saved: None,
             advanced_open: false,
+            hosted,
+            tester: None,
             error: None,
             focus_handle: cx.focus_handle(),
             _tasks: Vec::new(),
@@ -296,10 +315,7 @@ impl ServersModal {
         };
         let password = self.take_password(cx);
         let credentials = self.credentials.clone();
-        let engine = self
-            .engine
-            .clone()
-            .unwrap_or_else(|| Engine::new(&self.root, self.prompter.clone(), credentials.clone()));
+        let engine = self.test_engine();
         let detect = Tokio::spawn(cx, async move {
             if let Some((account, password)) = password {
                 credentials.set(&account, &password, false).await;
@@ -471,13 +487,11 @@ impl ServersModal {
 
     fn add_server(&mut self, kind: ServerType, window: &mut Window, cx: &mut Context<Self>) {
         self.commit_form(cx);
-        let store = ConfigStore::load(&self.root);
-        let name = format!("New {} server", kind.label());
-        let mut id = store.new_server_id(&name);
-        while self.draft.servers.iter().any(|s| s.server.id == id) {
-            id.push('-');
-            id.push('1');
-        }
+        let name = match kind {
+            ServerType::Group => "New group".to_string(),
+            _ => format!("New {} server", kind.label()),
+        };
+        let id = self.unique_id(&name);
         let mut server = Server::new(id.clone(), name, kind);
         server.mappings = vec![Mapping {
             local: String::new(),
@@ -574,10 +588,7 @@ impl ServersModal {
         };
         let password = self.take_password(cx);
         let credentials = self.credentials.clone();
-        let engine = self
-            .engine
-            .clone()
-            .unwrap_or_else(|| Engine::new(&self.root, self.prompter.clone(), credentials.clone()));
+        let engine = self.test_engine();
         self.test_results = None;
         let task = Tokio::spawn(cx, async move {
             if let Some((account, password)) = password {
@@ -597,25 +608,110 @@ impl ServersModal {
         cx.notify();
     }
 
-    fn save(&mut self, cx: &mut Context<Self>) {
+    /// The engine that tests connections and detects the root path. In the
+    /// Deployment window it is a separate engine whose questions (passwords,
+    /// host keys) are asked in that window.
+    fn test_engine(&mut self) -> Arc<Engine> {
+        if !self.hosted
+            && let Some(engine) = &self.engine
+        {
+            return engine.clone();
+        }
+        self.tester
+            .get_or_insert_with(|| {
+                Engine::new(&self.root, self.prompter.clone(), self.credentials.clone())
+            })
+            .clone()
+    }
+
+    /// Writes the draft to the config (and a typed password to the keychain).
+    /// Returns whether it worked.
+    fn apply(&mut self, window: &mut Window, cx: &mut Context<Self>) -> bool {
         self.commit_form(cx);
         let mut store = ConfigStore::load(&self.root);
         if let Err(error) = self.draft.apply(&mut store) {
             self.error = Some(format!("Couldn't save: {error}").into());
             cx.notify();
-            return;
+            return false;
         }
+        self.error = None;
         if let Some((account, password)) = self.take_password(cx) {
             let credentials = self.credentials.clone();
             Tokio::spawn(cx, async move {
                 credentials.set(&account, &password, true).await;
             })
             .detach();
+            if let Some(form) = &self.form {
+                form.password
+                    .update(cx, |field, cx| field.clear(window, cx));
+            }
+            self.password_saved = Some(true);
         }
         if let Some(engine) = &self.engine {
             engine.reload_config();
         }
-        cx.emit(DismissEvent);
+        if let Some(tester) = &self.tester {
+            tester.reload_config();
+        }
+        cx.notify();
+        true
+    }
+
+    fn save(&mut self, window: &mut Window, cx: &mut Context<Self>) {
+        if self.apply(window, cx) {
+            cx.emit(DismissEvent);
+        }
+    }
+
+    /// Adds a copy of the selected server ("… copy"), selected.
+    fn duplicate_selected(&mut self, window: &mut Window, cx: &mut Context<Self>) {
+        self.commit_form(cx);
+        let Some(resolved) = self
+            .selected
+            .and_then(|index| self.draft.servers.get(index))
+            .cloned()
+        else {
+            return;
+        };
+        let mut server = resolved.server;
+        server.name = format!("{} copy", server.name);
+        server.id = self.unique_id(&server.name);
+        self.draft.servers.push(ResolvedServer {
+            server,
+            shared: resolved.shared,
+        });
+        let index = self.draft.servers.len() - 1;
+        self.form = None;
+        self.select(index, window, cx);
+    }
+
+    /// Focuses the Name field (PhpStorm's Rename).
+    fn rename_selected(&mut self, window: &mut Window, cx: &mut Context<Self>) {
+        self.tab = Tab::Connection;
+        if let Some(form) = &self.form {
+            let focus = form.name.focus_handle(cx);
+            window.focus(&focus, cx);
+        }
+        cx.notify();
+    }
+
+    fn unique_id(&self, name: &str) -> String {
+        let store = ConfigStore::load(&self.root);
+        let mut id = store.new_server_id(name);
+        while self.draft.servers.iter().any(|s| s.server.id == id) {
+            id.push_str("-1");
+        }
+        id
+    }
+
+    fn toggle_member(&mut self, member: String, cx: &mut Context<Self>) {
+        self.update_server(cx, |server| {
+            if let Some(index) = server.members.iter().position(|id| *id == member) {
+                server.members.remove(index);
+            } else {
+                server.members.push(member);
+            }
+        });
     }
 
     fn render_server_list(&self, cx: &mut Context<Self>) -> impl IntoElement {
@@ -642,6 +738,9 @@ impl ServersModal {
                             for kind in ADDABLE_TYPES {
                                 let this = this.clone();
                                 let (icon, color) = server_type_icon(kind);
+                                if kind == ServerType::Group {
+                                    menu = menu.separator();
+                                }
                                 menu = menu.item(
                                     ContextMenuEntry::new(kind.label())
                                         .icon(icon)
@@ -668,12 +767,35 @@ impl ServersModal {
                     .on_click(cx.listener(|this, _, window, cx| this.remove_selected(window, cx))),
             )
             .child(
+                IconButton::new("duplicate-server", IconName::Copy)
+                    .icon_size(IconSize::Small)
+                    .tooltip(Tooltip::text("Duplicate"))
+                    .disabled(self.selected.is_none())
+                    .on_click(
+                        cx.listener(|this, _, window, cx| this.duplicate_selected(window, cx)),
+                    ),
+            )
+            .child(
+                div()
+                    .w_px()
+                    .h_4()
+                    .mx_1()
+                    .bg(cx.theme().colors().border_variant),
+            )
+            .child(
                 IconButton::new("default-server", IconName::Check)
                     .icon_size(IconSize::Small)
                     .icon_color(Color::Success)
                     .tooltip(Tooltip::text("Use as Default"))
                     .disabled(self.selected.is_none() || selected_is_default)
                     .on_click(cx.listener(|this, _, _, cx| this.make_default(cx))),
+            )
+            .child(
+                IconButton::new("rename-server", IconName::Pencil)
+                    .icon_size(IconSize::Small)
+                    .tooltip(Tooltip::text("Rename"))
+                    .disabled(self.selected.is_none())
+                    .on_click(cx.listener(|this, _, window, cx| this.rename_selected(window, cx))),
             );
 
         v_flex()
@@ -720,11 +842,14 @@ impl ServersModal {
         window: &mut Window,
         cx: &mut Context<Self>,
     ) -> AnyElement {
+        if server.kind == ServerType::Group {
+            return self.render_group(server, form, cx);
+        }
         let this = cx.weak_entity();
         let kind_menu = ContextMenu::build(window, cx, {
             let this = this.clone();
             move |mut menu, _, _| {
-                for kind in ADDABLE_TYPES {
+                for kind in SWITCHABLE_TYPES {
                     let this = this.clone();
                     let (icon, color) = server_type_icon(kind);
                     menu = menu.item(
@@ -740,7 +865,8 @@ impl ServersModal {
                 menu
             }
         });
-        let is_remote = !matches!(server.kind, ServerType::Local);
+        let is_remote = !matches!(server.kind, ServerType::Local | ServerType::InPlace);
+        let in_place = server.kind == ServerType::InPlace;
         let is_sftp = server.kind == ServerType::Sftp;
         let is_ftp = server.kind.is_ftp();
         let auth = server.auth.unwrap_or_default();
@@ -855,37 +981,46 @@ impl ServersModal {
                         }
                     })
             })
-            .child(field_row(
-                "",
-                v_flex()
-                    .gap_1()
-                    .items_start()
-                    .child(
-                        Button::new("test-connection", "Test Connection")
-                            .style(ButtonStyle::Outlined)
-                            .start_icon(Icon::new(IconName::ArrowRightLeft).size(IconSize::Small))
-                            .disabled(self.testing.is_some())
-                            .on_click(cx.listener(|this, _, _, cx| this.test_connection(cx))),
-                    )
-                    .children(self.render_test_results(&server.host)),
-            ))
-            .child(div().h_2())
-            .child(field_row(
-                "Root path:",
-                h_flex()
-                    .gap_2()
-                    .child(div().flex_1().child(form.root_path.clone()))
-                    .when(is_remote, |row| {
-                        row.child(
-                            Button::new("autodetect-root", "Autodetect")
-                                .style(ButtonStyle::Outlined)
-                                .tooltip(Tooltip::text("Use the folder the server logs you into"))
-                                .on_click(cx.listener(|this, _, window, cx| {
-                                    this.autodetect_root(window, cx)
-                                })),
-                        )
-                    }),
-            ))
+            .when(!in_place, |column| {
+                column
+                    .child(field_row(
+                        "",
+                        v_flex()
+                            .gap_1()
+                            .items_start()
+                            .child(
+                                Button::new("test-connection", "Test Connection")
+                                    .style(ButtonStyle::Outlined)
+                                    .start_icon(
+                                        Icon::new(IconName::ArrowRightLeft).size(IconSize::Small),
+                                    )
+                                    .disabled(self.testing.is_some())
+                                    .on_click(
+                                        cx.listener(|this, _, _, cx| this.test_connection(cx)),
+                                    ),
+                            )
+                            .children(self.render_test_results(&server.host)),
+                    ))
+                    .child(div().h_2())
+                    .child(field_row(
+                        if is_remote { "Root path:" } else { "Folder:" },
+                        h_flex()
+                            .gap_2()
+                            .child(div().flex_1().child(form.root_path.clone()))
+                            .when(is_remote, |row| {
+                                row.child(
+                                    Button::new("autodetect-root", "Autodetect")
+                                        .style(ButtonStyle::Outlined)
+                                        .tooltip(Tooltip::text(
+                                            "Use the folder the server logs you into",
+                                        ))
+                                        .on_click(cx.listener(|this, _, window, cx| {
+                                            this.autodetect_root(window, cx)
+                                        })),
+                                )
+                            }),
+                    ))
+            })
             .child(field_row(
                 "Web server URL:",
                 h_flex()
@@ -924,6 +1059,65 @@ impl ServersModal {
                         column.child(self.render_advanced(server, form, window, cx))
                     })
             })
+            .into_any_element()
+    }
+
+    /// A server group: its name and which servers it deploys to.
+    fn render_group(&self, server: &Server, form: &Form, cx: &mut Context<Self>) -> AnyElement {
+        let candidates: Vec<(String, String, ServerType)> = self
+            .draft
+            .servers
+            .iter()
+            .map(|resolved| &resolved.server)
+            .filter(|candidate| candidate.kind != ServerType::Group)
+            .map(|candidate| (candidate.id.clone(), candidate.name.clone(), candidate.kind))
+            .collect();
+        let (icon, color) = server_type_icon(ServerType::Group);
+        v_flex()
+            .gap_2()
+            .child(field_row("Name:", form.name.clone()))
+            .child(field_row(
+                "Type:",
+                h_flex()
+                    .gap_1p5()
+                    .child(Icon::new(icon).size(IconSize::Small).color(color))
+                    .child(Label::new("Server group")),
+            ))
+            .child(
+                Label::new("Uploads and downloads to this group go to every server checked below.")
+                    .size(LabelSize::Small)
+                    .color(Color::Muted),
+            )
+            .child(
+                v_flex()
+                    .gap_1()
+                    .p_2()
+                    .rounded_md()
+                    .border_1()
+                    .border_color(cx.theme().colors().border_variant)
+                    .when(candidates.is_empty(), |list| {
+                        list.child(Label::new("Add servers first.").color(Color::Muted))
+                    })
+                    .children(candidates.into_iter().enumerate().map(
+                        |(index, (id, name, kind))| {
+                            let (icon, color) = server_type_icon(kind);
+                            let checked = server.members.contains(&id);
+                            h_flex()
+                                .gap_1p5()
+                                .child(
+                                    Checkbox::new(
+                                        ("group-member", index),
+                                        ToggleState::from(checked),
+                                    )
+                                    .on_click(cx.listener(
+                                        move |this, _, _, cx| this.toggle_member(id.clone(), cx),
+                                    )),
+                                )
+                                .child(Icon::new(icon).size(IconSize::Small).color(color))
+                                .child(Label::new(name))
+                        },
+                    )),
+            )
             .into_any_element()
     }
 
@@ -1589,7 +1783,12 @@ impl Render for ServersModal {
 
         let body = match (&server, self.form.take()) {
             (Some(server), Some(form)) => {
-                let body = match self.tab {
+                let tab = if server.kind == ServerType::Group {
+                    Tab::Connection
+                } else {
+                    self.tab
+                };
+                let body = match tab {
                     Tab::Connection => self.render_connection(server, &form, window, cx),
                     Tab::Mappings => self.render_mappings(&form, cx),
                     Tab::Excluded => self.render_excluded(&form, cx),
@@ -1614,16 +1813,29 @@ impl Render for ServersModal {
         v_flex()
             .key_context("DeploymentServers")
             .track_focus(&self.focus_handle)
-            .w(rems(56.))
-            .h(rems(38.))
-            .elevation_3(cx)
+            .map(|frame| {
+                if self.hosted {
+                    frame.size_full()
+                } else {
+                    frame.w(rems(56.)).h(rems(38.)).elevation_3(cx)
+                }
+            })
             .on_action(cx.listener(|_, _: &menu::Cancel, _, cx| cx.emit(DismissEvent)))
+            .on_action(cx.listener(|this, _: &menu::Confirm, window, cx| this.save(window, cx)))
             .child(
                 h_flex()
                     .px_3()
-                    .py_2()
                     .border_b_1()
                     .border_color(cx.theme().colors().border_variant)
+                    .map(|header| {
+                        // In its own window on macOS this row is the title bar, next to the
+                        // traffic lights.
+                        if self.hosted && cfg!(target_os = "macos") {
+                            header.h(px(38.)).justify_center()
+                        } else {
+                            header.py_2()
+                        }
+                    })
                     .child(Label::new("Deployment").weight(gpui::FontWeight::SEMIBOLD)),
             )
             .child(
@@ -1646,7 +1858,12 @@ impl Render for ServersModal {
                             .pt_2()
                             .px_3()
                             .gap_3()
-                            .when(server.is_some(), |column| column.child(tabs))
+                            .when(
+                                server
+                                    .as_ref()
+                                    .is_some_and(|server| server.kind != ServerType::Group),
+                                |column| column.child(tabs),
+                            )
                             .child(
                                 div()
                                     .id("server-details")
@@ -1677,8 +1894,15 @@ impl Render for ServersModal {
                             .on_click(cx.listener(|_, _, _, cx| cx.emit(DismissEvent))),
                     )
                     .child(
+                        Button::new("apply-servers", "Apply")
+                            .style(ButtonStyle::Outlined)
+                            .on_click(cx.listener(|this, _, window, cx| {
+                                this.apply(window, cx);
+                            })),
+                    )
+                    .child(
                         dialog::primary_button("save-servers", "OK", &focus, cx)
-                            .on_click(cx.listener(|this, _, _, cx| this.save(cx))),
+                            .on_click(cx.listener(|this, _, window, cx| this.save(window, cx))),
                     ),
             )
     }

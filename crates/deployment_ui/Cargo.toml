@@ -26,8 +26,12 @@ gpui.workspace = true
 gpui_tokio.workspace = true
 language.workspace = true
 menu.workspace = true
+platform_title_bar.workspace = true
 project.workspace = true
 project_panel.workspace = true
+release_channel.workspace = true
+settings.workspace = true
+theme_settings.workspace = true
 time.workspace = true
 tokio = { workspace = true, features = ["sync"] }
 ui.workspace = true

@@ -2,6 +2,7 @@
 //! transfer progress, the Remote Host panel and Sync with Deployed, on top of the `deployment`
 //! engine.
 
+mod deployment_window;
 mod dialog;
 mod name_modal;
 mod permissions_modal;
@@ -30,7 +31,7 @@ use project_panel::ProjectPanel;
 use ui::prelude::*;
 use util::ResultExt as _;
 use workspace::notifications::NotificationId;
-use workspace::{OpenOptions, Toast, Workspace};
+use workspace::{MultiWorkspace, OpenOptions, Toast, Workspace};
 use zed_actions::deployment::{
     CancelTransfers, CompareWithDeployedVersion, DownloadFromDefaultServer, OpenDeploymentConfig,
     OpenDeploymentServers, SyncWithDeployed, ToggleRemoteHost, UploadToDefaultServer,
@@ -126,14 +127,9 @@ fn register_actions(workspace: &mut Workspace, store: Entity<DeploymentStore>) {
         move |_, _: &CancelTransfers, _, cx| store.read(cx).cancel_transfers()
     });
     workspace.register_action({
-        move |workspace, _: &OpenDeploymentServers, window, cx| {
-            let Some((root, engine, prompter)) = store.read(cx).servers_dialog_context(cx) else {
-                return;
-            };
-            let credentials = secrets::credentials(cx);
-            workspace.toggle_modal(window, cx, |window, cx| {
-                servers_modal::ServersModal::new(root, engine, prompter, credentials, window, cx)
-            });
+        move |_, _: &OpenDeploymentServers, window, cx| {
+            let handle = window.window_handle().downcast::<MultiWorkspace>();
+            deployment_window::open(store.clone(), handle, cx);
         }
     });
     workspace.register_action(|workspace, _: &ToggleRemoteHost, window, cx| {
@@ -307,7 +303,7 @@ fn show_requests(
     .detach();
 }
 
-fn show_request(
+pub(crate) fn show_request(
     request: Request,
     workspace: &mut Workspace,
     window: &mut Window,
