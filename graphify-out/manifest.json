@@ -19764,9 +19764,9 @@
     "semantic_hash": "525951a76b34100f3657e005e07aa542"
   },
   "vega/DEPLOYMENT.md": {
-    "mtime": 1795059390.192322,
-    "seen": 1795060505.453046,
-    "ast_hash": "44c5ca537a39edd7fb777a4bf9544a96",
+    "mtime": 1795066186.5969496,
+    "seen": 1795066279.8751712,
+    "ast_hash": "044812d053eb1c3d666a146fc8ab24ae",
     "semantic_hash": ""
   },
   "vega/PROMPTS.md": {
@@ -22416,9 +22416,9 @@
     "semantic_hash": ""
   },
   "crates/deployment_ui/Cargo.toml": {
-    "mtime": 1795056728.2853158,
-    "seen": 1795057323.6805792,
-    "ast_hash": "fe2affd9fb6d7e33903d4f3f3589c32d",
+    "mtime": 1795065849.1940591,
+    "seen": 1795066279.8250859,
+    "ast_hash": "80925c124681fd9b5ec05d332d0057c3",
     "semantic_hash": ""
   },
   "crates/workspace/src/deployment_menu.rs": {
@@ -22530,9 +22530,9 @@
     "semantic_hash": ""
   },
   "crates/deployment_ui/src/remote_host_panel.rs": {
-    "mtime": 1795056795.4723108,
-    "seen": 1795057323.6805818,
-    "ast_hash": "5983f256cc46392ac1202154b05bacca",
+    "mtime": 1795065969.6872718,
+    "seen": 1795066279.825144,
+    "ast_hash": "1e01a9c335e3bdf32e5cd08f40391bbf",
     "semantic_hash": ""
   },
   "crates/release_channel/src/vega_docs.rs": {
