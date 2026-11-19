@@ -39,7 +39,8 @@ Status keys: `[ ]` todo · `[~]` in progress · `[x]` done. Each item maps to a 
 - [~] Website, docs, README rewrite (P13) — README rewritten; Settings Sync user docs added
   - [x] MCP OAuth no longer offers Zed's CIMD document (`zed.dev/oauth/client-metadata.json`): `VEGA_CIMD_URL = None` in `crates/context_server/src/oauth.rs`, so VEGA registers via DCR or a pre-registered `client_id`
   - [ ] Optional: host VEGA's own client metadata document and set `VEGA_CIMD_URL` (needed only for CIMD-only auth servers)
-  - [ ] Repoint ~60 in-app `zed.dev/docs` links (error toasts, help menu, status/merch links) at VEGA docs
+  - [x] In-app `zed.dev/docs` links open VEGA's own docs: `gpui::OpenUrlRewriter` hook in `App::open_url`, mapping in `crates/release_channel/src/vega_docs.rs` (pages from `docs/src/SUMMARY.md` + `book.toml` redirects; base URL is one constant, currently the GitHub repo, so links work for others once the repo or docs are public)
+  - [ ] Other in-app zed.dev links (blog, merch, status, account pages)
 - [ ] Extension catalogue without zed.dev — the Extensions page and installs still use `api.zed.dev` (`extension_host::fetch_extensions_from_api`, `install_latest_extension`); only user-initiated, never on startup
 
 ## Changed defaults

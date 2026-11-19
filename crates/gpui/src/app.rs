@@ -579,6 +579,12 @@ pub struct SystemWindowTabController {
 
 impl Global for SystemWindowTabController {}
 
+/// Rewrites URLs before [`App::open_url`] hands them to the platform. The
+/// function returns `None` to open the URL unchanged.
+pub struct OpenUrlRewriter(pub fn(&str) -> Option<String>);
+
+impl Global for OpenUrlRewriter {}
+
 impl SystemWindowTabController {
     /// Create a new instance of the window tab controller.
     pub fn new() -> Self {
@@ -2048,7 +2054,10 @@ impl App {
 
     /// Directs the platform's default browser to open the given URL.
     pub fn open_url(&self, url: &str) {
-        self.platform.open_url(url);
+        let rewritten = self
+            .try_global::<OpenUrlRewriter>()
+            .and_then(|rewriter| (rewriter.0)(url));
+        self.platform.open_url(rewritten.as_deref().unwrap_or(url));
     }
 
     /// Registers the given URL scheme (e.g. `zed` for `zed://` urls) to be

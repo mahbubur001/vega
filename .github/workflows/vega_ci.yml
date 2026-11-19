@@ -69,6 +69,7 @@ jobs:
           -p theme_settings
           -p onboarding
           -p open_router
+          -p release_channel
       - name: Disk usage
         if: always()
         run: df -h /

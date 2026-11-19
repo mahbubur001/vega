@@ -500,6 +500,10 @@ fn main() {
         zed_actions::init();
 
         release_channel::init(app_version, cx);
+        // VEGA: send zed.dev docs links to VEGA's docs.
+        cx.set_global(gpui::OpenUrlRewriter(
+            release_channel::vega_docs::rewrite_docs_url,
+        ));
         gpui_tokio::init(cx);
         if let Some(app_commit_sha) = app_commit_sha {
             AppCommitSha::set_global(app_commit_sha, cx);
