@@ -4,7 +4,7 @@ use gpui::{App, ClipboardItem, PromptLevel, actions};
 use system_specs::{CopySystemSpecsIntoClipboard, SystemSpecs};
 use util::ResultExt;
 use workspace::Workspace;
-use zed_actions::feedback::{EmailZed, FileBugReport, RequestFeature};
+use zed_actions::feedback::{FileBugReport, RequestFeature};
 
 actions!(
     zed,
@@ -16,26 +16,15 @@ actions!(
     ]
 );
 
-const ZED_REPO_URL: &str = "https://github.com/zed-industries/zed";
+// VEGA: feedback goes to VEGA's repo, never to Zed's.
+const ZED_REPO_URL: &str = "https://github.com/mahbubur001/vega";
 
-const REQUEST_FEATURE_URL: &str = "https://github.com/zed-industries/zed/discussions/new/choose";
+const REQUEST_FEATURE_URL: &str =
+    "https://github.com/mahbubur001/vega/issues/new?labels=enhancement";
 
 fn file_bug_report_url(specs: &SystemSpecs) -> String {
     format!(
-        concat!(
-            "https://github.com/zed-industries/zed/issues/new",
-            "?",
-            "template=10_bug_report.yml",
-            "&",
-            "environment={}"
-        ),
-        urlencoding::encode(&specs.to_string())
-    )
-}
-
-fn email_zed_url(specs: &SystemSpecs) -> String {
-    format!(
-        concat!("mailto:hi@zed.dev", "?", "body={}"),
+        "{ZED_REPO_URL}/issues/new?labels=bug&body={}",
         email_body(specs)
     )
 }
@@ -91,18 +80,6 @@ pub fn init(cx: &mut App) {
                     let specs = specs.await;
                     cx.update(|_, cx| {
                         cx.open_url(&file_bug_report_url(&specs));
-                    })
-                    .log_err();
-                })
-                .detach();
-            })
-            .register_action(move |_, _: &EmailZed, window, cx| {
-                let os_name = telemetry::os_name(cx);
-                let specs = SystemSpecs::new(window, cx, os_name, telemetry::os_version());
-                cx.spawn_in(window, async move |_, cx| {
-                    let specs = specs.await;
-                    cx.update(|_, cx| {
-                        cx.open_url(&email_zed_url(&specs));
                     })
                     .log_err();
                 })

@@ -1,4 +1,4 @@
-//! VEGA: docs links.
+//! VEGA: zed.dev links.
 //!
 //! Upstream code links to the docs on zed.dev in many places. VEGA has no docs
 //! site and must never send people to zed.dev, so [`rewrite_docs_url`] maps
@@ -47,6 +47,32 @@ static REDIRECTS: LazyLock<HashMap<&'static str, &'static str>> = LazyLock::new(
         })
         .collect()
 });
+
+/// VEGA's repository, where any other zed.dev link goes.
+pub const VEGA_REPO_URL: &str = "https://github.com/mahbubur001/vega";
+
+/// Rewrites any zed.dev link VEGA would open in the browser: docs pages go to
+/// VEGA's docs, release notes and downloads to VEGA's releases, everything
+/// else (blog, account, pricing, …) to VEGA's repository. Returns `None` for
+/// URLs that aren't on zed.dev.
+pub fn rewrite_zed_url(url: &str) -> Option<String> {
+    if let Some(docs) = rewrite_docs_url(url) {
+        return Some(docs);
+    }
+    let rest = url
+        .strip_prefix("https://")
+        .or_else(|| url.strip_prefix("http://"))?;
+    let host_end = rest.find(['/', '?', '#']).unwrap_or(rest.len());
+    let host = rest[..host_end].to_ascii_lowercase();
+    if host != "zed.dev" && !host.ends_with(".zed.dev") {
+        return None;
+    }
+    let path = &rest[host_end..];
+    if path == "/releases" || path.starts_with("/releases/") || path.starts_with("/download") {
+        return Some(format!("{VEGA_REPO_URL}/releases"));
+    }
+    Some(VEGA_REPO_URL.to_string())
+}
 
 /// Returns VEGA's docs URL for a zed.dev docs URL, or `None` for any other URL.
 pub fn rewrite_docs_url(url: &str) -> Option<String> {
@@ -164,6 +190,36 @@ mod tests {
             "https://zed.dev/docs/no-such-page",
         ] {
             assert_eq!(rewrite_docs_url(url), Some(page("SUMMARY.md")), "{url}");
+        }
+    }
+
+    #[test]
+    fn no_zed_dev_link_survives() {
+        assert_eq!(
+            rewrite_zed_url("https://zed.dev/docs/tasks"),
+            Some(page("tasks.md"))
+        );
+        assert_eq!(
+            rewrite_zed_url("https://zed.dev/releases"),
+            Some(format!("{VEGA_REPO_URL}/releases"))
+        );
+        for url in [
+            "https://zed.dev",
+            "https://zed.dev/",
+            "https://zed.dev/blog/acp-registry",
+            "https://zed.dev/account?return=1",
+            "http://www.zed.dev/pricing",
+            "https://cloud.zed.dev/anything",
+        ] {
+            assert_eq!(rewrite_zed_url(url), Some(VEGA_REPO_URL.into()), "{url}");
+        }
+        for url in [
+            "https://github.com/zed-industries/zed",
+            "https://notzed.dev/",
+            "https://zed.dev.example.com/",
+            "zed://settings",
+        ] {
+            assert_eq!(rewrite_zed_url(url), None, "{url}");
         }
     }
 
