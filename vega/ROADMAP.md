@@ -34,7 +34,7 @@ Status keys: `[ ]` todo · `[~]` in progress · `[x]` done. Each item maps to a 
   - [~] D4 Compare & Sync — folder-diff Sync view, File Transfers panel with Retry, remote-change warnings; PhpStorm parity plan P1–P6 done (DEPLOYMENT_PLAN.md). Owner's in-app check ongoing
   - [ ] D5 Extras (SSH, agent tools)
 - [ ] External Libraries & Scratches (PhpStorm parity) — see `LIBRARIES_SCRATCHES_PLAN.md`
-  - [~] L1 Scratches — "Scratches and Consoles" node at the bottom of the project panel (project-panel seam `crates/project_panel/src/extra_rows.rs`), crate `scratches`: New Scratch File (⇧⌘N, language picker, recent languages, from selection), New Scratch Buffer, Show Scratch Files, Run (⌃⇧R, terminal), Change Language, Rename, Copy, Move to Project, Delete, New File/Directory, empty scratches deleted on close. Waiting for the owner's check
+  - [~] L1 Scratches — "Scratches and Consoles" node at the bottom of the project panel (project-panel seam `crates/project_panel/src/extra_rows.rs`), crate `scratches`: New Scratch File (⇧⌘N, VEGA's built-in language picker, from selection), New Scratch Buffer, Show Scratch Files, Run (⌃⇧R, terminal), Change Language, Rename, Copy, Move to Project, Delete, New File/Directory, empty scratches deleted on close. Waiting for the owner's check
   - [ ] L2 External Libraries (browse)
   - [ ] L3 Settings › PHP page
   - [ ] L4 Scopes

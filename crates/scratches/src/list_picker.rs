@@ -1,5 +1,4 @@
-//! A searchable list in a modal (New Scratch File's languages, Change
-//! Language, Show Scratch Files).
+//! A searchable list in a modal (Show Scratch Files).
 
 use std::sync::Arc;
 
@@ -17,8 +16,6 @@ pub(crate) struct PickerEntry {
     pub detail: SharedString,
     /// A file icon path (from `FileIcons`), if any.
     pub icon: Option<SharedString>,
-    /// Draws a separator above this entry while the search is empty.
-    pub separator_above: bool,
 }
 
 /// Indexes of the entries whose label contains every word of `query`, in order.
@@ -54,7 +51,6 @@ impl ListPicker {
             placeholder: placeholder.into(),
             entries,
             matches,
-            query_is_empty: true,
             selected_index: selected,
             on_pick: Some(Box::new(on_pick)),
         };
@@ -83,13 +79,12 @@ pub(crate) struct ListPickerDelegate {
     placeholder: Arc<str>,
     entries: Vec<PickerEntry>,
     matches: Vec<usize>,
-    query_is_empty: bool,
     selected_index: usize,
     on_pick: Option<OnPick>,
 }
 
 impl PickerDelegate for ListPickerDelegate {
-    type ListItem = Div;
+    type ListItem = ListItem;
 
     fn name() -> &'static str {
         "scratch list picker"
@@ -117,9 +112,9 @@ impl PickerDelegate for ListPickerDelegate {
         _: &mut Window,
         _: &mut Context<Picker<Self>>,
     ) -> Task<()> {
-        self.query_is_empty = query.trim().is_empty();
+        let query_is_empty = query.trim().is_empty();
         self.matches = filter(&self.entries, &query);
-        if !self.query_is_empty {
+        if !query_is_empty {
             self.selected_index = 0;
         }
         self.selected_index = self
@@ -145,7 +140,7 @@ impl PickerDelegate for ListPickerDelegate {
         ix: usize,
         selected: bool,
         _: &mut Window,
-        cx: &mut Context<Picker<Self>>,
+        _: &mut Context<Picker<Self>>,
     ) -> Option<Self::ListItem> {
         let entry = self.entries.get(*self.matches.get(ix)?)?;
         let icon = match &entry.icon {
@@ -153,26 +148,16 @@ impl PickerDelegate for ListPickerDelegate {
             None => Icon::new(IconName::File),
         };
         Some(
-            div()
-                .when(
-                    self.query_is_empty && entry.separator_above && ix > 0,
-                    |div| {
-                        div.border_t_1()
-                            .border_color(cx.theme().colors().border_variant)
-                    },
-                )
-                .child(
-                    ListItem::new(ix)
-                        .inset(true)
-                        .spacing(ListItemSpacing::Sparse)
-                        .toggle_state(selected)
-                        .start_slot(icon.size(IconSize::Small).color(Color::Muted))
-                        .child(Label::new(entry.label.clone()))
-                        .end_slot(
-                            Label::new(entry.detail.clone())
-                                .size(LabelSize::Small)
-                                .color(Color::Muted),
-                        ),
+            ListItem::new(ix)
+                .inset(true)
+                .spacing(ListItemSpacing::Sparse)
+                .toggle_state(selected)
+                .start_slot(icon.size(IconSize::Small).color(Color::Muted))
+                .child(Label::new(entry.label.clone()))
+                .end_slot(
+                    Label::new(entry.detail.clone())
+                        .size(LabelSize::Small)
+                        .color(Color::Muted),
                 ),
         )
     }
@@ -187,7 +172,6 @@ mod tests {
             label: label.to_string().into(),
             detail: SharedString::default(),
             icon: None,
-            separator_above: false,
         }
     }
 

@@ -16945,6 +16945,7 @@ dependencies = [
  "futures 0.3.34",
  "gpui",
  "language",
+ "language_selector",
  "log",
  "paths",
  "picker",

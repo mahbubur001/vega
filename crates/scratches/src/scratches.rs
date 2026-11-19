@@ -13,18 +13,17 @@ use std::sync::Arc;
 use std::time::SystemTime;
 
 use anyhow::Context as _;
-use db::kvp::KeyValueStore;
 use editor::Editor;
 use file_icons::FileIcons;
 use fs::Fs;
 use futures::StreamExt as _;
 use gpui::{App, AppContext as _, AsyncWindowContext, Task, WeakEntity, Window};
 use language::LanguageRegistry;
+use language_selector::LanguageSelector;
 use project::{Project, ProjectPath};
 use project_panel::ProjectPanel;
 use settings::SeedQuerySetting;
 use ui::prelude::*;
-use util::ResultExt as _;
 use workspace::notifications::NotificationId;
 use workspace::searchable::SearchableItem as _;
 use workspace::{OpenOptions, OpenVisible, Toast, Workspace};
@@ -33,11 +32,7 @@ use zed_actions::scratches::{
 };
 
 use crate::list_picker::{ListPicker, PickerEntry};
-use crate::naming::{extension_of, next_buffer_name, next_scratch_name, run_command};
-
-const RECENT_LANGUAGES_KEY: &str = "vega_scratch_recent_languages";
-/// How many recently used languages New Scratch File lists first.
-const RECENT_LANGUAGES: usize = 4;
+use crate::naming::{extension_of, free_name, next_buffer_name, run_command};
 
 /// Where scratch files live (outside every project).
 pub fn scratches_dir() -> PathBuf {
@@ -81,96 +76,74 @@ pub fn init(cx: &mut App) {
     .detach();
 }
 
-/// A language New Scratch File can create.
-#[derive(Clone, Debug, PartialEq)]
-pub(crate) struct LanguageChoice {
-    pub name: String,
-    pub extension: String,
-}
-
-/// Every language with a file extension, the recently used ones (and
-/// `preferred`, the active editor's language) first.
-pub(crate) fn language_choices(
+/// How a scratch in `language` is named, `(stem, extension)`: `scratch.php`
+/// for PHP, the file name itself for languages matched by name.
+pub(crate) fn scratch_file_for(
     registry: &Arc<LanguageRegistry>,
-    recent: &[String],
-    preferred: Option<String>,
-) -> (Vec<LanguageChoice>, usize) {
-    let mut all: Vec<LanguageChoice> = registry
-        .language_names()
-        .into_iter()
-        .filter_map(|name| {
-            let language = registry.available_language_for_name(name.as_ref())?;
-            if language.hidden() {
-                return None;
-            }
-            let extension = if name.as_ref() == "Plain Text" {
-                "txt".to_string()
-            } else {
-                language
-                    .matcher()
-                    .path_suffixes
-                    .iter()
-                    .find(|suffix| !suffix.contains('/') && !suffix.is_empty())?
-                    .to_string()
-            };
-            Some(LanguageChoice {
-                name: name.to_string(),
-                extension,
-            })
+    language: &str,
+) -> (String, String) {
+    if language == "Plain Text" {
+        return ("scratch".into(), "txt".into());
+    }
+    let suffixes: Vec<String> = registry
+        .available_language_for_name(language)
+        .map(|language| {
+            language
+                .matcher()
+                .path_suffixes
+                .iter()
+                .map(|suffix| suffix.to_string())
+                .collect()
         })
-        .collect();
-    if !all.iter().any(|choice| choice.name == "Plain Text") {
-        all.push(LanguageChoice {
-            name: "Plain Text".into(),
-            extension: "txt".into(),
-        });
-    }
-    order_languages(all, recent, preferred)
+        .unwrap_or_default();
+    file_for_suffixes(&suffixes)
 }
 
-/// `preferred`, then `recent` (most recent first, at most four), then the rest
-/// by name. Returns the list and how many entries come before the rest.
-fn order_languages(
-    mut all: Vec<LanguageChoice>,
-    recent: &[String],
-    preferred: Option<String>,
-) -> (Vec<LanguageChoice>, usize) {
-    all.sort_by_key(|choice| choice.name.to_lowercase());
-    let mut first: Vec<LanguageChoice> = Vec::new();
-    for name in preferred
-        .into_iter()
-        .chain(recent.iter().take(RECENT_LANGUAGES).cloned())
+fn file_for_suffixes(suffixes: &[String]) -> (String, String) {
+    let scratch = |extension: &str| ("scratch".to_string(), extension.to_string());
+    if let Some(extension) = suffixes.iter().find(|suffix| is_plain_extension(suffix)) {
+        return scratch(extension);
+    }
+    if let Some(extension) = suffixes
+        .iter()
+        .filter_map(|suffix| suffix.strip_prefix('.'))
+        .find(|suffix| is_plain_extension(suffix))
     {
-        if let Some(index) = all.iter().position(|choice| choice.name == name) {
-            first.push(all.remove(index));
-        }
+        return scratch(extension);
     }
-    let count = first.len();
-    first.extend(all);
-    (first, count)
+    if let Some(name) = suffixes
+        .iter()
+        .find(|suffix| !suffix.is_empty() && !suffix.contains(['/', '*', '.']))
+    {
+        return (name.clone(), String::new());
+    }
+    scratch("txt")
 }
 
-fn recent_languages(cx: &App) -> Vec<String> {
-    KeyValueStore::global(cx)
-        .read_kvp(RECENT_LANGUAGES_KEY)
-        .log_err()
-        .flatten()
-        .map(|value| value.lines().map(str::to_string).collect())
-        .unwrap_or_default()
-}
-
-fn remember_language(name: &str, cx: &mut App) {
-    let mut recent = recent_languages(cx);
-    recent.retain(|recent| recent != name);
-    recent.insert(0, name.to_string());
-    recent.truncate(RECENT_LANGUAGES * 2);
-    let kvp = KeyValueStore::global(cx);
-    cx.background_spawn(async move {
-        kvp.write_kvp(RECENT_LANGUAGES_KEY.into(), recent.join("\n"))
-            .await
-            .log_err();
+/// The language whose files look like `name` (for "(current)" in Change Language).
+pub(crate) fn language_for_file(registry: &Arc<LanguageRegistry>, name: &str) -> Option<String> {
+    let extension = extension_of(name);
+    registry.language_names().into_iter().find_map(|language| {
+        let available = registry.available_language_for_name(language.as_ref())?;
+        available
+            .matcher()
+            .path_suffixes
+            .iter()
+            .any(|suffix| {
+                (!extension.is_empty() && suffix.trim_start_matches('.') == extension)
+                    || suffix.as_ref() == name
+            })
+            .then(|| language.to_string())
     })
-    .detach();
+}
+
+/// A suffix usable as `scratch.<suffix>` ("php", "c++"), not a file name
+/// ("TAG_EDITMSG", ".env").
+fn is_plain_extension(suffix: &str) -> bool {
+    !suffix.is_empty()
+        && suffix
+            .chars()
+            .all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || matches!(c, '+' | '-' | '_'))
 }
 
 /// The text selected in the active editor (if any) and that editor's language.
@@ -195,13 +168,8 @@ fn selection_and_language(
     ((!text.is_empty()).then_some(text), language)
 }
 
-/// The file icon for files with this extension.
-pub(crate) fn icon_for_extension(extension: &str, cx: &App) -> Option<SharedString> {
-    FileIcons::get_icon(Path::new(&format!("scratch.{extension}")), cx)
-}
-
-/// File › New › Scratch File: choose a language, then create and open
-/// `scratch.<ext>` (with the editor's selection, if any).
+/// File › New › Scratch File: choose a language (VEGA's language picker),
+/// then create and open `scratch.<ext>` (with the editor's selection, if any).
 pub(crate) fn new_scratch_file(
     workspace: &mut Workspace,
     window: &mut Window,
@@ -209,30 +177,18 @@ pub(crate) fn new_scratch_file(
 ) {
     let registry = workspace.project().read(cx).languages().clone();
     let (selection, language) = selection_and_language(workspace, window, cx);
-    let preferred = language.filter(|_| selection.is_some());
-    let (languages, first_count) = language_choices(&registry, &recent_languages(cx), preferred);
-    let entries = language_entries(&languages, first_count, cx);
     let fs = workspace.project().read(cx).fs().clone();
     let handle = cx.entity().downgrade();
-    let title = if selection.is_some() {
-        "New Scratch File from Selection — choose a language…"
-    } else {
-        "New Scratch File — choose a language…"
-    };
     workspace.toggle_modal(window, cx, move |window, cx| {
-        ListPicker::new(
-            title,
-            entries,
-            0,
-            move |index, window, cx| {
-                let Some(choice) = languages.get(index).cloned() else {
-                    return;
-                };
-                remember_language(&choice.name, cx);
+        LanguageSelector::pick(
+            registry.clone(),
+            language,
+            move |name, window, cx| {
+                let (stem, extension) = scratch_file_for(&registry, name.as_ref());
                 create_scratch(
                     handle,
                     fs,
-                    NewName::Scratch(choice.extension),
+                    NewName::Scratch { stem, extension },
                     selection.unwrap_or_default(),
                     window,
                     cx,
@@ -242,23 +198,6 @@ pub(crate) fn new_scratch_file(
             cx,
         )
     });
-}
-
-pub(crate) fn language_entries(
-    languages: &[LanguageChoice],
-    first_count: usize,
-    cx: &App,
-) -> Vec<PickerEntry> {
-    languages
-        .iter()
-        .enumerate()
-        .map(|(index, choice)| PickerEntry {
-            label: choice.name.clone().into(),
-            detail: format!(".{}", choice.extension).into(),
-            icon: icon_for_extension(&choice.extension, cx),
-            separator_above: first_count > 0 && index == first_count,
-        })
-        .collect()
 }
 
 /// File › New › Scratch Buffer: a plain-text `bufferN.txt`.
@@ -275,8 +214,8 @@ fn new_scratch_buffer(workspace: &mut Workspace, window: &mut Window, cx: &mut C
 }
 
 pub(crate) enum NewName {
-    /// `scratch.<ext>`, numbered when taken.
-    Scratch(String),
+    /// `<stem>.<extension>`, numbered when taken.
+    Scratch { stem: String, extension: String },
     /// The next `bufferN.txt`, reused after five.
     Buffer,
 }
@@ -297,10 +236,10 @@ pub(crate) fn create_scratch(
                 fs.create_dir(&dir).await?;
                 let existing = list_dir(fs.as_ref(), &dir).await;
                 let path = match name {
-                    NewName::Scratch(extension) => {
+                    NewName::Scratch { stem, extension } => {
                         let names: HashSet<String> =
                             existing.into_iter().map(|(name, _, _)| name).collect();
-                        let path = dir.join(next_scratch_name(&names, &extension));
+                        let path = dir.join(free_name(&stem, &extension, &names));
                         fs.write(&path, content.as_bytes()).await?;
                         path
                     }
@@ -432,7 +371,6 @@ fn show_scratch_files(workspace: &mut Workspace, window: &mut Window, cx: &mut C
                             icon: FileIcons::get_icon(path, cx),
                             label: name.into(),
                             detail: folder.into(),
-                            separator_above: false,
                         }
                     })
                     .collect();
@@ -585,34 +523,28 @@ pub(crate) fn report(
 mod tests {
     use super::*;
 
-    fn choice(name: &str, extension: &str) -> LanguageChoice {
-        LanguageChoice {
-            name: name.into(),
-            extension: extension.into(),
-        }
+    #[test]
+    fn only_plain_extensions_name_scratches() {
+        assert!(is_plain_extension("php"));
+        assert!(is_plain_extension("c++"));
+        assert!(is_plain_extension("mp4"));
+        assert!(!is_plain_extension(".env"));
+        assert!(!is_plain_extension("TAG_EDITMSG"));
+        assert!(!is_plain_extension("Dockerfile"));
+        assert!(!is_plain_extension(""));
     }
 
     #[test]
-    fn recent_and_preferred_languages_come_first() {
-        let all = vec![
-            choice("PHP", "php"),
-            choice("JavaScript", "js"),
-            choice("Plain Text", "txt"),
-            choice("JSON", "json"),
-            choice("Python", "py"),
-        ];
-        let (ordered, first) = order_languages(
-            all.clone(),
-            &["JSON".into(), "Missing".into(), "PHP".into()],
-            None,
+    fn scratches_are_named_after_the_language_suffixes() {
+        let file = |suffixes: &[&str]| {
+            file_for_suffixes(&suffixes.iter().map(|s| s.to_string()).collect::<Vec<_>>())
+        };
+        assert_eq!(file(&["php", "phtml"]), ("scratch".into(), "php".into()));
+        assert_eq!(file(&[".env", "env.*"]), ("scratch".into(), "env".into()));
+        assert_eq!(
+            file(&["TAG_EDITMSG", "COMMIT_EDITMSG"]),
+            ("TAG_EDITMSG".into(), String::new())
         );
-        let names: Vec<&str> = ordered.iter().map(|c| c.name.as_str()).collect();
-        assert_eq!(names, ["JSON", "PHP", "JavaScript", "Plain Text", "Python"]);
-        assert_eq!(first, 2);
-
-        let (ordered, first) = order_languages(all, &["PHP".into()], Some("Python".into()));
-        let names: Vec<&str> = ordered.iter().map(|c| c.name.as_str()).collect();
-        assert_eq!(names, ["Python", "PHP", "JavaScript", "JSON", "Plain Text"]);
-        assert_eq!(first, 2);
+        assert_eq!(file(&[]), ("scratch".into(), "txt".into()));
     }
 }

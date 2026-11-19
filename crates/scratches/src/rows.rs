@@ -26,12 +26,12 @@ use vega_dialog::NameModal;
 use workspace::{ItemHandle, SaveIntent, Workspace};
 use zed_actions::scratches::{NewScratchBuffer, NewScratchFile};
 
-use crate::list_picker::ListPicker;
 use crate::naming::{extension_of, free_name, run_command, stem_of, with_extension};
 use crate::{
-    language_choices, language_entries, notify, open_scratch, recent_languages, remember_language,
-    run_scratch, save_if_dirty, scratches_dir,
+    language_for_file, notify, open_scratch, run_scratch, save_if_dirty, scratch_file_for,
+    scratches_dir,
 };
+use language_selector::LanguageSelector;
 
 const EXPANDED_KEY: &str = "vega_scratches_node_expanded";
 
@@ -422,29 +422,27 @@ impl ScratchRows {
         let siblings = self.sibling_names(parent, cx);
         let name = row.name.to_string();
         let registry = self.project.read(cx).languages().clone();
-        let (languages, first_count) = language_choices(&registry, &recent_languages(cx), None);
-        let current = extension_of(&name).to_lowercase();
-        let selected = languages
-            .iter()
-            .position(|choice| choice.extension.to_lowercase() == current)
-            .unwrap_or(0);
-        let entries = language_entries(&languages, first_count, cx);
+        let current = language_for_file(&registry, &name);
         let this = cx.entity().downgrade();
         self.workspace
             .update(cx, |workspace, cx| {
                 workspace.toggle_modal(window, cx, move |window, cx| {
-                    ListPicker::new(
-                        "Change Language…",
-                        entries,
-                        selected,
-                        move |index, _, cx| {
-                            let Some(choice) = languages.get(index) else {
-                                return;
+                    LanguageSelector::pick(
+                        registry.clone(),
+                        current,
+                        move |language, _, cx| {
+                            let (stem, extension) = scratch_file_for(&registry, language.as_ref());
+                            let mut new_name = if extension.is_empty() {
+                                stem
+                            } else {
+                                with_extension(&name, &extension)
                             };
-                            remember_language(&choice.name, cx);
-                            let mut new_name = with_extension(&name, &choice.extension);
                             if new_name != name && siblings.contains(&new_name) {
-                                new_name = free_name(stem_of(&name), &choice.extension, &siblings);
+                                new_name = free_name(
+                                    stem_of(&new_name),
+                                    extension_of(&new_name),
+                                    &siblings,
+                                );
                             }
                             if new_name != name {
                                 this.update(cx, |this, cx| this.rename_entry(&path, &new_name, cx))

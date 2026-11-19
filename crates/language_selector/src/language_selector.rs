@@ -75,10 +75,44 @@ impl LanguageSelector {
             .read(cx)
             .language()
             .map(|language| language.name().as_ref().to_string());
+        Self::with_target(
+            Target::Buffer { buffer, project },
+            language_registry,
+            current_language_name,
+            window,
+            cx,
+        )
+    }
+
+    /// VEGA: the same picker, handing the chosen language to `on_pick`
+    /// instead of setting a buffer's language (New Scratch File, Change
+    /// Language of a scratch). `current` is marked "(current)" and preselected.
+    pub fn pick(
+        language_registry: Arc<LanguageRegistry>,
+        current: Option<String>,
+        on_pick: impl FnOnce(LanguageName, &mut Window, &mut App) + 'static,
+        window: &mut Window,
+        cx: &mut Context<Self>,
+    ) -> Self {
+        Self::with_target(
+            Target::Callback(Some(Box::new(on_pick))),
+            language_registry,
+            current,
+            window,
+            cx,
+        )
+    }
+
+    fn with_target(
+        target: Target,
+        language_registry: Arc<LanguageRegistry>,
+        current_language_name: Option<String>,
+        window: &mut Window,
+        cx: &mut Context<Self>,
+    ) -> Self {
         let delegate = LanguageSelectorDelegate::new(
             cx.entity().downgrade(),
-            buffer,
-            project,
+            target,
             language_registry,
             current_language_name,
         );
@@ -86,6 +120,16 @@ impl LanguageSelector {
         let picker = cx.new(|cx| Picker::uniform_list(delegate, window, cx));
         Self { picker }
     }
+}
+
+/// What the chosen language is for.
+enum Target {
+    Buffer {
+        buffer: Entity<Buffer>,
+        project: Entity<Project>,
+    },
+    /// VEGA: see `LanguageSelector::pick`.
+    Callback(Option<Box<dyn FnOnce(LanguageName, &mut Window, &mut App)>>),
 }
 
 impl Render for LanguageSelector {
@@ -107,9 +151,9 @@ impl ModalView for LanguageSelector {}
 
 pub struct LanguageSelectorDelegate {
     language_selector: WeakEntity<LanguageSelector>,
-    buffer: Entity<Buffer>,
-    project: Entity<Project>,
+    target: Target,
     language_registry: Arc<LanguageRegistry>,
+    current_language_name: Option<String>,
     candidates: Vec<StringMatchCandidate>,
     matches: Vec<StringMatch>,
     selected_index: usize,
@@ -119,8 +163,7 @@ pub struct LanguageSelectorDelegate {
 impl LanguageSelectorDelegate {
     fn new(
         language_selector: WeakEntity<LanguageSelector>,
-        buffer: Entity<Buffer>,
-        project: Entity<Project>,
+        target: Target,
         language_registry: Arc<LanguageRegistry>,
         current_language_name: Option<String>,
     ) -> Self {
@@ -146,9 +189,9 @@ impl LanguageSelectorDelegate {
 
         Self {
             language_selector,
-            buffer,
-            project,
+            target,
             language_registry,
+            current_language_name,
             candidates,
             matches: vec![],
             selected_index: current_language_candidate_index.unwrap_or(0),
@@ -158,8 +201,11 @@ impl LanguageSelectorDelegate {
 
     fn language_data_for_match(&self, mat: &StringMatch, cx: &App) -> (String, Option<Icon>) {
         let mut label = mat.string.clone();
-        let buffer_language = self.buffer.read(cx).language();
         let need_icon = FileFinderSettings::get_global(cx).file_icons;
+        let buffer_language = match &self.target {
+            Target::Buffer { buffer, .. } => buffer.read(cx).language().cloned(),
+            Target::Callback(_) => None,
+        };
 
         if let Some(buffer_language) = buffer_language
             .filter(|buffer_language| buffer_language.name().as_ref() == mat.string.as_str())
@@ -170,6 +216,11 @@ impl LanguageSelectorDelegate {
                 .flatten();
             (label, icon)
         } else {
+            if matches!(self.target, Target::Callback(_))
+                && self.current_language_name.as_deref() == Some(mat.string.as_str())
+            {
+                label.push_str(" (current)");
+            }
             let icon = need_icon
                 .then(|| {
                     let language_name = LanguageName::new(mat.string.as_str());
@@ -214,9 +265,18 @@ impl PickerDelegate for LanguageSelectorDelegate {
     fn confirm(&mut self, _: bool, window: &mut Window, cx: &mut Context<Picker<Self>>) {
         if let Some(mat) = self.matches.get(self.selected_index) {
             let language_name = &self.candidates[mat.candidate_id].string;
+            let (buffer, project) = match &mut self.target {
+                Target::Buffer { buffer, project } => (buffer.downgrade(), project.downgrade()),
+                Target::Callback(on_pick) => {
+                    if let Some(on_pick) = on_pick.take() {
+                        let name = LanguageName::new(language_name);
+                        cx.defer_in(window, move |_, window, cx| on_pick(name, window, cx));
+                    }
+                    self.dismissed(window, cx);
+                    return;
+                }
+            };
             let language = self.language_registry.language_for_name(language_name);
-            let project = self.project.downgrade();
-            let buffer = self.buffer.downgrade();
             cx.spawn_in(window, async move |_, cx| {
                 let language = language.await?;
                 let project = project.upgrade().context("project was dropped")?;

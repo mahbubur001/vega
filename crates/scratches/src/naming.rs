@@ -6,11 +6,6 @@ use std::time::SystemTime;
 /// Number of plain-text scratch buffers before the oldest is reused.
 pub(crate) const BUFFER_COUNT: usize = 5;
 
-/// `scratch.<ext>`, or `scratch_1.<ext>`, `scratch_2.<ext>`… when taken.
-pub(crate) fn next_scratch_name(existing: &HashSet<String>, extension: &str) -> String {
-    free_name("scratch", extension, existing)
-}
-
 /// `<stem>.<ext>` if free, else `<stem>_1.<ext>`, `<stem>_2.<ext>`…
 pub(crate) fn free_name(stem: &str, extension: &str, existing: &HashSet<String>) -> String {
     let with_extension = |stem: &str| {
@@ -110,20 +105,20 @@ mod tests {
 
     #[test]
     fn scratch_names_count_up_like_phpstorm() {
-        assert_eq!(next_scratch_name(&names(&[]), "php"), "scratch.php");
+        assert_eq!(free_name("scratch", "php", &names(&[])), "scratch.php");
         assert_eq!(
-            next_scratch_name(&names(&["scratch.php"]), "php"),
+            free_name("scratch", "php", &names(&["scratch.php"])),
             "scratch_1.php"
         );
         assert_eq!(
-            next_scratch_name(&names(&["scratch.php", "scratch_1.php"]), "php"),
+            free_name("scratch", "php", &names(&["scratch.php", "scratch_1.php"])),
             "scratch_2.php"
         );
         assert_eq!(
-            next_scratch_name(&names(&["scratch.php"]), "js"),
+            free_name("scratch", "js", &names(&["scratch.php"])),
             "scratch.js"
         );
-        assert_eq!(next_scratch_name(&names(&[]), ""), "scratch");
+        assert_eq!(free_name("scratch", "", &names(&[])), "scratch");
     }
 
     #[test]
