@@ -262,10 +262,10 @@ impl Render for NonProjectBar {
             LibraryKind::PhpStubs => "Stubs describe PHP's built-in functions.",
             LibraryKind::IncludePath => "It is outside the project.",
         };
-        let folder_label = match kind {
-            LibraryKind::PhpStubs => "Edit All Stubs Here",
-            LibraryKind::IncludePath => "Edit Files in This Folder",
-            _ => "Edit Files in This Package",
+        let (folder_label, folder_tooltip) = match kind {
+            LibraryKind::PhpStubs => ("Edit Stubs", "Edit every stub file of this extension"),
+            LibraryKind::IncludePath => ("Edit Folder", "Edit every file in this include path"),
+            _ => ("Edit Package", "Edit every file of this package"),
         };
         h_flex()
             .w_full()
@@ -282,28 +282,30 @@ impl Render for NonProjectBar {
             )
             .child(
                 h_flex()
+                    .id("non-project-message")
                     .flex_1()
                     .min_w_0()
                     .gap_1()
-                    .child(Label::new("Non-project file").size(LabelSize::Small))
+                    .tooltip(Tooltip::text(format!("Read-only. {why}")))
+                    .child(
+                        Label::new("Non-project file")
+                            .size(LabelSize::Small)
+                            .single_line(),
+                    )
                     .when(!package.is_empty(), |row| {
                         row.child(
                             Label::new(format!("· {package}"))
                                 .size(LabelSize::Small)
-                                .color(Color::Muted),
+                                .color(Color::Muted)
+                                .truncate(),
                         )
-                    })
-                    .child(
-                        Label::new(format!("· read-only. {why}"))
-                            .size(LabelSize::Small)
-                            .color(Color::Muted)
-                            .truncate(),
-                    ),
+                    }),
             )
             .child(
-                Button::new("non-project-edit-file", "Edit This File")
+                Button::new("non-project-edit-file", "Edit File")
                     .style(ButtonStyle::Outlined)
                     .label_size(LabelSize::Small)
+                    .tooltip(Tooltip::text("Edit this file until VEGA quits"))
                     .on_click(cx.listener(move |this, _, _, cx| {
                         let path = path.clone();
                         this.allow(|allowances| _ = allowances.files.insert(path), cx)
@@ -313,16 +315,17 @@ impl Render for NonProjectBar {
                 Button::new("non-project-edit-folder", folder_label)
                     .style(ButtonStyle::Outlined)
                     .label_size(LabelSize::Small)
+                    .tooltip(Tooltip::text(folder_tooltip))
                     .on_click(cx.listener(move |this, _, _, cx| {
                         let root = root.clone();
                         this.allow(|allowances| _ = allowances.folders.insert(root), cx)
                     })),
             )
             .child(
-                Button::new("non-project-edit-any", "Edit Any Library File")
+                Button::new("non-project-edit-any", "Edit All")
                     .style(ButtonStyle::Outlined)
                     .label_size(LabelSize::Small)
-                    .tooltip(Tooltip::text("Until VEGA quits"))
+                    .tooltip(Tooltip::text("Edit any library file until VEGA quits"))
                     .on_click(cx.listener(|this, _, _, cx| {
                         this.allow(|allowances| allowances.any = true, cx)
                     })),

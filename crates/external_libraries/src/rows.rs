@@ -821,25 +821,24 @@ impl ProjectPanelExtraRows for LibraryRows {
                     .child(icon),
             )
             .child(
-                h_flex()
-                    .h_6()
-                    .min_w_0()
-                    .gap_1p5()
-                    .child(
-                        Label::new(row.label)
-                            .color(label_color)
-                            .single_line()
-                            .truncate(),
-                    )
-                    .when_some(row.detail, |label, detail| {
-                        label.child(
-                            Label::new(detail)
-                                .size(LabelSize::Small)
-                                .color(Color::Muted)
-                                .single_line(),
-                        )
-                    }),
-            ),
+                h_flex().h_6().min_w_0().child(
+                    Label::new(row.label)
+                        .color(label_color)
+                        .single_line()
+                        .truncate(),
+                ),
+            )
+            // Versions and counts on the right, so long names truncate first.
+            .when_some(row.detail, |item, detail| {
+                item.end_slot(
+                    div().flex_none().pr_3().child(
+                        Label::new(detail)
+                            .size(LabelSize::Small)
+                            .color(Color::Muted)
+                            .single_line(),
+                    ),
+                )
+            }),
         )
         .children(menu.map(|(menu, position)| {
             deferred(
