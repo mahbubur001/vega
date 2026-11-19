@@ -24,6 +24,7 @@ language.workspace = true
 language_selector.workspace = true
 log.workspace = true
 paths.workspace = true
+php_settings.workspace = true
 picker.workspace = true
 project.workspace = true
 project_panel.workspace = true

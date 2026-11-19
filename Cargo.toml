@@ -168,6 +168,7 @@ members = [
     "crates/outline_panel",
     "crates/path",
     "crates/paths",
+    "crates/php_settings",
     "crates/picker",
     "crates/picker_preview",
     "crates/platform_title_bar",
@@ -453,6 +454,7 @@ outline_panel = { path = "crates/outline_panel" }
 path = { path = "crates/path" }
 paths = { path = "crates/paths" }
 perf = { path = "tooling/perf", default-features = false }
+php_settings = { path = "crates/php_settings" }
 picker = { path = "crates/picker" }
 picker_preview = { path = "crates/picker_preview" }
 platform_title_bar = { path = "crates/platform_title_bar" }

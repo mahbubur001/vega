@@ -10,29 +10,18 @@ mod rows;
 use std::path::{Path, PathBuf};
 use std::sync::Arc;
 
-use anyhow::{Context as _, anyhow};
-use async_compression::futures::bufread::GzipDecoder;
-use async_tar::Archive;
-use fs::{Fs, RemoveOptions, RenameOptions};
-use futures::{StreamExt as _, io::BufReader};
+use fs::Fs;
+use futures::StreamExt as _;
 use gpui::{App, AppContext as _, Entity, Window};
-use http_client::{AsyncBody, HttpClient};
+use php_settings::PhpConfig;
+use php_settings::interpreters::php_info;
+use php_settings::stubs::stub_folders;
 use project_panel::ProjectPanel;
 use workspace::Workspace;
 
-use crate::model::{
-    Package, composer_packages, installed_version, node_dependencies, parse_php_info,
-};
+pub use php_settings::stubs::stubs_dir;
 
-/// Where downloaded PHP stubs live (one folder per PHP extension).
-pub fn stubs_dir() -> PathBuf {
-    paths::data_dir().join("php-stubs")
-}
-
-const STUBS_URL: &str =
-    "https://github.com/JetBrains/phpstorm-stubs/archive/refs/heads/master.tar.gz";
-
-const PHP_INFO: &str = r#"echo PHP_VERSION, "\n", implode("\n", get_loaded_extensions());"#;
+use crate::model::{Package, composer_packages, installed_version, node_dependencies};
 
 pub fn init(cx: &mut App) {
     cx.observe_new(|workspace: &mut Workspace, window, cx| {
@@ -111,22 +100,35 @@ pub(crate) enum GroupKind {
 #[derive(Clone, Debug, Default)]
 pub(crate) struct Libraries {
     pub php: Option<PhpRuntime>,
+    /// Include paths from the PHP settings, with whether each exists.
+    pub include_paths: Vec<(PathBuf, bool)>,
     pub groups: Vec<PackageGroup>,
 }
 
 /// Reads everything the External Libraries node lists. `roots` are the
-/// project folders.
-pub(crate) async fn load_libraries(fs: Arc<dyn Fs>, roots: Vec<PathBuf>, php: String) -> Libraries {
+/// project folders; `config` is the project's PHP settings.
+pub(crate) async fn load_libraries(
+    fs: Arc<dyn Fs>,
+    roots: Vec<PathBuf>,
+    config: PhpConfig,
+) -> Libraries {
     let mut libraries = Libraries {
-        php: load_php(fs.as_ref(), &php).await,
+        php: load_php(fs.as_ref(), &config).await,
+        include_paths: Vec::new(),
         groups: Vec::new(),
     };
+    for path in config.include_paths() {
+        let exists = fs.is_dir(&path).await;
+        libraries.include_paths.push((path, exists));
+    }
     for root in roots {
         let folder = root
             .file_name()
             .map(|name| name.to_string_lossy().into_owned())
             .unwrap_or_default();
-        if let Ok(lock) = fs.load(&root.join("composer.lock")).await {
+        if config.composer_libraries
+            && let Ok(lock) = fs.load(&root.join("composer.lock")).await
+        {
             let mut packages = Vec::new();
             for package in composer_packages(&lock, &root) {
                 let installed = fs.is_dir(&package.path).await;
@@ -171,19 +173,14 @@ pub(crate) async fn load_libraries(fs: Arc<dyn Fs>, roots: Vec<PathBuf>, php: St
     libraries
 }
 
-async fn load_php(fs: &dyn Fs, php: &str) -> Option<PhpRuntime> {
-    let output = util::command::new_command(php)
-        .args(["-r", PHP_INFO])
-        .output()
-        .await
-        .ok()?;
-    if !output.status.success() {
-        return None;
-    }
-    let (version, extensions) = parse_php_info(&String::from_utf8_lossy(&output.stdout))?;
+/// The interpreter's extensions, or the extensions chosen in the PHP
+/// settings, each with its stubs folder when stubs are downloaded.
+async fn load_php(fs: &dyn Fs, config: &PhpConfig) -> Option<PhpRuntime> {
+    let info = php_info(&config.php()).await?;
     let stubs = stub_folders(fs).await;
     let has_stubs = !stubs.is_empty();
-    let extensions = extensions
+    let names = config.stubs.clone().unwrap_or(info.extensions);
+    let extensions = names
         .into_iter()
         .map(|extension| {
             let folder = stubs
@@ -194,84 +191,10 @@ async fn load_php(fs: &dyn Fs, php: &str) -> Option<PhpRuntime> {
         })
         .collect();
     Some(PhpRuntime {
-        version,
+        version: info.version,
         extensions,
         has_stubs,
     })
-}
-
-/// The extension folders of the downloaded stubs.
-async fn stub_folders(fs: &dyn Fs) -> Vec<(String, PathBuf)> {
-    let mut folders = Vec::new();
-    let Ok(mut entries) = fs.read_dir(&stubs_dir()).await else {
-        return folders;
-    };
-    while let Some(Ok(path)) = entries.next().await {
-        if fs.is_dir(&path).await
-            && let Some(name) = path.file_name()
-        {
-            folders.push((name.to_string_lossy().into_owned(), path));
-        }
-    }
-    folders
-}
-
-/// Downloads JetBrains' phpstorm-stubs (Apache-2.0) into `stubs_dir()`.
-pub(crate) async fn download_stubs(
-    fs: Arc<dyn Fs>,
-    http: Arc<dyn HttpClient>,
-) -> anyhow::Result<()> {
-    let target = stubs_dir();
-    let staging = target.with_extension("download");
-    fs.remove_dir(
-        &staging,
-        RemoveOptions {
-            recursive: true,
-            ignore_if_not_exists: true,
-        },
-    )
-    .await?;
-    fs.create_dir(&staging).await?;
-
-    let mut response = http
-        .get(STUBS_URL, AsyncBody::default(), true)
-        .await
-        .context("couldn't reach GitHub")?;
-    if !response.status().is_success() {
-        return Err(anyhow!("GitHub answered {}", response.status()));
-    }
-    let archive = Archive::new(GzipDecoder::new(BufReader::new(response.body_mut())));
-    archive
-        .unpack(&staging)
-        .await
-        .context("couldn't unpack the stubs")?;
-
-    // The archive holds one folder (phpstorm-stubs-master); it becomes `stubs_dir()`.
-    let mut entries = fs.read_dir(&staging).await?;
-    let unpacked = entries
-        .next()
-        .await
-        .transpose()?
-        .ok_or_else(|| anyhow!("the stubs archive was empty"))?;
-    fs.remove_dir(
-        &target,
-        RemoveOptions {
-            recursive: true,
-            ignore_if_not_exists: true,
-        },
-    )
-    .await?;
-    fs.rename(&unpacked, &target, RenameOptions::default())
-        .await?;
-    fs.remove_dir(
-        &staging,
-        RemoveOptions {
-            recursive: true,
-            ignore_if_not_exists: true,
-        },
-    )
-    .await?;
-    Ok(())
 }
 
 /// Names and kinds of the entries in `dir`, folders first, then by name.
@@ -324,12 +247,16 @@ mod tests {
             }),
         )
         .await;
-        let libraries = load_libraries(
-            fs.clone(),
-            vec![PathBuf::from("/site")],
-            "vega-no-such-php".into(),
-        )
-        .await;
+        let config = PhpConfig {
+            interpreter: Some("vega-no-such-php".into()),
+            include_paths: vec!["/libs/wordpress".into()],
+            ..Default::default()
+        };
+        let libraries = load_libraries(fs.clone(), vec![PathBuf::from("/site")], config).await;
+        assert_eq!(
+            libraries.include_paths,
+            [(PathBuf::from("/libs/wordpress"), false)]
+        );
         assert!(libraries.php.is_none());
         assert_eq!(libraries.groups.len(), 2);
 

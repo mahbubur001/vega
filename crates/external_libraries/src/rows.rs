@@ -17,8 +17,12 @@ use util::ResultExt as _;
 use workspace::notifications::NotificationId;
 use workspace::{OpenOptions, OpenVisible, Toast, Workspace};
 
-use crate::model::short_version;
-use crate::{GroupKind, Libraries, download_stubs, list_dir, load_libraries, stubs_dir};
+use php_settings::interpreters::short_version;
+use php_settings::stubs::download_stubs;
+use php_settings::{PhpSettingsStore, config_for_project};
+use zed_actions::php::OpenPhpSettings;
+
+use crate::{GroupKind, Libraries, list_dir, load_libraries, stubs_dir};
 
 const EXPANDED_KEY: &str = "vega_external_libraries_expanded";
 const ROOT: &str = "root";
@@ -29,6 +33,7 @@ enum RowKind {
     Root,
     Php,
     PhpExtension,
+    IncludePath,
     Group(GroupKind),
     Package,
     Dir,
@@ -52,7 +57,9 @@ impl Row {
     fn expandable(&self) -> bool {
         match self.kind {
             RowKind::Root | RowKind::Php | RowKind::Group(_) | RowKind::Dir => true,
-            RowKind::PhpExtension | RowKind::Package => self.path.is_some() && !self.dimmed,
+            RowKind::PhpExtension | RowKind::IncludePath | RowKind::Package => {
+                self.path.is_some() && !self.dimmed
+            }
             RowKind::File | RowKind::Note => false,
         }
     }
@@ -114,6 +121,9 @@ impl LibraryRows {
             }
             _ => {}
         })];
+        // The PHP settings decide the interpreter, stubs, include paths and Composer packages.
+        let php_settings = PhpSettingsStore::global(cx);
+        subscriptions.push(cx.observe(&php_settings, |this, _, cx| this.reload(cx)));
         if let Some(workspace) = workspace.upgrade() {
             subscriptions.push(cx.subscribe(&workspace, |this, workspace, event, cx| {
                 if let workspace::Event::ActiveItemChanged = event {
@@ -148,7 +158,8 @@ impl LibraryRows {
             .visible_worktrees(cx)
             .map(|worktree| worktree.read(cx).abs_path().to_path_buf())
             .collect();
-        let load = cx.background_spawn(load_libraries(fs, roots, "php".into()));
+        let config = config_for_project(&self.project, cx);
+        let load = cx.background_spawn(load_libraries(fs, roots, config));
         self._load = cx.spawn(async move |this, cx| {
             let libraries = load.await;
             this.update(cx, |this, cx| {
@@ -243,6 +254,29 @@ impl LibraryRows {
                 }
             }
         }
+        for (path, exists) in &libraries.include_paths {
+            let key: SharedString = path.to_string_lossy().into_owned().into();
+            rows.push(Row {
+                key: key.clone(),
+                kind: RowKind::IncludePath,
+                label: path
+                    .file_name()
+                    .map(|name| name.to_string_lossy().into_owned())
+                    .unwrap_or_else(|| path.to_string_lossy().into_owned())
+                    .into(),
+                detail: Some(if *exists {
+                    "include path".into()
+                } else {
+                    "include path · missing".into()
+                }),
+                dimmed: !exists,
+                path: Some(path.clone()),
+                depth: 1,
+            });
+            if *exists && self.expanded.contains(&key) {
+                self.push_folder(path, 2, rows);
+            }
+        }
         let several_folders = libraries
             .groups
             .iter()
@@ -300,7 +334,10 @@ impl LibraryRows {
                 }
             }
         }
-        if libraries.php.is_none() && libraries.groups.is_empty() {
+        if libraries.php.is_none()
+            && libraries.groups.is_empty()
+            && libraries.include_paths.is_empty()
+        {
             rows.push(note(
                 "No PHP interpreter, composer.lock or package.json found",
             ));
@@ -456,6 +493,16 @@ impl LibraryRows {
                 )
                 .separator()
             })
+            .when(
+                matches!(
+                    row.kind,
+                    RowKind::Root | RowKind::Php | RowKind::IncludePath
+                ),
+                |menu| {
+                    menu.action("PHP Settings…", Box::new(OpenPhpSettings))
+                        .separator()
+                },
+            )
             .when(row.path.is_some(), |menu| {
                 menu.entry("Reveal in Finder", None, act(Self::reveal))
                     .entry("Copy Path", None, act(Self::copy_path))
@@ -552,6 +599,14 @@ impl LibraryRows {
                 }
             }
         }
+        for (include, exists) in &libraries.include_paths {
+            if *exists && path.starts_with(include) {
+                owner = Some((
+                    vec![ROOT.into(), include.to_string_lossy().into_owned().into()],
+                    include.clone(),
+                ));
+            }
+        }
         for (index, group) in libraries.groups.iter().enumerate() {
             for (package, installed) in &group.packages {
                 if *installed && path.starts_with(&package.path) {
@@ -645,6 +700,7 @@ impl ProjectPanelExtraRows for LibraryRows {
             RowKind::Root => Icon::new(IconName::BookCopy),
             RowKind::Php => file_icon("runtime.php"),
             RowKind::PhpExtension => Icon::new(IconName::FileCode),
+            RowKind::IncludePath => Icon::new(IconName::FolderInclude),
             RowKind::Group(GroupKind::Composer) => file_icon("composer.json"),
             RowKind::Group(GroupKind::Node) => file_icon("package.json"),
             RowKind::Package => Icon::new(if expanded {

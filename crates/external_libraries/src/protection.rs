@@ -20,6 +20,8 @@ pub(crate) enum LibraryKind {
     Composer,
     Node,
     PhpStubs,
+    /// A folder from the PHP settings' Include Path list.
+    IncludePath,
 }
 
 /// The package folder holding `path` (`vendor/<vendor>/<package>`,
@@ -29,6 +31,7 @@ pub(crate) fn library_root(
     path: &Path,
     project_roots: &[PathBuf],
     stubs: &Path,
+    include_paths: &[PathBuf],
 ) -> Option<(PathBuf, LibraryKind)> {
     let package = |base: PathBuf, rest: &Path, depth: usize, kind| {
         let parts: Vec<_> = rest.components().collect();
@@ -44,6 +47,12 @@ pub(crate) fn library_root(
     };
     if let Ok(rest) = path.strip_prefix(stubs) {
         return package(stubs.to_path_buf(), rest, 1, LibraryKind::PhpStubs);
+    }
+    if let Some(include) = include_paths
+        .iter()
+        .find(|include| path.starts_with(include))
+    {
+        return Some((include.clone(), LibraryKind::IncludePath));
     }
     for root in project_roots {
         let Ok(relative) = path.strip_prefix(root) else {
@@ -80,6 +89,12 @@ impl EditAllowances {
     }
 }
 
+fn include_paths(project: &Entity<Project>, cx: &App) -> Vec<PathBuf> {
+    php_settings::cached_config(project, cx)
+        .map(|config| config.include_paths())
+        .unwrap_or_default()
+}
+
 fn project_roots(project: &Entity<Project>, cx: &App) -> Vec<PathBuf> {
     project
         .read(cx)
@@ -100,7 +115,12 @@ fn protected(
     cx: &App,
 ) -> Option<(PathBuf, PathBuf, LibraryKind)> {
     let path = editor_path(editor, project, cx)?;
-    let (root, kind) = library_root(&path, &project_roots(project, cx), &stubs_dir())?;
+    let (root, kind) = library_root(
+        &path,
+        &project_roots(project, cx),
+        &stubs_dir(),
+        &include_paths(project, cx),
+    )?;
     let allowed = cx
         .try_global::<EditAllowances>()
         .is_some_and(|allowances| allowances.allows(&path, &root));
@@ -161,7 +181,12 @@ impl NonProjectBar {
                 workspace.read(cx).items_of_type::<Editor>(cx).collect();
             for editor in editors {
                 let library = editor_path(&editor, &self.project, cx).and_then(|path| {
-                    library_root(&path, &project_roots(&self.project, cx), &stubs_dir())
+                    library_root(
+                        &path,
+                        &project_roots(&self.project, cx),
+                        &stubs_dir(),
+                        &include_paths(&self.project, cx),
+                    )
                 });
                 if library.is_some() && protected(&editor, &self.project, cx).is_none() {
                     editor.update(cx, |editor, cx| {
@@ -213,6 +238,7 @@ impl Render for NonProjectBar {
                 .file_name()
                 .map(|name| format!("PHP stubs: {}", name.to_string_lossy()))
                 .unwrap_or_else(|| "PHP stubs".into()),
+            LibraryKind::IncludePath => format!("include path {}", root.display()),
             LibraryKind::Composer | LibraryKind::Node => {
                 let base = if kind == LibraryKind::Composer {
                     "vendor"
@@ -234,9 +260,11 @@ impl Render for NonProjectBar {
             LibraryKind::Composer => "Changes are overwritten by composer install.",
             LibraryKind::Node => "Changes are overwritten by npm install.",
             LibraryKind::PhpStubs => "Stubs describe PHP's built-in functions.",
+            LibraryKind::IncludePath => "It is outside the project.",
         };
         let folder_label = match kind {
             LibraryKind::PhpStubs => "Edit All Stubs Here",
+            LibraryKind::IncludePath => "Edit Files in This Folder",
             _ => "Edit Files in This Package",
         };
         h_flex()
@@ -311,7 +339,8 @@ mod tests {
     fn finds_the_package_of_library_files() {
         let roots = [PathBuf::from("/site")];
         let stubs = Path::new("/data/php-stubs");
-        let root = |path: &str| library_root(Path::new(path), &roots, stubs);
+        let includes = [PathBuf::from("/libs/wordpress")];
+        let root = |path: &str| library_root(Path::new(path), &roots, stubs, &includes);
 
         assert_eq!(
             root("/site/vendor/guzzlehttp/guzzle/src/Client.php"),
@@ -344,6 +373,10 @@ mod tests {
                 PathBuf::from("/data/php-stubs/standard"),
                 LibraryKind::PhpStubs
             ))
+        );
+        assert_eq!(
+            root("/libs/wordpress/wp-includes/plugin.php"),
+            Some((PathBuf::from("/libs/wordpress"), LibraryKind::IncludePath))
         );
         assert_eq!(root("/site/src/vendor.php"), None);
         assert_eq!(root("/elsewhere/vendor/a/b/c.php"), None);

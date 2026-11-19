@@ -423,7 +423,8 @@ pub(crate) fn run_scratch(
         .map(|name| name.to_string_lossy().into_owned())
         .unwrap_or_default();
     let extension = extension_of(&name).to_string();
-    let Some((program, mut args)) = run_command(&extension, "php") else {
+    let php = php_settings::config_for_project(workspace.project(), cx).php();
+    let Some((program, mut args)) = run_command(&extension, &php) else {
         notify(
             workspace,
             format!("VEGA doesn't know how to run .{extension} scratches."),

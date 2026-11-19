@@ -745,6 +745,7 @@ fn main() {
         dev_container::init(cx);
         deployment_ui::init(cx);
         // External Libraries before Scratches: their nodes appear in this order.
+        php_settings::init(cx);
         external_libraries::init(cx);
         scratches::init(cx);
 

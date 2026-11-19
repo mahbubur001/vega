@@ -76,28 +76,6 @@ pub(crate) fn installed_version(package_json: &str) -> Option<String> {
         .map(str::to_string)
 }
 
-/// PHP's version and loaded extensions, from the output of
-/// `php -r 'echo PHP_VERSION, "\n", implode("\n", get_loaded_extensions());'`.
-pub(crate) fn parse_php_info(output: &str) -> Option<(String, Vec<String>)> {
-    let mut lines = output
-        .lines()
-        .map(str::trim)
-        .filter(|line| !line.is_empty());
-    let version = lines.next()?.to_string();
-    if !version.starts_with(|c: char| c.is_ascii_digit()) {
-        return None;
-    }
-    let mut extensions: Vec<String> = lines.map(str::to_string).collect();
-    extensions.sort_by_key(|extension| extension.to_lowercase());
-    extensions.dedup();
-    Some((version, extensions))
-}
-
-/// `8.4.12` → `8.4`.
-pub(crate) fn short_version(version: &str) -> String {
-    version.split('.').take(2).collect::<Vec<_>>().join(".")
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -154,16 +132,5 @@ mod tests {
             Some("4.17.21")
         );
         assert!(node_dependencies("{}").is_empty());
-    }
-
-    #[test]
-    fn reads_php_version_and_extensions() {
-        let (version, extensions) =
-            parse_php_info("8.4.12\nCore\ndate\nstandard\nPDO\nmbstring\n").unwrap();
-        assert_eq!(version, "8.4.12");
-        assert_eq!(extensions, ["Core", "date", "mbstring", "PDO", "standard"]);
-        assert_eq!(short_version(&version), "8.4");
-        assert!(parse_php_info("PHP Warning: something\n").is_none());
-        assert!(parse_php_info("").is_none());
     }
 }

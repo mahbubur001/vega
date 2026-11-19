@@ -6584,22 +6584,20 @@ name = "external_libraries"
 version = "0.1.0"
 dependencies = [
  "anyhow",
- "async-compression",
- "async-tar",
  "db",
  "editor",
  "file_icons",
  "fs",
  "futures 0.3.34",
  "gpui",
- "http_client",
- "paths",
+ "php_settings",
  "project",
  "project_panel",
  "serde_json",
  "ui",
  "util",
  "workspace",
+ "zed_actions",
 ]
 
 [[package]]
@@ -14198,6 +14196,35 @@ dependencies = [
 ]
 
 [[package]]
+name = "php_settings"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "async-compression",
+ "async-tar",
+ "file_icons",
+ "fs",
+ "futures 0.3.34",
+ "gpui",
+ "http_client",
+ "menu",
+ "paths",
+ "platform_title_bar",
+ "project",
+ "release_channel",
+ "serde",
+ "serde_json",
+ "settings",
+ "settings_json",
+ "theme_settings",
+ "ui",
+ "util",
+ "vega_dialog",
+ "workspace",
+ "zed_actions",
+]
+
+[[package]]
 name = "picker"
 version = "0.1.0"
 dependencies = [
@@ -16971,6 +16998,7 @@ dependencies = [
  "language_selector",
  "log",
  "paths",
+ "php_settings",
  "picker",
  "project",
  "project_panel",
@@ -23950,6 +23978,7 @@ dependencies = [
  "outline_panel",
  "parking_lot",
  "paths",
+ "php_settings",
  "picker",
  "pkg-config",
  "pretty_assertions",

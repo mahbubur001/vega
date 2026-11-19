@@ -3789,10 +3789,24 @@ fn languages_and_tools_page(cx: &App) -> SettingsPage {
             .collect()
     }
 
+    /// VEGA: PHP's settings are edited in their own window (PhpStorm's Settings › PHP).
+    fn php_section() -> [SettingsPageItem; 2] {
+        [
+            SettingsPageItem::SectionHeader("PHP"),
+            vega_action_link(
+                "PHP",
+                "Language level, CLI interpreter, include paths and the PHP stubs the language server loads.",
+                "Open PHP Settings",
+                "php::OpenPhpSettings",
+            ),
+        ]
+    }
+
     SettingsPage {
         title: "Languages & Tools",
         items: {
             concat_sections!(
+                php_section(),
                 non_editor_language_settings_data(),
                 file_types_section(),
                 diagnostics_section(),

@@ -1001,6 +1001,19 @@ pub mod git_panel {
     );
 }
 
+/// VEGA: PHP settings (PhpStorm's Settings › PHP).
+pub mod php {
+    use gpui::actions;
+
+    actions!(
+        php,
+        [
+            /// Opens the project's PHP settings: language level, CLI interpreter, include paths, stubs.
+            OpenPhpSettings,
+        ]
+    );
+}
+
 /// VEGA: scratch files, kept outside projects (PhpStorm's Scratches and Consoles).
 pub mod scratches {
     use gpui::actions;
