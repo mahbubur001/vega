@@ -1,11 +1,15 @@
-//! Asks for a server password or key passphrase.
+//! Asks for a server password or key passphrase, in a small movable window of
+//! its own (see [`open_window`]).
 
 use deployment::prompt::{SecretAnswer, SecretKind, SecretRequest};
 use futures::channel::oneshot;
-use gpui::{DismissEvent, Entity, EventEmitter, FocusHandle, Focusable};
+use gpui::{
+    Bounds, DismissEvent, Entity, EventEmitter, FocusHandle, Focusable, Pixels, TitlebarOptions,
+    WindowBounds, WindowKind, WindowOptions,
+};
 use ui::{Callout, Checkbox, Modal, ModalHeader, Section, Severity, ToggleState, prelude::*};
 use ui_input::InputField;
-use workspace::ModalView;
+use util::ResultExt as _;
 
 use crate::dialog;
 
@@ -15,6 +19,55 @@ pub(crate) struct SecretModal {
     save: bool,
     reply: Option<oneshot::Sender<Option<SecretAnswer>>>,
     focus_handle: FocusHandle,
+}
+
+/// Opens the question as a small window centred over `parent` (the window
+/// that asked). It can be moved like any window; closing it answers "no".
+pub(crate) fn open_window(
+    request: SecretRequest,
+    reply: oneshot::Sender<Option<SecretAnswer>>,
+    parent: Bounds<Pixels>,
+    cx: &mut App,
+) {
+    // Taller when it has to show why the last attempt failed.
+    let height = if request.error.is_some() { 330. } else { 250. };
+    let size = gpui::size(px(440.), px(height));
+    let origin = parent.center() - gpui::point(size.width / 2., size.height / 2.);
+    let result = cx.open_window(
+        WindowOptions {
+            kind: WindowKind::Floating,
+            window_bounds: Some(WindowBounds::Windowed(Bounds { origin, size })),
+            is_resizable: false,
+            is_movable: true,
+            is_minimizable: false,
+            titlebar: Some(TitlebarOptions {
+                title: Some("VEGA — Sign in".into()),
+                appears_transparent: true,
+                traffic_light_position: Some(gpui::point(px(12.), px(12.))),
+            }),
+            window_background: cx.theme().window_background_appearance(),
+            ..Default::default()
+        },
+        |window, cx| {
+            cx.new(|cx| {
+                cx.subscribe_in(&cx.entity(), window, |_, _, _: &DismissEvent, window, _| {
+                    window.remove_window();
+                })
+                .detach();
+                SecretModal::new(request, reply, window, cx)
+            })
+        },
+    );
+    result.log_err();
+}
+
+impl Drop for SecretModal {
+    /// Closing the window without connecting answers "no secret".
+    fn drop(&mut self) {
+        if let Some(reply) = self.reply.take() {
+            reply.send(None).ok();
+        }
+    }
 }
 
 impl SecretModal {
@@ -65,22 +118,9 @@ impl Focusable for SecretModal {
     }
 }
 
-impl ModalView for SecretModal {
-    fn on_before_dismiss(
-        &mut self,
-        _: &mut Window,
-        _: &mut Context<Self>,
-    ) -> workspace::DismissDecision {
-        // Closing without confirming answers "no secret".
-        if let Some(reply) = self.reply.take() {
-            reply.send(None).ok();
-        }
-        workspace::DismissDecision::Dismiss(true)
-    }
-}
-
 impl Render for SecretModal {
-    fn render(&mut self, _: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
+    fn render(&mut self, window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
+        let ui_font = theme_settings::setup_ui_font(window, cx);
         let (headline, icon) = match self.request.kind {
             SecretKind::Password => (
                 format!("Sign in to {}", self.request.server_name),
@@ -95,8 +135,11 @@ impl Render for SecretModal {
             .track_focus(&self.focus_handle)
             .on_action(cx.listener(Self::confirm))
             .on_action(cx.listener(Self::cancel))
-            .w(rems(28.))
-            .elevation_3(cx)
+            .size_full()
+            .pt_6()
+            .font(ui_font)
+            .text_color(cx.theme().colors().text)
+            .bg(cx.theme().colors().elevated_surface_background)
             .child(
                 Modal::new("deployment-secret", None)
                     .header(

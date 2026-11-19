@@ -45,7 +45,6 @@ use crate::server_picker::ServerPicker;
 
 use crate::prompter::{Request, WindowPrompter};
 use crate::remote_host_panel::RemoteHostPanel;
-use crate::secret_modal::SecretModal;
 use crate::store::DeploymentStore;
 use crate::transfers_indicator::TransfersIndicator;
 
@@ -525,9 +524,7 @@ pub(crate) fn show_request(
 ) {
     match request {
         Request::Secret { request, reply } => {
-            workspace.toggle_modal(window, cx, |window, cx| {
-                SecretModal::new(request, reply, window, cx)
-            });
+            crate::secret_modal::open_window(request, reply, window.bounds(), cx);
         }
         Request::Choice {
             level,

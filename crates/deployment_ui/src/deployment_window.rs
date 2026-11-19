@@ -1,8 +1,8 @@
 //! The Deployment window: the servers dialog in its own resizable OS window,
 //! like PhpStorm's Deployment configuration and VEGA's Settings window. Its
 //! size is remembered; it is reused when already open. Password prompts raised
-//! while testing a connection appear in this window; diffs and notifications go
-//! to the workspace it was opened from.
+//! while testing a connection open centred over this window; diffs and
+//! notifications go to the workspace it was opened from.
 
 use std::sync::Arc;
 use std::time::Duration;
@@ -11,9 +11,9 @@ use db::kvp::KeyValueStore;
 use futures::StreamExt as _;
 use futures::channel::mpsc;
 use gpui::{
-    AnyView, App, AppContext as _, Context, DismissEvent, Entity, FocusHandle, Focusable,
-    PromptLevel, Render, Size, Subscription, Task, TitlebarOptions, WindowBounds, WindowHandle,
-    WindowKind, WindowOptions, point, px,
+    App, AppContext as _, Context, DismissEvent, Entity, FocusHandle, Focusable, PromptLevel,
+    Render, Size, Subscription, Task, TitlebarOptions, WindowBounds, WindowHandle, WindowKind,
+    WindowOptions, point, px,
 };
 use platform_title_bar::PlatformTitleBar;
 use release_channel::ReleaseChannel;
@@ -25,7 +25,6 @@ use workspace::{MultiWorkspace, WorkspaceSettings};
 use deployment::prompt::Level;
 
 use crate::prompter::{Request, WindowPrompter};
-use crate::secret_modal::SecretModal;
 use crate::servers_modal::ServersModal;
 use crate::store::DeploymentStore;
 
@@ -43,8 +42,6 @@ const MIN_SIZE: Size<Pixels> = Size {
 pub(crate) struct DeploymentWindow {
     workspace: Option<WindowHandle<MultiWorkspace>>,
     servers: Entity<ServersModal>,
-    /// A question shown on top of the window (password, passphrase).
-    overlay: Option<(AnyView, Subscription)>,
     title_bar: Option<Entity<PlatformTitleBar>>,
     focus_handle: FocusHandle,
     save_size: Option<Task<()>>,
@@ -147,7 +144,6 @@ pub(crate) fn open(
                     DeploymentWindow {
                         workspace,
                         servers,
-                        overlay: None,
                         title_bar: (!cfg!(target_os = "macos")).then(|| {
                             cx.new(|cx| PlatformTitleBar::new("deployment-title-bar", cx))
                         }),
@@ -201,15 +197,7 @@ impl DeploymentWindow {
     fn show(&mut self, request: Request, window: &mut Window, cx: &mut Context<Self>) {
         match request {
             Request::Secret { request, reply } => {
-                let modal = cx.new(|cx| SecretModal::new(request, reply, window, cx));
-                let subscription =
-                    cx.subscribe_in(&modal, window, |this, _, _: &DismissEvent, window, cx| {
-                        this.overlay = None;
-                        this.servers.focus_handle(cx).focus(window, cx);
-                        cx.notify();
-                    });
-                self.overlay = Some((modal.into(), subscription));
-                cx.notify();
+                crate::secret_modal::open_window(request, reply, window.bounds(), cx);
             }
             Request::Choice {
                 level,
@@ -296,20 +284,7 @@ impl Render for DeploymentWindow {
                                 .border_t_1()
                                 .border_color(cx.theme().colors().border)
                         })
-                        .child(self.servers.clone())
-                        .when_some(self.overlay.as_ref(), |content, (overlay, _)| {
-                            content.child(
-                                div()
-                                    .absolute()
-                                    .inset_0()
-                                    .flex()
-                                    .justify_center()
-                                    .pt_20()
-                                    .bg(cx.theme().colors().background.opacity(0.6))
-                                    .occlude()
-                                    .child(overlay.clone()),
-                            )
-                        }),
+                        .child(self.servers.clone()),
                 ),
             window,
             cx,
