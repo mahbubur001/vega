@@ -88,6 +88,22 @@ impl DeploymentStore {
             .cloned()
     }
 
+    /// The engine that opened `path` as a copy of a file on the server
+    /// (Remote Host "edit on server"); such copies live outside the project.
+    pub fn engine_for_remote_edit(&self, path: &Path) -> Option<Arc<Engine>> {
+        self.engines
+            .values()
+            .find(|engine| engine.remote_edit(path).is_some())
+            .cloned()
+    }
+
+    /// The project's deployment engines, one per configured local folder.
+    pub fn engines(&self) -> Vec<Arc<Engine>> {
+        let mut engines: Vec<_> = self.engines.values().cloned().collect();
+        engines.sort_by(|a, b| a.root().cmp(b.root()));
+        engines
+    }
+
     fn worktree_root(&self, worktree_id: WorktreeId, cx: &App) -> Option<PathBuf> {
         let worktree = self
             .project
@@ -210,7 +226,10 @@ impl DeploymentStore {
             else {
                 return;
             };
-            if let Some(engine) = this.engine_for_path(&path) {
+            if let Some(engine) = this
+                .engine_for_path(&path)
+                .or_else(|| this.engine_for_remote_edit(&path))
+            {
                 Tokio::spawn(cx, async move { engine.on_saved(&path, true).await }).detach();
             }
         });

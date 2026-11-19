@@ -26,9 +26,9 @@ Status keys: `[ ]` todo · `[~]` in progress · `[x]` done. Each item maps to a 
   - [x] M4 All resources, history, settings page — extensions list waits for the extension catalogue
 - [ ] Deployment & Remote Host (built-in iRemote) — see `DEPLOYMENT.md`
   - [x] D0 Vendor the core (63 tests incl. real SFTP/FTP/WebDAV servers)
-  - [~] D1 Upload on save + actions — code written, not built yet (see DEPLOYMENT.md "Next session")
-  - [~] D2 Deployment Servers UI — dialog built and tested at the config level; not tried in the app yet (see DEPLOYMENT.md)
-  - [ ] D3 Remote Host panel
+  - [~] D1 Upload on save + actions — built and unit-tested; waiting for a check in the running app (see `HANDOFF.md`)
+  - [~] D2 Deployment Servers UI — dialog with Connection / Mappings / Excluded / Advanced tabs, settings-window link; not tried in the app yet
+  - [~] D3 Remote Host panel — first version built (browse, open/edit on server with save-back, new/rename/delete, upload here, download to project); not tried in the app yet. Drag and drop, chmod, copy/paste still to do
   - [ ] D4 Compare & Sync
   - [ ] D5 Extras (SSH, agent tools)
 

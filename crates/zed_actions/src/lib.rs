@@ -1020,6 +1020,8 @@ pub mod deployment {
             OpenDeploymentConfig,
             /// Opens the Deployment Servers dialog to add, edit, test and remove servers.
             OpenDeploymentServers,
+            /// Shows or hides the Remote Host panel, which browses the deployment server's files.
+            ToggleRemoteHost,
             /// Cancels running and queued deployment transfers.
             CancelTransfers,
         ]

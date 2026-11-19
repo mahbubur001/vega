@@ -2,7 +2,10 @@
 
 VEGA ("Code Beyond Limits") is an independent, open-source, AI-powered code editor forked from [Zed](https://github.com/zed-industries/zed). It is a Rust workspace (~250 crates) built on GPUI, Zed's GPU-accelerated UI framework.
 
+**Start of every session: read `vega/HANDOFF.md`** (where work stopped, how the owner wants to work, setup for a new computer) and update it before ending the session.
+
 Product docs live in `vega/`:
+- `vega/HANDOFF.md` — restart point: current state, next tasks, pending decisions.
 - `vega/ROADMAP.md` — phased plan and current status. Check it before starting work and update it when a phase item is done.
 - `vega/BRAND.md` — name, palette, icon rules.
 - `vega/PROMPTS.md` — the A–Z prompt sequence used to drive the fork.

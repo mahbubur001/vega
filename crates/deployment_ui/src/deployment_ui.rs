@@ -1,7 +1,10 @@
-//! Deployment in VEGA: upload on save, Upload/Download/Compare actions and
-//! transfer progress, on top of the `deployment` engine.
+//! Deployment in VEGA: upload on save, Upload/Download/Compare actions,
+//! transfer progress and the Remote Host panel, on top of the `deployment`
+//! engine.
 
+mod name_modal;
 mod prompter;
+mod remote_host_panel;
 mod secret_modal;
 mod secrets;
 mod servers_modal;
@@ -27,10 +30,11 @@ use workspace::notifications::NotificationId;
 use workspace::{OpenOptions, Toast, Workspace};
 use zed_actions::deployment::{
     CancelTransfers, CompareWithDeployedVersion, DownloadFromDefaultServer, OpenDeploymentConfig,
-    OpenDeploymentServers, UploadToDefaultServer,
+    OpenDeploymentServers, ToggleRemoteHost, UploadToDefaultServer,
 };
 
 use crate::prompter::{Request, WindowPrompter};
+use crate::remote_host_panel::RemoteHostPanel;
 use crate::secret_modal::SecretModal;
 use crate::store::DeploymentStore;
 use crate::transfers_indicator::TransfersIndicator;
@@ -80,6 +84,10 @@ pub fn init(cx: &mut App) {
             status_bar.add_right_item(indicator, window, cx);
         });
 
+        let weak_workspace = cx.weak_entity();
+        let panel = cx.new(|cx| RemoteHostPanel::new(store.clone(), weak_workspace, cx));
+        workspace.add_panel(panel, window, cx);
+
         register_actions(workspace, store);
     })
     .detach();
@@ -118,6 +126,9 @@ fn register_actions(workspace: &mut Workspace, store: Entity<DeploymentStore>) {
                 servers_modal::ServersModal::new(root, engine, prompter, credentials, window, cx)
             });
         }
+    });
+    workspace.register_action(|workspace, _: &ToggleRemoteHost, window, cx| {
+        workspace.toggle_panel_focus::<RemoteHostPanel>(window, cx);
     });
     workspace.register_action(|workspace, _: &OpenDeploymentConfig, window, cx| {
         open_config(workspace, window, cx);
