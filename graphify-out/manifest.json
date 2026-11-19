@@ -2832,10 +2832,10 @@
     "semantic_hash": "8102df5405120d28579dd62459d18ce6"
   },
   "crates/context_server/src/oauth.rs": {
-    "mtime": 1795011961.9138,
-    "seen": 1795016968.62413,
-    "ast_hash": "497a75ca9fa32051bdd3b6e3ac77a59b",
-    "semantic_hash": "497a75ca9fa32051bdd3b6e3ac77a59b"
+    "mtime": 1795048740.1400168,
+    "seen": 1795048978.4258401,
+    "ast_hash": "a924b62d663cf0964e5dbce864111f22",
+    "semantic_hash": ""
   },
   "crates/context_server/src/protocol.rs": {
     "mtime": 1795011961.9139185,
@@ -10422,10 +10422,10 @@
     "semantic_hash": "666267b704f68d334220b2d604a79f5f"
   },
   "crates/project/tests/integration/context_server_store.rs": {
-    "mtime": 1795011962.1073346,
-    "seen": 1795016968.624846,
-    "ast_hash": "6864afe2da03f1d194457d638183420b",
-    "semantic_hash": "6864afe2da03f1d194457d638183420b"
+    "mtime": 1795048792.621796,
+    "seen": 1795048978.457952,
+    "ast_hash": "529127b0fb5ea93c862a5679888f6d43",
+    "semantic_hash": ""
   },
   "crates/project/tests/integration/debugger.rs": {
     "mtime": 1795011962.1074266,
@@ -19776,9 +19776,9 @@
     "semantic_hash": "c28d81d3006f29e314d94e46abcae829"
   },
   "vega/ROADMAP.md": {
-    "mtime": 1795028747.0257766,
-    "seen": 1795028836.033891,
-    "ast_hash": "2163cda6b56e1659b024749808d6a91e",
+    "mtime": 1795048882.0134249,
+    "seen": 1795048978.499553,
+    "ast_hash": "eaa6b5af1a5c1cffb127ab40ca8842cc",
     "semantic_hash": ""
   },
   "vega/SETTINGS_SYNC.md": {
@@ -22515,6 +22515,12 @@
     "mtime": 1795028549.837998,
     "seen": 1795028835.985158,
     "ast_hash": "3513171bd47bb8c67653e8f504c5b7e5",
+    "semantic_hash": ""
+  },
+  ".github/workflows/vega_ci.yml": {
+    "mtime": 1795048597.0692258,
+    "seen": 1795048978.4171221,
+    "ast_hash": "3d37c8a0fb2777527cdccd122a47f3ce",
     "semantic_hash": ""
   },
   "script/danger/pnpm-lock.yaml": {
