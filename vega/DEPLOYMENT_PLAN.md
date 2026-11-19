@@ -1,6 +1,6 @@
 # Deployment: PhpStorm parity plan (2026-11-19)
 
-Based on a study of PhpStorm's Deployment / Remote Host docs and an inventory of VEGA's `deployment` + `deployment_ui` crates. Preview: `vega/mockups/deployment.html` (open in a browser). Nothing here is built yet; waiting for the owner's go-ahead.
+Based on a study of PhpStorm's Deployment / Remote Host docs and an inventory of VEGA's `deployment` + `deployment_ui` crates. Preview: `vega/mockups/deployment.html` (open in a browser). Status 2026-11-19: P1–P6 built (see DEPLOYMENT.md); P7 later.
 
 ## What is missing today (summary)
 

@@ -2,7 +2,7 @@
 
 The restart point for the next working session, possibly on another computer. Read this first, then `ROADMAP.md`. Update it at the end of every session.
 
-_Last updated: 2026-11-19, end of day. Branch `vega`, everything committed and pushed._
+_Last updated: 2026-11-19, late. Branch `vega`, everything committed and pushed._
 
 ## How the owner wants to work
 
@@ -40,6 +40,9 @@ Built but **not yet checked in the running app** (owner's manual check, screensh
 Docker SFTP test server: `crates/deployment/tests/servers` (see `DEPLOYMENT.md` "Running the server tests"; generate `fixtures/id_ed25519` first on a new machine). Test login `tester` / `pass` on `localhost:2222`.
 
 ## Next tasks, in order
+
+Deployment: PhpStorm parity P1–P6 built 2026-11-19 (DEPLOYMENT.md); owner is checking it in the app. Everything else: `vega/NEXT_PLAN.md` (phases, decisions needed).
+
 
 1. Fix whatever the owner's app check turns up (D1, D2, D3, P06, P07).
 2. D3 leftovers (small): multi-select, recursive chmod, copy between servers.
