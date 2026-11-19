@@ -324,7 +324,7 @@ fn main() {
             client::telemetry::guessed_os_name(),
             client::telemetry::os_version(),
         );
-        println!("Zed System Specs (from CLI):\n{}", system_specs);
+        println!("VEGA System Specs (from CLI):\n{}", system_specs);
         return;
     }
 

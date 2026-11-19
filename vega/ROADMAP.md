@@ -13,6 +13,7 @@ Status keys: `[ ]` todo · `[~]` in progress · `[x]` done. Each item maps to a 
 - [x] Rebrand app name, bundle IDs, URL scheme, icons (P03) — bundled .app check pending (P11)
 - [x] Disable telemetry, crash upload, auto-update against zed.dev (P04) — release-asset lookups (incl. the SSH/WSL/Docker remote-server download) now refuse zed.dev too; P10 gives them a real host
 - [x] Remove/hide Zed sign-in, Zed AI plan, collab UI (P05)
+- [x] User-facing "Zed" strings → VEGA (welcome/onboarding, settings descriptions, CLI, updates, providers, extensions); VEGA mark replaces the Zed logo (`assets/images/zed_logo.svg`). Hidden Zed-cloud/collab/plan copy left as is
 - [x] Project config in `.vega/` (settings, tasks, debug, deployment), `.zed/` ignored; `vega` CLI (`vega .`), installed by "cli: install" to `/usr/local/bin/vega`
 - [~] Default "VEGA Dark" theme (P06) — `assets/themes/vega/vega.json`, default dark theme and first onboarding family; syntax colors ≥ WCAG AA on `#101018` (tested in `theme_settings`). Not yet looked at in the running app
 

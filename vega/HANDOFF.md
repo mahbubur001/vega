@@ -21,7 +21,7 @@ _Last updated: 2026-11-19, end of day. Branch `vega`, everything committed and p
 
 ## Where things stand
 
-Done and pushed today: project config folder is `.vega/` instead of `.zed/` (settings, tasks, debug, deployment; `.zed/` is ignored on purpose); the CLI is `vega` (`vega .` opens a folder; `script/vega-dev-app --build` builds it, then `ln -sf "$PWD/target/debug/VEGA Dev.app/Contents/MacOS/cli" ~/.local/bin/vega` or run "cli: install"); D4 Sync with Deployed view (`deployment: sync with deployed`, see `DEPLOYMENT.md`); D3 second pass (cut/copy/paste, chmod, Exclude Path, drag and drop, keyboard navigation, remembered dock position; see `DEPLOYMENT.md`). Earlier: Linux-only CI (`.github/workflows/vega_ci.yml`, green, about 22 minutes uncached), MCP OAuth without Zed's CIMD document, every zed.dev link VEGA opens now goes to VEGA's docs or repo (`crates/release_channel/src/vega_docs.rs` + `gpui::OpenUrlRewriter`), Help menu feedback to VEGA's GitHub, Deployment Servers dialog Advanced tab and settings link, `script/vega-dev-app`, and the first version of the **Remote Host panel (D3)**.
+Done and pushed today: branding sweep of ~100 visible "Zed" strings, VEGA logo on the welcome/onboarding pages, onboarding telemetry switches hidden (VEGA never uploads); project config folder is `.vega/` instead of `.zed/` (settings, tasks, debug, deployment; `.zed/` is ignored on purpose); the CLI is `vega` (`vega .` opens a folder; `script/vega-dev-app --build` builds it, then `ln -sf "$PWD/target/debug/VEGA Dev.app/Contents/MacOS/cli" ~/.local/bin/vega` or run "cli: install"); D4 Sync with Deployed view (`deployment: sync with deployed`, see `DEPLOYMENT.md`); D3 second pass (cut/copy/paste, chmod, Exclude Path, drag and drop, keyboard navigation, remembered dock position; see `DEPLOYMENT.md`). Earlier: Linux-only CI (`.github/workflows/vega_ci.yml`, green, about 22 minutes uncached), MCP OAuth without Zed's CIMD document, every zed.dev link VEGA opens now goes to VEGA's docs or repo (`crates/release_channel/src/vega_docs.rs` + `gpui::OpenUrlRewriter`), Help menu feedback to VEGA's GitHub, Deployment Servers dialog Advanced tab and settings link, `script/vega-dev-app`, and the first version of the **Remote Host panel (D3)**.
 
 Built but **not yet checked in the running app** (owner's manual check, screenshots welcome):
 
@@ -44,7 +44,7 @@ Docker SFTP test server: `crates/deployment/tests/servers` (see `DEPLOYMENT.md` 
 1. Fix whatever the owner's app check turns up (D1, D2, D3, P06, P07).
 2. D3 leftovers (small): multi-select, recursive chmod, copy between servers.
 3. D4 leftovers: Transfers list with retry; maybe an inline multi-file diff in the Sync view.
-4. Branding sweep of user-facing "Zed" strings (e.g. "Update Zed" error actions), keeping internal crate names.
+4. Branding leftovers: hidden Zed-cloud/collab/plan UI still says Zed (unreachable without sign-in); agent thumbs-up/down text says it "sends the conversation to the Zed team" — check whether it sends anything (telemetry upload is off) and remove or reword.
 5. Periodic upstream sync (P14 checklist in `ROADMAP.md`).
 
 ## Waiting on the owner's decision
