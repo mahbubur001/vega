@@ -69,4 +69,3 @@ Deployment: PhpStorm parity P1–P6 built 2026-11-19 (DEPLOYMENT.md); owner is c
 - **P10 updates:** where VEGA downloads updates and the remote-server binary from (GitHub Releases needs a public repo or a separate public releases repo).
 - **Extensions:** keep Zed's registry for now (user-initiated only) or plan a replacement catalogue.
 - **P09:** which VEGA-specific AI features to build.
-- **Upstream workflows:** 7 Zed workflows still registered on the repo (all skipped). Disable with `gh api repos/mahbubur001/vega/actions/workflows --jq '.workflows[] | select(.state=="active") | .id' | xargs -n1 gh workflow disable -R mahbubur001/vega`.
