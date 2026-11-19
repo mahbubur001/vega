@@ -26,12 +26,15 @@ use gpui::{
 };
 use gpui_tokio::Tokio;
 use ui::{
-    Checkbox, ContextMenu, ContextMenuEntry, Disclosure, DropdownMenu, IconPosition, ListItem,
-    ListItemSpacing, PopoverMenu, ToggleState, Tooltip, prelude::*,
+    Callout, Checkbox, CommonAnimationExt as _, ContextMenu, ContextMenuEntry, Disclosure,
+    DropdownMenu, IconPosition, ListItem, ListItemSpacing, PopoverMenu, Severity, ToggleState,
+    Tooltip, prelude::*,
 };
 use ui_input::InputField;
 use util::ResultExt as _;
 use workspace::ModalView;
+
+use crate::dialog;
 
 /// The server types offered when adding a server. Groups and "in place"
 /// servers are still available by editing the config file.
@@ -860,10 +863,11 @@ impl ServersModal {
                     .child(
                         Button::new("test-connection", "Test Connection")
                             .style(ButtonStyle::Outlined)
+                            .start_icon(Icon::new(IconName::ArrowRightLeft).size(IconSize::Small))
                             .disabled(self.testing.is_some())
                             .on_click(cx.listener(|this, _, _, cx| this.test_connection(cx))),
                     )
-                    .children(self.render_test_results()),
+                    .children(self.render_test_results(&server.host)),
             ))
             .child(div().h_2())
             .child(field_row(
@@ -1284,37 +1288,69 @@ impl ServersModal {
             .into_any_element()
     }
 
-    fn render_test_results(&self) -> Option<impl IntoElement> {
+    fn render_test_results(&self, host: &str) -> Option<AnyElement> {
         if self.testing.is_some() {
             return Some(
-                Label::new("Testing the connection…")
-                    .color(Color::Muted)
+                h_flex()
+                    .gap_2()
+                    .child(
+                        Icon::new(IconName::ArrowCircle)
+                            .size(IconSize::Small)
+                            .color(Color::Muted)
+                            .with_rotate_animation(2),
+                    )
+                    .child(Label::new("Testing the connection…").color(Color::Muted))
                     .into_any_element(),
             );
         }
         let steps = self.test_results.as_ref()?;
-        Some(
-            v_flex()
-                .gap_1()
-                .children(steps.iter().map(|step| {
-                    let (icon, color) = match step.state {
-                        StepState::Ok => (IconName::Check, Color::Success),
-                        StepState::Warning => (IconName::Warning, Color::Warning),
-                        StepState::Failed => (IconName::XCircle, Color::Error),
-                        StepState::Skipped => (IconName::Dash, Color::Muted),
-                    };
-                    h_flex()
-                        .gap_2()
-                        .child(Icon::new(icon).size(IconSize::Small).color(color))
-                        .child(Label::new(step.label.clone()))
-                        .when(!step.detail.is_empty(), |row| {
-                            row.child(
+        let worst = steps
+            .iter()
+            .map(|step| step.state)
+            .fold(StepState::Ok, |worst, state| match (worst, state) {
+                (StepState::Failed, _) | (_, StepState::Failed) => StepState::Failed,
+                (StepState::Warning, _) | (_, StepState::Warning) => StepState::Warning,
+                _ => StepState::Ok,
+            });
+        let (severity, title) = match worst {
+            StepState::Failed => (Severity::Error, "Couldn't connect".to_string()),
+            StepState::Warning => (
+                Severity::Warning,
+                format!("Connected to {host}, with warnings"),
+            ),
+            _ => (
+                Severity::Success,
+                format!("Successfully connected to {host}"),
+            ),
+        };
+        let details = v_flex().gap_0p5().children(steps.iter().map(|step| {
+            let (icon, color) = match step.state {
+                StepState::Ok => (IconName::Check, Color::Success),
+                StepState::Warning => (IconName::Warning, Color::Warning),
+                StepState::Failed => (IconName::XCircle, Color::Error),
+                StepState::Skipped => (IconName::Dash, Color::Muted),
+            };
+            h_flex()
+                .gap_1p5()
+                .items_start()
+                .child(Icon::new(icon).size(IconSize::XSmall).color(color))
+                .child(
+                    v_flex()
+                        .child(Label::new(step.label.clone()).size(LabelSize::Small))
+                        .when(!step.detail.is_empty(), |column| {
+                            column.child(
                                 Label::new(step.detail.clone())
-                                    .size(LabelSize::Small)
+                                    .size(LabelSize::XSmall)
                                     .color(Color::Muted),
                             )
-                        })
-                }))
+                        }),
+                )
+        }));
+        Some(
+            Callout::new()
+                .severity(severity)
+                .title(title)
+                .description_slot(details)
                 .into_any_element(),
         )
     }
@@ -1517,6 +1553,7 @@ impl ModalView for ServersModal {}
 impl Render for ServersModal {
     fn render(&mut self, window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
         let server = self.selected_server().cloned();
+        let focus = self.focus_handle.clone();
         let tab_button =
             |id: &'static str, label: &'static str, tab: Tab, cx: &mut Context<Self>| {
                 Button::new(id, label)
@@ -1636,13 +1673,11 @@ impl Render for ServersModal {
                             }),
                     )
                     .child(
-                        Button::new("cancel-servers", "Cancel")
-                            .style(ButtonStyle::Outlined)
+                        dialog::cancel_button("cancel-servers", &focus, cx)
                             .on_click(cx.listener(|_, _, _, cx| cx.emit(DismissEvent))),
                     )
                     .child(
-                        Button::new("save-servers", "OK")
-                            .style(ButtonStyle::Filled)
+                        dialog::primary_button("save-servers", "OK", &focus, cx)
                             .on_click(cx.listener(|this, _, _, cx| this.save(cx))),
                     ),
             )

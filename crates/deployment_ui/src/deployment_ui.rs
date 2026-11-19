@@ -2,6 +2,7 @@
 //! transfer progress, the Remote Host panel and Sync with Deployed, on top of the `deployment`
 //! engine.
 
+mod dialog;
 mod name_modal;
 mod permissions_modal;
 mod prompter;

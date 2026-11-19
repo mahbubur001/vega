@@ -5,9 +5,11 @@
 use gpui::{
     App, DismissEvent, Entity, EventEmitter, FocusHandle, Focusable, Render, Subscription, Window,
 };
-use ui::{Checkbox, prelude::*};
+use ui::{Checkbox, Modal, ModalHeader, Section, prelude::*};
 use ui_input::{ErasedEditorEvent, InputField};
 use workspace::ModalView;
+
+use crate::dialog;
 
 /// What to apply: modes for files and folders (None leaves them alone), and
 /// whether to go into a folder's contents.
@@ -64,7 +66,7 @@ pub(crate) struct PermissionsModal {
 }
 
 #[derive(Clone, Copy, PartialEq)]
-enum Section {
+enum Part {
     Files,
     Folders,
 }
@@ -81,8 +83,8 @@ impl PermissionsModal {
         window: &mut Window,
         cx: &mut Context<Self>,
     ) -> Self {
-        let files = Some(Self::editor(Section::Files, file_mode, window, cx));
-        let folders = is_dir.then(|| Self::editor(Section::Folders, dir_mode, window, cx));
+        let files = Some(Self::editor(Part::Files, file_mode, window, cx));
+        let folders = is_dir.then(|| Self::editor(Part::Folders, dir_mode, window, cx));
         Self {
             title: title.into(),
             files,
@@ -94,12 +96,7 @@ impl PermissionsModal {
         }
     }
 
-    fn editor(
-        section: Section,
-        mode: u32,
-        window: &mut Window,
-        cx: &mut Context<Self>,
-    ) -> ModeEditor {
+    fn editor(section: Part, mode: u32, window: &mut Window, cx: &mut Context<Self>) -> ModeEditor {
         let octal = cx.new(|cx| {
             let field = InputField::new(window, cx, "Octal, e.g. 644");
             field.set_text(&format!("{:o}", mode & 0o7777), window, cx);
@@ -125,14 +122,14 @@ impl PermissionsModal {
         }
     }
 
-    fn section(&mut self, section: Section) -> Option<&mut ModeEditor> {
+    fn section(&mut self, section: Part) -> Option<&mut ModeEditor> {
         match section {
-            Section::Files => self.files.as_mut(),
-            Section::Folders => self.folders.as_mut(),
+            Part::Files => self.files.as_mut(),
+            Part::Folders => self.folders.as_mut(),
         }
     }
 
-    fn octal_edited(&mut self, section: Section, cx: &mut Context<Self>) {
+    fn octal_edited(&mut self, section: Part, cx: &mut Context<Self>) {
         let Some(editor) = self.section(section) else {
             return;
         };
@@ -148,13 +145,7 @@ impl PermissionsModal {
         cx.notify();
     }
 
-    fn set_mode(
-        &mut self,
-        section: Section,
-        mode: u32,
-        window: &mut Window,
-        cx: &mut Context<Self>,
-    ) {
+    fn set_mode(&mut self, section: Part, mode: u32, window: &mut Window, cx: &mut Context<Self>) {
         let Some(editor) = self.section(section) else {
             return;
         };
@@ -194,43 +185,44 @@ impl PermissionsModal {
 
     fn render_section(
         &self,
-        section: Section,
+        section: Part,
         label: &'static str,
         disabled: bool,
         cx: &mut Context<Self>,
     ) -> Option<AnyElement> {
         let editor = match section {
-            Section::Files => self.files.as_ref()?,
-            Section::Folders => self.folders.as_ref()?,
+            Part::Files => self.files.as_ref()?,
+            Part::Folders => self.folders.as_ref()?,
         };
         let mode = editor.mode;
         let id = match section {
-            Section::Files => "files",
-            Section::Folders => "folders",
+            Part::Files => "files",
+            Part::Folders => "folders",
         };
-        let cell = || div().w(rems(4.)).flex().justify_center();
-        let header = h_flex()
-            .gap_1()
-            .child(div().w(rems(5.)))
-            .children((0..3).map(|what| {
-                cell().child(
-                    Button::new(SharedString::from(format!("{id}-col-{what}")), WHAT[what])
-                        .style(ButtonStyle::Outlined)
-                        .disabled(disabled)
-                        .on_click(cx.listener(move |this, _, window, cx| {
-                            let bits = (0..3).map(move |who| bit(who, what));
-                            this.set_mode(section, toggle_bits(mode, bits), window, cx);
-                        })),
-                )
-            }));
+        let cell = || div().w(rems(3.5)).flex().justify_center();
+        let who_cell = || div().w(rems(5.5));
+        let header = h_flex().child(who_cell()).children((0..3).map(|what| {
+            cell().child(
+                Button::new(SharedString::from(format!("{id}-col-{what}")), WHAT[what])
+                    .style(ButtonStyle::Subtle)
+                    .label_size(LabelSize::Small)
+                    .color(Color::Muted)
+                    .disabled(disabled)
+                    .tooltip(ui::Tooltip::text("Toggle the whole column"))
+                    .on_click(cx.listener(move |this, _, window, cx| {
+                        let bits = (0..3).map(move |who| bit(who, what));
+                        this.set_mode(section, toggle_bits(mode, bits), window, cx);
+                    })),
+            )
+        }));
         let rows = (0..3).map(|who| {
             h_flex()
-                .gap_1()
                 .child(
-                    div().w(rems(5.)).child(
+                    who_cell().child(
                         Button::new(SharedString::from(format!("{id}-row-{who}")), WHO[who])
-                            .style(ButtonStyle::Outlined)
+                            .style(ButtonStyle::Subtle)
                             .disabled(disabled)
+                            .tooltip(ui::Tooltip::text("Toggle the whole row"))
                             .on_click(cx.listener(move |this, _, window, cx| {
                                 let bits = (0..3).map(move |what| bit(who, what));
                                 this.set_mode(section, toggle_bits(mode, bits), window, cx);
@@ -255,27 +247,60 @@ impl PermissionsModal {
         });
         Some(
             v_flex()
-                .gap_1()
-                .child(Label::new(label).color(if disabled {
-                    Color::Disabled
-                } else {
-                    Color::Default
-                }))
-                .child(header)
-                .children(rows)
+                .gap_2()
                 .child(
                     h_flex()
-                        .gap_1()
+                        .justify_between()
+                        .child(Label::new(label).size(LabelSize::Small).color(if disabled {
+                            Color::Disabled
+                        } else {
+                            Color::Muted
+                        }))
                         .child(
-                            div()
-                                .w(rems(5.))
-                                .child(Label::new("Octal:").color(Color::Muted)),
-                        )
-                        .child(div().w(rems(12.5)).child(editor.octal.clone())),
+                            Label::new(format_symbolic(mode))
+                                .size(LabelSize::Small)
+                                .buffer_font(cx)
+                                .color(Color::Muted),
+                        ),
+                )
+                .child(
+                    h_flex()
+                        .gap_4()
+                        .items_end()
+                        .p_2()
+                        .rounded_md()
+                        .border_1()
+                        .border_color(cx.theme().colors().border_variant)
+                        .bg(cx.theme().colors().editor_background)
+                        .child(v_flex().gap_1().child(header).children(rows))
+                        .child(
+                            v_flex()
+                                .gap_1()
+                                .pb_1()
+                                .child(
+                                    Label::new("Octal")
+                                        .size(LabelSize::Small)
+                                        .color(Color::Muted),
+                                )
+                                .child(div().w(rems(5.5)).child(editor.octal.clone())),
+                        ),
                 )
                 .into_any_element(),
         )
     }
+}
+
+/// "rwxr-xr-x" for the permission bits of `mode`.
+fn format_symbolic(mode: u32) -> String {
+    (0..9)
+        .map(|index| {
+            if mode & (1 << (8 - index)) == 0 {
+                '-'
+            } else {
+                ['r', 'w', 'x'][index % 3]
+            }
+        })
+        .collect()
 }
 
 impl Focusable for PermissionsModal {
@@ -293,43 +318,59 @@ impl ModalView for PermissionsModal {}
 impl Render for PermissionsModal {
     fn render(&mut self, _window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
         let files_disabled = self.is_dir && !self.recursive;
-        let files_label = if self.is_dir { "Files inside" } else { "Files" };
+        let files_label = if self.is_dir { "FILES INSIDE" } else { "FILE" };
+        let focus = self.focus_handle(cx);
         v_flex()
             .key_context("RemoteHostPermissions")
-            .w(rems(24.))
-            .p_3()
-            .gap_3()
+            .w(rems(26.))
             .elevation_3(cx)
             .on_action(cx.listener(Self::confirm))
             .on_action(cx.listener(|_, _: &menu::Cancel, _, cx| cx.emit(DismissEvent)))
-            .child(Headline::new(self.title.clone()).size(HeadlineSize::Small))
-            .children(self.render_section(Section::Folders, "Folders", false, cx))
-            .when(self.is_dir, |modal| {
-                modal.child(
-                    Checkbox::new("permissions-recursive", self.recursive.into())
-                        .label("Apply to everything inside the folder")
-                        .on_click(cx.listener(|this, state: &ToggleState, _, cx| {
-                            this.recursive = state.selected();
-                            cx.notify();
-                        })),
-                )
-            })
-            .children(self.render_section(Section::Files, files_label, files_disabled, cx))
             .child(
-                h_flex()
-                    .justify_end()
-                    .gap_2()
-                    .child(
-                        Button::new("permissions-cancel", "Cancel")
-                            .on_click(cx.listener(|_, _, _, cx| cx.emit(DismissEvent))),
+                Modal::new("remote-host-permissions", None)
+                    .header(
+                        ModalHeader::new()
+                            .icon(Icon::new(IconName::Lock).color(Color::Muted))
+                            .headline("Change Permissions")
+                            .description(self.title.clone()),
                     )
-                    .child(
-                        Button::new("permissions-ok", "OK")
-                            .style(ButtonStyle::Filled)
-                            .on_click(cx.listener(|this, _, window, cx| {
+                    .section(
+                        Section::new().child(
+                            v_flex()
+                                .gap_4()
+                                .children(self.render_section(Part::Folders, "FOLDERS", false, cx))
+                                .when(self.is_dir, |column| {
+                                    column.child(
+                                        Checkbox::new(
+                                            "permissions-recursive",
+                                            self.recursive.into(),
+                                        )
+                                        .label("Also apply to everything inside the folder")
+                                        .on_click(
+                                            cx.listener(|this, state: &ToggleState, _, cx| {
+                                                this.recursive = state.selected();
+                                                cx.notify();
+                                            }),
+                                        ),
+                                    )
+                                })
+                                .children(self.render_section(
+                                    Part::Files,
+                                    files_label,
+                                    files_disabled,
+                                    cx,
+                                )),
+                        ),
+                    )
+                    .footer(dialog::footer(
+                        dialog::cancel_button("permissions-cancel", &focus, cx)
+                            .on_click(cx.listener(|_, _, _, cx| cx.emit(DismissEvent))),
+                        dialog::primary_button("permissions-ok", "Apply", &focus, cx).on_click(
+                            cx.listener(|this, _, window, cx| {
                                 this.confirm(&menu::Confirm, window, cx)
-                            })),
-                    ),
+                            }),
+                        ),
+                    )),
             )
     }
 }

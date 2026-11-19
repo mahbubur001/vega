@@ -1,9 +1,11 @@
 //! Asks for a file or folder name (Remote Host New File, New Folder, Rename).
 
 use gpui::{App, DismissEvent, Entity, EventEmitter, FocusHandle, Focusable, Render, Window};
-use ui::prelude::*;
+use ui::{Modal, ModalHeader, Section, prelude::*};
 use ui_input::InputField;
 use workspace::ModalView;
+
+use crate::dialog;
 
 type OnConfirm = Box<dyn FnOnce(String, &mut Window, &mut App)>;
 
@@ -22,7 +24,7 @@ impl NameModal {
         cx: &mut Context<Self>,
     ) -> Self {
         let input = cx.new(|cx| {
-            let field = InputField::new(window, cx, "Name");
+            let field = InputField::new(window, cx, "Name").label("Name");
             field.set_text(initial, window, cx);
             field
         });
@@ -71,16 +73,25 @@ impl ModalView for NameModal {}
 
 impl Render for NameModal {
     fn render(&mut self, _window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
+        let focus = self.input.focus_handle(cx);
         v_flex()
             .key_context("RemoteHostName")
-            .w(rems(24.))
-            .p_3()
-            .gap_2()
+            .w(rems(26.))
             .elevation_3(cx)
             .on_action(cx.listener(Self::confirm))
             .on_action(cx.listener(|_, _: &menu::Cancel, _, cx| cx.emit(DismissEvent)))
-            .child(Headline::new(self.title.clone()).size(HeadlineSize::Small))
-            .child(self.input.clone())
+            .child(
+                Modal::new("remote-host-name", None)
+                    .header(ModalHeader::new().headline(self.title.clone()))
+                    .section(Section::new().child(self.input.clone()))
+                    .footer(dialog::footer(
+                        dialog::cancel_button("name-cancel", &focus, cx)
+                            .on_click(cx.listener(|_, _, _, cx| cx.emit(DismissEvent))),
+                        dialog::primary_button("name-ok", "OK", &focus, cx).on_click(cx.listener(
+                            |this, _, window, cx| this.confirm(&menu::Confirm, window, cx),
+                        )),
+                    )),
+            )
     }
 }
 

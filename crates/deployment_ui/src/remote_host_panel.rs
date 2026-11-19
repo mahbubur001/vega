@@ -956,6 +956,7 @@ impl RemoteHostPanel {
         } else {
             (current.unwrap_or(0o644), 0o755)
         };
+        let title = row.path.clone();
         let this = cx.weak_entity();
         let on_confirm = move |choice: PermissionsChoice, _: &mut Window, cx: &mut App| {
             this.update(cx, |this, cx| {
@@ -993,7 +994,6 @@ impl RemoteHostPanel {
             })
             .ok();
         };
-        let title = format!("Permissions of {}", row.name);
         let is_dir = row.is_dir;
         self.workspace
             .update(cx, |workspace, cx| {

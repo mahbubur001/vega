@@ -3,9 +3,11 @@
 use deployment::prompt::{SecretAnswer, SecretKind, SecretRequest};
 use futures::channel::oneshot;
 use gpui::{DismissEvent, Entity, EventEmitter, FocusHandle, Focusable};
-use ui::{Checkbox, ToggleState, prelude::*};
+use ui::{Callout, Checkbox, Modal, ModalHeader, Section, Severity, ToggleState, prelude::*};
 use ui_input::InputField;
 use workspace::ModalView;
+
+use crate::dialog;
 
 pub(crate) struct SecretModal {
     request: SecretRequest,
@@ -22,11 +24,11 @@ impl SecretModal {
         window: &mut Window,
         cx: &mut Context<Self>,
     ) -> Self {
-        let placeholder = match request.kind {
+        let label = match request.kind {
             SecretKind::Password => "Password",
             SecretKind::Passphrase => "Key passphrase",
         };
-        let input = cx.new(|cx| InputField::new(window, cx, placeholder).masked(true));
+        let input = cx.new(|cx| InputField::new(window, cx, "").label(label).masked(true));
         input.read(cx).editor().focus_handle(cx).focus(window, cx);
         Self {
             request,
@@ -79,50 +81,65 @@ impl ModalView for SecretModal {
 
 impl Render for SecretModal {
     fn render(&mut self, _: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
-        let title = match self.request.kind {
-            SecretKind::Password => format!("Password for {}", self.request.server_name),
-            SecretKind::Passphrase => "Key passphrase".to_string(),
+        let (headline, icon) = match self.request.kind {
+            SecretKind::Password => (
+                format!("Sign in to {}", self.request.server_name),
+                IconName::Lock,
+            ),
+            SecretKind::Passphrase => ("Unlock SSH key".to_string(), IconName::Lock),
         };
-        let save = self.save;
+        let focus = self.focus_handle.clone();
 
         v_flex()
             .key_context("DeploymentSecretModal")
             .track_focus(&self.focus_handle)
             .on_action(cx.listener(Self::confirm))
             .on_action(cx.listener(Self::cancel))
-            .w(rems(26.))
-            .p_4()
-            .gap_3()
+            .w(rems(28.))
             .elevation_3(cx)
-            .child(Headline::new(title).size(HeadlineSize::Small))
-            .child(Label::new(self.request.target.clone()).color(Color::Muted))
-            .when_some(self.request.error.clone(), |this, error| {
-                this.child(Label::new(error).color(Color::Error))
-            })
-            .child(self.input.clone())
             .child(
-                Checkbox::new("save-secret", ToggleState::from(save))
-                    .label("Save in Keychain")
-                    .on_click(cx.listener(|this, state: &ToggleState, _, cx| {
-                        this.save = state.selected();
-                        cx.notify();
-                    })),
-            )
-            .child(
-                h_flex()
-                    .justify_end()
-                    .gap_2()
-                    .child(
-                        Button::new("cancel", "Cancel")
-                            .on_click(cx.listener(|_, _, _, cx| cx.emit(DismissEvent))),
+                Modal::new("deployment-secret", None)
+                    .header(
+                        ModalHeader::new()
+                            .icon(Icon::new(icon).color(Color::Muted))
+                            .headline(headline)
+                            .description(self.request.target.clone()),
                     )
-                    .child(
-                        Button::new("connect", "Connect")
-                            .style(ButtonStyle::Filled)
-                            .on_click(cx.listener(|this, _, window, cx| {
+                    .section(
+                        Section::new().child(
+                            v_flex()
+                                .gap_3()
+                                .when_some(self.request.error.clone(), |column, error| {
+                                    column.child(
+                                        Callout::new()
+                                            .severity(Severity::Error)
+                                            .icon(IconName::Warning)
+                                            .title("The server rejected the login")
+                                            .description(error),
+                                    )
+                                })
+                                .child(self.input.clone())
+                                .child(
+                                    Checkbox::new("save-secret", ToggleState::from(self.save))
+                                        .label("Remember in Keychain")
+                                        .on_click(cx.listener(
+                                            |this, state: &ToggleState, _, cx| {
+                                                this.save = state.selected();
+                                                cx.notify();
+                                            },
+                                        )),
+                                ),
+                        ),
+                    )
+                    .footer(dialog::footer(
+                        dialog::cancel_button("cancel", &focus, cx)
+                            .on_click(cx.listener(|_, _, _, cx| cx.emit(DismissEvent))),
+                        dialog::primary_button("connect", "Connect", &focus, cx).on_click(
+                            cx.listener(|this, _, window, cx| {
                                 this.confirm(&menu::Confirm, window, cx)
-                            })),
-                    ),
+                            }),
+                        ),
+                    )),
             )
     }
 }
