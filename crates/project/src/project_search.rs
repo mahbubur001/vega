@@ -133,6 +133,18 @@ impl Search {
         }
     }
 
+    /// VEGA: also searches `worktrees` (library folders), when local.
+    pub(crate) fn add_worktrees(&mut self, more: Vec<Entity<Worktree>>, cx: &App) {
+        if let SearchKind::Local { worktrees, .. } = &mut self.kind {
+            for worktree in more {
+                if !worktrees.contains(&worktree) {
+                    worktrees.push(worktree);
+                }
+            }
+            worktrees.sort_by_key(|worktree| worktree.read(cx).id());
+        }
+    }
+
     pub(crate) fn remote(
         buffer_store: Entity<BufferStore>,
         worktree_store: Entity<WorktreeStore>,

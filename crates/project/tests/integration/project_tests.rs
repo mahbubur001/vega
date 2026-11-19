@@ -13314,6 +13314,60 @@ async fn test_search_multiple_worktrees_with_inclusions(cx: &mut gpui::TestAppCo
     );
 }
 
+/// VEGA: library worktrees (include paths, PHP stubs) are searched only with
+/// ignored files included ("Project and Libraries").
+#[gpui::test]
+async fn test_search_includes_library_worktrees_with_ignored_files(cx: &mut gpui::TestAppContext) {
+    init_test(cx);
+
+    let fs = FakeFs::new(cx.background_executor.clone());
+    fs.insert_tree(path!("/site"), json!({ "index.php": "<?php needle();" }))
+        .await;
+    fs.insert_tree(
+        path!("/libs"),
+        json!({ "plugin.php": "<?php function needle() {}" }),
+    )
+    .await;
+    let project = Project::test(fs.clone(), [path!("/site").as_ref()], cx).await;
+    let (library, _) = project
+        .update(cx, |project, cx| {
+            project.find_or_create_worktree(path!("/libs"), false, cx)
+        })
+        .await
+        .unwrap();
+    cx.update(|cx| project::library_worktrees::mark_library_worktree(&library, true, cx));
+    cx.run_until_parked();
+
+    let query = |include_ignored| {
+        SearchQuery::text(
+            "needle",
+            false,
+            false,
+            include_ignored,
+            Default::default(),
+            Default::default(),
+            false,
+            None,
+        )
+        .unwrap()
+    };
+    let mut found: Vec<String> = search(&project, query(false), cx)
+        .await
+        .unwrap()
+        .into_keys()
+        .collect();
+    assert_eq!(found, [path!("site/index.php")]);
+
+    found = search(&project, query(true), cx)
+        .await
+        .unwrap()
+        .into_keys()
+        .collect();
+    found.sort();
+    assert_eq!(found, [path!("/libs/plugin.php"), path!("site/index.php")]);
+    drop(library);
+}
+
 #[gpui::test]
 async fn test_search_in_gitignored_dirs(cx: &mut gpui::TestAppContext) {
     init_test(cx);

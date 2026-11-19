@@ -9,6 +9,7 @@ pub mod debounced_delay;
 pub mod debugger;
 pub mod git_store;
 pub mod image_store;
+pub mod library_worktrees;
 pub mod lsp_command;
 pub mod lsp_store;
 pub mod manifest_tree;
@@ -4988,13 +4989,22 @@ impl Project {
                     project_search::Search::MAX_SEARCH_RESULT_FILES + 1,
                     (client, remote_id, self.remotely_created_models.clone()),
                 ),
-                None => project_search::Search::local(
-                    self.fs.clone(),
-                    self.buffer_store.clone(),
-                    self.worktree_store.clone(),
-                    project_search::Search::MAX_SEARCH_RESULT_FILES + 1,
-                    cx,
-                ),
+                None => {
+                    let mut search = project_search::Search::local(
+                        self.fs.clone(),
+                        self.buffer_store.clone(),
+                        self.worktree_store.clone(),
+                        project_search::Search::MAX_SEARCH_RESULT_FILES + 1,
+                        cx,
+                    );
+                    // VEGA: with ignored files included, search library folders too.
+                    if query.include_ignored() {
+                        let libraries =
+                            library_worktrees::library_worktrees(self.worktree_store.read(cx), cx);
+                        search.add_worktrees(libraries, cx);
+                    }
+                    search
+                }
             }
         };
         searcher.into_handle(query, cx)

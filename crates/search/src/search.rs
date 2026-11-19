@@ -113,7 +113,9 @@ impl SearchOption {
         match self {
             SearchOption::WholeWord => "Match Whole Words",
             SearchOption::CaseSensitive => "Match Case Sensitivity",
-            SearchOption::IncludeIgnored => "Also search files ignored by configuration",
+            SearchOption::IncludeIgnored => {
+                "Also search ignored files and libraries (vendor, node_modules, PHP include paths and stubs)"
+            }
             SearchOption::Regex => "Use Regular Expressions",
             SearchOption::OneMatchPerLine => "One Match Per Line",
             SearchOption::Backwards => "Search Backwards",

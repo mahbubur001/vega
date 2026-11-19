@@ -10,7 +10,8 @@ use gpui::{
     MouseButton, MouseDownEvent, Pixels, Point, Subscription, Task, WeakEntity, Window, anchored,
     deferred,
 };
-use project::Project;
+use project::library_worktrees::mark_library_worktree;
+use project::{Project, Worktree};
 use project_panel::{ExtraRowState, ProjectPanel, ProjectPanelExtraRows};
 use ui::{ContextMenu, prelude::*};
 use util::ResultExt as _;
@@ -82,6 +83,9 @@ pub(crate) struct LibraryRows {
         Subscription,
     )>,
     downloading: bool,
+    /// Include paths and the stubs as hidden worktrees, searched by Find in
+    /// Files with ignored files included ("Project and Libraries").
+    library_worktrees: HashMap<PathBuf, Entity<Worktree>>,
     _subscriptions: Vec<Subscription>,
     _load: Task<()>,
     _download: Task<()>,
@@ -142,6 +146,7 @@ impl LibraryRows {
             selected: None,
             context_menu: None,
             downloading: false,
+            library_worktrees: HashMap::default(),
             _subscriptions: subscriptions,
             _load: Task::ready(()),
             _download: Task::ready(()),
@@ -163,6 +168,7 @@ impl LibraryRows {
         self._load = cx.spawn(async move |this, cx| {
             let libraries = load.await;
             this.update(cx, |this, cx| {
+                this.sync_library_worktrees(&libraries, cx);
                 this.libraries = Some(libraries);
                 this.listings.clear();
                 let open: Vec<PathBuf> = this
@@ -178,6 +184,59 @@ impl LibraryRows {
             })
             .ok();
         });
+    }
+
+    /// Keeps one hidden worktree per include path (and for the stubs).
+    fn sync_library_worktrees(&mut self, libraries: &Libraries, cx: &mut Context<Self>) {
+        let mut wanted: Vec<PathBuf> = libraries
+            .include_paths
+            .iter()
+            .filter(|(_, exists)| *exists)
+            .map(|(path, _)| path.clone())
+            .collect();
+        if libraries.php.as_ref().is_some_and(|php| php.has_stubs) {
+            wanted.push(stubs_dir());
+        }
+        let stale: Vec<PathBuf> = self
+            .library_worktrees
+            .keys()
+            .filter(|path| !wanted.contains(path))
+            .cloned()
+            .collect();
+        for path in stale {
+            if let Some(worktree) = self.library_worktrees.remove(&path)
+                && !worktree.read(cx).is_visible()
+            {
+                mark_library_worktree(&worktree, false, cx);
+                let id = worktree.read(cx).id();
+                self.project
+                    .update(cx, |project, cx| project.remove_worktree(id, cx));
+            }
+        }
+        for path in wanted {
+            if self.library_worktrees.contains_key(&path) {
+                continue;
+            }
+            let task = self.project.update(cx, |project, cx| {
+                project.find_or_create_worktree(&path, false, cx)
+            });
+            cx.spawn(async move |this, cx| {
+                let Some((worktree, _)) = task.await.log_err() else {
+                    return;
+                };
+                this.update(cx, |this, cx| {
+                    // A folder inside the project is already searched; never hold
+                    // (or later remove) one of the project's own folders.
+                    if worktree.read(cx).is_visible() {
+                        return;
+                    }
+                    mark_library_worktree(&worktree, true, cx);
+                    this.library_worktrees.insert(path, worktree);
+                })
+                .ok();
+            })
+            .detach();
+        }
     }
 
     fn load_listing(&mut self, path: PathBuf, cx: &mut Context<Self>) {
