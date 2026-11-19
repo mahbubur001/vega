@@ -1035,6 +1035,25 @@ pub(crate) async fn find_file(
             }
         }
     }
+
+    // VEGA: PHP's `__DIR__ . '/includes/header.php'` names a file next to the current one,
+    // like PhpStorm resolves it; when the root-based path doesn't exist, try it relative.
+    for (pattern_candidate, pattern_range) in &pattern_candidates {
+        let relative = pattern_candidate.trim_start_matches('/');
+        if relative.len() < pattern_candidate.len()
+            && !relative.is_empty()
+            && let Some(existing_path) = check_path(relative, &project, buffer, cx).await
+        {
+            return Some((
+                make_range(pattern_range),
+                ResolvedFileTarget {
+                    resolved_path: existing_path,
+                    row: None,
+                    column: None,
+                },
+            ));
+        }
+    }
     None
 }
 
@@ -4041,6 +4060,69 @@ Sentence ending file2.rs.
                 selections.head().column,
                 2,
                 "Expected cursor on column 3 (0-indexed: 2)"
+            );
+        });
+    }
+
+    /// VEGA: `__DIR__ . '/includes/header.php'` opens the file next to the current one.
+    #[gpui::test]
+    async fn test_cmd_click_root_based_path_falls_back_to_relative(cx: &mut gpui::TestAppContext) {
+        init_test(cx, |_| {});
+        let mut cx = EditorLspTestContext::new_rust(
+            lsp::ServerCapabilities {
+                ..Default::default()
+            },
+            cx,
+        )
+        .await;
+
+        let fs = cx.update_workspace(|workspace, _, cx| workspace.project().read(cx).fs().clone());
+        fs.create_dir(path!("/root/dir/includes").as_ref())
+            .await
+            .unwrap();
+        fs.as_fake()
+            .insert_file(
+                path!("/root/dir/includes/header.php"),
+                b"<?php echo 'header';".to_vec(),
+            )
+            .await;
+        cx.run_until_parked();
+
+        cx.set_state(indoc! {"
+            require __DIR__ . '/includes/header.php';ˇ
+        "});
+        let screen_coord = cx.pixel_position(indoc! {"
+            require __DIR__ . '/includes/heˇader.php';
+        "});
+
+        let modifiers = cx.read(Modifiers::secondary_key);
+        cx.simulate_mouse_move(screen_coord, None, modifiers);
+        cx.assert_editor_text_highlights(
+            HighlightKey::HoveredLinkState,
+            indoc! {"
+            require __DIR__ . '«/includes/header.phpˇ»';
+        "},
+        );
+
+        cx.simulate_click(screen_coord, modifiers);
+        cx.update_workspace(|workspace, _, cx| {
+            let active_editor = workspace.active_item_as::<Editor>(cx).unwrap();
+            let buffer = active_editor
+                .read(cx)
+                .buffer()
+                .read(cx)
+                .as_singleton()
+                .unwrap();
+            let file_path = buffer
+                .read(cx)
+                .file()
+                .unwrap()
+                .as_local()
+                .unwrap()
+                .abs_path(cx);
+            assert_eq!(
+                file_path,
+                std::path::PathBuf::from(path!("/root/dir/includes/header.php"))
             );
         });
     }
