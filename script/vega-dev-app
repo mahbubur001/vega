@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+# VEGA: run the debug build as "VEGA Dev.app" so macOS shows the VEGA icon in
+# the Dock and app switcher (a bare `target/debug/vega` binary gets the generic
+# "exec" icon). No signing, no Xcode needed; the binary is cloned, not copied.
+#
+#   script/vega-dev-app [--build] [paths to open…]
+#
+# --build runs `cargo build` first (with runtime shaders when Xcode's Metal
+# compiler isn't available).
+
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+if [[ "${1:-}" == "--build" ]]; then
+  shift
+  features=()
+  if ! xcrun -f metal > /dev/null 2>&1; then
+    features=(--features gpui_platform/runtime_shaders)
+  fi
+  cargo build -p zed "${features[@]}"
+fi
+
+binary=target/debug/vega
+if [[ ! -x "$binary" ]]; then
+  echo "No $binary yet; run: script/vega-dev-app --build" >&2
+  exit 1
+fi
+
+app="target/debug/VEGA Dev.app"
+contents="$app/Contents"
+mkdir -p "$contents/MacOS" "$contents/Resources"
+
+icon="$contents/Resources/AppIcon.icns"
+if [[ ! -f "$icon" || crates/zed/resources/app-icon-dev@2x.png -nt "$icon" ]]; then
+  iconset="$(mktemp -d)/AppIcon.iconset"
+  mkdir -p "$iconset"
+  source_png=crates/zed/resources/app-icon-dev@2x.png
+  for size in 16 32 128 256 512; do
+    sips -z "$size" "$size" "$source_png" --out "$iconset/icon_${size}x${size}.png" > /dev/null
+    double=$((size * 2))
+    sips -z "$double" "$double" "$source_png" --out "$iconset/icon_${size}x${size}@2x.png" > /dev/null
+  done
+  iconutil -c icns "$iconset" -o "$icon"
+  rm -rf "$(dirname "$iconset")"
+fi
+
+cat > "$contents/Info.plist" <<'PLIST'
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>CFBundleName</key><string>VEGA Dev</string>
+  <key>CFBundleDisplayName</key><string>VEGA Dev</string>
+  <key>CFBundleIdentifier</key><string>dev.vega.Vega-Dev</string>
+  <key>CFBundleExecutable</key><string>vega</string>
+  <key>CFBundleIconFile</key><string>AppIcon</string>
+  <key>CFBundlePackageType</key><string>APPL</string>
+  <key>CFBundleShortVersionString</key><string>0.0.0-dev</string>
+  <key>LSMinimumSystemVersion</key><string>12.0</string>
+  <key>NSHighResolutionCapable</key><true/>
+</dict>
+</plist>
+PLIST
+
+# Clone (APFS copy-on-write) so a multi-GB debug binary costs no disk space.
+rm -f "$contents/MacOS/vega"
+cp -c "$binary" "$contents/MacOS/vega" 2> /dev/null || cp "$binary" "$contents/MacOS/vega"
+touch "$app"
+
+exec "$contents/MacOS/vega" "$@"

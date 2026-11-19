@@ -32,7 +32,7 @@ cargo run --release       # release build
 
 Platform setup:
 
-- [macOS](docs/src/development/macos.md): full Xcode (not only the Command Line Tools) and `cmake`. Without Xcode, `cargo run --features gpui_platform/runtime_shaders` compiles shaders at runtime instead.
+- [macOS](docs/src/development/macos.md): full Xcode (not only the Command Line Tools) and `cmake`. Without Xcode, `cargo run --features gpui_platform/runtime_shaders` compiles shaders at runtime instead. `script/vega-dev-app --build ~/some/project` runs the debug build as "VEGA Dev.app", so the Dock shows the VEGA icon.
 - [Linux](docs/src/development/linux.md)
 - [Windows](docs/src/development/windows.md)
 

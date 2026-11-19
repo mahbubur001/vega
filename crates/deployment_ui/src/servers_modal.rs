@@ -1,7 +1,7 @@
 //! Deployment Servers (D2): a PhpStorm-style dialog to add, edit, test and
 //! remove deployment servers without editing JSON. The server list is on the
-//! left (★ marks the default); the selected server's Connection, Mappings and
-//! Excluded Paths are on the right.
+//! left (★ marks the default); the selected server's Connection, Mappings,
+//! Excluded Paths and Advanced options are on the right.
 //!
 //! Edits stay in a draft until Save, which writes them through the
 //! deployment `ConfigStore`. The `DeploymentStore` notices the config file
@@ -11,16 +11,20 @@ use std::path::PathBuf;
 use std::sync::Arc;
 
 use anyhow::Result;
-use deployment::config::{ConfigStore, Mapping, ResolvedServer, Server, ServerType, SftpAuth};
+use deployment::config::{
+    ConfigStore, DataProtection, HostKeyPolicy, Mapping, ResolvedServer, Server, ServerType,
+    SftpAuth, SshBackend, WebdavAuth,
+};
 use deployment::credentials::{Credentials, password_account};
 use deployment::engine::Engine;
 use deployment::manager::{StepState, TestStep};
 use deployment::prompt::Prompter;
 use gpui::{
-    App, Context, DismissEvent, Entity, EventEmitter, FocusHandle, Focusable, Render, Task, Window,
+    App, Context, DismissEvent, Entity, EventEmitter, FocusHandle, Focusable, Render, Task,
+    WeakEntity, Window,
 };
 use gpui_tokio::Tokio;
-use ui::{ContextMenu, DropdownMenu, ListItem, ListItemSpacing, prelude::*};
+use ui::{Checkbox, ContextMenu, DropdownMenu, ListItem, ListItemSpacing, ToggleState, prelude::*};
 use ui_input::InputField;
 use util::ResultExt as _;
 use workspace::ModalView;
@@ -42,6 +46,62 @@ const SFTP_AUTH: [(SftpAuth, &str); 4] = [
     (SftpAuth::Agent, "SSH agent"),
     (SftpAuth::Openssh, "OpenSSH config"),
 ];
+
+const HOST_KEY_POLICIES: [(HostKeyPolicy, &str); 4] = [
+    (HostKeyPolicy::Ask, "Ask for unknown hosts"),
+    (HostKeyPolicy::AcceptNew, "Accept new hosts"),
+    (HostKeyPolicy::Yes, "Only known hosts"),
+    (HostKeyPolicy::No, "Don't check (unsafe)"),
+];
+
+const SSH_BACKENDS: [(SshBackend, &str); 2] = [
+    (SshBackend::Builtin, "Built-in"),
+    (SshBackend::Openssh, "System OpenSSH"),
+];
+
+const DATA_PROTECTION: [(DataProtection, &str); 2] = [
+    (DataProtection::Private, "Private (encrypted)"),
+    (DataProtection::Clear, "Clear"),
+];
+
+const WEBDAV_AUTH: [(WebdavAuth, &str); 3] = [
+    (WebdavAuth::Basic, "Basic"),
+    (WebdavAuth::Digest, "Digest"),
+    (WebdavAuth::None, "None"),
+];
+
+/// FTP file name encodings the engine understands (UTF-8 is the default).
+const ENCODINGS: [(Option<&str>, &str); 2] = [
+    (None, "UTF-8"),
+    (Some("ISO-8859-1"), "ISO-8859-1 (Latin-1)"),
+];
+
+fn encoding_choice(encoding: Option<&str>) -> Option<&'static str> {
+    let latin1 = encoding.is_some_and(|encoding| {
+        matches!(
+            encoding.trim().to_ascii_lowercase().as_str(),
+            "latin1" | "latin-1" | "iso-8859-1" | "iso8859-1"
+        )
+    });
+    latin1.then_some("ISO-8859-1")
+}
+
+fn choice_label<T: PartialEq>(options: &[(T, &'static str)], value: &T) -> &'static str {
+    options
+        .iter()
+        .find(|(option, _)| option == value)
+        .map_or("", |(_, label)| label)
+}
+
+/// An optional text setting: empty means unset.
+fn optional_text(text: String) -> Option<String> {
+    (!text.is_empty()).then_some(text)
+}
+
+/// An optional count: empty or invalid means unset (the default).
+fn optional_count(text: &str) -> Option<u32> {
+    text.parse::<u32>().ok().filter(|count| *count > 0)
+}
 
 /// The servers being edited, before Save.
 #[derive(Clone, Debug, Default, PartialEq)]
@@ -96,6 +156,11 @@ struct Form {
     excluded_local: Entity<InputField>,
     excluded_remote: Entity<InputField>,
     mappings: Vec<[Entity<InputField>; 3]>,
+    jump_host: Entity<InputField>,
+    keep_alive_seconds: Entity<InputField>,
+    keep_alive_command: Entity<InputField>,
+    trusted_fingerprint: Entity<InputField>,
+    max_connections: Entity<InputField>,
 }
 
 #[derive(Clone, Copy, PartialEq, Eq)]
@@ -103,6 +168,7 @@ enum Tab {
     Connection,
     Mappings,
     Excluded,
+    Advanced,
 }
 
 pub(crate) struct ServersModal {
@@ -204,6 +270,11 @@ impl ServersModal {
             })
             .filter(|mapping| !(mapping.local.is_empty() && mapping.remote.is_empty()))
             .collect();
+        let jump_host = optional_text(text(&form.jump_host));
+        let keep_alive_seconds = optional_count(&text(&form.keep_alive_seconds));
+        let keep_alive_command = optional_text(text(&form.keep_alive_command));
+        let trusted_fingerprint = optional_text(text(&form.trusted_fingerprint));
+        let max_connections = optional_count(&text(&form.max_connections));
 
         let Some(server) = self.selected_server_mut() else {
             return;
@@ -220,6 +291,20 @@ impl ServersModal {
         server.excluded_local = excluded_local;
         server.excluded_remote = excluded_remote;
         server.mappings = mappings;
+        server.jump_host = jump_host;
+        server.keep_alive_seconds = keep_alive_seconds;
+        server.keep_alive_command = keep_alive_command;
+        server.trusted_certificate_fingerprint = trusted_fingerprint;
+        server.max_connections = max_connections;
+    }
+
+    /// Changes the selected server from a toggle or dropdown.
+    fn update_server(&mut self, cx: &mut Context<Self>, update: impl FnOnce(&mut Server)) {
+        self.commit_form(cx);
+        if let Some(server) = self.selected_server_mut() {
+            update(server);
+        }
+        cx.notify();
     }
 
     fn add_server(&mut self, kind: ServerType, window: &mut Window, cx: &mut Context<Self>) {
@@ -555,6 +640,184 @@ impl ServersModal {
             .into_any_element()
     }
 
+    /// Options that apply to the selected server's type. FTP passive mode
+    /// (always on) and rsync transfers aren't offered until the engine uses them.
+    fn render_advanced(
+        &self,
+        server: &Server,
+        form: &Form,
+        window: &mut Window,
+        cx: &mut Context<Self>,
+    ) -> AnyElement {
+        let kind = server.kind;
+        let is_sftp = kind == ServerType::Sftp;
+        let is_ftp = kind.is_ftp();
+        let is_ftps = matches!(kind, ServerType::Ftps | ServerType::FtpsImplicit);
+        let is_webdav = kind == ServerType::Webdav;
+        let uses_tls = is_ftps || is_webdav;
+
+        let this = cx.weak_entity();
+        let dropdown = |id: &'static str, label: &'static str, selected: &'static str, menu| {
+            h_flex()
+                .gap_2()
+                .child(Label::new(label).color(Color::Muted))
+                .child(DropdownMenu::new(id, selected, menu))
+        };
+        fn menu<T: Copy + 'static>(
+            this: WeakEntity<ServersModal>,
+            options: &'static [(T, &'static str)],
+            set: fn(&mut Server, T),
+            window: &mut Window,
+            cx: &mut App,
+        ) -> Entity<ContextMenu> {
+            ContextMenu::build(window, cx, move |mut menu, _, _| {
+                for (value, label) in options {
+                    let this = this.clone();
+                    let value = *value;
+                    menu = menu.entry(*label, None, move |_, cx| {
+                        this.update(cx, |this, cx| {
+                            this.update_server(cx, |server| set(server, value))
+                        })
+                        .ok();
+                    });
+                }
+                menu
+            })
+        }
+        let checkbox = |id: &'static str,
+                        label: &'static str,
+                        checked: bool,
+                        set: fn(&mut Server, bool),
+                        cx: &mut Context<Self>| {
+            Checkbox::new(id, ToggleState::from(checked))
+                .label(label)
+                .on_click(cx.listener(move |this, state: &ToggleState, _, cx| {
+                    let checked = state.selected();
+                    this.update_server(cx, |server| set(server, checked));
+                }))
+        };
+
+        if kind == ServerType::Local {
+            return Label::new("Local folders have no advanced options.")
+                .color(Color::Muted)
+                .into_any_element();
+        }
+
+        v_flex()
+            .gap_2()
+            .when(is_sftp, |column| {
+                let policy = server.strict_host_key_checking.unwrap_or_default();
+                let backend = server.ssh_backend.unwrap_or_default();
+                column
+                    .child(dropdown(
+                        "host-key-policy",
+                        "Host key checking",
+                        choice_label(&HOST_KEY_POLICIES, &policy),
+                        menu(
+                            this.clone(),
+                            &HOST_KEY_POLICIES,
+                            |server, policy| server.strict_host_key_checking = Some(policy),
+                            window,
+                            cx,
+                        ),
+                    ))
+                    .child(dropdown(
+                        "ssh-backend",
+                        "SSH client",
+                        choice_label(&SSH_BACKENDS, &backend),
+                        menu(
+                            this.clone(),
+                            &SSH_BACKENDS,
+                            |server, backend| server.ssh_backend = Some(backend),
+                            window,
+                            cx,
+                        ),
+                    ))
+                    .child(form.jump_host.clone())
+                    .child(form.keep_alive_seconds.clone())
+            })
+            .when(is_ftp, |column| {
+                column
+                    .child(checkbox(
+                        "ftp-anonymous",
+                        "Anonymous login",
+                        server.anonymous,
+                        |server, checked| server.anonymous = checked,
+                        cx,
+                    ))
+                    .child(checkbox(
+                        "ftp-use-list",
+                        "List files with LIST instead of MLSD (older servers)",
+                        server.use_list,
+                        |server, checked| server.use_list = checked,
+                        cx,
+                    ))
+                    .child(dropdown(
+                        "ftp-encoding",
+                        "File name encoding",
+                        choice_label(&ENCODINGS, &encoding_choice(server.encoding.as_deref())),
+                        menu(
+                            this.clone(),
+                            &ENCODINGS,
+                            |server, encoding| server.encoding = encoding.map(str::to_string),
+                            window,
+                            cx,
+                        ),
+                    ))
+                    .child(form.keep_alive_command.clone())
+            })
+            .when(is_ftps, |column| {
+                let protection = server.data_protection.unwrap_or_default();
+                column.child(dropdown(
+                    "data-protection",
+                    "Data connection",
+                    choice_label(&DATA_PROTECTION, &protection),
+                    menu(
+                        this.clone(),
+                        &DATA_PROTECTION,
+                        |server, protection| server.data_protection = Some(protection),
+                        window,
+                        cx,
+                    ),
+                ))
+            })
+            .when(is_webdav, |column| {
+                let auth = server.webdav_auth.unwrap_or_default();
+                column.child(dropdown(
+                    "webdav-auth",
+                    "Authentication",
+                    choice_label(&WEBDAV_AUTH, &auth),
+                    menu(
+                        this.clone(),
+                        &WEBDAV_AUTH,
+                        |server, auth| server.webdav_auth = Some(auth),
+                        window,
+                        cx,
+                    ),
+                ))
+            })
+            .when(uses_tls, |column| {
+                column
+                    .child(checkbox(
+                        "disable-tls13",
+                        "Disable TLS 1.3 (for servers that fail the handshake)",
+                        server.disable_tls13,
+                        |server, checked| server.disable_tls13 = checked,
+                        cx,
+                    ))
+                    .child(checkbox(
+                        "allow-untrusted-certificate",
+                        "Ask to trust certificates that aren't signed by a known authority",
+                        server.allow_untrusted_certificate,
+                        |server, checked| server.allow_untrusted_certificate = checked,
+                        cx,
+                    ))
+                    .child(form.trusted_fingerprint.clone())
+            })
+            .child(form.max_connections.clone())
+            .into_any_element()
+    }
+
     fn render_test_results(&self) -> Option<impl IntoElement> {
         if self.testing.is_some() {
             return Some(
@@ -664,6 +927,50 @@ fn new_form(server: &Server, window: &mut Window, cx: &mut App) -> Form {
             .iter()
             .map(|mapping| mapping_fields(mapping, window, cx))
             .collect(),
+        jump_host: input(
+            "user@bastion.example.com:22",
+            "Jump host",
+            server.jump_host.as_deref().unwrap_or_default(),
+            window,
+            cx,
+        ),
+        keep_alive_seconds: input(
+            "30",
+            "Keep-alive interval (seconds)",
+            &server
+                .keep_alive_seconds
+                .map(|seconds| seconds.to_string())
+                .unwrap_or_default(),
+            window,
+            cx,
+        ),
+        keep_alive_command: input(
+            "NOOP",
+            "Keep-alive command",
+            server.keep_alive_command.as_deref().unwrap_or_default(),
+            window,
+            cx,
+        ),
+        trusted_fingerprint: input(
+            "SHA-256 fingerprint",
+            "Trusted certificate",
+            server
+                .trusted_certificate_fingerprint
+                .as_deref()
+                .unwrap_or_default(),
+            window,
+            cx,
+        ),
+        max_connections: input(
+            &server.max_connections_or_default().to_string(),
+            "Max. connections (1–16)",
+            &server
+                .max_connections
+                .map(|count| count.to_string())
+                .unwrap_or_default(),
+            window,
+            cx,
+        ),
     }
 }
 
@@ -772,7 +1079,8 @@ impl Render for ServersModal {
                 "Excluded Paths",
                 Tab::Excluded,
                 cx,
-            ));
+            ))
+            .child(tab_button("tab-advanced", "Advanced", Tab::Advanced, cx));
 
         let body = match (&server, self.form.take()) {
             (Some(server), Some(form)) => {
@@ -780,6 +1088,7 @@ impl Render for ServersModal {
                     Tab::Connection => self.render_connection(server, &form, window, cx),
                     Tab::Mappings => self.render_mappings(&form, cx),
                     Tab::Excluded => self.render_excluded(&form),
+                    Tab::Advanced => self.render_advanced(server, &form, window, cx),
                 };
                 self.form = Some(form);
                 body
@@ -864,6 +1173,41 @@ mod tests {
         assert_eq!(
             zed_actions::deployment::OpenDeploymentServers.name(),
             "deployment::OpenDeploymentServers"
+        );
+    }
+
+    #[test]
+    fn empty_or_invalid_advanced_fields_mean_the_default() {
+        assert_eq!(optional_text(String::new()), None);
+        assert_eq!(optional_text("NOOP".into()), Some("NOOP".into()));
+        assert_eq!(optional_count(""), None);
+        assert_eq!(optional_count("0"), None);
+        assert_eq!(optional_count("four"), None);
+        assert_eq!(optional_count("4"), Some(4));
+    }
+
+    #[test]
+    fn every_choice_has_a_label() {
+        for (value, _) in HOST_KEY_POLICIES {
+            assert!(!choice_label(&HOST_KEY_POLICIES, &value).is_empty());
+        }
+        assert_eq!(
+            choice_label(&HOST_KEY_POLICIES, &HostKeyPolicy::default()),
+            "Ask for unknown hosts"
+        );
+        assert_eq!(
+            choice_label(&SSH_BACKENDS, &SshBackend::default()),
+            "Built-in"
+        );
+        assert_eq!(
+            choice_label(&DATA_PROTECTION, &DataProtection::default()),
+            "Private (encrypted)"
+        );
+        assert!(!choice_label(&WEBDAV_AUTH, &WebdavAuth::default()).is_empty());
+        assert_eq!(choice_label(&ENCODINGS, &encoding_choice(None)), "UTF-8");
+        assert_eq!(
+            choice_label(&ENCODINGS, &encoding_choice(Some("latin1"))),
+            "ISO-8859-1 (Latin-1)"
         );
     }
 
