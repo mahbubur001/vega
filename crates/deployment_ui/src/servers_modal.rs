@@ -27,8 +27,8 @@ use gpui::{
 use gpui_tokio::Tokio;
 use ui::{
     Callout, Checkbox, CommonAnimationExt as _, ContextMenu, ContextMenuEntry, Disclosure,
-    IconPosition, ListItem, ListItemSpacing, PopoverMenu, Severity, TintColor, ToggleState,
-    Tooltip, prelude::*,
+    IconPosition, ListItem, ListItemSpacing, PopoverMenu, Severity, ToggleState, Tooltip,
+    prelude::*,
 };
 use ui_input::InputField;
 use util::ResultExt as _;
@@ -514,7 +514,7 @@ impl ServersModal {
                 remote: text(remote),
                 web: text(web),
             })
-            .filter(|mapping| !(mapping.local.is_empty() && mapping.remote.is_empty()))
+            // An empty mapping is valid: the project root ↔ the server's root path.
             .collect();
         let jump_host = optional_text(text(&form.jump_host));
         let keep_alive_seconds = optional_count(&text(&form.keep_alive_seconds));
@@ -932,6 +932,90 @@ impl ServersModal {
         });
     }
 
+    /// Above the tabs: the selected server's icon, name and a one-line summary.
+    fn render_content_header(&self, server: Option<&Server>, cx: &App) -> AnyElement {
+        let (icon, color, title, summary): (IconName, Color, SharedString, SharedString) =
+            if self.showing_options {
+                (
+                    IconName::Settings,
+                    Color::Muted,
+                    "Options".into(),
+                    "Settings for every deployment server of this project.".into(),
+                )
+            } else if let Some(server) = server {
+                let (icon, color) = server_type_icon(server.kind);
+                let summary = match server.kind {
+                    ServerType::Group => format!("Server group · {} servers", server.members.len()),
+                    ServerType::Local | ServerType::InPlace => {
+                        format!("{} · {}", server.kind.label(), server.root_path)
+                    }
+                    _ => {
+                        let user = if server.username.is_empty() {
+                            String::new()
+                        } else {
+                            format!("{}@", server.username)
+                        };
+                        let port = server
+                            .port
+                            .map(|port| format!(":{port}"))
+                            .unwrap_or_default();
+                        format!("{} · {user}{}{port}", server.kind.label(), server.host)
+                    }
+                };
+                (icon, color, server.name.clone().into(), summary.into())
+            } else {
+                return div().into_any_element();
+            };
+        let is_default = server.is_some_and(|server| {
+            !self.showing_options && self.draft.default_id.as_deref() == Some(server.id.as_str())
+        });
+        h_flex()
+            .px_6()
+            .pt_5()
+            .pb_3()
+            .gap_3()
+            .child(
+                div()
+                    .size_9()
+                    .flex()
+                    .items_center()
+                    .justify_center()
+                    .rounded_lg()
+                    .bg(cx.theme().colors().element_background)
+                    .child(Icon::new(icon).size(IconSize::Medium).color(color)),
+            )
+            .child(
+                v_flex()
+                    .min_w_0()
+                    .child(
+                        h_flex()
+                            .gap_2()
+                            .child(Headline::new(title).size(HeadlineSize::Small))
+                            .when(is_default, |row| {
+                                row.child(
+                                    div()
+                                        .px_1p5()
+                                        .rounded_full()
+                                        .border_1()
+                                        .border_color(cx.theme().status().success_border)
+                                        .child(
+                                            Label::new("default")
+                                                .size(LabelSize::XSmall)
+                                                .color(Color::Success),
+                                        ),
+                                )
+                            }),
+                    )
+                    .child(
+                        Label::new(summary)
+                            .size(LabelSize::Small)
+                            .color(Color::Muted)
+                            .truncate(),
+                    ),
+            )
+            .into_any_element()
+    }
+
     fn render_server_list(&self, cx: &mut Context<Self>) -> impl IntoElement {
         let this = cx.weak_entity();
         let selected_is_default = self
@@ -939,8 +1023,15 @@ impl ServersModal {
             .is_some_and(|server| self.draft.default_id.as_deref() == Some(server.id.as_str()));
         let toolbar = h_flex()
             .gap_0p5()
-            .px_1()
-            .pb_1()
+            .px_2()
+            .py_1p5()
+            .child(
+                Label::new("SERVERS")
+                    .size(LabelSize::XSmall)
+                    .weight(gpui::FontWeight::SEMIBOLD)
+                    .color(Color::Muted),
+            )
+            .child(div().flex_1())
             .child(
                 PopoverMenu::new("add-server-menu")
                     .trigger_with_tooltip(
@@ -994,9 +1085,10 @@ impl ServersModal {
             );
 
         v_flex()
-            .w(rems(15.))
+            .w(rems(16.))
             .h_full()
             .flex_none()
+            .bg(cx.theme().colors().panel_background)
             .border_r_1()
             .border_color(cx.theme().colors().border_variant)
             .child(toolbar)
@@ -1070,6 +1162,7 @@ impl ServersModal {
             return self.render_group(server, form, cx);
         }
         let this = cx.weak_entity();
+        let rule = cx.theme().colors().border_variant;
         let kind_menu = {
             let this = this.clone();
             move |window: &mut Window, cx: &mut App| {
@@ -1121,7 +1214,9 @@ impl ServersModal {
         let (kind_icon, kind_color) = server_type_icon(server.kind);
 
         v_flex()
-            .gap_2()
+            .w_full()
+            .gap_3()
+            .child(section_title("General", rule))
             .child(
                 Checkbox::new("visible-only-here", ToggleState::from(!shared))
                     .label("Visible only for this project")
@@ -1149,19 +1244,20 @@ impl ServersModal {
             ))
             .when(is_remote, |column| {
                 column
+                    .child(section_title("Connection", rule))
                     .child(field_row(
                         "Host:",
                         h_flex()
                             .gap_2()
-                            .child(div().flex_1().max_w(rems(20.)).child(form.host.clone()))
-                            .child(Label::new("Port:"))
-                            .child(div().w(rems(5.)).child(form.port.clone())),
+                            .child(div().flex_1().min_w_0().child(form.host.clone()))
+                            .child(Label::new("Port:").color(Color::Muted))
+                            .child(div().w(rems(5.5)).flex_none().child(form.port.clone())),
                     ))
                     .child(field_row(
                         "Username:",
                         h_flex()
                             .gap_2()
-                            .child(div().w(rems(14.)).child(form.username.clone()))
+                            .child(div().flex_1().min_w_0().max_w(rems(18.)).child(form.username.clone()))
                             .when(is_ftp, |row| {
                                 row.child(
                                     Checkbox::new(
@@ -1236,12 +1332,12 @@ impl ServersModal {
                             )
                             .children(self.render_test_results(&server.host)),
                     ))
-                    .child(div().h_2())
+                    .child(section_title("Paths", rule))
                     .child(field_row(
                         if is_remote { "Root path:" } else { "Folder:" },
                         h_flex()
                             .gap_2()
-                            .child(div().flex_1().max_w(rems(24.)).child(form.root_path.clone()))
+                            .child(div().flex_1().min_w_0().child(form.root_path.clone()))
                             .when(!is_remote, |row| {
                                 row.child(
                                     IconButton::new("browse-root", IconName::Folder)
@@ -1293,7 +1389,7 @@ impl ServersModal {
                     .child(
                         h_flex()
                             .id("advanced-toggle")
-                            .mt_3()
+                            .pt_4()
                             .gap_1()
                             .cursor_pointer()
                             .child(
@@ -1303,7 +1399,12 @@ impl ServersModal {
                                         cx.notify();
                                     })),
                             )
-                            .child(Label::new("Advanced"))
+                            .child(
+                                Label::new("ADVANCED")
+                                    .size(LabelSize::XSmall)
+                                    .weight(gpui::FontWeight::SEMIBOLD)
+                                    .color(Color::Muted),
+                            )
                             .child(div().flex_1().h_px().bg(cx.theme().colors().border_variant))
                             .on_click(cx.listener(|this, _, _, cx| {
                                 this.advanced_open = !this.advanced_open;
@@ -1359,14 +1460,8 @@ impl ServersModal {
                     this.update_options(cx, |options| set(options, checked));
                 }))
         };
-        let divider_color = cx.theme().colors().border_variant;
-        let section = move |title: &'static str| {
-            h_flex()
-                .mt_3()
-                .gap_2()
-                .child(Label::new(title).color(Color::Muted))
-                .child(div().flex_1().h_px().bg(divider_color))
-        };
+        let rule = cx.theme().colors().border_variant;
+        let section = move |title: &'static str| section_title(title, rule);
         let auto_off = options.auto_upload == AutoUpload::Never;
         let no_overwrite_check = options.warn_on_newer_remote == OverwriteCheck::None;
         let permission_row = |id: &'static str,
@@ -1406,14 +1501,8 @@ impl ServersModal {
         };
 
         v_flex()
-            .gap_2()
-            .max_w(rems(44.))
-            .child(Headline::new("Options").size(HeadlineSize::Small))
-            .child(
-                Label::new("These apply to every deployment server of this project.")
-                    .size(LabelSize::Small)
-                    .color(Color::Muted),
-            )
+            .w_full()
+            .gap_3()
             .child(section("Automatic upload"))
             .child(wide_row(
                 "Upload changed files to the default server:",
@@ -1667,12 +1756,9 @@ impl ServersModal {
         let web = server
             .map(|server| server.web_url.clone())
             .unwrap_or_default();
-        let missing_deployment_path = form
-            .mappings
-            .iter()
-            .any(|[_, remote, _]| remote.read(cx).text(cx).trim().is_empty());
         let several = form.mappings.len() > 1;
         v_flex()
+            .pt_3()
             .gap_3()
             .children(form.mappings.iter().enumerate().map(|(index, [local, remote, web])| {
                 v_flex()
@@ -1737,14 +1823,6 @@ impl ServersModal {
                         .on_click(cx.listener(|this, _, window, cx| this.add_mapping(window, cx))),
                 ),
             )
-            .when(missing_deployment_path, |column| {
-                column.child(
-                    h_flex()
-                        .gap_1()
-                        .child(Icon::new(IconName::Warning).size(IconSize::Small).color(Color::Warning))
-                        .child(Label::new("Deployment path is not specified.").size(LabelSize::Small)),
-                )
-            })
             .into_any_element()
     }
 
@@ -2128,21 +2206,37 @@ impl ServersModal {
 
 fn input(placeholder: &str, text: &str, window: &mut Window, cx: &mut App) -> Entity<InputField> {
     cx.new(|cx| {
-        let field = InputField::new(window, cx, placeholder);
+        // Sized by the form layout, not a built-in minimum (narrow fields like Port).
+        let field = InputField::new(window, cx, placeholder).label_min_width(px(40.));
         field.set_text(text, window, cx);
         field
     })
 }
 
+/// A section heading in a form: small caps title and a rule.
+fn section_title(title: &'static str, rule: gpui::Hsla) -> impl IntoElement {
+    h_flex()
+        .pt_3()
+        .gap_2()
+        .child(
+            Label::new(title.to_uppercase())
+                .size(LabelSize::XSmall)
+                .weight(gpui::FontWeight::SEMIBOLD)
+                .color(Color::Muted),
+        )
+        .child(div().flex_1().h_px().bg(rule))
+}
+
 /// A PhpStorm-style form row: the label on the left, the field filling the rest.
 fn field_row(label: &'static str, field: impl IntoElement) -> impl IntoElement {
     h_flex()
-        .gap_2()
+        .w_full()
+        .gap_3()
         .child(
             div()
                 .w(rems(LABEL_WIDTH))
                 .flex_none()
-                .child(Label::new(label)),
+                .child(Label::new(label).color(Color::Muted)),
         )
         .child(div().flex_1().min_w_0().child(field))
 }
@@ -2150,8 +2244,14 @@ fn field_row(label: &'static str, field: impl IntoElement) -> impl IntoElement {
 /// Like [`field_row`], with room for a long label (Options page).
 fn wide_row(label: &'static str, field: impl IntoElement) -> impl IntoElement {
     h_flex()
-        .gap_2()
-        .child(div().w(rems(17.)).flex_none().child(Label::new(label)))
+        .w_full()
+        .gap_3()
+        .child(
+            div()
+                .w(rems(17.))
+                .flex_none()
+                .child(Label::new(label).color(Color::Muted)),
+        )
         .child(div().flex_1().min_w_0().child(field))
 }
 
@@ -2169,9 +2269,9 @@ pub(crate) fn server_type_icon(kind: ServerType) -> (IconName, Color) {
 
 fn mapping_fields(mapping: &Mapping, window: &mut Window, cx: &mut App) -> [Entity<InputField>; 3] {
     [
-        input("src", &mapping.local, window, cx),
-        input("/var/www/site", &mapping.remote, window, cx),
-        input("/", &mapping.web, window, cx),
+        input("Project root", &mapping.local, window, cx),
+        input("Server root path", &mapping.remote, window, cx),
+        input("Web server URL", &mapping.web, window, cx),
     ]
 }
 
@@ -2346,23 +2446,37 @@ impl Render for ServersModal {
     fn render(&mut self, _window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
         let server = self.selected_server().cloned();
         let focus = self.focus_handle.clone();
+        let accent = cx.theme().colors().text_accent;
         let tab_button =
             |id: &'static str, label: &'static str, tab: Tab, cx: &mut Context<Self>| {
-                Button::new(id, label)
-                    .style(if self.tab == tab {
-                        ButtonStyle::Tinted(TintColor::Accent)
-                    } else {
-                        ButtonStyle::Subtle
-                    })
-                    .toggle_state(self.tab == tab)
+                let active = self.tab == tab;
+                v_flex()
+                    .id(id)
+                    .cursor_pointer()
+                    .gap_1()
+                    .child(
+                        Label::new(label)
+                            .color(if active { Color::Default } else { Color::Muted })
+                            .weight(if active {
+                                gpui::FontWeight::SEMIBOLD
+                            } else {
+                                gpui::FontWeight::NORMAL
+                            }),
+                    )
+                    .child(
+                        div()
+                            .h(px(2.))
+                            .rounded_full()
+                            .when(active, |bar| bar.bg(accent)),
+                    )
                     .on_click(cx.listener(move |this, _, _, cx| {
                         this.tab = tab;
                         cx.notify();
                     }))
             };
         let tabs = h_flex()
-            .gap_1()
-            .pb_2()
+            .px_6()
+            .gap_5()
             .border_b_1()
             .border_color(cx.theme().colors().border_variant)
             .child(tab_button(
@@ -2378,6 +2492,7 @@ impl Render for ServersModal {
                 Tab::Excluded,
                 cx,
             ));
+        let content_header = self.render_content_header(server.as_ref(), cx);
 
         let body = if self.showing_options {
             self.render_options(cx)
@@ -2424,6 +2539,7 @@ impl Render for ServersModal {
             })
             .on_action(cx.listener(|_, _: &menu::Cancel, _, cx| cx.emit(DismissEvent)))
             .on_action(cx.listener(|this, _: &menu::Confirm, window, cx| this.save(window, cx)))
+            .bg(cx.theme().colors().panel_background)
             .child(
                 h_flex()
                     .px_3()
@@ -2445,21 +2561,14 @@ impl Render for ServersModal {
                     .flex_1()
                     .min_h_0()
                     .items_start()
-                    .child(
-                        div()
-                            .h_full()
-                            .pt_2()
-                            .pl_2()
-                            .child(self.render_server_list(cx)),
-                    )
+                    .child(self.render_server_list(cx))
                     .child(
                         v_flex()
                             .flex_1()
                             .h_full()
                             .min_w_0()
-                            .pt_2()
-                            .px_3()
-                            .gap_3()
+                            .bg(cx.theme().colors().editor_background)
+                            .child(content_header)
                             .when(
                                 !self.showing_options
                                     && server
@@ -2471,9 +2580,13 @@ impl Render for ServersModal {
                                 div()
                                     .id("server-details")
                                     .flex_1()
+                                    .min_h_0()
+                                    .w_full()
                                     .overflow_y_scroll()
-                                    .pb_2()
-                                    .child(body),
+                                    .px_6()
+                                    .pt_2()
+                                    .pb_6()
+                                    .child(div().w_full().max_w(rems(46.)).child(body)),
                             ),
                     ),
             )
