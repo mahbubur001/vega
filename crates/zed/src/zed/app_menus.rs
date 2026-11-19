@@ -329,6 +329,10 @@ pub fn app_menus(cx: &mut App) -> Vec<Menu> {
                     zed_actions::deployment::ToggleRemoteHost,
                 ),
                 MenuItem::action(
+                    "File Transfers",
+                    zed_actions::deployment::ToggleFileTransfers,
+                ),
+                MenuItem::action(
                     "Automatic Upload",
                     zed_actions::deployment::ToggleAutomaticUpload,
                 ),

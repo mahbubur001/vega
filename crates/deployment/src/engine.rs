@@ -1490,6 +1490,31 @@ impl Engine {
     }
 
     /// Diff of a remote-edit copy against the current server version.
+    /// Whether the default server's copy of the project file `local` changed since VEGA last
+    /// uploaded or downloaded it ("Notify of remote changes"). Files never transferred are not
+    /// checked, so opening them doesn't connect or ask for a password.
+    pub async fn deployed_copy_changed(self: &Arc<Self>, local: &Path) -> Result<bool> {
+        let options = self.config().options().clone();
+        if !options.notify_remote_changes || options.warn_on_newer_remote == OverwriteCheck::None {
+            return Ok(false);
+        }
+        let Some(t) = self.targets(None)?.into_iter().next() else {
+            return Ok(false);
+        };
+        let Some(remote) = t.mapper.to_remote(local) else {
+            return Ok(false);
+        };
+        let Some(record) = self.state.get(&t.server.id, &remote) else {
+            return Ok(false);
+        };
+        let Some(stat) = self.remote_stat(&t.server.id, &remote).await? else {
+            return Ok(false);
+        };
+        let time_known = stat.mtime > 0 && record.remote_mtime > 0;
+        Ok(stat.size != record.remote_size
+            || (time_known && !deploy::same_time(stat.mtime, record.remote_mtime)))
+    }
+
     pub async fn compare_remote_edit(self: &Arc<Self>, local: &Path) -> Result<()> {
         let edit = self
             .remote_edit(local)

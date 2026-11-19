@@ -356,17 +356,27 @@ impl TransferQueue {
 
     /// Cancels queued and running tasks (of one server, or all).
     pub fn cancel(self: &Arc<Self>, server_id: Option<&str>) {
-        let matches = |s: &str| server_id.is_none_or(|id| id == s);
+        self.cancel_where(|_, task_server| server_id.is_none_or(|id| id == task_server));
+    }
+
+    /// Cancels one task, queued or running (the Transfers list's Cancel).
+    pub fn cancel_task(self: &Arc<Self>, task_id: u64) {
+        self.cancel_where(|id, _| id == task_id);
+    }
+
+    fn cancel_where(self: &Arc<Self>, matches: impl Fn(u64, &str) -> bool) {
         let (dropped, running): (Vec<Queued>, Vec<Arc<Cancel>>) = {
             let mut st = self.lock();
-            let (drop, keep): (Vec<Queued>, Vec<Queued>) =
-                st.queued.drain(..).partition(|q| matches(&q.server_id));
+            let (drop, keep): (Vec<Queued>, Vec<Queued>) = st
+                .queued
+                .drain(..)
+                .partition(|q| matches(q.id, &q.server_id));
             st.queued = keep.into();
             let running = st
                 .running
-                .values()
-                .filter(|r| matches(&r.server_id))
-                .map(|r| r.cancel.clone())
+                .iter()
+                .filter(|(id, r)| matches(**id, &r.server_id))
+                .map(|(_, r)| r.cancel.clone())
                 .collect();
             (drop, running)
         };

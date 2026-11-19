@@ -1039,6 +1039,8 @@ pub mod deployment {
             OpenDeploymentServers,
             /// Shows or hides the Remote Host panel, which browses the deployment server's files.
             ToggleRemoteHost,
+            /// Shows or hides the File Transfers panel: deployment transfers, Retry and the log.
+            ToggleFileTransfers,
             /// Cancels running and queued deployment transfers.
             CancelTransfers,
         ]

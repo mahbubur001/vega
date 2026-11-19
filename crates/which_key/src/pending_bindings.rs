@@ -615,7 +615,10 @@ mod tests {
                 .map(|row| row.action_name.as_ref())
                 .collect::<Vec<_>>();
             action_names.sort();
-            assert_eq!(action_names, vec!["vega: open keymap", "vega: open settings"]);
+            assert_eq!(
+                action_names,
+                vec!["vega: open keymap", "vega: open settings"]
+            );
             assert!(rows.iter().all(|row| !row.is_group));
         }
     }

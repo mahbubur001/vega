@@ -4,10 +4,11 @@ use std::path::{Path, PathBuf};
 use std::sync::Arc;
 
 use collections::HashMap;
+use deployment::engine::LogLine;
 use deployment::engine::{Engine, FsEvent};
 use deployment::project::{CONFIG_PATH, locate_config};
-use deployment::prompt::Prompter;
-use deployment::queue::TaskStatus;
+use deployment::prompt::{Level, Prompter};
+use deployment::queue::{TaskInfo, TaskStatus};
 use futures::StreamExt as _;
 use futures::channel::mpsc;
 use gpui::{App, AppContext as _, Context, Entity, SharedString, Task, WeakEntity};
@@ -31,6 +32,8 @@ pub struct DeploymentStore {
     engines: HashMap<WorktreeId, Arc<Engine>>,
     prompter: Arc<WindowPrompter>,
     transfers: TransfersStatus,
+    /// Recent engine log lines (File Transfers › Log), oldest first.
+    log: std::collections::VecDeque<LogLine>,
     _tasks: Vec<Task<()>>,
     _subscriptions: Vec<gpui::Subscription>,
 }
@@ -56,6 +59,7 @@ impl DeploymentStore {
             engines: HashMap::default(),
             prompter,
             transfers: TransfersStatus::default(),
+            log: std::collections::VecDeque::new(),
             _tasks: Vec::new(),
             _subscriptions: subscriptions,
         };
@@ -76,6 +80,46 @@ impl DeploymentStore {
 
     pub fn transfers(&self) -> &TransfersStatus {
         &self.transfers
+    }
+
+    pub(crate) fn absolute_path(
+        &self,
+        project_path: &project::ProjectPath,
+        cx: &App,
+    ) -> Option<PathBuf> {
+        self.project
+            .upgrade()?
+            .read(cx)
+            .absolute_path(project_path, cx)
+    }
+
+    pub(crate) fn log(&self) -> &std::collections::VecDeque<LogLine> {
+        &self.log
+    }
+
+    pub(crate) fn clear_log(&mut self, cx: &mut Context<Self>) {
+        self.log.clear();
+        for engine in self.engines.values() {
+            engine.queue.clear_finished();
+        }
+        cx.notify();
+    }
+
+    /// Every transfer the engines know about (newest first), with its engine.
+    pub(crate) fn tasks(&self) -> Vec<(Arc<Engine>, TaskInfo)> {
+        let mut tasks: Vec<(Arc<Engine>, TaskInfo)> = self
+            .engines
+            .values()
+            .flat_map(|engine| {
+                engine
+                    .queue
+                    .tasks()
+                    .into_iter()
+                    .map(move |task| (engine.clone(), task))
+            })
+            .collect();
+        tasks.sort_by(|(_, a), (_, b)| b.queued_at.cmp(&a.queued_at).then(b.id.cmp(&a.id)));
+        tasks
     }
 
     /// The engine whose project root contains `path`.
@@ -203,6 +247,7 @@ impl DeploymentStore {
             this.update(cx, |this, cx| {
                 set_configured(engine.root(), true, cx);
                 this.watch_transfers(&engine, cx);
+                this.watch_log(&engine, cx);
                 this.engines.insert(worktree_id, engine);
                 cx.notify();
             })
@@ -212,6 +257,7 @@ impl DeploymentStore {
     }
 
     fn watch_buffer(&mut self, buffer: &Entity<language::Buffer>, cx: &mut Context<Self>) {
+        self.check_deployed_copy(buffer, cx);
         let subscription = cx.subscribe(buffer, |this, buffer, event, cx| {
             if !matches!(event, BufferEvent::Saved) {
                 return;
@@ -232,6 +278,78 @@ impl DeploymentStore {
             }
         });
         self._subscriptions.push(subscription);
+    }
+
+    /// Warns when a project file just opened changed on the default server since
+    /// it was last transferred (Deployment › Options › Notify of remote changes).
+    fn check_deployed_copy(&mut self, buffer: &Entity<language::Buffer>, cx: &mut Context<Self>) {
+        let Some(path) = buffer
+            .read(cx)
+            .file()
+            .and_then(|file| file.as_local())
+            .map(|file| file.abs_path(cx))
+        else {
+            return;
+        };
+        let Some(engine) = self.engine_for_path(&path) else {
+            return;
+        };
+        let prompter = self.prompter.clone();
+        Tokio::spawn(cx, async move {
+            if let Ok(true) = engine.deployed_copy_changed(&path).await {
+                let name = path
+                    .file_name()
+                    .map(|name| name.to_string_lossy().into_owned())
+                    .unwrap_or_default();
+                let server = engine
+                    .default_server()
+                    .map(|server| server.server.name)
+                    .unwrap_or_default();
+                prompter.notify(
+                    Level::Warning,
+                    &format!(
+                        "{name} changed on {server} since your last upload. Use Compare with Deployed Version before overwriting it."
+                    ),
+                );
+            }
+        })
+        .detach();
+    }
+
+    /// Collects the engine's log lines for the File Transfers panel.
+    fn watch_log(&mut self, engine: &Arc<Engine>, cx: &mut Context<Self>) {
+        const MAX_LOG: usize = 1000;
+        let (line_tx, mut line_rx) = mpsc::unbounded::<LogLine>();
+        let mut lines = engine.subscribe_log();
+        let forward = Tokio::spawn(cx, async move {
+            loop {
+                match lines.recv().await {
+                    Ok(line) => {
+                        if line_tx.unbounded_send(line).is_err() {
+                            break;
+                        }
+                    }
+                    Err(tokio::sync::broadcast::error::RecvError::Lagged(_)) => {}
+                    Err(tokio::sync::broadcast::error::RecvError::Closed) => break,
+                }
+            }
+        });
+        let collect = cx.spawn(async move |this, cx| {
+            let _forward = forward;
+            while let Some(line) = line_rx.next().await {
+                let result = this.update(cx, |this, cx| {
+                    this.log.push_back(line);
+                    while this.log.len() > MAX_LOG {
+                        this.log.pop_front();
+                    }
+                    cx.notify();
+                });
+                if result.is_err() {
+                    break;
+                }
+            }
+        });
+        self._tasks.push(collect);
     }
 
     /// Keeps [`TransfersStatus`] up to date from the engine's queue.

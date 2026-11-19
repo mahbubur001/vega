@@ -7,6 +7,7 @@ mod dialog;
 mod name_modal;
 mod permissions_modal;
 mod prompter;
+mod remote_edit_bar;
 mod remote_host_panel;
 mod secret_modal;
 mod secrets;
@@ -15,6 +16,7 @@ mod servers_modal;
 mod store;
 mod sync_view;
 mod transfers_indicator;
+mod transfers_panel;
 
 use std::path::PathBuf;
 use std::sync::Arc;
@@ -38,7 +40,7 @@ use zed_actions::deployment::{
     CancelTransfers, CompareWithDeployedTo, CompareWithDeployedVersion, DownloadFrom,
     DownloadFromDefaultServer, EditRemoteFile, OpenDeploymentConfig, OpenDeploymentOptions,
     OpenDeploymentServers, SyncWithDeployed, SyncWithDeployedTo, ToggleAutomaticUpload,
-    ToggleRemoteHost, UploadTo, UploadToDefaultServer,
+    ToggleFileTransfers, ToggleRemoteHost, UploadTo, UploadToDefaultServer,
 };
 
 use crate::server_picker::ServerPicker;
@@ -95,8 +97,36 @@ pub fn init(cx: &mut App) {
             status_bar.add_right_item(indicator, window, cx);
         });
 
-        let panel = cx.new(|cx| RemoteHostPanel::new(store.clone(), weak_workspace, cx));
+        let panel = cx.new(|cx| RemoteHostPanel::new(store.clone(), weak_workspace.clone(), cx));
         workspace.add_panel(panel, window, cx);
+        let transfers =
+            cx.new(|cx| transfers_panel::TransfersPanel::new(store.clone(), weak_workspace, cx));
+        workspace.add_panel(transfers, window, cx);
+
+        // The bar above editors showing a server copy, in every pane.
+        let add_bar = {
+            let store = store.clone();
+            move |pane: &Entity<workspace::Pane>, window: &mut Window, cx: &mut App| {
+                let bar = cx.new(|_| remote_edit_bar::RemoteEditBar::new(store.clone()));
+                pane.update(cx, |pane, cx| {
+                    pane.toolbar()
+                        .update(cx, |toolbar, cx| toolbar.add_item(bar, window, cx));
+                });
+            }
+        };
+        for pane in workspace.panes().to_vec() {
+            add_bar(&pane, window, cx);
+        }
+        cx.subscribe_in(
+            &cx.entity(),
+            window,
+            move |_, _, event: &workspace::Event, window, cx| {
+                if let workspace::Event::PaneAdded(pane) = event {
+                    add_bar(pane, window, cx);
+                }
+            },
+        )
+        .detach();
 
         register_actions(workspace, store);
     })
@@ -183,6 +213,9 @@ fn register_actions(workspace: &mut Workspace, store: Entity<DeploymentStore>) {
     });
     workspace.register_action(|workspace, _: &ToggleRemoteHost, window, cx| {
         workspace.toggle_panel_focus::<RemoteHostPanel>(window, cx);
+    });
+    workspace.register_action(|workspace, _: &ToggleFileTransfers, window, cx| {
+        workspace.toggle_panel_focus::<transfers_panel::TransfersPanel>(window, cx);
     });
     workspace.register_action(|workspace, _: &OpenDeploymentConfig, window, cx| {
         open_config(workspace, window, cx);

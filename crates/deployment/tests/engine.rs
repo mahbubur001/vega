@@ -433,3 +433,23 @@ async fn remote_host_copy_chmod_and_exclude() {
         f.engine.remote_list("local", &root).await.unwrap()
     ));
 }
+
+#[tokio::test]
+async fn notices_files_changed_on_the_server_since_the_last_transfer() {
+    let f = fixture(|_, _| {});
+    let local = f.project.join("page.php");
+    write(&local, "v1");
+    // Never transferred: not checked.
+    assert!(!f.engine.deployed_copy_changed(&local).await.unwrap());
+
+    f.engine
+        .upload(None, std::slice::from_ref(&local), true)
+        .await
+        .unwrap();
+    assert!(!f.engine.deployed_copy_changed(&local).await.unwrap());
+
+    let remote = f.remote.join("www/page.php");
+    write(&remote, "changed on the server");
+    bump_mtime(&remote, 500);
+    assert!(f.engine.deployed_copy_changed(&local).await.unwrap());
+}
