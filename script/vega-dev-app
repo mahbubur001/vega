@@ -20,7 +20,9 @@ if [[ "${1:-}" == "--build" ]]; then
   if ! xcrun -f metal > /dev/null 2>&1; then
     features=(--features gpui_platform/runtime_shaders)
   fi
-  cargo build -p zed -p cli "${features[@]}"
+  # Non-incremental, like the other VEGA builds: mixing incremental and
+  # non-incremental builds keeps two copies of every crate in target/.
+  CARGO_INCREMENTAL=0 cargo build -p zed -p cli "${features[@]}"
 fi
 
 binary=target/debug/vega
