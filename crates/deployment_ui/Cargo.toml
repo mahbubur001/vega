@@ -17,6 +17,7 @@ anyhow.workspace = true
 async-trait.workspace = true
 collections.workspace = true
 credentials_provider.workspace = true
+db.workspace = true
 deployment.workspace = true
 futures.workspace = true
 git_ui_core.workspace = true

@@ -5061,6 +5061,7 @@ dependencies = [
  "async-trait",
  "collections",
  "credentials_provider",
+ "db",
  "deployment",
  "futures 0.3.34",
  "git_ui_core",

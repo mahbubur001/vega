@@ -15,7 +15,7 @@ use crate::deploy::{self, Target, Uploader, collect_local, collect_remote, local
 use crate::error::{ErrorCode, RemoteError, Result};
 use crate::known_hosts::HostKeyTrust;
 use crate::manager::{ConnectContext, ConnectionSettings, ServerManager, TestStep};
-use crate::mapper::{PathMapper, join_remote, remote_name, remote_parent};
+use crate::mapper::{PathMapper, join_remote, rebase_remote, remote_name, remote_parent};
 use crate::prompt::{Level, Prompter};
 use crate::protocol::{RemoteEntry, RemoteStat};
 use crate::queue::{TaskKind, TaskOutcome, TaskSpec, TransferQueue};
@@ -1208,22 +1208,28 @@ impl Engine {
             .map(|_| ())
     }
 
-    /// Copies remote files to another remote folder on the same server (Remote Host Copy/Paste).
+    /// Copies remote files or folders on the same server (Remote Host Copy/Paste). Each pair is a
+    /// source path and the path its copy gets; folders are copied with their contents.
     pub async fn remote_copy(
         self: &Arc<Self>,
         server_id: &str,
-        sources: &[String],
-        dest_dir: &str,
+        copies: &[(String, String)],
     ) -> Result<Summary> {
         let t = self.target_by_id(server_id)?;
         let pool = self.manager.pool(&t.server);
         let mut summary = Summary::default();
-        for src in sources {
-            let (files, _) = with_client!(pool, |c| collect_remote(c, &t, src))?;
-            let base = remote_parent(src);
+        for (src, dest_root) in copies {
+            let (files, dirs) = with_client!(pool, |c| collect_remote(c, &t, src))?;
+            for dir in dirs {
+                let Some(dest) = rebase_remote(src, dest_root, &dir) else {
+                    continue;
+                };
+                with_client!(pool, |c| deploy::ensure_remote_dir(c, &t, &dest))?;
+            }
             for (f, _) in files {
-                let rel = f.strip_prefix(&base).unwrap_or(&f).trim_start_matches('/');
-                let dest = join_remote(dest_dir, rel);
+                let Some(dest) = rebase_remote(src, dest_root, &f) else {
+                    continue;
+                };
                 let r = with_client!(pool, |c| async {
                     let data = c.read_file(&f).await?;
                     deploy::ensure_remote_dir(c, &t, &remote_parent(&dest)).await?;

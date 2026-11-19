@@ -1,4 +1,5 @@
-//! Asks for a file or folder name (Remote Host New File, New Folder, Rename).
+//! Asks for a file or folder name (Remote Host New File, New Folder, Rename), or another short
+//! value such as permissions.
 
 use gpui::{App, DismissEvent, Entity, EventEmitter, FocusHandle, Focusable, Render, Window};
 use ui::prelude::*;
@@ -6,10 +7,12 @@ use ui_input::InputField;
 use workspace::ModalView;
 
 type OnConfirm = Box<dyn FnOnce(String, &mut Window, &mut App)>;
+type Validate = fn(&str) -> Option<&'static str>;
 
 pub(crate) struct NameModal {
     title: SharedString,
     input: Entity<InputField>,
+    validate: Validate,
     on_confirm: Option<OnConfirm>,
 }
 
@@ -21,21 +24,35 @@ impl NameModal {
         window: &mut Window,
         cx: &mut Context<Self>,
     ) -> Self {
+        Self::with_validator(title, "Name", initial, name_problem, on_confirm, window, cx)
+    }
+
+    /// Like [`Self::new`], with another placeholder and check than for file names.
+    pub(crate) fn with_validator(
+        title: impl Into<SharedString>,
+        placeholder: &str,
+        initial: &str,
+        validate: Validate,
+        on_confirm: impl FnOnce(String, &mut Window, &mut App) + 'static,
+        window: &mut Window,
+        cx: &mut Context<Self>,
+    ) -> Self {
         let input = cx.new(|cx| {
-            let field = InputField::new(window, cx, "Name");
+            let field = InputField::new(window, cx, placeholder);
             field.set_text(initial, window, cx);
             field
         });
         Self {
             title: title.into(),
             input,
+            validate,
             on_confirm: Some(Box::new(on_confirm)),
         }
     }
 
     fn confirm(&mut self, _: &menu::Confirm, window: &mut Window, cx: &mut Context<Self>) {
         let name = self.input.read(cx).text(cx).trim().to_string();
-        if let Some(problem) = name_problem(&name) {
+        if let Some(problem) = (self.validate)(&name) {
             self.input
                 .update(cx, |input, cx| input.set_error(Some(problem), cx));
             return;

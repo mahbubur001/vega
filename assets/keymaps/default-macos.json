@@ -1095,6 +1095,23 @@
     },
   },
   {
+    "context": "RemoteHostPanel",
+    "use_key_equivalents": true,
+    "bindings": {
+      "left": "remote_host::CollapseSelectedEntry",
+      "right": "remote_host::ExpandSelectedEntry",
+      "cmd-n": "remote_host::NewFile",
+      "alt-cmd-n": "remote_host::NewFolder",
+      "cmd-x": "remote_host::Cut",
+      "cmd-c": "remote_host::Copy",
+      "cmd-v": "remote_host::Paste",
+      "cmd-alt-c": "remote_host::CopyPath",
+      "f2": "remote_host::Rename",
+      "backspace": "remote_host::Delete",
+      "delete": "remote_host::Delete",
+    },
+  },
+  {
     "context": "ProjectPanel && not_editing",
     "use_key_equivalents": true,
     "bindings": {

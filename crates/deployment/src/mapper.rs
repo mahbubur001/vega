@@ -75,6 +75,16 @@ pub fn remote_name(p: &str) -> &str {
     p.trim_end_matches('/').rsplit('/').next().unwrap_or("")
 }
 
+/// Where `path` ends up when `from` moves to `to`, or None when `path` isn't `from` or inside it.
+pub fn rebase_remote(from: &str, to: &str, path: &str) -> Option<String> {
+    let rest = relative_inside(&norm_remote(from), &norm_remote(path), false)?;
+    Some(if rest.is_empty() {
+        norm_remote(to)
+    } else {
+        join_remote(to, &rest)
+    })
+}
+
 /// Path of `child` relative to `parent`, or None when it's not inside it.
 fn relative_inside(parent: &str, child: &str, case_insensitive: bool) -> Option<String> {
     let (a, b): (String, String) = if case_insensitive {
@@ -471,5 +481,17 @@ mod tests {
         assert_eq!(remote_parent("/a/b"), "/a");
         assert_eq!(remote_parent("/a"), "/");
         assert_eq!(remote_name("/a/b.txt"), "b.txt");
+    }
+
+    #[test]
+    fn rebases_paths_under_a_moved_folder() {
+        assert_eq!(rebase_remote("/a", "/b", "/a").as_deref(), Some("/b"));
+        assert_eq!(
+            rebase_remote("/a", "/b", "/a/x/y").as_deref(),
+            Some("/b/x/y")
+        );
+        assert_eq!(rebase_remote("/", "/b", "/x").as_deref(), Some("/b/x"));
+        assert_eq!(rebase_remote("/a", "/b", "/ab"), None);
+        assert_eq!(rebase_remote("/a/x", "/b", "/a"), None);
     }
 }
