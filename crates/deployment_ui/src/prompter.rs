@@ -5,6 +5,7 @@
 //! through a oneshot channel.
 
 use std::path::{Path, PathBuf};
+use std::time::{Duration, Instant};
 
 use async_trait::async_trait;
 use deployment::known_hosts::{HostKeyAnswer, HostKeyQuestion, HostKeyQuestionKind};
@@ -40,12 +41,30 @@ pub(crate) enum Request {
 
 pub(crate) struct WindowPrompter {
     requests: mpsc::UnboundedSender<Request>,
+    /// One password question at a time; the answer is reused by connections
+    /// that asked for the same login meanwhile (see [`Prompter::secret`]).
+    last_secret: futures::lock::Mutex<Option<RecentSecret>>,
 }
+
+struct RecentSecret {
+    key: String,
+    answer: Option<SecretAnswer>,
+    at: Instant,
+}
+
+/// How long an answer is reused for connections opened at the same time.
+const REUSE_SECRET_FOR: Duration = Duration::from_secs(20);
 
 impl WindowPrompter {
     pub fn new() -> (Self, mpsc::UnboundedReceiver<Request>) {
         let (requests, receiver) = mpsc::unbounded();
-        (Self { requests }, receiver)
+        (
+            Self {
+                requests,
+                last_secret: futures::lock::Mutex::new(None),
+            },
+            receiver,
+        )
     }
 
     /// Asks a multiple-choice question. Returns `None` if the window is gone.
@@ -72,7 +91,22 @@ impl WindowPrompter {
 
 #[async_trait]
 impl Prompter for WindowPrompter {
+    /// Several connections can ask for the same password at once (the Remote
+    /// Host panel opens a few). They wait for each other, and a fresh answer
+    /// is reused instead of asking again, unless the server rejected it.
     async fn secret(&self, request: &SecretRequest) -> Option<SecretAnswer> {
+        let mut last = self.last_secret.lock().await;
+        let key = format!(
+            "{:?}|{}|{}",
+            request.kind, request.server_name, request.target
+        );
+        if request.error.is_none()
+            && let Some(recent) = last.as_ref()
+            && recent.key == key
+            && recent.at.elapsed() < REUSE_SECRET_FOR
+        {
+            return recent.answer.clone();
+        }
         let (reply, response) = oneshot::channel();
         self.requests
             .unbounded_send(Request::Secret {
@@ -80,7 +114,13 @@ impl Prompter for WindowPrompter {
                 reply,
             })
             .ok()?;
-        response.await.ok().flatten()
+        let answer = response.await.ok().flatten();
+        *last = Some(RecentSecret {
+            key,
+            answer: answer.clone(),
+            at: Instant::now(),
+        });
+        answer
     }
 
     async fn host_key(&self, question: &HostKeyQuestion) -> HostKeyAnswer {
@@ -213,5 +253,61 @@ impl Prompter for WindowPrompter {
                 message: message.to_string(),
             })
             .ok();
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use deployment::prompt::SecretKind;
+    use futures::StreamExt as _;
+
+    fn request(error: Option<&str>) -> SecretRequest {
+        SecretRequest {
+            kind: SecretKind::Password,
+            server_name: "Live".into(),
+            target: "deploy@example.com".into(),
+            error: error.map(str::to_string),
+        }
+    }
+
+    #[test]
+    fn simultaneous_password_questions_are_asked_once() {
+        let (prompter, mut requests) = WindowPrompter::new();
+        let answer = SecretAnswer {
+            value: "pass".into(),
+            save: true,
+        };
+        let answerer = {
+            let answer = answer.clone();
+            async move {
+                let mut asked = 0;
+                while let Some(request) = requests.next().await {
+                    if let Request::Secret { reply, .. } = request {
+                        asked += 1;
+                        reply.send(Some(answer.clone())).ok();
+                    }
+                    if asked == 2 {
+                        break;
+                    }
+                }
+                asked
+            }
+        };
+        let first = request(None);
+        let rejected = request(Some("Login incorrect"));
+        let askers = async {
+            let (a, b) = futures::join!(prompter.secret(&first), prompter.secret(&first));
+            // A rejected answer is asked for again.
+            let c = prompter.secret(&rejected).await;
+            drop(prompter);
+            (a, b, c)
+        };
+        let ((a, b, c), asked) =
+            futures::executor::block_on(futures::future::join(askers, answerer));
+        assert_eq!(a.as_ref(), Some(&answer));
+        assert_eq!(b.as_ref(), Some(&answer));
+        assert_eq!(c.as_ref(), Some(&answer));
+        assert_eq!(asked, 2);
     }
 }

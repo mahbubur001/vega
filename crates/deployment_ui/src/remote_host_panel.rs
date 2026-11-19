@@ -27,8 +27,8 @@ use project_panel::project_panel_settings::ProjectPanelSettings;
 use settings::{ProjectPanelEntrySpacing, Settings as _, ShowIndentGuides};
 use time::{OffsetDateTime, UtcOffset};
 use ui::{
-    ContextMenu, ContextMenuEntry, DropdownMenu, IconPosition, IndentGuideColors, ListItem,
-    ListItemSpacing, Tooltip, prelude::*,
+    ButtonLike, ContextMenu, ContextMenuEntry, IconPosition, IndentGuideColors, ListItem,
+    ListItemSpacing, PopoverMenu, Tooltip, prelude::*,
 };
 use util::ResultExt as _;
 use workspace::dock::{DockPosition, Panel, PanelEvent};
@@ -1690,66 +1690,110 @@ impl RemoteHostPanel {
             .server()
             .map(|choice| choice.label.clone())
             .unwrap_or_else(|| "<None>".into());
+        let kind = self.server().map(|choice| choice.kind);
         let has_server = self.server().is_some();
-        h_flex()
-            .px_2()
-            .py_1()
-            .gap_1()
+        // PhpStorm-style combo box: the server's icon and name on the left, the arrow on the right.
+        let combo = PopoverMenu::new("remote-host-server-menu")
+            .full_width(true)
+            .anchor(gpui::Anchor::TopLeft)
+            .trigger(
+                ButtonLike::new("remote-host-server")
+                    .style(ButtonStyle::Outlined)
+                    .full_width()
+                    .child(
+                        h_flex()
+                            .w_full()
+                            .min_w_0()
+                            .gap_1p5()
+                            .px_1()
+                            .children(
+                                kind.map(|kind| server_icon(Some(kind)).size(IconSize::Small)),
+                            )
+                            .child(
+                                Label::new(label)
+                                    .color(if has_server {
+                                        Color::Default
+                                    } else {
+                                        Color::Muted
+                                    })
+                                    .truncate(),
+                            )
+                            .child(div().flex_1())
+                            .child(
+                                Icon::new(IconName::ChevronDown)
+                                    .size(IconSize::XSmall)
+                                    .color(Color::Muted),
+                            ),
+                    ),
+            )
+            .menu(move |_, _| Some(menu.clone()));
+        let tool = |id: &'static str, icon: IconName, tooltip: &'static str| {
+            IconButton::new(id, icon)
+                .icon_size(IconSize::Small)
+                .tooltip(Tooltip::text(tooltip))
+                .disabled(!has_server)
+        };
+        v_flex()
             .border_b_1()
             .border_color(cx.theme().colors().border_variant)
             .child(
-                div()
-                    .flex_1()
-                    .min_w_0()
-                    .child(DropdownMenu::new("remote-host-server", label, menu).full_width(true)),
+                h_flex()
+                    .px_2()
+                    .pt_1()
+                    .justify_between()
+                    .child(Label::new("Remote Host").weight(gpui::FontWeight::SEMIBOLD))
+                    .child(
+                        IconButton::new("remote-host-options", IconName::Ellipsis)
+                            .icon_size(IconSize::Small)
+                            .tooltip(Tooltip::text("Options"))
+                            .on_click(cx.listener(|this, _, window, cx| {
+                                let position = window.mouse_position();
+                                this.deploy_options_menu(position, window, cx)
+                            })),
+                    ),
             )
             .child(
-                Button::new("remote-host-servers", "…")
-                    .style(ButtonStyle::Outlined)
-                    .tooltip(Tooltip::text("Deployment Servers…"))
-                    .on_click(|_, window, cx| {
-                        window.dispatch_action(OpenDeploymentServers.boxed_clone(), cx)
-                    }),
-            )
-            .child(
-                IconButton::new("remote-host-locate", IconName::Crosshair)
-                    .icon_size(IconSize::Small)
-                    .tooltip(Tooltip::text("Select Opened File"))
-                    .disabled(!has_server)
-                    .on_click(cx.listener(|this, _, window, cx| {
-                        this.select_opened_file(&SelectOpenedFile, window, cx)
-                    })),
-            )
-            .child(
-                IconButton::new("remote-host-collapse", IconName::ListCollapse)
-                    .icon_size(IconSize::Small)
-                    .tooltip(Tooltip::text("Collapse All"))
-                    .disabled(!has_server)
-                    .on_click(cx.listener(|this, _, _, cx| this.collapse_all(cx))),
-            )
-            .child(
-                IconButton::new("remote-host-refresh", IconName::RotateCw)
-                    .icon_size(IconSize::Small)
-                    .tooltip(Tooltip::text("Refresh"))
-                    .disabled(!has_server)
-                    .on_click(cx.listener(|this, _, _, cx| this.refresh(cx))),
-            )
-            .child(
-                IconButton::new("remote-host-disconnect", IconName::Close)
-                    .icon_size(IconSize::Small)
-                    .icon_color(Color::Error)
-                    .tooltip(Tooltip::text("Disconnect"))
-                    .disabled(!has_server)
-                    .on_click(cx.listener(|this, _, _, cx| this.disconnect(cx))),
-            )
-            .child(
-                IconButton::new("remote-host-options", IconName::Ellipsis)
-                    .icon_size(IconSize::Small)
-                    .tooltip(Tooltip::text("Options"))
-                    .on_click(cx.listener(|this, _, window, cx| {
-                        let position = window.mouse_position();
-                        this.deploy_options_menu(position, window, cx)
-                    })),
+                h_flex()
+                    .px_2()
+                    .py_1()
+                    .gap_1()
+                    .child(div().flex_1().min_w_0().child(combo))
+                    .child(
+                        Button::new("remote-host-servers", "…")
+                            .style(ButtonStyle::Outlined)
+                            .tooltip(Tooltip::text("Deployment Servers…"))
+                            .on_click(|_, window, cx| {
+                                window.dispatch_action(OpenDeploymentServers.boxed_clone(), cx)
+                            }),
+                    )
+                    .child(
+                        tool(
+                            "remote-host-collapse",
+                            IconName::ListCollapse,
+                            "Collapse All",
+                        )
+                        .on_click(cx.listener(|this, _, _, cx| this.collapse_all(cx))),
+                    )
+                    .child(
+                        tool("remote-host-refresh", IconName::RotateCw, "Refresh")
+                            .icon_color(Color::Accent)
+                            .on_click(cx.listener(|this, _, _, cx| this.refresh(cx))),
+                    )
+                    .child(
+                        tool("remote-host-disconnect", IconName::Close, "Disconnect")
+                            .icon_color(Color::Error)
+                            .on_click(cx.listener(|this, _, _, cx| this.disconnect(cx))),
+                    )
+                    .child(
+                        tool(
+                            "remote-host-locate",
+                            IconName::Crosshair,
+                            "Select Opened File",
+                        )
+                        .on_click(cx.listener(|this, _, window, cx| {
+                            this.select_opened_file(&SelectOpenedFile, window, cx)
+                        })),
+                    ),
             )
     }
 
@@ -2265,8 +2309,33 @@ impl Render for RemoteHostPanel {
                 .when_some(self.error.clone(), |column, error| {
                     column.child(
                         h_flex()
+                            .mx_2()
+                            .my_1()
                             .px_2()
-                            .child(Label::new(error).size(LabelSize::Small).color(Color::Error)),
+                            .py_1()
+                            .gap_2()
+                            .rounded_md()
+                            .bg(cx.theme().status().error_background)
+                            .child(
+                                Icon::new(IconName::Warning)
+                                    .size(IconSize::Small)
+                                    .color(Color::Error),
+                            )
+                            .child(
+                                div()
+                                    .flex_1()
+                                    .min_w_0()
+                                    .child(Label::new(error).size(LabelSize::Small)),
+                            )
+                            .child(
+                                Button::new("remote-host-retry", "Retry")
+                                    .style(ButtonStyle::Outlined)
+                                    .label_size(LabelSize::Small)
+                                    .on_click(cx.listener(|this, _, _, cx| {
+                                        this.error = None;
+                                        this.refresh(cx);
+                                    })),
+                            ),
                     )
                 })
                 .child(self.render_tree(cx))
