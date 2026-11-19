@@ -2,7 +2,7 @@
 
 The restart point for the next working session, possibly on another computer. Read this first, then `ROADMAP.md`. Update it at the end of every session.
 
-_Last updated: 2026-11-19, night. Branch `vega`, everything committed and pushed._
+_Last updated: 2026-11-19, end of day. Branch `vega`, everything committed and pushed._
 
 ## How the owner wants to work
 
@@ -46,6 +46,13 @@ Built but **not yet checked in the running app** (owner's manual check, screensh
 Docker SFTP test server: `crates/deployment/tests/servers` (see `DEPLOYMENT.md` "Running the server tests"; generate `fixtures/id_ed25519` first on a new machine). Test login `tester` / `pass` on `localhost:2222`.
 
 ## Next tasks, in order
+
+**Start here next session:**
+- Go-to-definition on PHP built-ins (`defined`, `die`…) fails: phpactor answers with paths inside `phpactor.phar`. Fix: when stubs are downloaded, write `worse_reflection.stub_dir` = the stubs folder into phpactor's init options (`php_settings::config::settings_with_lsp_keys`), maybe clear phpactor's stub cache.
+- After a reindex, ask phpactor to re-check open files (diagnostics from before the index finished stay until the file changes).
+- Owner checks: cmd-click `__DIR__ . '/x.php'` (fixed today), WordPress include path in classified-listing (phpactor index verified to resolve `plugin_dir_path`).
+- Restart VEGA Dev with `osascript -e 'tell application "VEGA Dev" to quit'`, never `pkill` (it orphans language servers; 25 phpactor processes piled up).
+- Build only with `CARGO_INCREMENTAL=0` (`script/vega-dev-app` does it now); mixing modes filled `target/` to 168 GB, the owner ran `cargo clean`.
 
 0. Owner's check of L1–L4 (table above); fix what it turns up. Open: keyboard navigation of the add-on rows (arrow keys, Enter) in the project panel; JavaScript › Libraries page; include paths/stubs in the file finder.
 Deployment: PhpStorm parity P1–P6 built 2026-11-19 (DEPLOYMENT.md); owner is checking it in the app. Everything else: `vega/NEXT_PLAN.md` (phases, decisions needed).
