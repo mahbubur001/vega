@@ -1,0 +1,74 @@
+# VEGA CI: Linux only, on GitHub-hosted runners (the upstream workflows use
+# Zed's Namespace runners and are skipped on this repo). macOS and Windows are
+# left out on purpose: on a private repo their minutes cost 10x and 2x.
+name: VEGA CI
+
+on:
+  push:
+    branches: [vega]
+    paths-ignore:
+      - "graphify-out/**"
+      - "**.md"
+      - "docs/**"
+  pull_request:
+    branches: [vega]
+    paths-ignore:
+      - "graphify-out/**"
+      - "**.md"
+      - "docs/**"
+  workflow_dispatch:
+
+concurrency:
+  group: vega-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+  CARGO_INCREMENTAL: "0"
+  # No debug info: smaller target dir and faster links on a 2-core runner.
+  CARGO_PROFILE_DEV_DEBUG: "0"
+  RUST_BACKTRACE: "1"
+
+jobs:
+  fmt:
+    name: Format
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: cargo fmt
+        run: cargo fmt --all -- --check
+
+  test:
+    name: Test VEGA crates
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    steps:
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL
+          df -h /
+      - uses: actions/checkout@v4
+      - name: Install Linux dependencies
+        run: ./script/linux
+      - uses: Swatinem/rust-cache@v2
+        with:
+          # Only the vega branch writes the cache; PRs reuse it.
+          save-if: ${{ github.ref == 'refs/heads/vega' }}
+      - name: cargo test
+        run: >
+          cargo test
+          -p deployment
+          -p deployment_ui
+          -p settings_sync
+          -p settings_content
+          -p auto_update
+          -p theme_settings
+          -p onboarding
+          -p open_router
+      - name: Disk usage
+        if: always()
+        run: df -h /
