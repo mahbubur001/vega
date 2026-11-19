@@ -38,7 +38,8 @@ pub(crate) fn index_signature(config: &PhpConfig) -> String {
 }
 
 fn indexed_key(root: &Path) -> String {
-    format!("vega_phpactor_indexed:{}", root.display())
+    // v2: v1 markers could be saved without phpactor having reindexed.
+    format!("vega_phpactor_indexed_v2:{}", root.display())
 }
 
 fn indexed_signature(root: &Path, cx: &App) -> Option<String> {
@@ -141,7 +142,10 @@ pub(crate) fn reindex(project: &Entity<Project>, cx: &mut App) -> usize {
     for server in &servers {
         server.notify::<Reindex>(serde_json::json!({})).log_err();
     }
-    if let (Some(root), Some(config)) = (project_root(project, cx), cached_config(project, cx)) {
+    // Only a running phpactor can reindex; otherwise the next one to start does.
+    if !servers.is_empty()
+        && let (Some(root), Some(config)) = (project_root(project, cx), cached_config(project, cx))
+    {
         remember_indexed(&root, index_signature(&config), cx);
     }
     servers.len()
