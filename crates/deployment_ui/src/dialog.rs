@@ -3,46 +3,87 @@
 //! bordered combo boxes with the choice's icon inside.
 
 use gpui::{App, ClickEvent, Entity, FocusHandle, Rems, Stateful};
-use ui::{ButtonLike, ContextMenu, KeyBinding, ModalFooter, PopoverMenu, prelude::*};
+use ui::{ButtonLike, ContextMenu, ModalFooter, PopoverMenu, prelude::*};
 
-/// The dialog's main button (OK, Connect, Apply…): solid accent, bound to Enter.
+/// The dialog's main button (OK, Connect, Apply…): solid accent. Enter runs it.
 pub(crate) fn primary_button(
     id: &'static str,
     label: impl Into<SharedString>,
-    focus: &FocusHandle,
+    _focus: &FocusHandle,
     cx: &App,
-) -> PrimaryButton {
+) -> DialogButton {
     let background = cx.theme().status().info;
-    PrimaryButton {
-        element: h_flex()
-            .id(id)
-            .h_7()
-            .px_3()
-            .gap_1p5()
-            .rounded_md()
-            .cursor_pointer()
-            .bg(background)
-            .hover(move |style| style.bg(background.opacity(0.85)))
-            .child(
-                Label::new(label.into())
-                    .color(Color::Custom(gpui::white()))
-                    .weight(gpui::FontWeight::MEDIUM),
-            )
-            .child(
-                KeyBinding::for_action_in(&menu::Confirm, focus, cx)
-                    .size(rems_from_px(12_f32))
-                    .color(Color::Custom(gpui::white().opacity(0.8))),
-            ),
-    }
+    DialogButton::new(id, label, cx)
+        .bg(background)
+        .hover(move |style| style.bg(background.opacity(0.85)))
+        .text(Color::Custom(gpui::white()), gpui::FontWeight::SEMIBOLD)
 }
 
-/// A solid button; see [`primary_button`].
+/// The dialog's Cancel button. Escape runs it.
+pub(crate) fn cancel_button(id: &'static str, _focus: &FocusHandle, cx: &App) -> DialogButton {
+    secondary_button(id, "Cancel", cx)
+}
+
+/// An outlined button (Cancel, Apply…), the same size as [`primary_button`].
+pub(crate) fn secondary_button(
+    id: &'static str,
+    label: impl Into<SharedString>,
+    cx: &App,
+) -> DialogButton {
+    let colors = cx.theme().colors();
+    let hover = colors.element_hover;
+    DialogButton::new(id, label, cx)
+        .border(colors.border)
+        .hover(move |style| style.bg(hover))
+}
+
+/// A footer button: fixed height and padding so primary and secondary buttons line up.
 #[derive(IntoElement)]
-pub(crate) struct PrimaryButton {
+pub(crate) struct DialogButton {
     element: Stateful<Div>,
+    label: SharedString,
+    color: Color,
+    weight: gpui::FontWeight,
 }
 
-impl PrimaryButton {
+impl DialogButton {
+    fn new(id: &'static str, label: impl Into<SharedString>, _cx: &App) -> Self {
+        Self {
+            element: h_flex()
+                .id(id)
+                .h_7()
+                .min_w(rems(5.))
+                .px_3()
+                .justify_center()
+                .rounded_md()
+                .cursor_pointer(),
+            label: label.into(),
+            color: Color::Default,
+            weight: gpui::FontWeight::MEDIUM,
+        }
+    }
+
+    fn bg(mut self, color: gpui::Hsla) -> Self {
+        self.element = self.element.bg(color);
+        self
+    }
+
+    fn border(mut self, color: gpui::Hsla) -> Self {
+        self.element = self.element.border_1().border_color(color);
+        self
+    }
+
+    fn hover(mut self, style: impl Fn(gpui::StyleRefinement) -> gpui::StyleRefinement) -> Self {
+        self.element = self.element.hover(style);
+        self
+    }
+
+    fn text(mut self, color: Color, weight: gpui::FontWeight) -> Self {
+        self.color = color;
+        self.weight = weight;
+        self
+    }
+
     pub(crate) fn on_click(
         mut self,
         handler: impl Fn(&ClickEvent, &mut Window, &mut App) + 'static,
@@ -52,28 +93,34 @@ impl PrimaryButton {
     }
 }
 
-impl RenderOnce for PrimaryButton {
+impl RenderOnce for DialogButton {
     fn render(self, _: &mut Window, _: &mut App) -> impl IntoElement {
         self.element
+            .child(Label::new(self.label).color(self.color).weight(self.weight))
     }
 }
 
-/// The dialog's Cancel button, bound to Escape.
-pub(crate) fn cancel_button(id: &'static str, focus: &FocusHandle, cx: &App) -> Button {
-    secondary_button(id, "Cancel").key_binding(
-        KeyBinding::for_action_in(&menu::Cancel, focus, cx)
-            .map(|binding| binding.size(rems_from_px(12_f32))),
-    )
-}
-
-/// An outlined button (Cancel, Apply, Test Connection…).
-pub(crate) fn secondary_button(id: &'static str, label: impl Into<SharedString>) -> Button {
-    Button::new(id, label).style(ButtonStyle::Outlined)
-}
-
 /// A footer with Cancel and the primary button on the right.
-pub(crate) fn footer(cancel: Button, primary: PrimaryButton) -> ModalFooter {
+pub(crate) fn footer(cancel: DialogButton, primary: DialogButton) -> ModalFooter {
     ModalFooter::new().end_slot(h_flex().gap_2().child(cancel).child(primary))
+}
+
+/// PhpStorm's round "?" help button.
+pub(crate) fn help_button(id: &'static str, cx: &App) -> Stateful<Div> {
+    let colors = cx.theme().colors();
+    let hover = colors.element_hover;
+    div()
+        .id(id)
+        .size_6()
+        .flex()
+        .items_center()
+        .justify_center()
+        .rounded_full()
+        .border_1()
+        .border_color(colors.border)
+        .cursor_pointer()
+        .hover(move |style| style.bg(hover))
+        .child(Label::new("?").size(LabelSize::Small).color(Color::Muted))
 }
 
 /// A PhpStorm-style combo box: a bordered box with the choice's icon and label
@@ -89,6 +136,7 @@ pub(crate) fn combo_box(
     let label: SharedString = label.into();
     let trigger = ButtonLike::new(SharedString::from(format!("{id}-trigger")))
         .style(ButtonStyle::Outlined)
+        .size(ButtonSize::Large)
         .full_width()
         .child(
             h_flex()

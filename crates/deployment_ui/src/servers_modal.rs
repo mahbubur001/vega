@@ -1320,15 +1320,20 @@ impl ServersModal {
                             .gap_1()
                             .items_start()
                             .child(
-                                Button::new("test-connection", "Test Connection")
-                                    .style(ButtonStyle::Outlined)
-                                    .start_icon(
-                                        Icon::new(IconName::ArrowRightLeft).size(IconSize::Small),
-                                    )
-                                    .disabled(self.testing.is_some())
-                                    .on_click(
-                                        cx.listener(|this, _, _, cx| this.test_connection(cx)),
-                                    ),
+                                dialog::secondary_button(
+                                    "test-connection",
+                                    if self.testing.is_some() {
+                                        "Testing…"
+                                    } else {
+                                        "Test Connection"
+                                    },
+                                    cx,
+                                )
+                                .on_click(cx.listener(|this, _, _, cx| {
+                                    if this.testing.is_none() {
+                                        this.test_connection(cx)
+                                    }
+                                })),
                             )
                             .children(self.render_test_results(&server.host)),
                     ))
@@ -1360,11 +1365,7 @@ impl ServersModal {
                             })
                             .when(is_remote, |row| {
                                 row.child(
-                                    Button::new("autodetect-root", "Autodetect")
-                                        .style(ButtonStyle::Outlined)
-                                        .tooltip(Tooltip::text(
-                                            "Use the folder the server logs you into",
-                                        ))
+                                    dialog::secondary_button("autodetect-root", "Autodetect", cx)
                                         .on_click(cx.listener(|this, _, window, cx| {
                                             this.autodetect_root(window, cx)
                                         })),
@@ -2598,8 +2599,7 @@ impl Render for ServersModal {
                     .border_t_1()
                     .border_color(cx.theme().colors().border_variant)
                     .child(
-                        IconButton::new("deployment-help", IconName::CircleHelp)
-                            .icon_size(IconSize::Small)
+                        dialog::help_button("deployment-help", cx)
                             .tooltip(Tooltip::text("Deployment help"))
                             .on_click(|_, _, cx| {
                                 cx.open_url(
@@ -2620,7 +2620,7 @@ impl Render for ServersModal {
                             .on_click(cx.listener(|_, _, _, cx| cx.emit(DismissEvent))),
                     )
                     .child(
-                        dialog::secondary_button("apply-servers", "Apply")
+                        dialog::secondary_button("apply-servers", "Apply", cx)
                             .on_click(cx.listener(|this, _, window, cx| {
                                 this.apply(window, cx);
                             })),
