@@ -27,7 +27,7 @@ use gpui::{
 use gpui_tokio::Tokio;
 use ui::{
     Callout, Checkbox, CommonAnimationExt as _, ContextMenu, ContextMenuEntry, Disclosure,
-    DropdownMenu, IconPosition, ListItem, ListItemSpacing, PopoverMenu, Severity, ToggleState,
+    IconPosition, ListItem, ListItemSpacing, PopoverMenu, Severity, TintColor, ToggleState,
     Tooltip, prelude::*,
 };
 use ui_input::InputField;
@@ -255,6 +255,7 @@ pub(crate) struct ServersModal {
     advanced_open: bool,
     /// Shown in the Deployment window rather than as a modal.
     hosted: bool,
+    context_menu: Option<(Entity<ContextMenu>, gpui::Point<Pixels>, gpui::Subscription)>,
     /// The Options page is shown instead of a server.
     showing_options: bool,
     options_form: Option<OptionsForm>,
@@ -290,6 +291,7 @@ impl ServersModal {
             password_saved: None,
             advanced_open: false,
             hosted,
+            context_menu: None,
             showing_options: false,
             options_form: None,
             tester: None,
@@ -373,6 +375,33 @@ impl ServersModal {
                     }
                     Ok(Err(error)) => this.error = Some(format!("Autodetect: {error}").into()),
                     Err(error) => this.error = Some(format!("Autodetect: {error}").into()),
+                }
+                cx.notify();
+            })
+            .ok();
+        }));
+    }
+
+    /// Picks the folder of a "Local or mounted folder" server.
+    fn browse_root_folder(&mut self, window: &mut Window, cx: &mut Context<Self>) {
+        let paths = cx.prompt_for_paths(gpui::PathPromptOptions {
+            files: false,
+            directories: true,
+            multiple: false,
+            prompt: Some("Choose".into()),
+        });
+        self._tasks.push(cx.spawn_in(window, async move |this, cx| {
+            let Ok(Ok(Some(paths))) = paths.await else {
+                return;
+            };
+            let Some(path) = paths.into_iter().next() else {
+                return;
+            };
+            this.update_in(cx, |this, window, cx| {
+                if let Some(form) = &this.form {
+                    form.root_path.update(cx, |field, cx| {
+                        field.set_text(&path.to_string_lossy(), window, cx)
+                    });
                 }
                 cx.notify();
             })
@@ -775,6 +804,83 @@ impl ServersModal {
         }
     }
 
+    /// Right-click on a server: Add ▸, Delete, Duplicate, Rename, Use as Default.
+    fn deploy_server_menu(
+        &mut self,
+        position: gpui::Point<Pixels>,
+        window: &mut Window,
+        cx: &mut Context<Self>,
+    ) {
+        let this = cx.weak_entity();
+        let is_default = self
+            .selected_server()
+            .is_some_and(|server| self.draft.default_id.as_deref() == Some(server.id.as_str()));
+        let menu = ContextMenu::build(window, cx, move |menu, _, _| {
+            let action = |label: &'static str,
+                          icon: Option<(IconName, Color)>,
+                          run: fn(&mut ServersModal, &mut Window, &mut Context<ServersModal>)| {
+                let this = this.clone();
+                let entry = ContextMenuEntry::new(label).handler(move |window, cx| {
+                    this.update(cx, |modal, cx| run(modal, window, cx)).ok();
+                });
+                match icon {
+                    Some((icon, color)) => entry
+                        .icon(icon)
+                        .icon_color(color)
+                        .icon_position(IconPosition::Start),
+                    None => entry,
+                }
+            };
+            let add_this = this.clone();
+            menu.submenu_with_icon("Add", IconName::Plus, move |mut menu, _, _| {
+                for kind in ADDABLE_TYPES {
+                    let this = add_this.clone();
+                    let (icon, color) = server_type_icon(kind);
+                    if kind == ServerType::Group {
+                        menu = menu.separator();
+                    }
+                    menu = menu.item(
+                        ContextMenuEntry::new(kind.label())
+                            .icon(icon)
+                            .icon_color(color)
+                            .icon_position(IconPosition::Start)
+                            .handler(move |window, cx| {
+                                this.update(cx, |this, cx| this.add_server(kind, window, cx))
+                                    .ok();
+                            }),
+                    );
+                }
+                menu
+            })
+            .item(action(
+                "Delete",
+                Some((IconName::Dash, Color::Error)),
+                |modal, window, cx| modal.remove_selected(window, cx),
+            ))
+            .item(action(
+                "Duplicate",
+                Some((IconName::Copy, Color::Success)),
+                |modal, window, cx| modal.duplicate_selected(window, cx),
+            ))
+            .item(action("Rename", None, |modal, window, cx| {
+                modal.rename_selected(window, cx)
+            }))
+            .item(
+                action("Use as Default", None, |modal, _, cx| {
+                    modal.make_default(cx)
+                })
+                .disabled(is_default),
+            )
+        });
+        window.focus(&menu.focus_handle(cx), cx);
+        let subscription = cx.subscribe(&menu, |this, _, _: &DismissEvent, cx| {
+            this.context_menu.take();
+            cx.notify();
+        });
+        self.context_menu = Some((menu, position, subscription));
+        cx.notify();
+    }
+
     /// Adds a copy of the selected server ("… copy"), selected.
     fn duplicate_selected(&mut self, window: &mut Window, cx: &mut Context<Self>) {
         self.commit_form(cx);
@@ -879,35 +985,12 @@ impl ServersModal {
                     .on_click(cx.listener(|this, _, window, cx| this.remove_selected(window, cx))),
             )
             .child(
-                IconButton::new("duplicate-server", IconName::Copy)
-                    .icon_size(IconSize::Small)
-                    .tooltip(Tooltip::text("Duplicate"))
-                    .disabled(self.selected.is_none())
-                    .on_click(
-                        cx.listener(|this, _, window, cx| this.duplicate_selected(window, cx)),
-                    ),
-            )
-            .child(
-                div()
-                    .w_px()
-                    .h_4()
-                    .mx_1()
-                    .bg(cx.theme().colors().border_variant),
-            )
-            .child(
                 IconButton::new("default-server", IconName::Check)
                     .icon_size(IconSize::Small)
                     .icon_color(Color::Success)
                     .tooltip(Tooltip::text("Use as Default"))
                     .disabled(self.selected.is_none() || selected_is_default)
                     .on_click(cx.listener(|this, _, _, cx| this.make_default(cx))),
-            )
-            .child(
-                IconButton::new("rename-server", IconName::Pencil)
-                    .icon_size(IconSize::Small)
-                    .tooltip(Tooltip::text("Rename"))
-                    .disabled(self.selected.is_none())
-                    .on_click(cx.listener(|this, _, window, cx| this.rename_selected(window, cx))),
             );
 
         v_flex()
@@ -939,9 +1022,18 @@ impl ServersModal {
                                     is_default,
                                 )
                                 .selected(!self.showing_options && self.selected == Some(index))
-                                .on_click(cx.listener(
-                                    move |this, _, window, cx| this.select(index, window, cx),
-                                ))
+                                .on_click(cx.listener(move |this, _, window, cx| {
+                                    this.select(index, window, cx)
+                                }))
+                                .on_secondary_mouse_down(
+                                    cx.listener(
+                                        move |this, event: &gpui::MouseDownEvent, window, cx| {
+                                            cx.stop_propagation();
+                                            this.select(index, window, cx);
+                                            this.deploy_server_menu(event.position, window, cx);
+                                        },
+                                    ),
+                                )
                             }),
                     ),
             )
@@ -972,32 +1064,34 @@ impl ServersModal {
         &self,
         server: &Server,
         form: &Form,
-        window: &mut Window,
         cx: &mut Context<Self>,
     ) -> AnyElement {
         if server.kind == ServerType::Group {
             return self.render_group(server, form, cx);
         }
         let this = cx.weak_entity();
-        let kind_menu = ContextMenu::build(window, cx, {
+        let kind_menu = {
             let this = this.clone();
-            move |mut menu, _, _| {
-                for kind in SWITCHABLE_TYPES {
-                    let this = this.clone();
-                    let (icon, color) = server_type_icon(kind);
-                    menu = menu.item(
-                        ContextMenuEntry::new(kind.label())
-                            .icon(icon)
-                            .icon_color(color)
-                            .icon_position(IconPosition::Start)
-                            .handler(move |_, cx| {
-                                this.update(cx, |this, cx| this.set_kind(kind, cx)).ok();
-                            }),
-                    );
-                }
-                menu
+            move |window: &mut Window, cx: &mut App| {
+                let this = this.clone();
+                ContextMenu::build(window, cx, move |mut menu, _, _| {
+                    for kind in SWITCHABLE_TYPES {
+                        let this = this.clone();
+                        let (icon, color) = server_type_icon(kind);
+                        menu = menu.item(
+                            ContextMenuEntry::new(kind.label())
+                                .icon(icon)
+                                .icon_color(color)
+                                .icon_position(IconPosition::Start)
+                                .handler(move |_, cx| {
+                                    this.update(cx, |this, cx| this.set_kind(kind, cx)).ok();
+                                }),
+                        );
+                    }
+                    menu
+                })
             }
-        });
+        };
         let is_remote = !matches!(server.kind, ServerType::Local | ServerType::InPlace);
         let in_place = server.kind == ServerType::InPlace;
         let is_sftp = server.kind == ServerType::Sftp;
@@ -1007,15 +1101,18 @@ impl ServersModal {
             .iter()
             .find(|(value, _)| *value == auth)
             .map_or("Password", |(_, label)| label);
-        let auth_menu = ContextMenu::build(window, cx, move |mut menu, _, _| {
-            for (value, label) in SFTP_AUTH {
-                let this = this.clone();
-                menu = menu.entry(label, None, move |_, cx| {
-                    this.update(cx, |this, cx| this.set_auth(value, cx)).ok();
-                });
-            }
-            menu
-        });
+        let auth_menu = move |window: &mut Window, cx: &mut App| {
+            let this = this.clone();
+            ContextMenu::build(window, cx, move |mut menu, _, _| {
+                for (value, label) in SFTP_AUTH {
+                    let this = this.clone();
+                    menu = menu.entry(label, None, move |_, cx| {
+                        this.update(cx, |this, cx| this.set_auth(value, cx)).ok();
+                    });
+                }
+                menu
+            })
+        };
         let needs_password = !(is_sftp && auth != SftpAuth::Password) && !server.anonymous;
         let shared = self
             .selected
@@ -1042,14 +1139,13 @@ impl ServersModal {
             .child(field_row("Name:", form.name.clone()))
             .child(field_row(
                 "Type:",
-                h_flex()
-                    .gap_1p5()
-                    .child(Icon::new(kind_icon).size(IconSize::Small).color(kind_color))
-                    .child(DropdownMenu::new(
-                        "server-type",
-                        server.kind.label(),
-                        kind_menu,
-                    )),
+                dialog::combo_box(
+                    "server-type",
+                    Some((kind_icon, kind_color)),
+                    server.kind.label(),
+                    Some(rems(16.)),
+                    kind_menu,
+                ),
             ))
             .when(is_remote, |column| {
                 column
@@ -1057,7 +1153,7 @@ impl ServersModal {
                         "Host:",
                         h_flex()
                             .gap_2()
-                            .child(div().flex_1().child(form.host.clone()))
+                            .child(div().flex_1().max_w(rems(20.)).child(form.host.clone()))
                             .child(Label::new("Port:"))
                             .child(div().w(rems(5.)).child(form.port.clone())),
                     ))
@@ -1065,7 +1161,7 @@ impl ServersModal {
                         "Username:",
                         h_flex()
                             .gap_2()
-                            .child(div().flex_1().child(form.username.clone()))
+                            .child(div().w(rems(14.)).child(form.username.clone()))
                             .when(is_ftp, |row| {
                                 row.child(
                                     Checkbox::new(
@@ -1087,7 +1183,13 @@ impl ServersModal {
                     .when(is_sftp, |column| {
                         column.child(field_row(
                             "Authentication:",
-                            DropdownMenu::new("sftp-auth", auth_label, auth_menu),
+                            dialog::combo_box(
+                                "sftp-auth",
+                                None,
+                                auth_label,
+                                Some(rems(16.)),
+                                auth_menu,
+                            ),
                         ))
                     })
                     .when(is_sftp && auth == SftpAuth::Key, |column| {
@@ -1139,7 +1241,27 @@ impl ServersModal {
                         if is_remote { "Root path:" } else { "Folder:" },
                         h_flex()
                             .gap_2()
-                            .child(div().flex_1().child(form.root_path.clone()))
+                            .child(div().flex_1().max_w(rems(24.)).child(form.root_path.clone()))
+                            .when(!is_remote, |row| {
+                                row.child(
+                                    IconButton::new("browse-root", IconName::Folder)
+                                        .icon_size(IconSize::Small)
+                                        .tooltip(Tooltip::text("Choose Folder…"))
+                                        .on_click(cx.listener(|this, _, window, cx| {
+                                            this.browse_root_folder(window, cx)
+                                        })),
+                                )
+                            })
+                            .when(is_remote, |row| {
+                                row.child(
+                                    IconButton::new("root-path-help", IconName::CircleHelp)
+                                        .icon_size(IconSize::Small)
+                                        .icon_color(Color::Muted)
+                                        .tooltip(Tooltip::text(
+                                            "The server folder that deployment paths in Mappings start from.",
+                                        )),
+                                )
+                            })
                             .when(is_remote, |row| {
                                 row.child(
                                     Button::new("autodetect-root", "Autodetect")
@@ -1189,14 +1311,14 @@ impl ServersModal {
                             })),
                     )
                     .when(self.advanced_open, |column| {
-                        column.child(self.render_advanced(server, form, window, cx))
+                        column.child(self.render_advanced(server, form, cx))
                     })
             })
             .into_any_element()
     }
 
     /// Deployment › Options: settings for every server of this project.
-    fn render_options(&self, window: &mut Window, cx: &mut Context<Self>) -> AnyElement {
+    fn render_options(&self, cx: &mut Context<Self>) -> AnyElement {
         let Some(form) = &self.options_form else {
             return div().into_any_element();
         };
@@ -1295,16 +1417,23 @@ impl ServersModal {
             .child(section("Automatic upload"))
             .child(wide_row(
                 "Upload changed files to the default server:",
-                DropdownMenu::new(
+                dialog::combo_box(
                     "auto-upload",
+                    None,
                     choice_label(&AUTO_UPLOAD, &options.auto_upload),
-                    menu(
-                        this.clone(),
-                        &AUTO_UPLOAD,
-                        |o, v| o.auto_upload = v,
-                        window,
-                        cx,
-                    ),
+                    Some(rems(16.)),
+                    {
+                        let this = this.clone();
+                        move |window, cx| {
+                            menu(
+                                this.clone(),
+                                &AUTO_UPLOAD,
+                                |o, v| o.auto_upload = v,
+                                window,
+                                cx,
+                            )
+                        }
+                    },
                 ),
             ))
             .child(check(
@@ -1380,16 +1509,23 @@ impl ServersModal {
             .child(section("Safety"))
             .child(wide_row(
                 "Warn when uploading over newer file:",
-                DropdownMenu::new(
+                dialog::combo_box(
                     "warn-newer",
+                    None,
                     choice_label(&OVERWRITE_CHECKS, &options.warn_on_newer_remote),
-                    menu(
-                        this.clone(),
-                        &OVERWRITE_CHECKS,
-                        |o, v| o.warn_on_newer_remote = v,
-                        window,
-                        cx,
-                    ),
+                    Some(rems(16.)),
+                    {
+                        let this = this.clone();
+                        move |window, cx| {
+                            menu(
+                                this.clone(),
+                                &OVERWRITE_CHECKS,
+                                |o, v| o.warn_on_newer_remote = v,
+                                window,
+                                cx,
+                            )
+                        }
+                    },
                 ),
             ))
             .child(check(
@@ -1450,10 +1586,14 @@ impl ServersModal {
             .child(section("Log"))
             .child(wide_row(
                 "Operations logging:",
-                DropdownMenu::new(
+                dialog::combo_box(
                     "logging",
+                    None,
                     choice_label(&LOG_LEVELS, &options.logging),
-                    menu(this, &LOG_LEVELS, |o, v| o.logging = v, window, cx),
+                    Some(rems(16.)),
+                    move |window, cx| {
+                        menu(this.clone(), &LOG_LEVELS, |o, v| o.logging = v, window, cx)
+                    },
                 ),
             ))
             .into_any_element()
@@ -1696,13 +1836,7 @@ impl ServersModal {
 
     /// Options that apply to the selected server's type. FTP passive mode
     /// (always on) and rsync transfers aren't offered until the engine uses them.
-    fn render_advanced(
-        &self,
-        server: &Server,
-        form: &Form,
-        window: &mut Window,
-        cx: &mut Context<Self>,
-    ) -> AnyElement {
+    fn render_advanced(&self, server: &Server, form: &Form, cx: &mut Context<Self>) -> AnyElement {
         let kind = server.kind;
         let is_sftp = kind == ServerType::Sftp;
         let is_ftp = kind.is_ftp();
@@ -1754,30 +1888,46 @@ impl ServersModal {
                 column
                     .child(field_row(
                         "Host keys:",
-                        DropdownMenu::new(
+                        dialog::combo_box(
                             "host-key-policy",
+                            None,
                             choice_label(&HOST_KEY_POLICIES, &policy),
-                            menu(
-                                this.clone(),
-                                &HOST_KEY_POLICIES,
-                                |server, policy| server.strict_host_key_checking = Some(policy),
-                                window,
-                                cx,
-                            ),
+                            Some(rems(16.)),
+                            {
+                                let this = this.clone();
+                                move |window, cx| {
+                                    menu(
+                                        this.clone(),
+                                        &HOST_KEY_POLICIES,
+                                        |server, policy| {
+                                            server.strict_host_key_checking = Some(policy)
+                                        },
+                                        window,
+                                        cx,
+                                    )
+                                }
+                            },
                         ),
                     ))
                     .child(field_row(
                         "SSH client:",
-                        DropdownMenu::new(
+                        dialog::combo_box(
                             "ssh-backend",
+                            None,
                             choice_label(&SSH_BACKENDS, &backend),
-                            menu(
-                                this.clone(),
-                                &SSH_BACKENDS,
-                                |server, backend| server.ssh_backend = Some(backend),
-                                window,
-                                cx,
-                            ),
+                            Some(rems(16.)),
+                            {
+                                let this = this.clone();
+                                move |window, cx| {
+                                    menu(
+                                        this.clone(),
+                                        &SSH_BACKENDS,
+                                        |server, backend| server.ssh_backend = Some(backend),
+                                        window,
+                                        cx,
+                                    )
+                                }
+                            },
                         ),
                     ))
                     .child(field_row("Jump host:", form.jump_host.clone()))
@@ -1791,25 +1941,40 @@ impl ServersModal {
             })
             .when(is_ftp, |column| {
                 column
-                    .child(checkbox(
+                    .child(
+                        Checkbox::new("ftp-passive", ToggleState::Selected)
+                            .label("Passive mode")
+                            .disabled(true),
+                    )
+                    .child(Label::new("Use LIST command:"))
+                    .child(div().pl_4().child(checkbox(
                         "ftp-use-list",
-                        "Use LIST instead of MLSD (older servers)",
+                        "Instead of MLSD (for servers that list files wrongly)",
                         server.use_list,
                         |server, checked| server.use_list = checked,
                         cx,
-                    ))
+                    )))
                     .child(field_row(
                         "File names:",
-                        DropdownMenu::new(
+                        dialog::combo_box(
                             "ftp-encoding",
+                            None,
                             choice_label(&ENCODINGS, &encoding_choice(server.encoding.as_deref())),
-                            menu(
-                                this.clone(),
-                                &ENCODINGS,
-                                |server, encoding| server.encoding = encoding.map(str::to_string),
-                                window,
-                                cx,
-                            ),
+                            Some(rems(16.)),
+                            {
+                                let this = this.clone();
+                                move |window, cx| {
+                                    menu(
+                                        this.clone(),
+                                        &ENCODINGS,
+                                        |server, encoding| {
+                                            server.encoding = encoding.map(str::to_string)
+                                        },
+                                        window,
+                                        cx,
+                                    )
+                                }
+                            },
                         ),
                     ))
                     .child(field_row(
@@ -1821,16 +1986,23 @@ impl ServersModal {
                 let protection = server.data_protection.unwrap_or_default();
                 column.child(field_row(
                     "Data connection:",
-                    DropdownMenu::new(
+                    dialog::combo_box(
                         "data-protection",
+                        None,
                         choice_label(&DATA_PROTECTION, &protection),
-                        menu(
-                            this.clone(),
-                            &DATA_PROTECTION,
-                            |server, protection| server.data_protection = Some(protection),
-                            window,
-                            cx,
-                        ),
+                        Some(rems(16.)),
+                        {
+                            let this = this.clone();
+                            move |window, cx| {
+                                menu(
+                                    this.clone(),
+                                    &DATA_PROTECTION,
+                                    |server, protection| server.data_protection = Some(protection),
+                                    window,
+                                    cx,
+                                )
+                            }
+                        },
                     ),
                 ))
             })
@@ -1838,16 +2010,23 @@ impl ServersModal {
                 let auth = server.webdav_auth.unwrap_or_default();
                 column.child(field_row(
                     "Authentication:",
-                    DropdownMenu::new(
+                    dialog::combo_box(
                         "webdav-auth",
+                        None,
                         choice_label(&WEBDAV_AUTH, &auth),
-                        menu(
-                            this.clone(),
-                            &WEBDAV_AUTH,
-                            |server, auth| server.webdav_auth = Some(auth),
-                            window,
-                            cx,
-                        ),
+                        Some(rems(16.)),
+                        {
+                            let this = this.clone();
+                            move |window, cx| {
+                                menu(
+                                    this.clone(),
+                                    &WEBDAV_AUTH,
+                                    |server, auth| server.webdav_auth = Some(auth),
+                                    window,
+                                    cx,
+                                )
+                            }
+                        },
                     ),
                 ))
             })
@@ -2090,6 +2269,8 @@ struct ListItemButton {
     is_default: bool,
     selected: bool,
     on_click: Option<Box<dyn Fn(&gpui::ClickEvent, &mut Window, &mut App) + 'static>>,
+    on_secondary_mouse_down:
+        Option<Box<dyn Fn(&gpui::MouseDownEvent, &mut Window, &mut App) + 'static>>,
 }
 
 impl ListItemButton {
@@ -2101,6 +2282,7 @@ impl ListItemButton {
             is_default,
             selected: false,
             on_click: None,
+            on_secondary_mouse_down: None,
         }
     }
 
@@ -2116,6 +2298,14 @@ impl ListItemButton {
         self.on_click = Some(Box::new(handler));
         self
     }
+
+    fn on_secondary_mouse_down(
+        mut self,
+        handler: impl Fn(&gpui::MouseDownEvent, &mut Window, &mut App) + 'static,
+    ) -> Self {
+        self.on_secondary_mouse_down = Some(Box::new(handler));
+        self
+    }
 }
 
 impl RenderOnce for ListItemButton {
@@ -2126,6 +2316,9 @@ impl RenderOnce for ListItemButton {
             .spacing(ListItemSpacing::Dense)
             .toggle_state(self.selected)
             .when_some(self.on_click, |item, on_click| item.on_click(on_click))
+            .when_some(self.on_secondary_mouse_down, |item, handler| {
+                item.on_secondary_mouse_down(handler)
+            })
             .start_slot(Icon::new(icon).size(IconSize::Small).color(color))
             .child(
                 Label::new(self.name)
@@ -2150,14 +2343,14 @@ impl EventEmitter<DismissEvent> for ServersModal {}
 impl ModalView for ServersModal {}
 
 impl Render for ServersModal {
-    fn render(&mut self, window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
+    fn render(&mut self, _window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
         let server = self.selected_server().cloned();
         let focus = self.focus_handle.clone();
         let tab_button =
             |id: &'static str, label: &'static str, tab: Tab, cx: &mut Context<Self>| {
                 Button::new(id, label)
                     .style(if self.tab == tab {
-                        ButtonStyle::Outlined
+                        ButtonStyle::Tinted(TintColor::Accent)
                     } else {
                         ButtonStyle::Subtle
                     })
@@ -2187,7 +2380,7 @@ impl Render for ServersModal {
             ));
 
         let body = if self.showing_options {
-            self.render_options(window, cx)
+            self.render_options(cx)
         } else {
             match (&server, self.form.take()) {
                 (Some(server), Some(form)) => {
@@ -2197,7 +2390,7 @@ impl Render for ServersModal {
                         self.tab
                     };
                     let body = match tab {
-                        Tab::Connection => self.render_connection(server, &form, window, cx),
+                        Tab::Connection => self.render_connection(server, &form, cx),
                         Tab::Mappings => self.render_mappings(&form, cx),
                         Tab::Excluded => self.render_excluded(&form, cx),
                     };
@@ -2292,6 +2485,16 @@ impl Render for ServersModal {
                     .border_t_1()
                     .border_color(cx.theme().colors().border_variant)
                     .child(
+                        IconButton::new("deployment-help", IconName::CircleHelp)
+                            .icon_size(IconSize::Small)
+                            .tooltip(Tooltip::text("Deployment help"))
+                            .on_click(|_, _, cx| {
+                                cx.open_url(
+                                    "https://github.com/mahbubur001/vega/blob/vega/vega/DEPLOYMENT.md",
+                                )
+                            }),
+                    )
+                    .child(
                         div()
                             .flex_1()
                             .min_w_0()
@@ -2304,8 +2507,7 @@ impl Render for ServersModal {
                             .on_click(cx.listener(|_, _, _, cx| cx.emit(DismissEvent))),
                     )
                     .child(
-                        Button::new("apply-servers", "Apply")
-                            .style(ButtonStyle::Outlined)
+                        dialog::secondary_button("apply-servers", "Apply")
                             .on_click(cx.listener(|this, _, window, cx| {
                                 this.apply(window, cx);
                             })),
@@ -2315,6 +2517,15 @@ impl Render for ServersModal {
                             .on_click(cx.listener(|this, _, window, cx| this.save(window, cx))),
                     ),
             )
+            .children(self.context_menu.as_ref().map(|(menu, position, _)| {
+                gpui::deferred(
+                    gpui::anchored()
+                        .position(*position)
+                        .anchor(gpui::Anchor::TopLeft)
+                        .child(menu.clone()),
+                )
+                .with_priority(1)
+            }))
     }
 }
 
