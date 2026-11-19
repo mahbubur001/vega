@@ -28,7 +28,7 @@ crates/deployment_ui   (GPUI)    Remote Host panel, transfers status item, serve
 
 - **Engine per worktree.** A `DeploymentStore` entity per workspace holds one `Engine` per local worktree root. SSH/remote projects are out of scope at first.
 - **Upload on save.** Subscribe to `BufferStore` → `BufferEvent::Saved`, then call `Engine::on_saved`. Worktree entry updates replace iRemote's own file watcher for external changes, deletes and renames.
-- **Config.** Same schema as iRemote, in VEGA's own files: `.zed/deployment.json` per project and shared servers in `~/.config/vega/deployment/servers.json`. A project's existing `.zed/iremote.json` is imported once (the original is left untouched).
+- **Config.** Same schema as iRemote, in VEGA's own files: `.vega/deployment.json` per project and shared servers in `~/.config/vega/deployment/servers.json`. `.zed/` is ignored (owner, 2026-11-19), so iRemote's `.zed/iremote.json` is no longer imported.
 - **Secrets.** In the OS keychain only, never in JSON or logs. See decision 2.
 - **Security.** Unchanged from iRemote: `known_hosts` checks with strict-host-key modes, TLS verified against the system store, explicit fingerprint trust.
 
@@ -59,7 +59,7 @@ crates/deployment_ui   (GPUI)    Remote Host panel, transfers status item, serve
 | D4 | **Compare & Sync.** Compare with Deployed (diff view), Sync view, Transfers list with retry | Sync a folder both ways with a preview |
 | D5 | **Extras.** SSH session in the terminal, ssh-copy-id, upload changed files (git), agent tools, docs | |
 
-D0–D1 is the smallest useful slice: upload on save and the menu actions working with existing `.zed/iremote.json` files.
+D0–D1 is the smallest useful slice: upload on save and the menu actions working with a `.vega/deployment.json` file.
 
 ## Status
 
@@ -80,7 +80,7 @@ D0–D1 is the smallest useful slice: upload on save and the menu actions workin
 ### Next session
 
 1. Check disk space first (`df -h /`); `~/dev/vega/target` filled the disk once. `rm -r target/debug/incremental` frees most of it.
-2. Try D1 and D2 in the app. Without Xcode, run with `cargo run --features gpui_platform/runtime_shaders -- ~/some/test/project`. Start the Docker servers (`docker compose -f crates/deployment/tests/servers/compose.yml up`), run `deployment: open deployment config`, point it at SFTP (`localhost:2222`, `tester`/`pass`), save a file, check the upload, the Deployment submenu (project panel, editor, tab), Compare and the transfers indicator. Then open Deployment > Configuration…, add a second server, Test Connection, Save, and check `.zed/deployment.json`.
+2. Try D1 and D2 in the app. Without Xcode, run with `cargo run --features gpui_platform/runtime_shaders -- ~/some/test/project`. Start the Docker servers (`docker compose -f crates/deployment/tests/servers/compose.yml up`), run `deployment: open deployment config`, point it at SFTP (`localhost:2222`, `tester`/`pass`), save a file, check the upload, the Deployment submenu (project panel, editor, tab), Compare and the transfers indicator. Then open Deployment > Configuration…, add a second server, Test Connection, Save, and check `.vega/deployment.json`.
 3. Mark D1 done once step 2 works. Known issue: `cargo clippy -p deployment --tests --features integration` flags `std::process::Command::output` in `tests/sftp.rs` (pre-existing; normal clippy doesn't build that test).
 
 ### Running the server tests
@@ -107,7 +107,7 @@ docker compose -f crates/deployment/tests/servers/compose.yml down -v
 
 ## Decisions (owner, 2026-11-18)
 
-1. **Config:** new VEGA files (`.zed/deployment.json`, `~/.config/vega/deployment/servers.json`), with a one-time import of `.zed/iremote.json`.
+1. **Config:** new VEGA files (`.vega/deployment.json`, `~/.config/vega/deployment/servers.json`). Originally with a one-time import of `.zed/iremote.json`; dropped on 2026-11-19 when all project config moved to `.vega/`.
 2. **Passwords:** VEGA's credentials provider, reading iRemote's `iremote` keychain entries once as a fallback.
 3. **Source:** iremote-core is vendored into `crates/deployment` and evolves in VEGA.
 4. **First slice:** D0–D1.

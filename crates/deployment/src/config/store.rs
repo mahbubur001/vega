@@ -1,4 +1,4 @@
-//! Loads and saves `.zed/iremote.json` plus the shared servers file, and resolves servers for a project.
+//! Loads and saves `.vega/deployment.json` plus the shared servers file, and resolves servers for a project.
 
 use std::path::{Path, PathBuf};
 

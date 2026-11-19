@@ -21,7 +21,7 @@ _Last updated: 2026-11-19, end of day. Branch `vega`, everything committed and p
 
 ## Where things stand
 
-Done and pushed today: D4 Sync with Deployed view (`deployment: sync with deployed`, see `DEPLOYMENT.md`); D3 second pass (cut/copy/paste, chmod, Exclude Path, drag and drop, keyboard navigation, remembered dock position; see `DEPLOYMENT.md`). Earlier: Linux-only CI (`.github/workflows/vega_ci.yml`, green, about 22 minutes uncached), MCP OAuth without Zed's CIMD document, every zed.dev link VEGA opens now goes to VEGA's docs or repo (`crates/release_channel/src/vega_docs.rs` + `gpui::OpenUrlRewriter`), Help menu feedback to VEGA's GitHub, Deployment Servers dialog Advanced tab and settings link, `script/vega-dev-app`, and the first version of the **Remote Host panel (D3)**.
+Done and pushed today: project config folder is `.vega/` instead of `.zed/` (settings, tasks, debug, deployment; `.zed/` is ignored on purpose); the CLI is `vega` (`vega .` opens a folder; `script/vega-dev-app --build` builds it, then `ln -sf "$PWD/target/debug/VEGA Dev.app/Contents/MacOS/cli" ~/.local/bin/vega` or run "cli: install"); D4 Sync with Deployed view (`deployment: sync with deployed`, see `DEPLOYMENT.md`); D3 second pass (cut/copy/paste, chmod, Exclude Path, drag and drop, keyboard navigation, remembered dock position; see `DEPLOYMENT.md`). Earlier: Linux-only CI (`.github/workflows/vega_ci.yml`, green, about 22 minutes uncached), MCP OAuth without Zed's CIMD document, every zed.dev link VEGA opens now goes to VEGA's docs or repo (`crates/release_channel/src/vega_docs.rs` + `gpui::OpenUrlRewriter`), Help menu feedback to VEGA's GitHub, Deployment Servers dialog Advanced tab and settings link, `script/vega-dev-app`, and the first version of the **Remote Host panel (D3)**.
 
 Built but **not yet checked in the running app** (owner's manual check, screenshots welcome):
 
@@ -34,6 +34,7 @@ Built but **not yet checked in the running app** (owner's manual check, screensh
 | D3 Remote Host panel | Server icon in the right dock (shown once a server is configured), or `deployment: toggle remote host`. Browse, open a file, edit and save (should upload), right-click menu, cut/copy/paste, Change Permissions…, Exclude Path, arrow keys, drag rows onto folders, drag files from Finder and the project panel, move the dock and restart |
 | D4 Sync with Deployed | Deployment → Sync with Deployed… on a folder (or `deployment: sync with deployed`). Change some files on both sides, check the states, flip directions, Compare, Synchronize |
 | Settings Sync page | Settings → General → Settings Sync |
+| `vega` CLI | `vega .` in a project folder opens it in VEGA Dev |
 | App icon | Launch with `script/vega-dev-app` and look at the Dock |
 
 Docker SFTP test server: `crates/deployment/tests/servers` (see `DEPLOYMENT.md` "Running the server tests"; generate `fixtures/id_ed25519` first on a new machine). Test login `tester` / `pass` on `localhost:2222`.

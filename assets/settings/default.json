@@ -2004,7 +2004,7 @@
       "**/*.crt",
       "**/.dev.vars",
       "**/secrets.yml",
-      "**/.zed/settings.json", // zed project settings
+      "**/.vega/settings.json", // zed project settings
       "/**/zed/settings.json", // zed user settings
       "/**/zed/keymap.json",
     ],
@@ -2383,7 +2383,7 @@
   //
   "file_types": {
     "JSONC": [
-      "**/.zed/*.json",
+      "**/.vega/*.json",
       "**/.vscode/**/*.json",
       "**/{zed,Zed}/{settings,keymap,tasks,debug}.json",
       "tsconfig*.json",

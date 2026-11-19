@@ -768,7 +768,7 @@ mod tests {
             TreeDiff {
                 entries: [
                     (
-                        RepoPath::new(".zed/settings.json").unwrap(),
+                        RepoPath::new(".vega/settings.json").unwrap(),
                         TreeDiffStatus::Added,
                     ),
                     (

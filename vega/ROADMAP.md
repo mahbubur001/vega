@@ -13,6 +13,7 @@ Status keys: `[ ]` todo · `[~]` in progress · `[x]` done. Each item maps to a 
 - [x] Rebrand app name, bundle IDs, URL scheme, icons (P03) — bundled .app check pending (P11)
 - [x] Disable telemetry, crash upload, auto-update against zed.dev (P04) — release-asset lookups (incl. the SSH/WSL/Docker remote-server download) now refuse zed.dev too; P10 gives them a real host
 - [x] Remove/hide Zed sign-in, Zed AI plan, collab UI (P05)
+- [x] Project config in `.vega/` (settings, tasks, debug, deployment), `.zed/` ignored; `vega` CLI (`vega .`), installed by "cli: install" to `/usr/local/bin/vega`
 - [~] Default "VEGA Dark" theme (P06) — `assets/themes/vega/vega.json`, default dark theme and first onboarding family; syntax colors ≥ WCAG AA on `#101018` (tested in `theme_settings`). Not yet looked at in the running app
 
 ## Phase 2 — AI-first
@@ -61,4 +62,4 @@ Every default VEGA changes from Zed (`assets/settings/default.json` unless noted
 | `theme.dark` | `One Dark` | `VEGA Dark` | Brand default (also `settings_content::DEFAULT_DARK_THEME`) | P06 |
 
 ## Ongoing
-- [ ] Weekly upstream sync (P14) — last: 2026-11-19, upstream `dd091a1b4f` (22 commits, no conflicts). Check after each merge: VEGA guards in `client.rs` (`ZED_ACCOUNTS_ENABLED`), `telemetry.rs` (`UPLOAD_EVENTS`), `auto_update.rs` (`is_zed_hosted`), and no new `build_zed_*_url`/zed.dev calls in code. Test `workspace` on its own (combined test runs enable `remote/test-support` and fail to compile)
+- [ ] Weekly upstream sync (P14) — last: 2026-11-19, upstream `dd091a1b4f` (22 commits, no conflicts). Check after each merge: new hard-coded `.zed` project paths (should use `paths::local_settings_folder_name()` / `.vega`), VEGA guards in `client.rs` (`ZED_ACCOUNTS_ENABLED`), `telemetry.rs` (`UPLOAD_EVENTS`), `auto_update.rs` (`is_zed_hosted`), and no new `build_zed_*_url`/zed.dev calls in code. Test `workspace` on its own (combined test runs enable `remote/test-support` and fail to compile)

@@ -6,7 +6,9 @@
 #   script/vega-dev-app [--build] [paths to open…]
 #
 # --build runs `cargo build` first (with runtime shaders when Xcode's Metal
-# compiler isn't available).
+# compiler isn't available), including the `vega` command-line tool. To use
+# `vega .` in a terminal, run "cli: install" in VEGA Dev once, or:
+#   ln -sf "$PWD/target/debug/VEGA Dev.app/Contents/MacOS/cli" ~/.local/bin/vega
 
 set -euo pipefail
 
@@ -18,7 +20,7 @@ if [[ "${1:-}" == "--build" ]]; then
   if ! xcrun -f metal > /dev/null 2>&1; then
     features=(--features gpui_platform/runtime_shaders)
   fi
-  cargo build -p zed "${features[@]}"
+  cargo build -p zed -p cli "${features[@]}"
 fi
 
 binary=target/debug/vega
@@ -66,6 +68,11 @@ PLIST
 # Clone (APFS copy-on-write) so a multi-GB debug binary costs no disk space.
 rm -f "$contents/MacOS/vega"
 cp -c "$binary" "$contents/MacOS/vega" 2> /dev/null || cp "$binary" "$contents/MacOS/vega"
+# The `vega` command-line tool looks for the app around itself.
+if [[ -x target/debug/cli ]]; then
+  rm -f "$contents/MacOS/cli"
+  cp -c target/debug/cli "$contents/MacOS/cli" 2> /dev/null || cp target/debug/cli "$contents/MacOS/cli"
+fi
 touch "$app"
 
 exec "$contents/MacOS/vega" "$@"

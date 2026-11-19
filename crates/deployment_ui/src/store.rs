@@ -1,11 +1,11 @@
-//! One deployment engine per local worktree that has `.zed/deployment.json`.
+//! One deployment engine per local worktree that has `.vega/deployment.json`.
 
 use std::path::{Path, PathBuf};
 use std::sync::Arc;
 
 use collections::HashMap;
 use deployment::engine::{Engine, FsEvent};
-use deployment::project::{CONFIG_PATH, import_iremote_config, locate_config};
+use deployment::project::{CONFIG_PATH, locate_config};
 use deployment::prompt::Prompter;
 use deployment::queue::TaskStatus;
 use futures::StreamExt as _;
@@ -15,7 +15,6 @@ use gpui_tokio::Tokio;
 use language::BufferEvent;
 use project::buffer_store::BufferStoreEvent;
 use project::{PathChange, Project, WorktreeId};
-use util::ResultExt as _;
 use zed_actions::deployment::ConfiguredRoots;
 
 use crate::prompter::WindowPrompter;
@@ -193,7 +192,6 @@ impl DeploymentStore {
         let prompter: Arc<dyn Prompter> = self.prompter.clone();
         let credentials = crate::secrets::credentials(cx);
         let load = Tokio::spawn(cx, async move {
-            import_iremote_config(&root).log_err();
             locate_config(&root)
                 .exists
                 .then(|| Engine::new(&root, prompter, credentials))

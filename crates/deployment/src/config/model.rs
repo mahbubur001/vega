@@ -319,7 +319,7 @@ pub enum LogLevel {
     Details,
 }
 
-pub const DEFAULT_EXCLUDE_NAMES: [&str; 8] = [
+pub const DEFAULT_EXCLUDE_NAMES: [&str; 9] = [
     ".svn",
     ".cvs",
     ".idea",
@@ -327,6 +327,7 @@ pub const DEFAULT_EXCLUDE_NAMES: [&str; 8] = [
     ".git",
     ".hg",
     ".zed",
+    ".vega",
     "node_modules",
 ];
 
@@ -416,7 +417,7 @@ pub struct ProjectServerData {
     pub excluded_remote: Vec<String>,
 }
 
-/// `.zed/iremote.json`
+/// `.vega/deployment.json`
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ProjectConfig {

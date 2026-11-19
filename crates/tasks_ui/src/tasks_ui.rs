@@ -578,7 +578,7 @@ mod tests {
         fs.insert_tree(
             worktree_root,
             json!({
-                ".zed": {
+                ".vega": {
                     "tasks.json": "[]",
                 },
                 "scenes": {
@@ -977,7 +977,7 @@ mod tests {
             .resolve_task(
                 &TaskSourceKind::Worktree {
                     id: project_worktree_id,
-                    directory_in_worktree: rel_path(".zed").into(),
+                    directory_in_worktree: rel_path(".vega").into(),
                     id_base: "local worktree tasks".into(),
                 },
                 &TaskTemplate {
@@ -1095,7 +1095,7 @@ mod tests {
         fs.insert_tree(
             path!("/project"),
             json!({
-                ".zed": {
+                ".vega": {
                     "tasks.json": r#"[
                         {
                             "label": "print worktree root",
@@ -1252,7 +1252,7 @@ mod tests {
         fs.insert_tree(
             path!("/dir"),
             json!({
-                ".zed": {
+                ".vega": {
                     "tasks.json": r#"[
                             {
                                 "label": "example task",
