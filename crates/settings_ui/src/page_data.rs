@@ -500,35 +500,7 @@ fn general_page(cx: &App) -> SettingsPage {
     /// VEGA: Settings Sync lives in its own crate; its actions are dispatched
     /// by name so this crate doesn't depend on it.
     fn settings_sync_section() -> [SettingsPageItem; 4] {
-        fn link(
-            title: &'static str,
-            description: &'static str,
-            button_text: &'static str,
-            action: &'static str,
-        ) -> SettingsPageItem {
-            SettingsPageItem::ActionLink(ActionLink {
-                title: title.into(),
-                description: Some(description.into()),
-                button_text: button_text.into(),
-                on_click: Arc::new(move |settings_window, window, cx| {
-                    let Some(original_window) = settings_window.original_window else {
-                        return;
-                    };
-                    let Some(action) = cx.build_action(action, None).ok() else {
-                        return;
-                    };
-                    original_window
-                        .update(cx, |_workspace, original_window, cx| {
-                            original_window.dispatch_action(action, cx);
-                            original_window.activate_window();
-                        })
-                        .ok();
-                    window.remove_window();
-                }),
-                files: USER,
-            })
-        }
-
+        let link = vega_action_link;
         [
             SettingsPageItem::SectionHeader("Settings Sync"),
             link(
@@ -548,6 +520,19 @@ fn general_page(cx: &App) -> SettingsPage {
                 "Restore an earlier version of your synced settings.",
                 "Show History",
                 "settings_sync::ShowHistory",
+            ),
+        ]
+    }
+
+    /// VEGA: deployment servers are edited in their own dialog.
+    fn deployment_section() -> [SettingsPageItem; 2] {
+        [
+            SettingsPageItem::SectionHeader("Deployment"),
+            vega_action_link(
+                "Deployment Servers",
+                "Add, edit and test the SFTP, FTP and WebDAV servers this project uploads to.",
+                "Open Servers",
+                "deployment::OpenDeploymentServers",
             ),
         ]
     }
@@ -603,10 +588,43 @@ fn general_page(cx: &App) -> SettingsPage {
             privacy_section(),
             auto_update_section(),
             settings_sync_section(),
+            deployment_section(),
             extensions_section(),
         )
         .into(),
     }
+}
+
+/// VEGA: a settings-window link that runs an action, by name, in the window
+/// the settings were opened from, so this crate needn't depend on the crate
+/// that defines the action.
+fn vega_action_link(
+    title: &'static str,
+    description: &'static str,
+    button_text: &'static str,
+    action: &'static str,
+) -> SettingsPageItem {
+    SettingsPageItem::ActionLink(ActionLink {
+        title: title.into(),
+        description: Some(description.into()),
+        button_text: button_text.into(),
+        on_click: Arc::new(move |settings_window, window, cx| {
+            let Some(original_window) = settings_window.original_window else {
+                return;
+            };
+            let Some(action) = cx.build_action(action, None).ok() else {
+                return;
+            };
+            original_window
+                .update(cx, |_workspace, original_window, cx| {
+                    original_window.dispatch_action(action, cx);
+                    original_window.activate_window();
+                })
+                .ok();
+            window.remove_window();
+        }),
+        files: USER,
+    })
 }
 
 fn appearance_page() -> SettingsPage {

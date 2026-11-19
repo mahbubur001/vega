@@ -858,6 +858,15 @@ impl Render for ServersModal {
 mod tests {
     use super::*;
 
+    #[test]
+    fn action_name_used_by_the_settings_page() {
+        use gpui::Action as _;
+        assert_eq!(
+            zed_actions::deployment::OpenDeploymentServers.name(),
+            "deployment::OpenDeploymentServers"
+        );
+    }
+
     fn store(dir: &std::path::Path) -> ConfigStore {
         ConfigStore::load_with(dir, dir.join("servers.json"))
     }
