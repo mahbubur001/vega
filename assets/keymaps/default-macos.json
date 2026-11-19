@@ -1107,6 +1107,8 @@
       "cmd-v": "remote_host::Paste",
       "cmd-alt-c": "remote_host::CopyPath",
       "f2": "remote_host::Rename",
+      "shift-f6": "remote_host::Rename",
+      "shift-cmd-c": "remote_host::CopyPath",
       "backspace": "remote_host::Delete",
       "delete": "remote_host::Delete",
     },

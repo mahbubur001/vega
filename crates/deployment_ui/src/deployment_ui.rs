@@ -3,6 +3,7 @@
 //! engine.
 
 mod name_modal;
+mod permissions_modal;
 mod prompter;
 mod remote_host_panel;
 mod secret_modal;

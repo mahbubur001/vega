@@ -24,13 +24,17 @@ use gpui::{
 };
 use gpui_tokio::Tokio;
 use time::{OffsetDateTime, UtcOffset};
-use ui::{ContextMenu, DropdownMenu, IconPosition, ListItem, ListItemSpacing, Tooltip, prelude::*};
+use ui::{
+    ContextMenu, ContextMenuEntry, DropdownMenu, IconPosition, ListItem, ListItemSpacing, Tooltip,
+    prelude::*,
+};
 use util::ResultExt as _;
 use workspace::dock::{DockPosition, Panel, PanelEvent};
 use workspace::{DraggedSelection, OpenOptions, Workspace};
 use zed_actions::deployment::{OpenDeploymentServers, ToggleRemoteHost};
 
 use crate::name_modal::NameModal;
+use crate::permissions_modal::{PermissionsChoice, PermissionsModal};
 use crate::store::DeploymentStore;
 
 actions!(
@@ -62,7 +66,7 @@ actions!(
         ChangePermissions,
         /// Excludes the selected path from uploads and downloads, or includes it again.
         ToggleExcluded,
-        /// Copies the selected item's path on the server.
+        /// Copies the selected item's absolute path on the server.
         CopyPath,
         /// Reloads the open folders.
         Refresh,
@@ -587,43 +591,35 @@ impl RemoteHostPanel {
         };
         let this = cx.weak_entity();
         let title = if folder { "New Folder" } else { "New File" };
-        self.prompt(
-            NameModalKind::Name,
-            title.into(),
-            "",
-            window,
-            cx,
-            move |name, window, cx| {
-                this.update(cx, |this, cx| {
-                    let path = remote_join(&dir, &name);
-                    if folder {
-                        this.run(
-                            vec![dir],
-                            move |engine, id| {
-                                async move { engine.remote_mkdir(&id, &path).await }.boxed()
-                            },
-                            cx,
-                        );
-                    } else {
-                        let open_path = path.clone();
-                        this.run(
-                            vec![dir],
-                            move |engine, id| {
-                                async move { engine.remote_new_file(&id, &path).await }.boxed()
-                            },
-                            cx,
-                        );
-                        this.open(open_path, true, window, cx);
-                    }
-                })
-                .ok();
-            },
-        );
+        self.prompt(title.into(), "", window, cx, move |name, window, cx| {
+            this.update(cx, |this, cx| {
+                let path = remote_join(&dir, &name);
+                if folder {
+                    this.run(
+                        vec![dir],
+                        move |engine, id| {
+                            async move { engine.remote_mkdir(&id, &path).await }.boxed()
+                        },
+                        cx,
+                    );
+                } else {
+                    let open_path = path.clone();
+                    this.run(
+                        vec![dir],
+                        move |engine, id| {
+                            async move { engine.remote_new_file(&id, &path).await }.boxed()
+                        },
+                        cx,
+                    );
+                    this.open(open_path, true, window, cx);
+                }
+            })
+            .ok();
+        });
     }
 
     fn prompt(
         &self,
-        kind: NameModalKind,
         title: SharedString,
         initial: &str,
         window: &mut Window,
@@ -633,17 +629,8 @@ impl RemoteHostPanel {
         let initial = initial.to_string();
         self.workspace
             .update(cx, |workspace, cx| {
-                workspace.toggle_modal(window, cx, |window, cx| match kind {
-                    NameModalKind::Name => NameModal::new(title, &initial, on_confirm, window, cx),
-                    NameModalKind::Permissions => NameModal::with_validator(
-                        title,
-                        "Permissions, e.g. 644",
-                        &initial,
-                        permissions_problem,
-                        on_confirm,
-                        window,
-                        cx,
-                    ),
+                workspace.toggle_modal(window, cx, |window, cx| {
+                    NameModal::new(title, &initial, on_confirm, window, cx)
                 });
             })
             .ok();
@@ -870,7 +857,6 @@ impl RemoteHostPanel {
         };
         let this = cx.weak_entity();
         self.prompt(
-            NameModalKind::Name,
             "Rename".into(),
             &row.name,
             window,
@@ -964,33 +950,60 @@ impl RemoteHostPanel {
         let current = self
             .item(&row.path)
             .and_then(|item| item.stat.mode)
-            .map(|mode| format!("{:o}", mode & 0o7777))
-            .unwrap_or_default();
+            .map(|mode| mode & 0o7777);
+        let (file_mode, dir_mode) = if row.is_dir {
+            (0o644, current.unwrap_or(0o755))
+        } else {
+            (current.unwrap_or(0o644), 0o755)
+        };
         let this = cx.weak_entity();
-        self.prompt(
-            NameModalKind::Permissions,
-            format!("Permissions of {}", row.name).into(),
-            &current,
-            window,
-            cx,
-            move |value, _, cx| {
-                let Some(mode) = parse_permissions(&value) else {
-                    return;
-                };
-                this.update(cx, |this, cx| {
-                    let path = row.path.clone();
-                    this.run(
-                        vec![remote_parent(&row.path)],
-                        move |engine, id| {
-                            async move { engine.remote_chmod(&id, &path, mode, false).await }
-                                .boxed()
-                        },
-                        cx,
-                    );
-                })
-                .ok();
-            },
-        );
+        let on_confirm = move |choice: PermissionsChoice, _: &mut Window, cx: &mut App| {
+            this.update(cx, |this, cx| {
+                let path = row.path.clone();
+                let mut reload = vec![remote_parent(&row.path)];
+                if row.is_dir {
+                    reload.push(row.path.clone());
+                }
+                this.run(
+                    reload,
+                    move |engine, id| {
+                        async move {
+                            if choice.recursive {
+                                engine
+                                    .remote_chmod_tree(
+                                        &id,
+                                        &path,
+                                        choice.file_mode,
+                                        choice.dir_mode,
+                                    )
+                                    .await
+                            } else {
+                                match choice.dir_mode.or(choice.file_mode) {
+                                    Some(mode) => {
+                                        engine.remote_chmod(&id, &path, mode, false).await
+                                    }
+                                    None => Ok(()),
+                                }
+                            }
+                        }
+                        .boxed()
+                    },
+                    cx,
+                );
+            })
+            .ok();
+        };
+        let title = format!("Permissions of {}", row.name);
+        let is_dir = row.is_dir;
+        self.workspace
+            .update(cx, |workspace, cx| {
+                workspace.toggle_modal(window, cx, |window, cx| {
+                    PermissionsModal::new(
+                        title, is_dir, file_mode, dir_mode, on_confirm, window, cx,
+                    )
+                });
+            })
+            .ok();
     }
 
     /// Whether `path` itself is in the server's excluded paths (not only inside
@@ -1048,49 +1061,89 @@ impl RemoteHostPanel {
         let can_paste = self.can_paste();
         let focus_handle = self.focus_handle.clone();
         let menu = ContextMenu::build(window, cx, move |menu, _, _| {
-            let menu = menu.context(focus_handle);
-            let Some(row) = row else {
-                return menu
-                    .action("Upload Here…", Box::new(UploadHere))
-                    .separator()
-                    .action("New File…", Box::new(NewFile))
-                    .action("New Folder…", Box::new(NewFolder))
-                    .action_disabled_when(!can_paste, "Paste", Box::new(Paste))
-                    .separator()
-                    .action("Refresh", Box::new(Refresh));
-            };
-            menu.when(!row.is_dir, |menu| {
-                menu.action("Open", Box::new(Open)).when(mapped, |menu| {
-                    menu.action("Open Server Copy", Box::new(OpenServerCopy))
-                })
-            })
-            .when(mapped, |menu| {
-                menu.action("Download to Project", Box::new(DownloadToProject))
-            })
-            .action("Upload Here…", Box::new(UploadHere))
-            .separator()
-            .action("New File…", Box::new(NewFile))
-            .action("New Folder…", Box::new(NewFolder))
-            .separator()
-            .action("Cut", Box::new(Cut))
-            .action("Copy", Box::new(Copy))
-            .action_disabled_when(!can_paste, "Paste", Box::new(Paste))
-            .separator()
-            .action("Rename…", Box::new(Rename))
-            .action("Delete", Box::new(Delete))
-            .action("Change Permissions…", Box::new(ChangePermissions))
-            .map(|menu| {
-                if explicitly_excluded {
-                    menu.action("Include Path", Box::new(ToggleExcluded))
-                } else if !excluded {
-                    menu.action("Exclude Path", Box::new(ToggleExcluded))
-                } else {
-                    menu
+            let focus = focus_handle.clone();
+            let entry =
+                move |label: &'static str, icon: Option<IconName>, action: Box<dyn Action>| {
+                    menu_entry(label, icon, action, focus.clone())
+                };
+            let new_submenu = {
+                let focus = focus_handle.clone();
+                move |menu: ContextMenu| {
+                    let focus = focus.clone();
+                    menu.submenu_with_icon("New", IconName::Plus, move |menu, _, _| {
+                        menu.context(focus.clone())
+                            .item(menu_entry(
+                                "File…",
+                                Some(IconName::File),
+                                Box::new(NewFile),
+                                focus.clone(),
+                            ))
+                            .item(menu_entry(
+                                "Folder…",
+                                Some(IconName::Folder),
+                                Box::new(NewFolder),
+                                focus.clone(),
+                            ))
+                    })
                 }
-            })
-            .separator()
-            .action("Copy Path", Box::new(CopyPath))
-            .action("Refresh", Box::new(Refresh))
+            };
+            let menu = menu.context(focus_handle.clone());
+            let Some(row) = row else {
+                return new_submenu(menu)
+                    .item(entry("Upload Here…", None, Box::new(UploadHere)))
+                    .separator()
+                    .item(entry("Paste", None, Box::new(Paste)).disabled(!can_paste))
+                    .separator()
+                    .item(entry(
+                        "Refresh",
+                        Some(IconName::RotateCw),
+                        Box::new(Refresh),
+                    ));
+            };
+            let menu = menu
+                .when(!row.is_dir, |menu| {
+                    menu.item(entry("Open", None, Box::new(Open)))
+                        .when(mapped, |menu| {
+                            menu.item(entry("Open Server Copy", None, Box::new(OpenServerCopy)))
+                        })
+                })
+                .when(mapped, |menu| {
+                    menu.item(entry(
+                        "Download to Project",
+                        None,
+                        Box::new(DownloadToProject),
+                    ))
+                })
+                .item(entry("Upload Here…", None, Box::new(UploadHere)))
+                .separator();
+            new_submenu(menu)
+                .item(entry(
+                    "Change Permissions…",
+                    Some(IconName::Lock),
+                    Box::new(ChangePermissions),
+                ))
+                .item(entry("Rename…", None, Box::new(Rename)))
+                .item(entry("Delete…", Some(IconName::Trash), Box::new(Delete)))
+                .separator()
+                .item(entry("Cut", Some(IconName::Scissors), Box::new(Cut)))
+                .item(entry("Copy", Some(IconName::Copy), Box::new(Copy)))
+                .item(entry("Paste", None, Box::new(Paste)).disabled(!can_paste))
+                .item(entry("Copy Absolute Path", None, Box::new(CopyPath)))
+                .separator()
+                .map(|menu| {
+                    if explicitly_excluded {
+                        menu.item(entry("Include Path", None, Box::new(ToggleExcluded)))
+                    } else if !excluded {
+                        menu.item(entry("Exclude Path", None, Box::new(ToggleExcluded)))
+                    } else {
+                        menu
+                    }
+                })
+                .item(entry(
+                    "Refresh",
+                    Some(IconName::RotateCw),
+                    Box::new(Refresh),
+                ))
         });
         self.show_menu(menu, position, window, cx);
     }
@@ -1494,10 +1547,24 @@ impl RemoteHostPanel {
     }
 }
 
-/// Which validation [`RemoteHostPanel::prompt`] uses.
-enum NameModalKind {
-    Name,
-    Permissions,
+/// A context menu entry that runs `action` on the panel and shows its key binding.
+fn menu_entry(
+    label: &'static str,
+    icon: Option<IconName>,
+    action: Box<dyn Action>,
+    focus: FocusHandle,
+) -> ContextMenuEntry {
+    let dispatch = action.boxed_clone();
+    let entry = ContextMenuEntry::new(label)
+        .action(action)
+        .handler(move |window, cx| {
+            window.focus(&focus, cx);
+            window.dispatch_action(dispatch.boxed_clone(), cx);
+        });
+    match icon {
+        Some(icon) => entry.icon(icon).icon_position(IconPosition::Start),
+        None => entry,
+    }
 }
 
 fn server_icon(kind: Option<ServerType>) -> Icon {
@@ -1634,21 +1701,6 @@ fn dock_position_from_str(value: &str) -> Option<DockPosition> {
         "right" => Some(DockPosition::Right),
         _ => None,
     }
-}
-
-/// Parses an octal permission mode such as `644` or `0755`.
-pub(crate) fn parse_permissions(value: &str) -> Option<u32> {
-    let value = value.trim();
-    if value.is_empty() || value.len() > 4 {
-        return None;
-    }
-    u32::from_str_radix(value, 8).ok()
-}
-
-fn permissions_problem(value: &str) -> Option<&'static str> {
-    parse_permissions(value)
-        .is_none()
-        .then_some("Enter octal permissions, such as 644 or 755.")
 }
 
 /// Where each pasted item goes: `(source, destination)` pairs for pasting
@@ -2011,16 +2063,6 @@ mod tests {
         assert!(paste_plan(&strings(&["/a"]), "/a", &[], false).is_err());
         assert!(paste_plan(&strings(&["/a"]), "/a/b", &[], true).is_err());
         assert!(paste_plan(&strings(&["/a"]), "/ab", &[], true).is_ok());
-    }
-
-    #[test]
-    fn permissions_are_octal() {
-        assert_eq!(parse_permissions("644"), Some(0o644));
-        assert_eq!(parse_permissions(" 0755 "), Some(0o755));
-        assert_eq!(parse_permissions("4755"), Some(0o4755));
-        assert_eq!(parse_permissions("888"), None);
-        assert_eq!(parse_permissions("12345"), None);
-        assert_eq!(parse_permissions(""), None);
     }
 
     #[test]

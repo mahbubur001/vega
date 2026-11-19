@@ -865,6 +865,15 @@ impl PickerDelegate for CommandPaletteDelegate {
 }
 
 pub fn humanize_action_name(name: &str) -> String {
+    // VEGA: `zed::` actions read as "vega: …"; the namespace stays `zed` in keymaps and code.
+    let vega_name;
+    let name = match name.strip_prefix("zed::") {
+        Some(rest) => {
+            vega_name = format!("vega::{rest}");
+            vega_name.as_str()
+        }
+        None => name,
+    };
     let chars = name.chars().collect::<Vec<_>>();
     let capacity = name.len() + chars.iter().filter(|c| c.is_uppercase()).count();
     let mut result = String::with_capacity(capacity);

@@ -394,6 +394,26 @@ async fn remote_host_copy_chmod_and_exclude() {
             .permissions()
             .mode();
         assert_eq!(mode & 0o777, 0o600);
+
+        f.engine
+            .remote_chmod_tree(
+                "local",
+                &format!("{root}/dir copy"),
+                Some(0o640),
+                Some(0o750),
+            )
+            .await
+            .unwrap();
+        let mode_of = |p: &str| {
+            std::fs::metadata(f.remote.join(p))
+                .unwrap()
+                .permissions()
+                .mode()
+                & 0o777
+        };
+        assert_eq!(mode_of("www/dir copy"), 0o750);
+        assert_eq!(mode_of("www/dir copy/empty"), 0o750);
+        assert_eq!(mode_of("www/dir copy/a.txt"), 0o640);
     }
 
     let dir = format!("{root}/dir");

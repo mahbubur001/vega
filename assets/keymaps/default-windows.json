@@ -1056,6 +1056,7 @@
       "ctrl-v": "remote_host::Paste",
       "shift-alt-c": "remote_host::CopyPath",
       "f2": "remote_host::Rename",
+      "shift-f6": "remote_host::Rename",
       "delete": "remote_host::Delete",
     },
   },

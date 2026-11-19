@@ -437,7 +437,7 @@ mod tests {
             let bindings = group_bindings(
                 sequences
                     .into_iter()
-                    .map(|sequence| binding(sequence, "zed: open settings"))
+                    .map(|sequence| binding(sequence, "vega: open settings"))
                     .collect(),
             );
 
@@ -615,7 +615,7 @@ mod tests {
                 .map(|row| row.action_name.as_ref())
                 .collect::<Vec<_>>();
             action_names.sort();
-            assert_eq!(action_names, vec!["zed: open keymap", "zed: open settings"]);
+            assert_eq!(action_names, vec!["vega: open keymap", "vega: open settings"]);
             assert!(rows.iter().all(|row| !row.is_group));
         }
     }
@@ -638,7 +638,7 @@ mod tests {
         assert_eq!(keys, vec![vec!["É"], vec!["é"]]);
         for row in rows {
             assert_eq!(text_for_keybinding_keystrokes(&row.keystrokes, cx), "É");
-            assert_eq!(row.action_name.as_ref(), "zed: open settings");
+            assert_eq!(row.action_name.as_ref(), "vega: open settings");
             assert!(!row.is_group);
         }
     }
@@ -670,7 +670,7 @@ mod tests {
                 .collect::<Vec<_>>(),
             vec![
                 (parse_keystrokes("cmd-o"), "workspace: open", false),
-                (parse_keystrokes("cmd-s"), "zed: open keymap", false),
+                (parse_keystrokes("cmd-s"), "vega: open keymap", false),
                 (
                     parse_keystrokes("cmd-o cmd-p"),
                     "workspace: reopen last picker",
@@ -687,8 +687,8 @@ mod tests {
         // A longer chord can sit between two bindings for the same keys, so duplicates aren't
         // always adjacent.
         let rows = group_bindings(vec![
-            binding("a", "zed: open keymap"),
-            binding("a b", "zed: open settings"),
+            binding("a", "vega: open keymap"),
+            binding("a b", "vega: open settings"),
             binding("a", "theme selector: toggle"),
         ]);
 
@@ -697,8 +697,8 @@ mod tests {
                 .map(|row| (row.keystrokes.to_vec(), row.action_name.as_ref()))
                 .collect::<Vec<_>>(),
             vec![
-                (parse_keystrokes("a"), "zed: open keymap"),
-                (parse_keystrokes("a b"), "zed: open settings"),
+                (parse_keystrokes("a"), "vega: open keymap"),
+                (parse_keystrokes("a b"), "vega: open settings"),
             ],
         );
         assert!(rows.iter().all(|row| !row.is_group));

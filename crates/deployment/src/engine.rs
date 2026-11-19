@@ -1264,6 +1264,32 @@ impl Engine {
         Ok(())
     }
 
+    /// Changes permissions under `path` (itself included): folders get `dir_mode`, files get
+    /// `file_mode`; `None` leaves that kind alone (Remote Host "Change Permissions…" on a folder).
+    pub async fn remote_chmod_tree(
+        self: &Arc<Self>,
+        server_id: &str,
+        path: &str,
+        file_mode: Option<u32>,
+        dir_mode: Option<u32>,
+    ) -> Result<()> {
+        let t = self.target_by_id(server_id)?;
+        let pool = self.manager.pool(&t.server);
+        let (files, dirs) = with_client!(pool, |c| collect_remote(c, &t, path))?;
+        let changes = dirs
+            .into_iter()
+            .filter_map(|dir| Some((dir, dir_mode?)))
+            .chain(
+                files
+                    .into_iter()
+                    .filter_map(|(file, _)| Some((file, file_mode?))),
+            );
+        for (p, mode) in changes {
+            with_client!(pool, |c| c.chmod(&p, mode))?;
+        }
+        Ok(())
+    }
+
     /// Download from Remote Host to the mapped local paths.
     pub async fn remote_download(
         self: &Arc<Self>,
