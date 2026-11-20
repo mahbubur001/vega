@@ -40,6 +40,19 @@ impl NameModal {
         Self::build(title, label, initial, path_problem, on_confirm, window, cx)
     }
 
+    /// Asks for a value that `validate` checks (`Some(problem)` refuses it).
+    pub fn with_validator(
+        title: impl Into<SharedString>,
+        label: &'static str,
+        initial: &str,
+        validate: fn(&str) -> Option<&'static str>,
+        on_confirm: impl FnOnce(String, &mut Window, &mut App) + 'static,
+        window: &mut Window,
+        cx: &mut Context<Self>,
+    ) -> Self {
+        Self::build(title, label, initial, validate, on_confirm, window, cx)
+    }
+
     fn build(
         title: impl Into<SharedString>,
         label: &'static str,

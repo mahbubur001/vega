@@ -613,6 +613,7 @@ impl MarkdownLayoutToolbar {
     }
 
     /// Whether the buttons show: the active item is a Markdown editor or preview.
+    #[cfg(test)]
     fn is_shown(&self, cx: &App) -> bool {
         self.source(cx).is_some()
     }

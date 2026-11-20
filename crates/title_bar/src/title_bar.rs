@@ -1100,12 +1100,13 @@ impl TitleBar {
 
                 PopoverMenu::new("branch-menu")
                     .menu(move |window, cx| {
-                        git_ui_core::build_branch_picker(
+                        // VEGA: PhpStorm-style branch popup.
+                        Some(vega_branch_popup::build(
                             workspace.downgrade(),
                             effective_repository.clone(),
                             window,
                             cx,
-                        )
+                        ))
                     })
                     .trigger_with_tooltip(trigger, move |_window, cx| {
                         let meta = if is_detached_head {

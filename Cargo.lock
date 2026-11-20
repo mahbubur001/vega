@@ -19829,6 +19829,7 @@ dependencies = [
  "theme_settings",
  "ui",
  "util",
+ "vega_branch_popup",
  "workspace",
  "zed_actions",
 ]
@@ -21039,6 +21040,23 @@ name = "vcpkg"
 version = "0.2.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "accd4ea62f7bb7a82fe23066fb0957d48ef677f6eeb8215f372f52e48bb32426"
+
+[[package]]
+name = "vega_branch_popup"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "collections",
+ "futures 0.3.34",
+ "git",
+ "gpui",
+ "picker",
+ "project",
+ "ui",
+ "util",
+ "vega_dialog",
+ "workspace",
+]
 
 [[package]]
 name = "vega_dialog"

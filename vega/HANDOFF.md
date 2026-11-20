@@ -21,7 +21,15 @@ _Last updated: 2026-11-21 (built-in PHP, auto-install fixed). Branch `vega`, eve
 
 ## Where things stand
 
-**Newest (2026-11-21): PHP is built in** (it was the `php` extension from Zed's registry, so a fresh VEGA had no PHP at all).
+**Newest (2026-11-21, later): PhpStorm-style title bar and branch popup** (new crate `vega_branch_popup`; title bar change in `crates/title_bar/src/title_bar.rs`, one call swapped from `git_ui_core::build_branch_picker`).
+- Title bar: the worktree button shows only when the repository has several worktrees; the branch button shows ↓incoming ↑outgoing and a ▾.
+- Popup: search over branches and actions; Update Project (`git::Pull`), Commit… (`git::ExpandCommitEditor`), Push… (`git::Push`), New Branch…, Checkout Tag or Revision…; groups Recent (from the reflog, unfolded) / Local / Remote / Tags (folded; any query unfolds all). Rows: ★ current, ↓/↑ counts, upstream, › menu: Checkout, New Branch from…, Rebase current onto, Merge into current, Update/Push (current), Rename…, Delete. Enter on a branch checks it out; Enter on a header folds it.
+- Tags, recent, remote checkout (`git checkout --track`), revision checkout, merge and rebase run the `git` CLI (local projects only); the rest uses the repository API. Errors show as toasts.
+- Not built: Compare with current, favourites (☆), Update for a non-current branch, PhpStorm's ⌘T/⌘K/⇧⌘K keys (⌘K is Zed's chord prefix). Not checked in the app.
+- Markdown layout buttons moved to the right end of the tab bar (`Pane::add_tab_bar_end_item`, a small VEGA seam in `crates/workspace/src/pane.rs`). Editor toolbar: breadcrumbs, quick actions and selections menu off by default.
+- phpactor: downloads `phpactor.phar` through the direct latest-release link when GitHub's API is rate limited; restarts only after the new include paths are loaded (settings reload is awaited, not timed); every project reindexes once (marker v3).
+
+ (it was the `php` extension from Zed's registry, so a fresh VEGA had no PHP at all).
 - Grammar: `tree-sitter-php` 0.24 (the exact revision the extension used); queries copied from the extension into `crates/grammars/src/php` (Apache-2.0, `LICENSE-APACHE` there, header in each file). Not ported: phpdoc highlighting in `/** */` comments (its grammar needs tree-sitter 0.20), Intelephense's custom completion labels, the phptools and phpantom servers.
 - Language servers in `crates/languages/src/php.rs`: phpactor (VEGA's default: `phpactor` on PATH, else the latest `phpactor.phar` from GitHub run with `php`) and Intelephense (npm). Tasks: phpunit, pest, run selection.
 - Xdebug debug adapter back in core: `crates/dap_adapters/src/xdebug.rs`, name "Xdebug" like the extension.

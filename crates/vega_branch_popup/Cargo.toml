@@ -1,0 +1,25 @@
+[package]
+name = "vega_branch_popup"
+version = "0.1.0"
+edition.workspace = true
+publish.workspace = true
+license = "GPL-3.0-or-later"
+
+[lints]
+workspace = true
+
+[lib]
+path = "src/vega_branch_popup.rs"
+
+[dependencies]
+anyhow.workspace = true
+collections.workspace = true
+futures.workspace = true
+git.workspace = true
+gpui.workspace = true
+picker.workspace = true
+project.workspace = true
+ui.workspace = true
+util.workspace = true
+vega_dialog.workspace = true
+workspace.workspace = true
