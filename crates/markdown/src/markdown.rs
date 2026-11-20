@@ -2,6 +2,7 @@ pub mod html;
 mod mermaid;
 pub mod parser;
 mod path_range;
+mod scroll_sync;
 mod selection;
 
 use base64::Engine as _;
@@ -15,6 +16,7 @@ use mermaid::{
     MermaidState, ParsedMarkdownMermaidDiagram, extract_mermaid_diagrams, render_mermaid_diagram,
 };
 pub use path_range::{LineCol, PathWithRange};
+pub use scroll_sync::MarkdownScrolled;
 use settings::Settings as _;
 use smallvec::SmallVec;
 use theme_settings::ThemeSettings;
@@ -496,6 +498,7 @@ pub struct Markdown {
     pressed_link: Option<RenderedLink>,
     pressed_footnote_ref: Option<RenderedFootnoteRef>,
     autoscroll_request: Option<usize>,
+    scroll_sync: scroll_sync::ScrollSyncState,
     pending_heading_scroll: Option<SharedString>,
     pending_autoscroll: Option<usize>,
     active_root_block: Option<usize>,
@@ -717,6 +720,7 @@ impl Markdown {
             pressed_link: None,
             pressed_footnote_ref: None,
             autoscroll_request: None,
+            scroll_sync: Default::default(),
             pending_heading_scroll: None,
             pending_autoscroll: None,
             active_root_block: None,
@@ -3478,7 +3482,7 @@ impl Element for MarkdownElement {
 
         let hitbox = window.insert_hitbox(bounds, HitboxBehavior::Normal);
         rendered_markdown.element.prepaint(window, cx);
-        self.autoscroll(&rendered_markdown.text, window, cx);
+        self.autoscroll_and_track_scroll(&rendered_markdown.text, window, cx);
         hitbox
     }
 

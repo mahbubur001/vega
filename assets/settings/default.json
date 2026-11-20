@@ -136,6 +136,8 @@
     "default_layout": "editor",
     // Whether scrolling a Markdown editor also scrolls its previews.
     "scroll_preview_with_editor": true,
+    // Whether scrolling a Markdown preview also scrolls its editor.
+    "scroll_editor_with_preview": true,
     // Whether to limit the width of the rendered markdown content. When
     // enabled, content is constrained to `max_width` and centered
     // horizontally within the preview pane.

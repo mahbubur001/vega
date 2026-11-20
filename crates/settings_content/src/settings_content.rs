@@ -1383,6 +1383,10 @@ pub struct MarkdownPreviewSettingsContent {
     ///
     /// Default: true
     pub scroll_preview_with_editor: Option<bool>,
+    /// VEGA: whether scrolling a Markdown preview also scrolls its editor.
+    ///
+    /// Default: true
+    pub scroll_editor_with_preview: Option<bool>,
     /// Whether to limit the width of the rendered markdown content. When
     /// enabled, content is constrained to `max_width` and centered
     /// horizontally within the preview pane, for optimal readability.

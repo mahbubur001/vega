@@ -6,16 +6,17 @@
 
 use std::sync::Arc;
 
-use collections::HashSet;
+use collections::{HashMap, HashSet};
 use editor::{
     Bias, Editor, EditorEvent,
-    display_map::{DisplayPoint, DisplayRow},
+    display_map::{DisplayPoint, DisplayRow, ToDisplayPoint as _},
 };
 use gpui::{
     App, Context, Empty, Entity, EntityId, EventEmitter, Global, IntoElement, ParentElement as _,
     Render, Subscription, WeakEntity, Window, actions,
 };
 use language::{Buffer, BufferEvent, LanguageRegistry};
+use markdown::MarkdownScrolled;
 use markdown_preview::markdown_preview_view::MarkdownPreviewView;
 use settings::{MarkdownDefaultLayout, RegisterSetting, Settings};
 use ui::{ButtonStyle, IconButton, IconName, IconSize, Tooltip, prelude::*};
@@ -83,6 +84,7 @@ impl MarkdownLayout {
 struct MarkdownLayoutSettings {
     default_layout: MarkdownDefaultLayout,
     scroll_preview_with_editor: bool,
+    scroll_editor_with_preview: bool,
 }
 
 impl Settings for MarkdownLayoutSettings {
@@ -95,32 +97,29 @@ impl Settings for MarkdownLayoutSettings {
             scroll_preview_with_editor: markdown_preview
                 .and_then(|markdown_preview| markdown_preview.scroll_preview_with_editor)
                 .unwrap_or(true),
+            scroll_editor_with_preview: markdown_preview
+                .and_then(|markdown_preview| markdown_preview.scroll_editor_with_preview)
+                .unwrap_or(true),
         }
     }
 }
 
-/// Editors that were already set up. An editor tab is "added" again when it
-/// moves between panes or comes back from Preview Only; the default layout must
-/// not override the layout the user chose since, and scroll sync must not be
-/// subscribed twice.
+/// Editors and previews that were already set up. A tab is "added" again when
+/// it moves between panes or comes back from Preview Only; the default layout
+/// must not override the layout the user chose since, and scroll sync must not
+/// be subscribed twice.
 #[derive(Default)]
-struct KnownMarkdownEditors(HashSet<EntityId>);
+struct KnownMarkdownTabs(HashSet<EntityId>);
 
-impl Global for KnownMarkdownEditors {}
+impl Global for KnownMarkdownTabs {}
 
-fn mark_known_markdown_editor(editor: &Entity<Editor>, cx: &mut App) -> bool {
-    let editor_id = editor.entity_id();
-    if !cx
-        .default_global::<KnownMarkdownEditors>()
-        .0
-        .insert(editor_id)
-    {
+fn mark_known_markdown_tab<T: 'static>(tab: &Entity<T>, cx: &mut App) -> bool {
+    let tab_id = tab.entity_id();
+    if !cx.default_global::<KnownMarkdownTabs>().0.insert(tab_id) {
         return false;
     }
-    cx.observe_release(editor, move |_, cx| {
-        cx.default_global::<KnownMarkdownEditors>()
-            .0
-            .remove(&editor_id);
+    cx.observe_release(tab, move |_, cx| {
+        cx.default_global::<KnownMarkdownTabs>().0.remove(&tab_id);
     })
     .detach();
     true
@@ -158,76 +157,118 @@ fn apply_default_layout(
     set_layout(workspace, &pane, layout, window, cx);
 }
 
-struct EditorScrollEdges {
-    top_row: f64,
-    top_source_index: usize,
-    bottom_source_index: usize,
+struct EditorScrollTop {
+    row: f64,
+    source_index: usize,
 }
 
-fn editor_scroll_edges(editor: &mut Editor, cx: &mut Context<Editor>) -> Option<EditorScrollEdges> {
-    let top_row = editor.scroll_position(cx).y;
-    let bottom_row = top_row + (editor.visible_line_count()? - 1.).max(0.);
+fn editor_scroll_top(editor: &mut Editor, cx: &mut Context<Editor>) -> Option<EditorScrollTop> {
+    let row = editor.scroll_position(cx).y.max(0.);
     let snapshot = editor.display_snapshot(cx);
-    let source_index_for_row = |row: f64| {
-        let point = snapshot.clip_point(
-            DisplayPoint::new(DisplayRow(row.max(0.) as u32), 0),
-            Bias::Left,
-        );
-        let (_, buffer_offset) = snapshot
-            .buffer_snapshot()
-            .point_to_buffer_offset(point.to_offset(&snapshot, Bias::Left))?;
-        Some(buffer_offset.0)
-    };
-    Some(EditorScrollEdges {
-        top_row,
-        top_source_index: source_index_for_row(top_row)?,
-        bottom_source_index: source_index_for_row(bottom_row)?,
+    let point = snapshot.clip_point(DisplayPoint::new(DisplayRow(row as u32), 0), Bias::Left);
+    let (_, buffer_offset) = snapshot
+        .buffer_snapshot()
+        .point_to_buffer_offset(point.to_offset(&snapshot, Bias::Left))?;
+    Some(EditorScrollTop {
+        row,
+        source_index: buffer_offset.0,
     })
 }
 
-/// Makes the previews of `editor`'s file follow its scrolling. The preview only
-/// offers "scroll just far enough to show this source position", so the edge
-/// the editor is scrolling towards is the one revealed: the last visible line
-/// when scrolling down, the first when scrolling up.
+/// Rows an editor was scrolled to because its preview scrolled. The editor
+/// reports that scroll like any other; it must not be sent back to the preview,
+/// which would snap the preview to a line start under the user's hand.
+#[derive(Default)]
+struct EditorRowsSetByPreview(HashMap<EntityId, f64>);
+
+impl Global for EditorRowsSetByPreview {}
+
+/// Keeps the previews of `editor`'s file aligned with the top of the editor.
 fn scroll_previews_with_editor(
     editor: &Entity<Editor>,
     window: &mut Window,
     cx: &mut Context<Workspace>,
 ) {
-    let mut previous_top_row = None;
+    let mut previous_row = None;
     cx.subscribe_in(
         editor,
         window,
         move |workspace, editor, event: &EditorEvent, _, cx| {
-            // A scroll that follows the cursor is left to the preview's own
-            // cursor sync, which reveals the block under the cursor.
-            let EditorEvent::ScrollPositionChanged {
-                autoscroll: false, ..
-            } = event
-            else {
+            let EditorEvent::ScrollPositionChanged { .. } = event else {
                 return;
             };
-            let Some(edges) = editor.update(cx, editor_scroll_edges) else {
+            let Some(top) = editor.update(cx, editor_scroll_top) else {
                 return;
             };
-            let scrolled_up = previous_top_row.is_some_and(|previous| edges.top_row < previous);
-            let unchanged = previous_top_row == Some(edges.top_row);
-            previous_top_row = Some(edges.top_row);
-            if unchanged || !MarkdownLayoutSettings::get_global(cx).scroll_preview_with_editor {
+            let unchanged = previous_row == Some(top.row);
+            previous_row = Some(top.row);
+            let set_by_preview = cx
+                .default_global::<EditorRowsSetByPreview>()
+                .0
+                .remove(&editor.entity_id())
+                == Some(top.row);
+            if unchanged
+                || set_by_preview
+                || !MarkdownLayoutSettings::get_global(cx).scroll_preview_with_editor
+            {
                 return;
             }
             let Some(buffer) = singleton_buffer(editor, cx) else {
                 return;
             };
-            let source_index = if scrolled_up || edges.top_row == 0. {
-                edges.top_source_index
-            } else {
-                edges.bottom_source_index
-            };
+            let line_fraction = top.row.fract() as f32;
             for (_, preview) in open_tabs(workspace, &buffer, cx).previews {
-                preview.update(cx, |preview, cx| {
-                    preview.reveal_source_index(source_index, cx);
+                let markdown = preview.read(cx).markdown().clone();
+                markdown.update(cx, |markdown, cx| {
+                    markdown.scroll_source_index_to_top(top.source_index, line_fraction, cx);
                 });
+            }
+        },
+    )
+    .detach();
+}
+
+/// Scrolls the source editor of `preview` when the preview is scrolled by hand.
+fn scroll_editor_with_preview(
+    preview: &Entity<MarkdownPreviewView>,
+    window: &mut Window,
+    cx: &mut Context<Workspace>,
+) {
+    let markdown = preview.read(cx).markdown().clone();
+    let preview = preview.downgrade();
+    cx.subscribe_in(
+        &markdown,
+        window,
+        move |_, _, event: &MarkdownScrolled, window, cx| {
+            if !MarkdownLayoutSettings::get_global(cx).scroll_editor_with_preview {
+                return;
+            }
+            let Some(preview) = preview.upgrade() else {
+                return;
+            };
+            let preview: &dyn ItemHandle = &preview;
+            let Some(editor) = preview.act_as::<Editor>(cx) else {
+                return;
+            };
+            let Some(buffer) = singleton_buffer(&editor, cx) else {
+                return;
+            };
+            let top_point = {
+                let buffer = buffer.read(cx);
+                buffer.offset_to_point(event.top_source_index.min(buffer.len()))
+            };
+            let new_row = editor.update(cx, |editor, cx| {
+                let snapshot = editor.display_snapshot(cx);
+                let row = f64::from(top_point.to_display_point(&snapshot).row().0);
+                let position = editor.scroll_position(cx);
+                editor.set_scroll_position(gpui::point(position.x, row), window, cx);
+                let new_row = editor.scroll_position(cx).y;
+                (new_row != position.y).then_some(new_row)
+            });
+            if let Some(new_row) = new_row {
+                cx.default_global::<EditorRowsSetByPreview>()
+                    .0
+                    .insert(editor.entity_id(), new_row);
             }
         },
     )
@@ -245,6 +286,12 @@ pub fn init(cx: &mut App) {
                     let workspace::Event::ItemAdded { item } = event else {
                         return;
                     };
+                    if let Some(preview) = item.downcast::<MarkdownPreviewView>() {
+                        if mark_known_markdown_tab(&preview, cx) {
+                            scroll_editor_with_preview(&preview, window, cx);
+                        }
+                        return;
+                    }
                     let Some(editor) = item.downcast::<Editor>() else {
                         return;
                     };
@@ -253,7 +300,7 @@ pub fn init(cx: &mut App) {
                     };
                     let languages = workspace.project().read(cx).languages().clone();
                     if !is_markdown_buffer(&buffer, &languages, cx)
-                        || !mark_known_markdown_editor(&editor, cx)
+                        || !mark_known_markdown_tab(&editor, cx)
                     {
                         return;
                     }
@@ -519,7 +566,7 @@ fn show_editor_tab(
         return (pane, editor);
     }
     MarkdownPreviewView::suppress_auto_preview_for(&source.editor, cx);
-    mark_known_markdown_editor(&source.editor, cx);
+    mark_known_markdown_tab(&source.editor, cx);
     workspace.add_item(
         origin_pane.clone(),
         Box::new(source.editor.clone()),
@@ -655,7 +702,7 @@ impl Render for MarkdownLayoutToolbar {
 mod tests {
     use super::*;
     use fs::FakeFs;
-    use gpui::{TestAppContext, UpdateGlobal as _, WindowHandle};
+    use gpui::{Focusable as _, TestAppContext, UpdateGlobal as _, WindowHandle};
     use project::{Project, ProjectPath};
     use serde_json::json;
     use util::{path, rel_path::rel_path};
@@ -936,40 +983,78 @@ mod tests {
     }
 
     #[gpui::test]
-    async fn scrolling_the_editor_reaches_its_previews(cx: &mut TestAppContext) {
+    async fn scrolling_syncs_editor_and_preview_both_ways(cx: &mut TestAppContext) {
         let test = markdown_workspace(cx).await;
         test.open_guide(cx).await;
         let editor = test.active_editor(cx);
         test.window
             .update(cx, |_, window, cx| {
                 editor.update(cx, |editor, cx| {
-                    editor.insert(&"line\n\n".repeat(200), window, cx);
+                    let lines = (0..400)
+                        .map(|line| format!("paragraph {line}\n\n"))
+                        .collect::<String>();
+                    editor.insert(&lines, window, cx);
+                    // A new preview scrolls to the cursor, so start it at the top.
+                    editor.move_to_beginning(&editor::actions::MoveToBeginning, window, cx);
                 });
             })
             .unwrap();
         test.set_layout(MarkdownLayout::EditorAndPreview, cx);
-
-        for row in [40., 120., 10., 0.] {
+        cx.executor()
+            .advance_clock(std::time::Duration::from_millis(500));
+        cx.run_until_parked();
+        let preview = test.workspace.read_with(cx, |workspace, cx| {
+            workspace
+                .items_of_type::<MarkdownPreviewView>(cx)
+                .next()
+                .unwrap()
+        });
+        let editor_row = |cx: &mut TestAppContext| {
+            test.window
+                .update(cx, |_, _, cx| {
+                    editor.update(cx, |editor, cx| editor.scroll_position(cx).y)
+                })
+                .unwrap()
+        };
+        let page_down_in_preview = |cx: &mut TestAppContext| {
             test.window
                 .update(cx, |_, window, cx| {
-                    editor.update(cx, |editor, cx| {
-                        editor.set_scroll_position(gpui::point(0., row), window, cx);
-                    });
+                    preview.focus_handle(cx).dispatch_action(
+                        &markdown_preview::ScrollPageDown,
+                        window,
+                        cx,
+                    );
                 })
                 .unwrap();
             cx.run_until_parked();
-        }
+        };
 
-        let edges = test
-            .window
-            .update(cx, |_, _, cx| editor.update(cx, editor_scroll_edges))
+        // Preview to editor: a page down in the preview moves the editor.
+        assert_eq!(editor_row(cx), 0.);
+        page_down_in_preview(cx);
+        let row_after_first_page = editor_row(cx);
+        assert!(
+            row_after_first_page > 0.,
+            "editor did not follow the preview"
+        );
+
+        // Editor to preview: after the editor jumps far down, a page down in the
+        // preview continues from there, which it only can if the preview followed.
+        test.window
+            .update(cx, |_, window, cx| {
+                editor.update(cx, |editor, cx| {
+                    editor.set_scroll_position(gpui::point(0., 400.), window, cx);
+                });
+            })
             .unwrap();
-        if let Some(edges) = edges {
-            assert_eq!(edges.top_row, 0.);
-            assert_eq!(edges.top_source_index, 0);
-            assert!(edges.bottom_source_index >= edges.top_source_index);
-        }
-        assert_eq!(test.visible_tabs(cx), "E|P");
+        cx.run_until_parked();
+        assert_eq!(editor_row(cx), 400.);
+        page_down_in_preview(cx);
+        assert!(
+            editor_row(cx) > 400.,
+            "preview did not follow the editor: row {}",
+            editor_row(cx)
+        );
     }
 
     #[gpui::test]

@@ -11185,6 +11185,7 @@ dependencies = [
  "fs",
  "gpui",
  "language",
+ "markdown",
  "markdown_preview",
  "project",
  "serde_json",
