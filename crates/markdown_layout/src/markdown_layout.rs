@@ -371,21 +371,25 @@ impl MarkdownLayoutToolbar {
             ToolbarItemLocation::Hidden
         }
     }
+}
 
-    fn set_layout(&mut self, layout: MarkdownLayout, window: &mut Window, cx: &mut Context<Self>) {
-        let Some(workspace) = self.workspace.upgrade() else {
-            return;
-        };
-        let Some(item) = self.active_item.as_ref() else {
-            return;
-        };
-        workspace.update(cx, |workspace, cx| {
-            if let Some(pane) = workspace.pane_for(item.as_ref()) {
-                set_layout(workspace, &pane, layout, window, cx);
-            }
-        });
-        cx.notify();
-    }
+/// Must run outside the toolbar item's own update: switching layouts changes the
+/// pane's active tab, which calls back into every toolbar item of that pane.
+fn set_layout_for_item(
+    workspace: &WeakEntity<Workspace>,
+    item: &dyn ItemHandle,
+    layout: MarkdownLayout,
+    window: &mut Window,
+    cx: &mut App,
+) {
+    let Some(workspace) = workspace.upgrade() else {
+        return;
+    };
+    workspace.update(cx, |workspace, cx| {
+        if let Some(pane) = workspace.pane_for(item) {
+            set_layout(workspace, &pane, layout, window, cx);
+        }
+    });
 }
 
 impl EventEmitter<ToolbarItemEvent> for MarkdownLayoutToolbar {}
@@ -420,7 +424,7 @@ impl Render for MarkdownLayoutToolbar {
             let source = self.source(cx)?;
             Some(layout_for_source(workspace, &pane, &source, cx))
         });
-        let Some(current) = current else {
+        let (Some(current), Some(active_item)) = (current, self.active_item.as_ref()) else {
             return Empty.into_any_element();
         };
 
@@ -434,9 +438,13 @@ impl Render for MarkdownLayoutToolbar {
                     .tooltip(move |_, cx| {
                         Tooltip::for_action(layout.label(), layout.action().as_ref(), cx)
                     })
-                    .on_click(cx.listener(move |this, _, window, cx| {
-                        this.set_layout(layout, window, cx);
-                    }))
+                    .on_click({
+                        let workspace = self.workspace.clone();
+                        let item = active_item.boxed_clone();
+                        move |_, window, cx| {
+                            set_layout_for_item(&workspace, item.as_ref(), layout, window, cx);
+                        }
+                    })
             }))
             .into_any_element()
     }
@@ -651,6 +659,59 @@ mod tests {
         test.set_layout(MarkdownLayout::EditorAndPreview, cx);
         assert_eq!(test.visible_tabs(cx), "E|P");
         assert_eq!(test.tab_count(cx), 2);
+    }
+
+    #[gpui::test]
+    async fn toolbar_buttons_switch_layouts(cx: &mut TestAppContext) {
+        let test = markdown_workspace(cx).await;
+        let toolbar_item = test
+            .window
+            .update(cx, |_, window, cx| {
+                self::add_toolbar_item(&test.workspace, window, cx)
+            })
+            .unwrap();
+        test.open_guide(cx).await;
+
+        for (layout, visible_tabs) in [
+            (MarkdownLayout::EditorAndPreview, "E|P"),
+            (MarkdownLayout::PreviewOnly, "P"),
+            (MarkdownLayout::EditorOnly, "E"),
+        ] {
+            test.window
+                .update(cx, |_, window, cx| {
+                    let (workspace, item) = toolbar_item.read_with(cx, |toolbar_item, _| {
+                        (
+                            toolbar_item.workspace.clone(),
+                            toolbar_item.active_item.as_ref().unwrap().boxed_clone(),
+                        )
+                    });
+                    set_layout_for_item(&workspace, item.as_ref(), layout, window, cx);
+                })
+                .unwrap();
+            cx.run_until_parked();
+            assert_eq!(test.visible_tabs(cx), visible_tabs);
+            assert_eq!(
+                toolbar_item.read_with(cx, |toolbar_item, cx| toolbar_item.location(cx)),
+                ToolbarItemLocation::PrimaryRight
+            );
+        }
+    }
+
+    fn add_toolbar_item(
+        workspace: &Entity<Workspace>,
+        window: &mut Window,
+        cx: &mut App,
+    ) -> Entity<MarkdownLayoutToolbar> {
+        workspace.update(cx, |workspace, cx| {
+            let pane = workspace.active_pane().clone();
+            let toolbar_item = cx.new(|cx| MarkdownLayoutToolbar::new(workspace, cx));
+            pane.update(cx, |pane, cx| {
+                pane.toolbar().update(cx, |toolbar, cx| {
+                    toolbar.add_item(toolbar_item.clone(), window, cx);
+                });
+            });
+            toolbar_item
+        })
     }
 
     #[gpui::test]
