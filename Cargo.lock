@@ -14242,6 +14242,7 @@ dependencies = [
  "futures 0.3.34",
  "gpui",
  "http_client",
+ "log",
  "lsp",
  "menu",
  "paths",

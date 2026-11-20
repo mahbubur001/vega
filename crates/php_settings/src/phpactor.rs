@@ -5,16 +5,19 @@
 
 use std::collections::HashSet;
 use std::path::Path;
-use std::time::Duration;
+use std::time::{Duration, Instant};
 
 use db::kvp::KeyValueStore;
-use gpui::{App, AppContext as _, Entity};
+use gpui::{App, AppContext as _, AsyncApp, Entity};
 use lsp::{LanguageServerId, LanguageServerName, LanguageServerSelector};
 use project::Project;
 use project::lsp_command::file_path_to_lsp_url;
-use project::lsp_store::{LspStore, LspStoreEvent};
+use project::lsp_store::{LspStore, LspStoreEvent, language_server_settings_for};
 use proto::update_language_server::Variant;
+use serde_json::Value;
+use settings::SettingsLocation;
 use util::ResultExt as _;
+use util::rel_path::RelPath;
 
 use crate::config::{PhpConfig, settings_path, settings_with_stub_keys};
 use crate::store::{PhpSettingsStore, cached_config, project_root};
@@ -26,9 +29,10 @@ const PHPACTOR: &str = "phpactor";
 /// (`IndexerHandler`), at startup and after a reindex.
 const INDEXING_TITLE: &str = "Indexing workspace";
 
-/// How long to wait after saving for the settings file to be reloaded
-/// before phpactor restarts with it.
-const SETTINGS_RELOAD_DELAY: Duration = Duration::from_millis(1500);
+/// How long to wait, at most, for a saved settings file to be reloaded
+/// before phpactor restarts anyway.
+const SETTINGS_RELOAD_TIMEOUT: Duration = Duration::from_secs(10);
+const SETTINGS_RELOAD_POLL: Duration = Duration::from_millis(200);
 
 enum Reindex {}
 
@@ -46,7 +50,9 @@ pub(crate) fn index_signature(config: &PhpConfig) -> String {
 
 fn indexed_key(root: &Path) -> String {
     // v2: v1 markers could be saved without phpactor having reindexed.
-    format!("vega_phpactor_indexed_v2:{}", root.display())
+    // v3: v2 markers could be saved for an index built before the new
+    // include paths were loaded.
+    format!("vega_phpactor_indexed_v3:{}", root.display())
 }
 
 fn indexed_signature(root: &Path, cx: &App) -> Option<String> {
@@ -144,9 +150,10 @@ pub(crate) fn watch(project: Entity<Project>, cx: &mut App) {
             }
         } else if changed {
             let project = project.clone();
+            let wanted =
+                (!config.include_paths.is_empty()).then(|| serde_json::json!(config.include_paths));
             cx.spawn(async move |cx| {
-                cx.background_executor().timer(SETTINGS_RELOAD_DELAY).await;
-                cx.update(|cx| restart(&project, cx));
+                restart_when_loaded(&project, "indexer.stub_paths", wanted, cx).await;
             })
             .detach();
         }
@@ -183,10 +190,46 @@ pub(crate) fn sync_stub_settings(project: &Entity<Project>, create: bool, cx: &m
         if fs.atomic_write(settings, updated).await.log_err().is_none() {
             return;
         }
-        cx.background_executor().timer(SETTINGS_RELOAD_DELAY).await;
-        cx.update(|cx| restart(&project, cx));
+        let wanted = stub_dir.map(|dir| serde_json::json!(dir.to_string_lossy()));
+        restart_when_loaded(&project, "worse_reflection.stub_dir", wanted, cx).await;
     })
     .detach();
+}
+
+/// phpactor's initialization option `key` in the project's settings as they
+/// are loaded now (`None` when it isn't set).
+fn loaded_init_option(project: &Entity<Project>, key: &str, cx: &App) -> Option<Value> {
+    let worktree_id = project.read(cx).visible_worktrees(cx).next()?.read(cx).id();
+    let location = SettingsLocation {
+        worktree_id,
+        path: RelPath::empty(),
+    };
+    language_server_settings_for(location, &LanguageServerName::new_static(PHPACTOR), cx)?
+        .initialization_options
+        .as_ref()?
+        .get(key)
+        .cloned()
+}
+
+/// Restarts phpactor once the settings files have been reloaded with `key`
+/// set to `wanted`, so it starts with the new settings. A restart that came
+/// too early would build the index without the new include paths and then
+/// count it as built.
+async fn restart_when_loaded(
+    project: &Entity<Project>,
+    key: &str,
+    wanted: Option<Value>,
+    cx: &mut AsyncApp,
+) {
+    let deadline = Instant::now() + SETTINGS_RELOAD_TIMEOUT;
+    while cx.update(|cx| loaded_init_option(project, key, cx)) != wanted {
+        if Instant::now() >= deadline {
+            log::warn!("phpactor settings ({key}) weren't reloaded in time; restarting anyway");
+            break;
+        }
+        cx.background_executor().timer(SETTINGS_RELOAD_POLL).await;
+    }
+    cx.update(|cx| restart(project, cx));
 }
 
 fn is_phpactor(lsp_store: &Entity<LspStore>, id: LanguageServerId, cx: &App) -> bool {
