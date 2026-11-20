@@ -612,12 +612,9 @@ impl MarkdownLayoutToolbar {
         markdown_source(self.active_item.as_deref()?, &self.languages, cx)
     }
 
-    fn location(&self, cx: &App) -> ToolbarItemLocation {
-        if self.source(cx).is_some() {
-            ToolbarItemLocation::PrimaryRight
-        } else {
-            ToolbarItemLocation::Hidden
-        }
+    /// Whether the buttons show: the active item is a Markdown editor or preview.
+    fn is_shown(&self, cx: &App) -> bool {
+        self.source(cx).is_some()
     }
 }
 
@@ -654,13 +651,16 @@ impl ToolbarItemView for MarkdownLayoutToolbar {
             .and_then(|item| item.downcast::<Editor>())
             .and_then(|editor| singleton_buffer(&editor, cx))
             .map(|buffer| {
-                cx.subscribe(&buffer, |this, _, event: &BufferEvent, cx| {
+                cx.subscribe(&buffer, |_, _, event: &BufferEvent, cx| {
                     if matches!(event, BufferEvent::LanguageChanged(_)) {
-                        cx.emit(ToolbarItemEvent::ChangeLocation(this.location(cx)));
+                        cx.notify();
                     }
                 })
             });
-        self.location(cx)
+        cx.notify();
+        // Drawn in the tab bar (`Pane::add_tab_bar_end_item`), like
+        // PhpStorm; the toolbar only tells it which item is active.
+        ToolbarItemLocation::Hidden
     }
 }
 
@@ -1087,8 +1087,8 @@ mod tests {
             cx.run_until_parked();
             assert_eq!(test.visible_tabs(cx), visible_tabs);
             assert_eq!(
-                toolbar_item.read_with(cx, |toolbar_item, cx| toolbar_item.location(cx)),
-                ToolbarItemLocation::PrimaryRight
+                toolbar_item.read_with(cx, |toolbar_item, cx| toolbar_item.is_shown(cx)),
+                true
             );
         }
     }

@@ -19,11 +19,11 @@ use collections::{BTreeSet, HashMap, HashSet, VecDeque};
 use futures::{StreamExt, stream::FuturesUnordered};
 use git::{CopyFilePermalink, OpenFilePermalink};
 use gpui::{
-    Action, Anchor, AnyElement, App, AsyncWindowContext, ClickEvent, ClipboardItem, Context, Div,
-    DragMoveEvent, Entity, EntityId, EventEmitter, ExternalPaths, FocusHandle, FocusOutEvent,
-    Focusable, KeyContext, MouseButton, NavigationDirection, Pixels, Point, PromptLevel, Render,
-    ScrollHandle, Subscription, Task, TaskExt, WeakEntity, WeakFocusHandle, Window, actions,
-    anchored, deferred, prelude::*,
+    Action, Anchor, AnyElement, AnyView, App, AsyncWindowContext, ClickEvent, ClipboardItem,
+    Context, Div, DragMoveEvent, Entity, EntityId, EventEmitter, ExternalPaths, FocusHandle,
+    FocusOutEvent, Focusable, KeyContext, MouseButton, NavigationDirection, Pixels, Point,
+    PromptLevel, Render, ScrollHandle, Subscription, Task, TaskExt, WeakEntity, WeakFocusHandle,
+    Window, actions, anchored, deferred, prelude::*,
 };
 use itertools::Itertools;
 use language::{Capability, DiagnosticSeverity};
@@ -429,6 +429,9 @@ pub struct Pane {
         ) -> (Option<AnyElement>, Option<AnyElement>),
     >,
     render_tab_bar: Rc<dyn Fn(&mut Pane, &mut Window, &mut Context<Pane>) -> AnyElement>,
+    /// VEGA: views shown at the right end of the tab bar, before the tab bar
+    /// buttons, whether or not the pane is focused (e.g. Markdown layouts).
+    tab_bar_end_items: Vec<AnyView>,
     show_tab_bar_buttons: bool,
     max_tabs: Option<NonZeroUsize>,
     use_max_tabs: bool,
@@ -607,6 +610,7 @@ impl Pane {
             should_display_tab_bar: Rc::new(|_, cx| TabBarSettings::get_global(cx).show),
             should_display_welcome_page: false,
             render_tab_bar_buttons: Rc::new(default_render_tab_bar_buttons),
+            tab_bar_end_items: Vec::new(),
             render_tab_bar: Rc::new(Self::render_tab_bar),
             show_tab_bar_buttons: TabBarSettings::get_global(cx).show_tab_bar_buttons,
             display_nav_history_buttons: Some(
@@ -870,6 +874,12 @@ impl Pane {
         F: 'static + Fn(&mut Pane, &mut Window, &mut Context<Pane>) -> AnyElement,
     {
         self.render_tab_bar = Rc::new(render);
+        cx.notify();
+    }
+
+    /// VEGA: adds a view at the right end of the tab bar (see `tab_bar_end_items`).
+    pub fn add_tab_bar_end_item(&mut self, item: AnyView, cx: &mut Context<Self>) {
+        self.tab_bar_end_items.push(item);
         cx.notify();
     }
 
@@ -3632,6 +3642,11 @@ impl Pane {
                         .start_child(navigate_backward)
                         .start_child(navigate_forward)
                 },
+            )
+            .end_children(
+                self.tab_bar_end_items
+                    .iter()
+                    .map(|item| item.clone().into_any_element()),
             )
             .map(|tab_bar| {
                 if self.show_tab_bar_buttons {

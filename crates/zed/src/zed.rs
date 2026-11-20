@@ -1473,6 +1473,7 @@ fn initialize_pane(
     cx: &mut Context<Workspace>,
 ) {
     let workspace_handle = cx.weak_entity();
+    let mut markdown_layout_buttons = None;
     pane.update(cx, |pane, cx| {
         pane.toolbar().update(cx, |toolbar, cx| {
             let multibuffer_hint = cx.new(|_| MultibufferHint::new());
@@ -1496,7 +1497,8 @@ fn initialize_pane(
             toolbar.add_item(quick_action_bar, window, cx);
             let markdown_layout_toolbar =
                 cx.new(|cx| markdown_layout::MarkdownLayoutToolbar::new(workspace, cx));
-            toolbar.add_item(markdown_layout_toolbar, window, cx);
+            toolbar.add_item(markdown_layout_toolbar.clone(), window, cx);
+            markdown_layout_buttons = Some(markdown_layout_toolbar);
             let diagnostic_editor_controls = cx.new(|_| diagnostics::ToolbarControls::new());
             toolbar.add_item(diagnostic_editor_controls, window, cx);
             let project_search_bar = cx.new(|_| ProjectSearchBar::new());
@@ -1536,7 +1538,11 @@ fn initialize_pane(
             toolbar.add_item(basedpyright_banner, window, cx);
             let image_view_toolbar = cx.new(|_| image_viewer::ImageViewToolbarControls::new());
             toolbar.add_item(image_view_toolbar, window, cx);
-        })
+        });
+        // VEGA: the Markdown layout buttons sit at the right end of the tab bar.
+        if let Some(buttons) = markdown_layout_buttons {
+            pane.add_tab_bar_end_item(buttons.into(), cx);
+        }
     });
 }
 
