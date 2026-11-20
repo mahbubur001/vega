@@ -381,15 +381,15 @@ pub struct CursorAnimationSettingsContent {
 pub struct ToolbarContent {
     /// Whether to display breadcrumbs in the editor toolbar.
     ///
-    /// Default: true
+    /// Default: false (VEGA)
     pub breadcrumbs: Option<bool>,
     /// Whether to display quick action buttons in the editor toolbar.
     ///
-    /// Default: true
+    /// Default: false (VEGA)
     pub quick_actions: Option<bool>,
     /// Whether to show the selections menu in the editor toolbar.
     ///
-    /// Default: true
+    /// Default: false (VEGA)
     pub selections_menu: Option<bool>,
     /// Whether to display Agent review buttons in the editor toolbar.
     /// Only applicable while reviewing a file edited by the Agent.

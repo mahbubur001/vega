@@ -608,12 +608,15 @@
   },
   // Toolbar related settings
   "toolbar": {
-    // Whether to show breadcrumbs.
-    "breadcrumbs": true,
+    // Whether to show breadcrumbs (the file's path above the editor).
+    // VEGA: off by default.
+    "breadcrumbs": false,
     // Whether to show quick action buttons.
-    "quick_actions": true,
+    // VEGA: off by default.
+    "quick_actions": false,
     // Whether to show the Selections menu in the editor toolbar.
-    "selections_menu": true,
+    // VEGA: off by default.
+    "selections_menu": false,
     // Whether to show agent review buttons in the editor toolbar.
     "agent_review": true,
     // Whether to show code action buttons in the editor toolbar.
