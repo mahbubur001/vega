@@ -14,8 +14,9 @@ use project::Project;
 use project::lsp_store::LspStoreEvent;
 use util::ResultExt as _;
 
-use crate::config::PhpConfig;
+use crate::config::{PhpConfig, settings_path, settings_with_stub_keys};
 use crate::store::{PhpSettingsStore, cached_config, project_root};
+use crate::stubs::downloaded_stubs_dir;
 
 const PHPACTOR: &str = "phpactor";
 
@@ -83,6 +84,9 @@ pub(crate) fn watch(project: Entity<Project>, cx: &mut App) {
     })
     .detach();
 
+    // The stubs may have been downloaded before this project last opened.
+    sync_stub_settings(&project, false, cx);
+
     let store = PhpSettingsStore::global(cx);
     // Load the settings now, so they are there when phpactor starts.
     crate::store::config_for_project(&project, cx);
@@ -110,6 +114,41 @@ pub(crate) fn watch(project: Entity<Project>, cx: &mut App) {
             })
             .detach();
         }
+    })
+    .detach();
+}
+
+/// Points phpactor at the downloaded stubs in the project's
+/// `.vega/settings.json` (or back at its own when there are none) and restarts
+/// it when that changed the file. Without `create`, a project that has no
+/// settings file is left alone (opening any folder shouldn't add one).
+pub(crate) fn sync_stub_settings(project: &Entity<Project>, create: bool, cx: &mut App) {
+    let Some(root) = project_root(project, cx) else {
+        return;
+    };
+    let fs = project.read(cx).fs().clone();
+    let project = project.clone();
+    cx.spawn(async move |cx| {
+        let settings = settings_path(&root);
+        let current = match fs.load(&settings).await {
+            Ok(text) => text,
+            Err(_) if create => String::new(),
+            Err(_) => return,
+        };
+        let stub_dir = downloaded_stubs_dir(fs.as_ref()).await;
+        let updated = settings_with_stub_keys(&current, stub_dir.as_deref());
+        // A missing file stays missing when there is nothing to write.
+        if updated == current || (current.is_empty() && stub_dir.is_none()) {
+            return;
+        }
+        if let Some(folder) = settings.parent() {
+            fs.create_dir(folder).await.log_err();
+        }
+        if fs.atomic_write(settings, updated).await.log_err().is_none() {
+            return;
+        }
+        cx.background_executor().timer(SETTINGS_RELOAD_DELAY).await;
+        cx.update(|cx| restart(&project, cx));
     })
     .detach();
 }

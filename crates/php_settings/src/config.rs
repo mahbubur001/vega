@@ -74,14 +74,15 @@ pub fn config_text(config: &PhpConfig) -> String {
 const INTELEPHENSE: &[&str] = &["lsp", "intelephense", "settings", "intelephense"];
 const PHPACTOR: &[&str] = &["lsp", "phpactor", "initialization_options"];
 
-/// `settings.json` text with the language-server keys for `config` set (or
-/// removed when they are back to the default). Other settings are kept.
-pub fn settings_with_lsp_keys(settings: &str, config: &PhpConfig) -> String {
-    let mut text = if settings.trim().is_empty() {
-        "{\n}\n".to_string()
-    } else {
-        settings.to_string()
-    };
+/// `settings.json` text with the language-server keys for `config` and the
+/// downloaded stubs (`stub_dir`) set, or removed when they are back to the
+/// default. Other settings are kept.
+pub fn settings_with_lsp_keys(
+    settings: &str,
+    config: &PhpConfig,
+    stub_dir: Option<&Path>,
+) -> String {
+    let text = settings_with_stub_keys(settings, stub_dir);
     let include_paths = (!config.include_paths.is_empty()).then(|| json!(config.include_paths));
     let level = config.language_level.as_deref();
     let edits: [(Vec<&str>, Option<Value>); 5] = [
@@ -103,6 +104,46 @@ pub fn settings_with_lsp_keys(settings: &str, config: &PhpConfig) -> String {
         ),
         ([PHPACTOR, &["indexer.stub_paths"]].concat(), include_paths),
     ];
+    apply_edits(text, edits)
+}
+
+/// `settings.json` text with phpactor pointed at the downloaded stubs
+/// (`stub_dir`), or back at its built-in ones when `stub_dir` is `None`.
+///
+/// phpactor's built-in stubs live inside `phpactor.phar`, so go-to-definition
+/// on a PHP function like `defined` answers with a path the editor can't open.
+/// phpactor caches its map of the stubs, so the downloaded stubs get their own
+/// cache folder (next to them) and the map is rebuilt from them.
+pub fn settings_with_stub_keys(settings: &str, stub_dir: Option<&Path>) -> String {
+    let text = if settings.trim().is_empty() {
+        "{\n}\n".to_string()
+    } else {
+        settings.to_string()
+    };
+    let path_value = |path: PathBuf| json!(path.to_string_lossy());
+    let edits = [
+        (
+            [PHPACTOR, &["worse_reflection.stub_dir"]].concat(),
+            stub_dir.map(|dir| path_value(dir.to_path_buf())),
+        ),
+        (
+            [PHPACTOR, &["worse_reflection.cache_dir"]].concat(),
+            stub_dir.map(|dir| path_value(phpactor_stub_cache_dir(dir))),
+        ),
+    ];
+    apply_edits(text, edits)
+}
+
+/// phpactor's cache for the stubs in `stub_dir`.
+pub fn phpactor_stub_cache_dir(stub_dir: &Path) -> PathBuf {
+    let name = stub_dir
+        .file_name()
+        .map(|name| name.to_string_lossy().into_owned())
+        .unwrap_or_default();
+    stub_dir.with_file_name(format!("{name}-phpactor-cache"))
+}
+
+fn apply_edits<const N: usize>(mut text: String, edits: [(Vec<&str>, Option<Value>); N]) -> String {
     for (path, value) in edits {
         if value.is_none() && !has_key(&text, &path) {
             continue;
@@ -161,7 +202,7 @@ mod tests {
             stubs: Some(vec!["Core".into(), "standard".into()]),
             ..Default::default()
         };
-        let text = settings_with_lsp_keys("{\n  \"tab_size\": 4\n}\n", &config);
+        let text = settings_with_lsp_keys("{\n  \"tab_size\": 4\n}\n", &config, None);
         let value: Value = settings_json::parse_json_with_comments(&text).unwrap();
         assert_eq!(value["tab_size"], 4);
         let intelephense = &value["lsp"]["intelephense"]["settings"]["intelephense"];
@@ -176,7 +217,7 @@ mod tests {
         assert_eq!(phpactor["indexer.stub_paths"], json!(["/libs/wordpress"]));
 
         // Back to the defaults: the keys go away, the rest stays.
-        let text = settings_with_lsp_keys(&text, &PhpConfig::default());
+        let text = settings_with_lsp_keys(&text, &PhpConfig::default(), None);
         let value: Value = settings_json::parse_json_with_comments(&text).unwrap();
         assert_eq!(value["tab_size"], 4);
         let intelephense = &value["lsp"]["intelephense"]["settings"]["intelephense"];
@@ -192,9 +233,48 @@ mod tests {
         let value: Value = settings_json::parse_json_with_comments(&settings_with_lsp_keys(
             "",
             &PhpConfig::default(),
+            None,
         ))
         .unwrap();
         assert_eq!(value, json!({}));
+    }
+
+    #[test]
+    fn points_phpactor_at_the_downloaded_stubs() {
+        let stubs = Path::new("/data/php-stubs");
+        let text = settings_with_lsp_keys(
+            "{\n  \"tab_size\": 4\n}\n",
+            &PhpConfig::default(),
+            Some(stubs),
+        );
+        let value: Value = settings_json::parse_json_with_comments(&text).unwrap();
+        let phpactor = &value["lsp"]["phpactor"]["initialization_options"];
+        assert_eq!(phpactor["worse_reflection.stub_dir"], "/data/php-stubs");
+        assert_eq!(
+            phpactor["worse_reflection.cache_dir"],
+            "/data/php-stubs-phpactor-cache"
+        );
+        assert_eq!(value["tab_size"], 4);
+
+        // Unchanged settings give the same text, so nothing is rewritten.
+        assert_eq!(settings_with_stub_keys(&text, Some(stubs)), text);
+
+        // Stub keys alone don't touch the other PHP keys someone wrote by hand.
+        let hand = r#"{"lsp": {"phpactor": {"initialization_options": {"php.version": "8.1"}}}}"#;
+        let value: Value =
+            settings_json::parse_json_with_comments(&settings_with_stub_keys(hand, Some(stubs)))
+                .unwrap();
+        assert_eq!(
+            value["lsp"]["phpactor"]["initialization_options"]["php.version"],
+            "8.1"
+        );
+
+        // Without stubs the keys go away.
+        let value: Value =
+            settings_json::parse_json_with_comments(&settings_with_stub_keys(&text, None)).unwrap();
+        let phpactor = &value["lsp"]["phpactor"]["initialization_options"];
+        assert!(phpactor.get("worse_reflection.stub_dir").is_none());
+        assert!(phpactor.get("worse_reflection.cache_dir").is_none());
     }
 
     #[test]

@@ -19,6 +19,12 @@ pub fn stubs_dir() -> PathBuf {
     paths::data_dir().join("php-stubs")
 }
 
+/// `stubs_dir()` when the stubs have been downloaded.
+pub async fn downloaded_stubs_dir(fs: &dyn Fs) -> Option<PathBuf> {
+    let dir = stubs_dir();
+    fs.is_dir(&dir).await.then_some(dir)
+}
+
 /// The extension folders of the downloaded stubs, by name.
 pub async fn stub_folders(fs: &dyn Fs) -> Vec<(String, PathBuf)> {
     let mut folders = Vec::new();
@@ -88,6 +94,15 @@ pub async fn download_stubs(fs: Arc<dyn Fs>, http: Arc<dyn HttpClient>) -> anyho
     .await?;
     fs.rename(&unpacked, &target, RenameOptions::default())
         .await?;
+    // phpactor's map of the old stubs.
+    fs.remove_dir(
+        &crate::config::phpactor_stub_cache_dir(&target),
+        RemoveOptions {
+            recursive: true,
+            ignore_if_not_exists: true,
+        },
+    )
+    .await?;
     fs.remove_dir(
         &staging,
         RemoveOptions {

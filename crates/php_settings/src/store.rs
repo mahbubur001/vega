@@ -82,7 +82,8 @@ impl PhpSettingsStore {
                 .context("couldn't save .vega/php.json")?;
             let settings = settings_path(&root);
             let current = fs.load(&settings).await.unwrap_or_default();
-            let updated = settings_with_lsp_keys(&current, &config);
+            let stub_dir = crate::stubs::downloaded_stubs_dir(fs.as_ref()).await;
+            let updated = settings_with_lsp_keys(&current, &config, stub_dir.as_deref());
             if updated != current {
                 fs.atomic_write(settings, updated)
                     .await

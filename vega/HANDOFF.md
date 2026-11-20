@@ -2,7 +2,7 @@
 
 The restart point for the next working session, possibly on another computer. Read this first, then `ROADMAP.md`. Update it at the end of every session.
 
-_Last updated: 2026-11-20, end of day. Branch `vega`, everything committed and pushed._
+_Last updated: 2026-11-20, evening (phpactor stubs fix). Branch `vega`, everything committed and pushed._
 
 ## How the owner wants to work
 
@@ -64,7 +64,7 @@ Docker SFTP test server: `crates/deployment/tests/servers` (see `DEPLOYMENT.md` 
 - Markdown (built 2026-11-20, steps 1 to 5; nothing has been looked at in the running app by the agent, only by tests): the owner checks the five "Markdown …" rows in the table above. Likely follow-ups, in the order the checks will show them: icons of the three layout buttons next to the upstream eye button; whether a split made of two tabs is acceptable (if not, the alternative is one composite tab, see the report, "Build the switcher first…"); jitter in the two-way scroll sync; key choices for the editing commands.
 - Markdown, not built: a preview below the editor (the split always opens to the right), per-file memory of the layout, one shared preview tab for all files in the split, IntelliJ's selection toolbar, table column commands (insert, move, align, remove), table of contents, default keys for strikethrough, code and insert link. Math is left to upstream (two community PRs open).
 - `research_notes/IntelliJ Markdown view modes/` holds the four research notes behind the report (IntelliJ view modes, IntelliJ editing features, VS Code and others, Zed's preview and seams).
-- Go-to-definition on PHP built-ins (`defined`, `die`…) fails: phpactor answers with paths inside `phpactor.phar`. Fix: when stubs are downloaded, write `worse_reflection.stub_dir` = the stubs folder into phpactor's init options (`php_settings::config::settings_with_lsp_keys`), maybe clear phpactor's stub cache.
+- Go-to-definition on PHP built-ins (`defined`, `die`…), **fix built 2026-11-20, not checked in the app**: once the stubs are downloaded (External Libraries › PHP Runtime › Download PHP Stubs), phpactor's init options in `.vega/settings.json` get `worse_reflection.stub_dir` = the stubs folder and `worse_reflection.cache_dir` = `<data dir>/php-stubs-phpactor-cache` (a fresh stub map; a new download clears it), and phpactor restarts. Projects opened later get the keys if they already have a `.vega/settings.json`. Code: `php_settings::config::settings_with_stub_keys`, `phpactor::sync_stub_settings`. Owner check: in a PHP project, download the stubs, wait for phpactor to restart, cmd-click `defined(`; it should open `…/php-stubs/Core/Core.php`.
 - After a reindex, ask phpactor to re-check open files (diagnostics from before the index finished stay until the file changes).
 - Owner checks: cmd-click `__DIR__ . '/x.php'` (fixed today), WordPress include path in classified-listing (phpactor index verified to resolve `plugin_dir_path`).
 - Restart VEGA Dev with `osascript -e 'tell application "VEGA Dev" to quit'`, never `pkill` (it orphans language servers; 25 phpactor processes piled up).

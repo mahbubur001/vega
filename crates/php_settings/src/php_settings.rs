@@ -46,6 +46,14 @@ pub fn init(cx: &mut App) {
     .detach();
 }
 
+/// Points the project's phpactor at the downloaded PHP stubs (call after
+/// downloading them).
+pub fn use_downloaded_stubs(project: &gpui::Entity<project::Project>, cx: &mut App) {
+    if project.read(cx).is_local() {
+        phpactor::sync_stub_settings(project, true, cx);
+    }
+}
+
 /// Opens the PHP settings of the workspace's project.
 pub fn open_for_workspace(workspace: &Workspace, cx: &mut App) {
     let project = workspace.project().clone();

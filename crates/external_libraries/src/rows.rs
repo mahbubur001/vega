@@ -614,6 +614,9 @@ impl LibraryRows {
             let result = download.await;
             this.update(cx, |this, cx| {
                 this.downloading = false;
+                if result.is_ok() {
+                    php_settings::use_downloaded_stubs(&this.project, cx);
+                }
                 this.reload(cx);
             })
             .ok();
