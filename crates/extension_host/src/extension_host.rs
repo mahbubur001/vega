@@ -76,7 +76,7 @@ pub use extension_settings::ExtensionSettings;
 use crate::headless_host::hash_directory_contents;
 
 pub const RELOAD_DEBOUNCE_DURATION: Duration = Duration::from_millis(200);
-/// Whether to auto-install and update extensions from the registry at startup.
+/// Whether to check the registry for extension updates at startup.
 const CONTACT_REGISTRY_ON_STARTUP: bool = false;
 
 const FS_WATCH_LATENCY: Duration = Duration::from_millis(100);
@@ -126,6 +126,8 @@ static SUPPRESSED_EXTENSIONS: LazyLock<FxHashSet<&str>> = LazyLock::new(|| {
         "corust-agent",
         "factory-droid",
         "qqcode",
+        // VEGA: PHP is built in (`crates/languages/src/php.rs`).
+        "php",
     ])
 });
 
@@ -464,17 +466,35 @@ impl ExtensionStore {
             .shared();
         this.initial_index_load = initial_index_load.clone();
 
-        // VEGA doesn't contact Zed's extension registry on its own; it's only
-        // reached when the user opens the extensions page or installs one.
-        if CONTACT_REGISTRY_ON_STARTUP {
+        // VEGA contacts Zed's extension registry only for what the user asked
+        // for: opening the extensions page, installing one, or listing it in
+        // `auto_install_extensions` (installed when missing, at startup and
+        // when the setting changes; VEGA's default list is empty). No update
+        // checks on startup.
+        let wants_auto_install = ExtensionSettings::get_global(cx)
+            .auto_install_extensions
+            .values()
+            .any(|install| *install);
+        if wants_auto_install || CONTACT_REGISTRY_ON_STARTUP {
             cx.spawn(async move |this, cx| {
                 initial_index_load.await;
-                this.update(cx, |this, cx| this.auto_install_extensions(cx))
-                    .ok();
-                this.update(cx, |this, cx| this.check_for_updates(cx)).ok();
+                this.update(cx, |this, cx| {
+                    this.auto_install_extensions(cx);
+                    if CONTACT_REGISTRY_ON_STARTUP {
+                        this.check_for_updates(cx);
+                    }
+                })
+                .ok();
             })
             .detach();
         }
+        cx.observe_global::<SettingsStore>(|this, cx| {
+            // Before the index is loaded every extension looks missing.
+            if this.initial_index_load.peek().is_some() {
+                this.auto_install_extensions(cx);
+            }
+        })
+        .detach();
 
         // Perform all extension loading in a single task to ensure that we
         // never attempt to simultaneously load/unload extensions from multiple
@@ -766,7 +786,11 @@ impl ExtensionStore {
                     .extension_index
                     .extensions
                     .contains_key(extension_id.as_ref());
-                !is_already_installed && !SUPPRESSED_EXTENSIONS.contains(extension_id.as_ref())
+                !is_already_installed
+                    && !self
+                        .outstanding_operations
+                        .contains_key(extension_id.as_ref())
+                    && !SUPPRESSED_EXTENSIONS.contains(extension_id.as_ref())
             })
             .cloned()
             .collect::<Vec<_>>();

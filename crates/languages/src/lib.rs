@@ -24,6 +24,7 @@ mod eslint;
 mod go;
 mod json;
 mod package_json;
+mod php;
 mod python;
 mod rust;
 mod tailwind;
@@ -68,6 +69,8 @@ pub fn init(languages: Arc<LanguageRegistry>, fs: Arc<dyn Fs>, node: NodeRuntime
     let json_context_provider = Arc::new(JsonTaskProvider);
     let json_lsp_adapter = Arc::new(json::JsonLspAdapter::new(languages.clone(), node.clone()));
     let node_version_lsp_adapter = Arc::new(json::NodeVersionAdapter);
+    let phpactor_lsp_adapter = Arc::new(php::PhpactorLspAdapter);
+    let intelephense_lsp_adapter = Arc::new(php::IntelephenseLspAdapter::new(node.clone()));
     let py_lsp_adapter = Arc::new(python::PyLspAdapter::new());
     let ty_lsp_adapter = Arc::new(python::TyLspAdapter::new(fs.clone()));
     let python_context_provider = Arc::new(python::PythonContextProvider);
@@ -160,6 +163,12 @@ pub fn init(languages: Arc<LanguageRegistry>, fs: Arc<dyn Fs>, node: NodeRuntime
         LanguageInfo {
             name: "markdown-inline",
             adapters: vec![],
+            ..Default::default()
+        },
+        LanguageInfo {
+            name: "php",
+            adapters: vec![phpactor_lsp_adapter, intelephense_lsp_adapter],
+            context: Some(Arc::new(php::php_task_context())),
             ..Default::default()
         },
         LanguageInfo {

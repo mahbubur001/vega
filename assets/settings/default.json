@@ -2424,12 +2424,11 @@
   //
   // If you don't want any of these extensions, add this field to your settings
   // and change the value to `false`.
-  "auto_install_extensions": {
-    "emmet": true,
-    "html": true,
-    "php": true,
-    "toml": true,
-  },
+  //
+  // VEGA installs these from Zed's extension registry when they are missing,
+  // at startup and when this setting changes. The default is none, so VEGA
+  // never contacts the registry on its own.
+  "auto_install_extensions": {},
   // Whether to suggest installing extensions based on the files you open.
   "suggest_extensions": true,
   // The capabilities granted to extensions.

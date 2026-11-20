@@ -3,6 +3,7 @@ mod gdb;
 mod go;
 mod javascript;
 mod python;
+mod xdebug;
 
 #[cfg(test)]
 use std::path::PathBuf;
@@ -25,6 +26,7 @@ use javascript::JsDebugAdapter;
 use python::PythonDebugAdapter;
 use serde_json::json;
 use task::{DebugScenario, ZedDebugConfig};
+use xdebug::XdebugAdapter;
 
 pub fn init(cx: &mut App) {
     cx.update_default_global(|registry: &mut DapRegistry, _cx| {
@@ -33,6 +35,7 @@ pub fn init(cx: &mut App) {
         registry.add_adapter(Arc::from(JsDebugAdapter::default()));
         registry.add_adapter(Arc::from(GoDebugAdapter::default()));
         registry.add_adapter(Arc::from(GdbDebugAdapter));
+        registry.add_adapter(Arc::from(XdebugAdapter::default()));
 
         #[cfg(any(test, feature = "test-support"))]
         {

@@ -2,7 +2,7 @@
 
 The restart point for the next working session, possibly on another computer. Read this first, then `ROADMAP.md`. Update it at the end of every session.
 
-_Last updated: 2026-11-20, evening (phpactor stubs fix, re-check after indexing, agent rating off, copy between servers). Branch `vega`, everything committed and pushed._
+_Last updated: 2026-11-21 (built-in PHP, auto-install fixed). Branch `vega`, everything committed and pushed._
 
 ## How the owner wants to work
 
@@ -21,7 +21,17 @@ _Last updated: 2026-11-20, evening (phpactor stubs fix, re-check after indexing,
 
 ## Where things stand
 
-**Newest (2026-11-20): Markdown layouts and editing, steps 1 to 5 of 6** (plan and research: `reports/IntelliJ Markdown view modes.md`, "Build the switcher first…" table). Steps 1 to 4 are in the new crate `markdown_layout`, step 5 in the new crate `markdown_editing`.
+**Newest (2026-11-21): PHP is built in** (it was the `php` extension from Zed's registry, so a fresh VEGA had no PHP at all).
+- Grammar: `tree-sitter-php` 0.24 (the exact revision the extension used); queries copied from the extension into `crates/grammars/src/php` (Apache-2.0, `LICENSE-APACHE` there, header in each file). Not ported: phpdoc highlighting in `/** */` comments (its grammar needs tree-sitter 0.20), Intelephense's custom completion labels, the phptools and phpantom servers.
+- Language servers in `crates/languages/src/php.rs`: phpactor (VEGA's default: `phpactor` on PATH, else the latest `phpactor.phar` from GitHub run with `php`) and Intelephense (npm). Tasks: phpunit, pest, run selection.
+- Xdebug debug adapter back in core: `crates/dap_adapters/src/xdebug.rs`, name "Xdebug" like the extension.
+- The `php` extension is suppressed (`SUPPRESSED_EXTENSIONS`), so an installed copy is removed and it can't be installed again.
+- Extension auto-install works again: VEGA installs what `auto_install_extensions` lists, at startup and when the setting changes (VEGA's default list is empty, so it never contacts the registry by itself; update checks stay off). Before, auto-install never ran, and the install prompt was hidden for listed extensions, so a `.php` file opened without highlighting and without a prompt.
+- Templates: keymap template says VEGA. The owner's `~/.config/vega/settings.json` got the VEGA header and their Zed extension list (backup in the session scratchpad).
+- Known failing test, not from this work: `extensions_ui` `test_suggestion_returns_after_failed_install` (fails on the previous commit too).
+- Owner check: open a `.php` file: highlighting, outline, phpactor starts (status bar), go-to-definition; debug a script with Xdebug.
+
+, steps 1 to 5 of 6** (plan and research: `reports/IntelliJ Markdown view modes.md`, "Build the switcher first…" table). Steps 1 to 4 are in the new crate `markdown_layout`, step 5 in the new crate `markdown_editing`.
 - Step 1, switcher: three buttons on every Markdown editor and preview tab (Editor Only / Editor and Preview / Preview Only, like IntelliJ) and the actions `markdown_layout: show editor only`, `show editor and preview`, `show preview only` (no default keys). Editor and preview stay separate tabs; the layout is worked out from what is open, nothing is stored. Preview Only keeps an editor tab that has unsaved changes.
 - Step 2, setting `markdown_preview.default_layout`: `editor` (default, no change), `split` or `preview`. Applied once, when a Markdown file is first opened (not on restore, not when a tab moves); `split` and `preview` win over `open_markdown_files_in_preview`. Also in the settings window ("Markdown Default Layout").
 - Steps 3 and 4, two-way scroll sync: scrolling a Markdown editor puts the same source line at the top of its previews (with the fraction of a line), and scrolling a preview by wheel, scrollbar or page keys scrolls its editor to the line at the preview's top. A scroll that one side caused on the other is not sent back. Off switches: `markdown_preview.scroll_preview_with_editor` and `markdown_preview.scroll_editor_with_preview` (both default true). The renderer seam is `crates/markdown/src/scroll_sync.rs` (new file): the event `MarkdownScrolled` and `Markdown::scroll_source_index_to_top`.
