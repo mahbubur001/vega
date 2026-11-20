@@ -9,9 +9,11 @@ use std::time::Duration;
 
 use db::kvp::KeyValueStore;
 use gpui::{App, AppContext as _, Entity};
-use lsp::{LanguageServerName, LanguageServerSelector};
+use lsp::{LanguageServerId, LanguageServerName, LanguageServerSelector};
 use project::Project;
-use project::lsp_store::LspStoreEvent;
+use project::lsp_command::file_path_to_lsp_url;
+use project::lsp_store::{LspStore, LspStoreEvent};
+use proto::update_language_server::Variant;
 use util::ResultExt as _;
 
 use crate::config::{PhpConfig, settings_path, settings_with_stub_keys};
@@ -19,6 +21,10 @@ use crate::store::{PhpSettingsStore, cached_config, project_root};
 use crate::stubs::downloaded_stubs_dir;
 
 const PHPACTOR: &str = "phpactor";
+
+/// The title of phpactor's work-done progress while it builds its index
+/// (`IndexerHandler`), at startup and after a reindex.
+const INDEXING_TITLE: &str = "Indexing workspace";
 
 /// How long to wait after saving for the settings file to be reloaded
 /// before phpactor restarts with it.
@@ -62,7 +68,37 @@ fn remember_indexed(root: &Path, signature: String, cx: &App) {
 pub(crate) fn watch(project: Entity<Project>, cx: &mut App) {
     let lsp_store = project.read(cx).lsp_store();
     let watched = project.clone();
+    // phpactor's "Indexing workspace" progress, by server.
+    let mut indexing: Vec<(LanguageServerId, proto::ProgressToken)> = Vec::new();
     cx.subscribe(&lsp_store, move |lsp_store, event, cx| {
+        if let LspStoreEvent::LanguageServerUpdate {
+            language_server_id,
+            message,
+            ..
+        } = event
+        {
+            match message {
+                Variant::WorkStart(start)
+                    if start.title.as_deref() == Some(INDEXING_TITLE)
+                        && is_phpactor(&lsp_store, *language_server_id, cx) =>
+                {
+                    if let Some(token) = start.token.clone() {
+                        indexing.push((*language_server_id, token));
+                    }
+                }
+                Variant::WorkEnd(end) => {
+                    let before = indexing.len();
+                    indexing.retain(|(id, token)| {
+                        !(id == language_server_id && end.token.as_ref() == Some(token))
+                    });
+                    if indexing.len() != before {
+                        recheck_open_files(&lsp_store, *language_server_id, cx);
+                    }
+                }
+                _ => {}
+            }
+            return;
+        }
         if let LspStoreEvent::LanguageServerAdded(id, name, _) = event
             && name.0.as_ref() == PHPACTOR
         {
@@ -151,6 +187,59 @@ pub(crate) fn sync_stub_settings(project: &Entity<Project>, create: bool, cx: &m
         cx.update(|cx| restart(&project, cx));
     })
     .detach();
+}
+
+fn is_phpactor(lsp_store: &Entity<LspStore>, id: LanguageServerId, cx: &App) -> bool {
+    lsp_store
+        .read(cx)
+        .language_server_statuses()
+        .any(|(server, status)| server == id && status.name.0.as_ref() == PHPACTOR)
+}
+
+/// Asks phpactor to check the open PHP files again. Their diagnostics were
+/// made while the index was being built ("class not found"…) and otherwise
+/// stay until the file changes. A `didSave` makes phpactor re-run its
+/// diagnostics (`language_server.diagnostics_on_save`, on by default) without
+/// changing the document.
+fn recheck_open_files(lsp_store: &Entity<LspStore>, id: LanguageServerId, cx: &mut App) {
+    let Some(server) = lsp_store.read(cx).language_server_for_id(id) else {
+        return;
+    };
+    let buffers = lsp_store
+        .read(cx)
+        .buffer_store()
+        .read(cx)
+        .buffers()
+        .collect::<Vec<_>>();
+    for buffer in buffers {
+        let uses_server = lsp_store.update(cx, |lsp_store, cx| {
+            buffer.update(cx, |buffer, cx| {
+                lsp_store
+                    .language_servers_for_local_buffer(buffer, cx)
+                    .contains(&id)
+            })
+        });
+        if !uses_server {
+            continue;
+        }
+        let Some(path) = buffer
+            .read(cx)
+            .file()
+            .and_then(|file| file.as_local())
+            .map(|file| file.abs_path(cx))
+        else {
+            continue;
+        };
+        let Some(uri) = file_path_to_lsp_url(&path).log_err() else {
+            continue;
+        };
+        server
+            .notify::<lsp::notification::DidSaveTextDocument>(lsp::DidSaveTextDocumentParams {
+                text_document: lsp::TextDocumentIdentifier { uri },
+                text: None,
+            })
+            .log_err();
+    }
 }
 
 /// Restarts the project's phpactor (it reindexes when it comes back).

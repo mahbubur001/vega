@@ -14245,6 +14245,7 @@ dependencies = [
  "paths",
  "platform_title_bar",
  "project",
+ "proto",
  "release_channel",
  "serde",
  "serde_json",

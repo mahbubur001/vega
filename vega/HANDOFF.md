@@ -2,7 +2,7 @@
 
 The restart point for the next working session, possibly on another computer. Read this first, then `ROADMAP.md`. Update it at the end of every session.
 
-_Last updated: 2026-11-20, evening (phpactor stubs fix). Branch `vega`, everything committed and pushed._
+_Last updated: 2026-11-20, evening (phpactor stubs fix, re-check after indexing). Branch `vega`, everything committed and pushed._
 
 ## How the owner wants to work
 
@@ -65,7 +65,7 @@ Docker SFTP test server: `crates/deployment/tests/servers` (see `DEPLOYMENT.md` 
 - Markdown, not built: a preview below the editor (the split always opens to the right), per-file memory of the layout, one shared preview tab for all files in the split, IntelliJ's selection toolbar, table column commands (insert, move, align, remove), table of contents, default keys for strikethrough, code and insert link. Math is left to upstream (two community PRs open).
 - `research_notes/IntelliJ Markdown view modes/` holds the four research notes behind the report (IntelliJ view modes, IntelliJ editing features, VS Code and others, Zed's preview and seams).
 - Go-to-definition on PHP built-ins (`defined`, `die`…), **fix built 2026-11-20, not checked in the app**: once the stubs are downloaded (External Libraries › PHP Runtime › Download PHP Stubs), phpactor's init options in `.vega/settings.json` get `worse_reflection.stub_dir` = the stubs folder and `worse_reflection.cache_dir` = `<data dir>/php-stubs-phpactor-cache` (a fresh stub map; a new download clears it), and phpactor restarts. Projects opened later get the keys if they already have a `.vega/settings.json`. Code: `php_settings::config::settings_with_stub_keys`, `phpactor::sync_stub_settings`. Owner check: in a PHP project, download the stubs, wait for phpactor to restart, cmd-click `defined(`; it should open `…/php-stubs/Core/Core.php`.
-- After a reindex, ask phpactor to re-check open files (diagnostics from before the index finished stay until the file changes).
+- After phpactor builds its index (at startup or after a reindex), **built 2026-11-20, not checked in the app**: when its "Indexing workspace" progress ends, VEGA sends `didSave` for each open file phpactor handles, and phpactor re-runs its diagnostics (`language_server.diagnostics_on_save`, on by default). Code: `php_settings::phpactor::recheck_open_files`. Owner check: open a file that uses a class from `vendor/`, run `php: reindex`; a "class not found" shown while indexing should clear by itself when indexing ends.
 - Owner checks: cmd-click `__DIR__ . '/x.php'` (fixed today), WordPress include path in classified-listing (phpactor index verified to resolve `plugin_dir_path`).
 - Restart VEGA Dev with `osascript -e 'tell application "VEGA Dev" to quit'`, never `pkill` (it orphans language servers; 25 phpactor processes piled up).
 - Build only with `CARGO_INCREMENTAL=0` (`script/vega-dev-app` does it now); mixing modes filled `target/` to 168 GB, the owner ran `cargo clean`.
