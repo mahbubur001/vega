@@ -11,7 +11,8 @@ _Drafted 2026-11-19 from HANDOFF, ROADMAP, PROMPTS, SETTINGS_SYNC, BRAND and spo
 | A3 | Hidden Zed cloud/collab/plan copy (unreachable without sign-in) | S | leave it + guard test? |
 | A4 | Owner checks VEGA Dark (P06) and the AI Provider onboarding (P07) in the app | S | — |
 | U1 | `script/vega-upstream-check`: fails on new `.zed` project paths, new `build_zed_*_url` calls, `zed.dev` literals in non-test code, changed VEGA guards; run after each upstream merge and in CI | S | no |
-| C1 | Turn off the 7 active upstream workflows (keep the files for cheap merges) | S | yes |
+| C1 | ~~Turn off the active upstream workflows~~ Done 2026-11-20: all 12 disabled on GitHub, files kept. A workflow file added by a later upstream merge registers as active and needs disabling too | S | done |
+| M1 | Markdown view, edit and preview (IntelliJ parity): steps 1 to 5 built 2026-11-20 (ROADMAP M1–M4); owner's app check, then leftovers (ROADMAP M5) | M | ⌘B key, default layout |
 | C2 | CI: clippy on VEGA crates + the check script now; tagged release workflow (macOS DMG, Linux + musl remote server, Windows) later | M | depends on R1 |
 | R1 | Repository visibility | — | **yes, first** |
 | S1 | Signed + notarized macOS bundle (P11): drop Sentry upload, Zed's team id → env var, rename keychain/DMG; unsigned DMG first | M | Apple Developer account ($99/yr) |
@@ -33,7 +34,7 @@ _Drafted 2026-11-19 from HANDOFF, ROADMAP, PROMPTS, SETTINGS_SYNC, BRAND and spo
 | 3 | Apple Developer account | Owner's personal account now | S1 signing |
 | 4 | Extensions | Turn zed.dev off now (b), VEGA catalogue later (c) | E1, E2 |
 | 5 | First P09 feature | Usage meter or model presets; deployment agent tools after D5 | F1 |
-| 6 | Turn off the 7 upstream workflows | Yes | C1 |
+| 6 | ~~Turn off the upstream workflows~~ | Done 2026-11-20 (12 disabled) | — |
 | 7 | Hidden cloud copy | Leave it, add a guard test | A3 |
 | 8 | MCP/ACP client identity | MCP → "VEGA"; ACP stays "zed" until tested with agents | A2 |
 
@@ -45,7 +46,7 @@ _Drafted 2026-11-19 from HANDOFF, ROADMAP, PROMPTS, SETTINGS_SYNC, BRAND and spo
 3. U1 + C2 part 1: upstream check script, CI job, clippy on VEGA crates.
 4. A4 owner's app check, fixes.
 5. Weekly upstream merge (P14), gated by the check script.
-6. A3 guard test, H1 cleanup, C1 once approved.
+6. A3 guard test, H1 cleanup (C1 is done).
 7. P09 interview and short spec; E1 option (b) once decided.
 
 **Phase 2 (weeks 3–6, after decisions 1–3):** S1 unsigned DMG then signing; C2 release workflow; S2 GitHub Releases updater; D1 docs on Pages + D2.

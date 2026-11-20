@@ -2,7 +2,7 @@
 
 The restart point for the next working session, possibly on another computer. Read this first, then `ROADMAP.md`. Update it at the end of every session.
 
-_Last updated: 2026-11-20. Branch `vega`, everything committed and pushed._
+_Last updated: 2026-11-20, end of day. Branch `vega`, everything committed and pushed._
 
 ## How the owner wants to work
 
@@ -17,7 +17,7 @@ _Last updated: 2026-11-20. Branch `vega`, everything committed and pushed._
 3. With full Xcode, plain `cargo run` works. Without Xcode, add `--features gpui_platform/runtime_shaders` to every build, check, test and clippy command that compiles the app (for crate tests: `cargo test -p <crate> -p gpui_platform --features gpui_platform/runtime_shaders`).
 4. Run the app as "VEGA Dev.app" so the Dock shows the VEGA icon: `script/vega-dev-app --build ~/some/test/project` (it picks runtime shaders itself when Xcode is missing). Don't open this repo itself in VEGA.
 5. Code graph: `graphify update .` once after cloning (`graph.json` and the cache are not in git).
-6. Disk: the debug build cache grows by tens of GB per session. When space runs low, `rm -r target/debug/incremental` (safe; it rebuilds).
+6. Disk: the debug build cache grows by tens of GB per session. When space runs low, `rm -r target/debug/incremental` (safe; it rebuilds). Each new dependency also leaves the old app and test binaries behind in `target/debug/deps` (`vega-<hash>`, about 1.2 GB each, and `<crate>-<hash>` test binaries); all but the newest of each name can be deleted.
 
 ## Where things stand
 
@@ -61,6 +61,9 @@ Docker SFTP test server: `crates/deployment/tests/servers` (see `DEPLOYMENT.md` 
 ## Next tasks, in order
 
 **Start here next session:**
+- Markdown (built 2026-11-20, steps 1 to 5; nothing has been looked at in the running app by the agent, only by tests): the owner checks the five "Markdown …" rows in the table above. Likely follow-ups, in the order the checks will show them: icons of the three layout buttons next to the upstream eye button; whether a split made of two tabs is acceptable (if not, the alternative is one composite tab, see the report, "Build the switcher first…"); jitter in the two-way scroll sync; key choices for the editing commands.
+- Markdown, not built: a preview below the editor (the split always opens to the right), per-file memory of the layout, one shared preview tab for all files in the split, IntelliJ's selection toolbar, table column commands (insert, move, align, remove), table of contents, default keys for strikethrough, code and insert link. Math is left to upstream (two community PRs open).
+- `research_notes/IntelliJ Markdown view modes/` holds the four research notes behind the report (IntelliJ view modes, IntelliJ editing features, VS Code and others, Zed's preview and seams).
 - Go-to-definition on PHP built-ins (`defined`, `die`…) fails: phpactor answers with paths inside `phpactor.phar`. Fix: when stubs are downloaded, write `worse_reflection.stub_dir` = the stubs folder into phpactor's init options (`php_settings::config::settings_with_lsp_keys`), maybe clear phpactor's stub cache.
 - After a reindex, ask phpactor to re-check open files (diagnostics from before the index finished stay until the file changes).
 - Owner checks: cmd-click `__DIR__ . '/x.php'` (fixed today), WordPress include path in classified-listing (phpactor index verified to resolve `plugin_dir_path`).
@@ -79,6 +82,9 @@ Deployment: PhpStorm parity P1–P6 built 2026-11-19 (DEPLOYMENT.md); owner is c
 
 ## Waiting on the owner's decision
 
+- **Markdown ⌘B:** in `.md` files ⌘B is now Toggle Bold (as in IntelliJ) instead of Toggle Left Dock. Keep, or move bold to another key.
+- **Markdown default layout:** `markdown_preview.default_layout` ships as `editor` (no change from Zed). IntelliJ's default is `split`. Change VEGA's default or leave it.
+- **AGENTS.md README banner rule:** upstream's `AGENTS.md` says to put a "remove this line to confirm you've reviewed this PR" banner at the top of `README.md` whenever source changes. It was never applied in this fork and was skipped again on 2026-11-20. Either delete the rule from `AGENTS.md` or say it should be followed.
 - **P10 updates:** where VEGA downloads updates and the remote-server binary from (GitHub Releases needs a public repo or a separate public releases repo).
 - **Extensions:** keep Zed's registry for now (user-initiated only) or plan a replacement catalogue.
 - **P09:** which VEGA-specific AI features to build.

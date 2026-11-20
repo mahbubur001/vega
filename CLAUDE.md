@@ -9,6 +9,7 @@ Product docs live in `vega/`:
 - `vega/ROADMAP.md` — phased plan and current status. Check it before starting work and update it when a phase item is done.
 - `vega/BRAND.md` — name, palette, icon rules.
 - `vega/PROMPTS.md` — the A–Z prompt sequence used to drive the fork.
+- `reports/` — research reports behind features (the Markdown view plan); the notes they were written from are in `research_notes/`.
 
 Coding guidelines for Rust and GPUI (error handling, naming, GPUI contexts, entities, actions, tests) are in `AGENTS.md`. Read the relevant sections before writing Rust code here.
 
