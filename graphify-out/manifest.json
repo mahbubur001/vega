@@ -22542,9 +22542,9 @@
     "semantic_hash": ""
   },
   "vega/HANDOFF.md": {
-    "mtime": 1795193186.2165866,
-    "seen": 1795193282.137486,
-    "ast_hash": "f75b68f6741173f8e87d741d23ccdab5",
+    "mtime": 1795195096.0828626,
+    "seen": 1795195188.536853,
+    "ast_hash": "07ad39753cceed37993739cb9ae40699",
     "semantic_hash": ""
   },
   "crates/deployment_ui/src/sync_view.rs": {
@@ -22632,9 +22632,9 @@
     "semantic_hash": ""
   },
   "crates/php_settings/Cargo.toml": {
-    "mtime": 1795111964.374304,
-    "seen": 1795114344.346285,
-    "ast_hash": "a85ef45380a8d978e74f9ba066f1ed0b",
+    "mtime": 1795195084.0393443,
+    "seen": 1795195188.505506,
+    "ast_hash": "8c689b44d09f1750dcec5fb1b99f1a58",
     "semantic_hash": ""
   },
   "crates/php_settings/src/config.rs": {
@@ -22752,9 +22752,9 @@
     "semantic_hash": ""
   },
   "crates/php_settings/src/phpactor.rs": {
-    "mtime": 1795193171.8732789,
-    "seen": 1795193282.106617,
-    "ast_hash": "46239a9791e83e9a10ae29eb9c0385b0",
+    "mtime": 1795195084.0392294,
+    "seen": 1795195188.505562,
+    "ast_hash": "c60ddee046f83615fbb2fddd12315df4",
     "semantic_hash": ""
   },
   "research_notes/IntelliJ Markdown view modes/intellij_editing_features.md": {
