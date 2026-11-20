@@ -504,9 +504,9 @@
     "semantic_hash": "4cd385763a696f14d59d93267927cf3e"
   },
   "assets/settings/default.json": {
-    "mtime": 1795111964.3415053,
-    "seen": 1795114344.3454368,
-    "ast_hash": "baeb823dccf18d6b8552c1c57a8b9c8b",
+    "mtime": 1795137327.247348,
+    "seen": 1795137755.37169,
+    "ast_hash": "6d5a166db6d48f95fd92497ca94fed66",
     "semantic_hash": ""
   },
   "assets/settings/default_semantic_token_rules.json": {
@@ -9060,9 +9060,9 @@
     "semantic_hash": "5cc37efdb8e40ae1373680948b8989be"
   },
   "crates/markdown_preview/src/markdown_preview_view.rs": {
-    "mtime": 1795119826.3760889,
-    "seen": 1795120233.66132,
-    "ast_hash": "044e9a555f67d7e4650044c156ed49d8",
+    "mtime": 1795137327.2467072,
+    "seen": 1795137755.3991108,
+    "ast_hash": "42687777930f35d862751501a64221cd",
     "semantic_hash": ""
   },
   "crates/menu/Cargo.toml": {
@@ -11616,9 +11616,9 @@
     "semantic_hash": "ca613d4fa5e012ae7a6dd589622d0ab5"
   },
   "crates/settings_content/src/settings_content.rs": {
-    "mtime": 1795026410.9397333,
-    "seen": 1795114344.346439,
-    "ast_hash": "bf9235cba3064ac53b2622e244ca54e3",
+    "mtime": 1795137327.2470267,
+    "seen": 1795137755.407381,
+    "ast_hash": "e73226e82f6118605af1270cceea5e5a",
     "semantic_hash": ""
   },
   "crates/settings_content/src/terminal.rs": {
@@ -11808,9 +11808,9 @@
     "semantic_hash": "57986db8b4e9e9d290d5cecf6e540b55"
   },
   "crates/settings_ui/src/page_data.rs": {
-    "mtime": 1795111964.385393,
-    "seen": 1795114344.3464582,
-    "ast_hash": "4baf2c38161347c388b5b07a66ae37ee",
+    "mtime": 1795137348.5534391,
+    "seen": 1795137755.408015,
+    "ast_hash": "109372d28fdbb2212afd30b77c5d0248",
     "semantic_hash": ""
   },
   "crates/settings_ui/src/pages.rs": {
@@ -11886,9 +11886,9 @@
     "semantic_hash": ""
   },
   "crates/settings_ui/src/settings_ui.rs": {
-    "mtime": 1795111964.3870075,
-    "seen": 1795114344.346464,
-    "ast_hash": "1986f726d4ea5c9a630c91cc938dec07",
+    "mtime": 1795137097.2137787,
+    "seen": 1795137755.408245,
+    "ast_hash": "79c8e9931f68ef0e4764e1cec3488e2b",
     "semantic_hash": ""
   },
   "crates/shell_command_parser/Cargo.toml": {
@@ -22776,15 +22776,15 @@
     "semantic_hash": ""
   },
   "crates/markdown_layout/Cargo.toml": {
-    "mtime": 1795119911.1681442,
-    "seen": 1795120233.661264,
-    "ast_hash": "3ad88abf08a434c5e141da18c46fb81d",
+    "mtime": 1795137097.214881,
+    "seen": 1795137755.399053,
+    "ast_hash": "552575c94ae2e7e8aa34f42f1a8c3829",
     "semantic_hash": ""
   },
   "crates/markdown_layout/src/markdown_layout.rs": {
-    "mtime": 1795119985.22565,
-    "seen": 1795120233.661265,
-    "ast_hash": "f65b1e101e3eeb1f511aaa3677c3ab57",
+    "mtime": 1795137373.5706186,
+    "seen": 1795137755.399054,
+    "ast_hash": "f87012c20ac2a7c324ffb92572143f96",
     "semantic_hash": ""
   },
   "reports/IntelliJ Markdown view modes.md": {

@@ -125,6 +125,17 @@
     "heading_font_weight": 600,
     // Whether to automatically open Markdown files in the preview.
     "open_markdown_files_in_preview": false,
+    // How a Markdown file is laid out when it is first opened.
+    //
+    // 1. Open the source editor (`open_markdown_files_in_preview` still applies):
+    //    "editor"
+    // 2. Open the source editor with its preview in the pane beside it:
+    //    "split"
+    // 3. Open the preview in place of the source editor:
+    //    "preview"
+    "default_layout": "editor",
+    // Whether scrolling a Markdown editor also scrolls its previews.
+    "scroll_preview_with_editor": true,
     // Whether to limit the width of the rendered markdown content. When
     // enabled, content is constrained to `max_width` and centered
     // horizontally within the preview pane.

@@ -259,6 +259,14 @@ impl MarkdownPreviewView {
         .detach();
     }
 
+    /// VEGA: scrolls the preview just far enough to show the block rendered
+    /// from `source_index`, without moving the highlighted block.
+    pub fn reveal_source_index(&mut self, source_index: usize, cx: &mut Context<Self>) {
+        self.markdown.update(cx, |markdown, cx| {
+            markdown.request_autoscroll_to_source_index(source_index, cx);
+        });
+    }
+
     pub fn open_preview_in_pane(
         workspace: &mut Workspace,
         editor: Entity<Editor>,

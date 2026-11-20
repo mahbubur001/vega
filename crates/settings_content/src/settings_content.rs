@@ -1375,6 +1375,14 @@ pub struct MarkdownPreviewSettingsContent {
     ///
     /// Default: false
     pub open_markdown_files_in_preview: Option<bool>,
+    /// VEGA: how a Markdown file is laid out when it is first opened.
+    ///
+    /// Default: editor
+    pub default_layout: Option<MarkdownDefaultLayout>,
+    /// VEGA: whether scrolling a Markdown editor also scrolls its previews.
+    ///
+    /// Default: true
+    pub scroll_preview_with_editor: Option<bool>,
     /// Whether to limit the width of the rendered markdown content. When
     /// enabled, content is constrained to `max_width` and centered
     /// horizontally within the preview pane, for optimal readability.
@@ -1386,6 +1394,31 @@ pub struct MarkdownPreviewSettingsContent {
     ///
     /// Default: 800
     pub max_width: Option<PixelSetting>,
+}
+
+/// VEGA: how a Markdown file is laid out when it is first opened.
+#[derive(
+    Clone,
+    Copy,
+    Debug,
+    Serialize,
+    Deserialize,
+    JsonSchema,
+    MergeFrom,
+    Default,
+    PartialEq,
+    strum::VariantArray,
+    strum::VariantNames,
+)]
+#[serde(rename_all = "snake_case")]
+pub enum MarkdownDefaultLayout {
+    /// Opens the source editor. `open_markdown_files_in_preview` still applies.
+    #[default]
+    Editor,
+    /// Opens the source editor with its preview in the pane beside it.
+    Split,
+    /// Opens the preview in place of the source editor.
+    Preview,
 }
 
 /// The settings for the image viewer.
