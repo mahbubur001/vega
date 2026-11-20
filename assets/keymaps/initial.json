@@ -1,9 +1,9 @@
-// Zed keymap
+// VEGA keymap
 //
-// For information on binding keys, see the Zed
-// documentation: https://zed.dev/docs/key-bindings
+// For information on binding keys, see the VEGA
+// documentation: https://github.com/mahbubur001/vega/blob/vega/docs/src/key-bindings.md
 //
-// To see the default key bindings run `zed: open default keymap`
+// To see the default key bindings run `vega: open default keymap`
 // from the command palette.
 [
   {
