@@ -1266,10 +1266,10 @@
     "semantic_hash": "e584babcb2409f6174f22e2de45c5f7e"
   },
   "crates/agent_ui/src/completion_provider.rs": {
-    "mtime": 1795011961.8805473,
-    "seen": 1795114344.3454988,
-    "ast_hash": "8d24078e3147494b2d1c9b5fc49b570d",
-    "semantic_hash": "8d24078e3147494b2d1c9b5fc49b570d"
+    "mtime": 1795195369.3666096,
+    "seen": 1795196026.203137,
+    "ast_hash": "9bf3b1c69adcb0cff603e091be6f4e14",
+    "semantic_hash": ""
   },
   "crates/agent_ui/src/config_options.rs": {
     "mtime": 1795011961.8806803,
@@ -1320,9 +1320,9 @@
     "semantic_hash": "bf3f6818ebb53b445dda65e2b030ac79"
   },
   "crates/agent_ui/src/conversation_view/thread_view.rs": {
-    "mtime": 1795027897.8805983,
-    "seen": 1795114344.345504,
-    "ast_hash": "890840bf61aae41d8e81b2453af27dcb",
+    "mtime": 1795195369.3661554,
+    "seen": 1795196026.203286,
+    "ast_hash": "ba77d20e7c705eaa290c5a2113a92770",
     "semantic_hash": ""
   },
   "crates/agent_ui/src/diagnostics.rs": {
@@ -1704,9 +1704,9 @@
     "semantic_hash": "6346e61da1598d87f586d9289c426030"
   },
   "crates/auto_update_ui/src/auto_update_ui.rs": {
-    "mtime": 1795018755.6489408,
-    "seen": 1795114344.345533,
-    "ast_hash": "b702cb7910935b7f37b7be541c128dc6",
+    "mtime": 1795195731.5807922,
+    "seen": 1795196026.204443,
+    "ast_hash": "dd615bc4b835a30e2bc7181cb9b8c115",
     "semantic_hash": ""
   },
   "crates/aws_http_client/Cargo.toml": {
@@ -22542,9 +22542,9 @@
     "semantic_hash": ""
   },
   "vega/HANDOFF.md": {
-    "mtime": 1795195096.0828626,
-    "seen": 1795195188.536853,
-    "ast_hash": "07ad39753cceed37993739cb9ae40699",
+    "mtime": 1795195937.0029795,
+    "seen": 1795196026.259292,
+    "ast_hash": "e877e1a63ef3b5887c2bd9ba2d3444fe",
     "semantic_hash": ""
   },
   "crates/deployment_ui/src/sync_view.rs": {
