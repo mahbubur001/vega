@@ -803,6 +803,7 @@ fn main() {
         feedback::init(cx);
         markdown_preview::init(cx);
         markdown_layout::init(cx);
+        markdown_editing::init(cx);
         tabular_data_preview::init(cx);
         svg_preview::init(cx);
         onboarding::init(cx);

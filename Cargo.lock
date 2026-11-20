@@ -11176,6 +11176,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "markdown_editing"
+version = "0.1.0"
+dependencies = [
+ "editor",
+ "gpui",
+ "language",
+ "settings",
+ "theme",
+ "theme_settings",
+]
+
+[[package]]
 name = "markdown_layout"
 version = "0.1.0"
 dependencies = [
@@ -23987,6 +23999,7 @@ dependencies = [
  "lsp_command_selector",
  "lsp_locations",
  "markdown",
+ "markdown_editing",
  "markdown_layout",
  "markdown_preview",
  "menu",

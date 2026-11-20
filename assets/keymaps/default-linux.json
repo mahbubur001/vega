@@ -606,6 +606,12 @@
     "bindings": {
       "ctrl-k v": "markdown::OpenPreviewToTheSide",
       "ctrl-shift-v": "markdown::OpenPreview",
+      "ctrl-b": "markdown_editing::ToggleBold",
+      "ctrl-i": "markdown_editing::ToggleItalic",
+      "ctrl-v": "markdown_editing::Paste",
+      "tab": "markdown_editing::NextTableCell",
+      "shift-tab": "markdown_editing::PreviousTableCell",
+      "shift-enter": "markdown_editing::InsertTableRow",
     },
   },
   {

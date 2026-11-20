@@ -644,6 +644,12 @@
     "bindings": {
       "cmd-k v": "markdown::OpenPreviewToTheSide",
       "cmd-shift-v": "markdown::OpenPreview",
+      "cmd-b": "markdown_editing::ToggleBold",
+      "cmd-i": "markdown_editing::ToggleItalic",
+      "cmd-v": "markdown_editing::Paste",
+      "tab": "markdown_editing::NextTableCell",
+      "shift-tab": "markdown_editing::PreviousTableCell",
+      "shift-enter": "markdown_editing::InsertTableRow",
     },
   },
   {
