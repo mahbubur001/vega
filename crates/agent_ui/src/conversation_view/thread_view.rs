@@ -8300,19 +8300,11 @@ impl ThreadView {
             .into_any_element()
     }
 
-    fn is_thread_feedback_enabled(&self, cx: &App) -> bool {
-        util::maybe!({
-            let project = self.thread.read(cx).project().read(cx);
-            let user_store = project.user_store();
-            if let Some(configuration) = user_store.read(cx).current_organization_configuration() {
-                if !configuration.is_agent_thread_feedback_enabled {
-                    return false;
-                }
-            }
-
-            AgentSettings::get_global(cx).enable_feedback
-                && self.thread.read(cx).connection().telemetry().is_some()
-        })
+    fn is_thread_feedback_enabled(&self, _cx: &App) -> bool {
+        // VEGA: rating a thread uploads the whole conversation to Zed's cloud
+        // (`submit_agent_feedback`), so the thumbs buttons and the
+        // `/helpful` / `/not-helpful` commands are off.
+        false
     }
 
     // The local slash commands the message editor should currently expose.

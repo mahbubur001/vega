@@ -220,9 +220,13 @@ impl Dismissable for DeltaAnnouncement {
     const KEY: &'static str = "delta_announcement_dismissed";
 }
 
+/// VEGA: no announcements of Zed Industries' products after an update.
+const SHOW_ZED_ANNOUNCEMENTS: bool = false;
+
 fn announcement_for_version(version: &Version, cx: &App) -> Option<AnnouncementContent> {
     let version_with_delta = Version::new(1, 22, 0);
-    if *version < version_with_delta
+    if !SHOW_ZED_ANNOUNCEMENTS
+        || *version < version_with_delta
         || DisableAiSettings::get_global(cx).disable_ai
         || DeltaAnnouncement::dismissed(cx)
     {
