@@ -1,23 +1,23 @@
 # Graph Report - vega  (2026-11-21)
 
 ## Corpus Check
-- 3340 files · ~5,575,120 words
+- 3343 files · ~5,579,239 words
 - Verdict: corpus is large enough that graph structure adds value.
-- Unclassified: 760 file(s) not represented in the graph (top: (none) 327, .scm 165, .wit 77)
+- Unclassified: 761 file(s) not represented in the graph (top: (none) 328, .scm 165, .wit 77)
 
 ## Summary
-- 113422 nodes · 352465 edges · 2934 communities (1852 shown, 1082 thin omitted)
-- Extraction: 96% EXTRACTED · 4% INFERRED · 0% AMBIGUOUS · INFERRED: 13506 edges (avg confidence: 0.76)
+- 113558 nodes · 352894 edges · 2715 communities (1718 shown, 997 thin omitted)
+- Extraction: 96% EXTRACTED · 4% INFERRED · 0% AMBIGUOUS · INFERRED: 13523 edges (avg confidence: 0.76)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `d3342903`
+- Built from commit: `2562752b`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
-- wayland/client.rs
-- thread.rs
+- tools/tool_permissions.rs
+- AgentTool
 - App
 - TestAppContext
 - AsyncApp
@@ -25,7 +25,7 @@
 - ElementId
 - MultiBufferSnapshot
 - LspStore
-- PlatformWindow
+- wayland/client.rs
 - FontId
 - Editor
 - px
@@ -33,22 +33,22 @@
 - FocusHandle
 - ActivityIndicator
 - gpui_macos/src/platform.rs
-- Size
+- Bounds
 - DisplaySnapshot
 - Buffer
-- ios/window.rs
-- pane_group.rs
+- AnyWindowHandle
+- SplitDirection
 - LspStore
 - markdown/src/markdown.rs
 - AgentConnection
-- LinuxPlatform
+- src/worktree.rs
 - Hsla
 - AsyncApp
-- NoModelConfiguredError
+- ExtensionHostProxy
 - px
 - PathKey
 - Editor
-- MultiBufferOffset
+- MultiBuffer
 - Pane
 - FontId
 - agent/src/agent.rs
@@ -56,13 +56,13 @@
 - Repository
 - terminal/src/terminal.rs
 - acp_thread.rs
-- div.rs
+- gestures.rs
 - AnyProtoClient
 - NativeAgent
-- motion.rs
+- src/x_ai_subscribed.rs
 - HighlightKey
-- BackgroundExecutor
-- MarkdownElement
+- git_tests.rs
+- title_bar/src/title_bar.rs
 - Sidebar
 - src/mistral.rs
 - ItemHandle
@@ -70,7 +70,7 @@
 - WorktreeDelegate
 - Motion
 - IconName
-- SharedString
+- App
 - components/data_table.rs
 - Styled
 - Context
@@ -78,7 +78,7 @@
 - Statement
 - settings
 - syntax_map.rs
-- ClipboardItem
+- vega_branch_popup.rs
 - Styled
 - Worktree
 - open_ai/src/completion.rs
@@ -87,32 +87,32 @@
 - App
 - BlameEntry
 - settings
-- linux/platform.rs
+- blame_ui.rs
 - Example
-- workspace/src/workspace.rs
+- render_window_title_format
 - acp_thread.rs
 - agent_panel.rs
 - Motion
 - anthropic/src/completion.rs
 - block_map.rs
 - Anchor
-- LanguageRegistry
+- LanguageServerName
 - AcpThread
 - App
-- LanguageModel
+- FakeLanguageModelProvider
 - disable_cursor_blinking/before.rs
 - language_models_cloud.rs
-- PlatformKeyboardLayout
+- external_agents_page.rs
 - DockPosition
 - Oid
 - devcontainer_manifest.rs
-- Size
-- PathStyle
+- gpui_tokio.rs
+- Envelope
 - Anchor
 - disable_cursor_blinking/before.rs
 - AssistantPhase
 - scratches/src/rows.rs
-- terminal_element.rs
+- Picker
 - src/git_store.rs
 - VisualTestContext
 - collab/src/rpc.rs
@@ -127,14 +127,14 @@
 - patch_metrics.rs
 - rules_to_skills_migration.rs
 - scrollbar.rs
-- ComponentScope
-- DeleteEntryOutcome
-- anthropic/src/completion.rs
-- lsp_ext_command.rs
-- src/elicitation.rs
+- application.rs
+- Database
+- MacPlatform
+- TaskSourceKind
+- ios/text_input.rs
 - ContextServerRegistry
-- raw_to_buffer_semantic_tokens
-- agent/src/agent.rs
+- bracket_colorization.rs
+- Skill
 - src/openai_subscribed.rs
 - terminal_panel.rs
 - gpui_macos/src/events.rs
@@ -144,16 +144,16 @@
 - crashes.rs
 - src/git_store.rs
 - patch_metrics.rs
-- Session
+- oauth.rs
 - MultiWorkspace
 - BufferStore
 - PathKey
 - init_test
-- oauth.rs
+- SettingsWindow
 - directx_renderer.rs
 - servers_modal.rs
 - K
-- TerminalProgramValidation
+- extract_terminal_command_prefix
 - v1.rs
 - SettingsWindow
 - MacWindow
@@ -161,20 +161,20 @@
 - theme_settings.rs
 - search/src/project_search.rs
 - Window
-- EditorEvent
+- text_diff_view.rs
 - Oid
 - LanguageModel
 - Diagnostic
 - buffer_search.rs
 - BufferSnapshot
 - RemoteServerProjects
-- gpui_windows/src/events.rs
-- settings_content/src/language.rs
+- PathKey
+- zed
 - CompletionsMenu
 - FakeFs
 - IndexMap
 - fallible_options.rs
-- search/src/project_search.rs
+- src/buffer_tests.rs
 - Onboarding
 - Point
 - x11/client.rs
@@ -187,21 +187,21 @@
 - Editor
 - TokenUsage
 - OutlinePanel
-- node_runtime.rs
+- zed/src/main.rs
 - policy.rs
 - Picker
 - tab_map.rs
 - metal_renderer.rs
-- add_multi_buffer_editor
+- PanelEntry
 - Selection
 - provider/bedrock.rs
 - branch_diff.rs
 - WindowsWindow
 - inlay_map.rs
 - BlinkManager
-- ClientOperation
-- LlamaCppLanguageModelProvider
-- ProtoMessageHandlerSet
+- Theme
+- provider/llama_cpp.rs
+- AnyProtoClient
 - mermaid.rs
 - google_ai.rs
 - WasmState
@@ -210,10 +210,10 @@
 - GitPanel
 - ElicitationEntryId
 - MockDelegate
-- MessageNotification
+- NotificationId
 - State
 - remote_host_panel.rs
-- node_runtime.rs
+- syntax_map_tests.rs
 - zed.rs
 - dev_container/src/lib.rs
 - BufferStore
@@ -225,7 +225,7 @@
 - ReasoningEffort
 - HeadlessProject
 - conversation_view/elicitation.rs
-- CommandRange
+- vim/src/command.rs
 - agent_settings.rs
 - PathList
 - synthesize.rs
@@ -235,9 +235,9 @@
 - arc
 - fs_watcher.rs
 - t
-- OpenPathDelegate
+- code_context_menus.rs
 - terminal/src/terminal.rs
-- provider/anthropic.rs
+- src/modal.rs
 - DisassociationTrackingConnection
 - edit_prediction/src/edit_prediction_tests.rs
 - external-agents.md
@@ -249,55 +249,56 @@
 - migrator.rs
 - keystroke_input.rs
 - agent_settings.rs
-- language_model_core.rs
+- editorconfig_store.rs
 - KeyValueStore
 - handshake.rs
 - livekit_client/src/test.rs
 - copilot/src/request.rs
-- key_dispatch.rs
+- tabular_data_preview/src/parser.rs
 - TableView
 - SshRemoteConnection
 - settings_content/src/editor.rs
 - ThemeColorField
-- src/lsp_store.rs
+- lsp_store/semantic_tokens.rs
 - TextFinder
-- .new_internal
+- editor/src/editor.rs
 - Room
-- KeyBinding
+- src/keymap.rs
 - context_server/src/types.rs
-- SecretModal
+- reorder_patch.rs
 - TerminalBackendEvent
-- gpui_windows/src/system_notifications.rs
+- PromptLevel
 - handshake.rs
 - VsCodeSettings
-- pull_examples.rs
-- Window
+- tasks_ui.rs
+- FocusHandle
 - SplittableEditor
-- provider/x_ai.rs
+- rust_lang
+- NotebookEditor
 - agent_ui/src/config_options.rs
 - Formatter
 - examples/end_to_end.rs
 - project_diff.rs
 - github-community-pr-board.py
-- vercel_ai_gateway.rs
+- Rope
 - split.rs
 - src/debugger_panel.rs
 - v2.rs
-- collab/src/db.rs
+- Project
 - gpui_windows/src/dispatcher.rs
 - insert_crease_for_mention
-- OpenRouterLanguageModelProvider
+- provider/open_router.rs
 - playback.rs
 - Editor
 - provider/cloud.rs
 - InvalidSettingsError
 - TransportDelegate
-- line.rs
+- agent_ui
 - windows_wsl.rs
 - hashed_regions.rs
 - gpui_windows/src/clipboard.rs
 - channel_view.rs
-- Subscription
+- Context<'a, T>
 - src/anthropic.rs
 - settings_content/src/theme.rs
 - BufferId
@@ -326,10 +327,10 @@
 - entry_view_state.rs
 - markdown_editing.rs
 - extension_store_test.rs
-- deployment/src/engine.rs
+- EditorSettings
 - AsyncBody
 - util/src/paths.rs
-- acp_tools.rs
+- Subscription
 - HighlightsTreeView
 - test_scheduler.rs
 - InvalidationStack<T>
@@ -338,10 +339,10 @@
 - shaders.metal
 - LanguageModelRegistry
 - gpui_macos/src/display_link.rs
-- OpenCodeLanguageModelProvider
+- provider/opencode.rs
 - protocol/sftp.rs
 - .update
-- LanguageModelCompletionError
+- codestral.rs
 - src/docker.rs
 - modal_app.py
 - gpui_windows/src/dispatcher.rs
@@ -350,18 +351,18 @@
 - svg_renderer.rs
 - TextSummary
 - PopoverMenuHandle
-- welcome.rs
+- MultiDiffView
 - mcp_servers_page.rs
-- Editor
-- delete_run_git_blame/before.rs
-- ImageView
+- Community 342
+- Deserialize
+- image_viewer.rs
 - ExtensionStore
-- DisplayId
+- gpui_macos/src/display.rs
 - inspector_render.rs
 - key_dispatch.rs
 - AnyElement
-- EditorLspTestContext
-- provider/open_ai.rs
+- json_schema_store.rs
+- highlight_cache.rs
 - seccomp.rs
 - Frequently Asked Questions {#faq}
 - tests/engine.rs
@@ -376,17 +377,17 @@
 - Engine
 - inlays/inlay_hints.rs
 - PanelEntry
-- HttpClientWithUrl
+- FetchTool
 - normal/paste.rs
 - GitPanel
-- Transformation
-- runnable.rs
+- rc
+- rope.rs
 - KeyBindingContextPredicate
-- RenderImage
+- img.rs
 - ConnectionId
-- Agent
+- AgentServer
 - chat_completion.rs
-- integration/dynamic_registration.rs
+- edit_file.rs
 - pane_group.rs
 - DebuggerHoverView
 - breakpoint_list.rs
@@ -399,35 +400,34 @@
 - Editor
 - syntax_tree_view.rs
 - Editor
-- ProjectPanel
-- startup_windows
-- DeploymentStore
+- App
+- deployment/src/project.rs
 - chunk.rs
 - pending_bindings.rs
 - command_palette.rs
 - EntityId
 - compliance/src/github.rs
-- copilot_edit_prediction_delegate.rs
+- App
 - alacritty.rs
 - TestApp
-- KeyContext
-- EditPredictionButton
+- key_dispatch.rs
+- KeystrokeInput
 - example_editor.rs
 - mermaid.rs
-- OpenAiCompatibleLanguageModelProvider
-- PlatformTextSystem
+- provider/open_ai_compatible.rs
+- component.rs
 - repeat.rs
 - launch.py
 - ScrollManager
-- edit_prediction/src/udiff.rs
-- settings_sync/src/settings_sync.rs
+- text_diff.rs
+- account_button.rs
 - hashed_regions.rs
-- ClientContext
+- permission_outcome_to_v1
 - KeymapFile
 - outputs.rs
-- integration/git_store.rs
+- conflict_view.rs
 - AnthropicLanguageModelProvider
-- RealFs
+- test_journal
 - KeystrokeInput
 - BufferSnapshot
 - .new
@@ -440,13 +440,13 @@
 - TitleBar
 - Editor
 - integration/bookmark_store.rs
-- .new
+- notebook_ui.rs
 - eslint.rs
 - pasteboard.rs
 - RandomizedElementTreeMutationKind
 - devcontainer_api.rs
 - vim/src/state.rs
-- Checkbox
+- pending_bindings.rs
 - bench_context.rs
 - tests/end_to_end.rs
 - scheduler/src/executor.rs
@@ -455,37 +455,38 @@
 - ui/blocking_io_on_foreground.rs
 - default_colors.rs
 - UnstagedDiff
-- find_or_create_repository
+- settings/src/settings.rs
 - FeatureFlag
-- App
+- styles/colors.rs
 - audio_pipeline.rs
 - CopilotCodeVerification
 - Inner
 - collab/src/db.rs
 - perf/src/main.rs
-- Diff
+- Example
 - TestApp
 - paths/src/paths.rs
 - DivInspector
 - StepOutput
 - timestamp.rs
-- edit_prediction_registry.rs
-- table_view.rs
+- ZedEditPredictionDelegate
+- AnyColumn
 - BufferSnapshot
 - markdown_layout.rs
-- number_field.rs
-- Connection
+- AsyncWindowContext
+- Global
+- db/src/db.rs
 - NeovimBackedTestContext
 - ExtensionsPage
 - SubmissionId
-- benches/streaming_diff.rs
+- jumps.rs
 - Toolbar
 - DebugSession
-- SharedScreen
+- gpui_macos/src/system_notifications.rs
 - sandbox_linux.rs
 - github-check-new-issue-for-duplicates.py
 - ConfigurationView
-- ErrorAction
+- copilot_edit_prediction_delegate.rs
 - go_to_line.rs
 - conflict_view.rs
 - provider/ollama.rs
@@ -493,7 +494,7 @@
 - number_field.rs
 - ClientApiError
 - etw_tracing.rs
-- add_overwrite_test/before.rs
+- time_format.rs
 - src/emmet_ext.rs
 - unstaged_diff.rs
 - ProjectDiagnosticsEditor
@@ -503,130 +504,130 @@
 - kernels/mod.rs
 - SkillCreatorPage
 - MemoryView
-- .render
+- ResolvedTask
 - StagedDiff
 - src/bedrock.rs
 - edit_prediction_provider_setup.rs
 - PlatformScheduler
-- ActionLog
+- action_log.rs
 - Console
 - tab_map.rs
 - docs_preprocessor/src/main.rs
 - StackFrameList
-- ShellKind
-- Markdown
+- operation_queue.rs
+- workspace/src/tasks.rs
 - ChannelRole
 - CopilotChat
 - Crease
 - ElicitationEntryId
 - ReplicaId
 - BufferDiagnosticsEditor
-- hover_popover.rs
+- use_wasi_sdk_in_compile_parser_to_wasm/before.rs
 - ServerType
-- LspLogView
+- settingsstore
 - buf.rs
 - NativeAgentConnection
 - ThemeSelectorDelegate
-- BookmarkTestContext
+- call_hierarchy.rs
 - increment.rs
 - indent_guides
 - WasmState
-- FoldedAncestors
+- .render_folder_elements
 - MigrationPatterns
-- TelemetryLogView
+- node_runtime.rs
 - sweep_prompt.rs
 - reversal.rs
 - LspStoreEvent
 - ExtensionCard
 - sandbox_linux.rs
-- cloud_api_types.rs
+- OrganizationId
 - UpdateButton
 - cloud_llm_client.rs
 - visual.rs
-- Telemetry
+- client/src/telemetry.rs
 - remote_servers/filter.rs
 - commit_modal.rs
 - default_colors.rs
 - AgentProfileId
-- ios/window.rs
+- data_table/tests.rs
 - ExecuteProxyError
-- converter.rs
-- src/model.rs
+- terminal_settings.rs
+- MessageNotification
 - ChunkSlice<'a>
-- basics_page.rs
+- prelude
 - page_data.rs
 - containers
 - apache_licensed.rs
 - InlayHint
-- language/src/proto.rs
-- .compress_commit_diff
+- ToOffset
+- Entity
 - BreakpointStore
 - ModalLayer
-- AgentId
+- Fs
 - running/console.rs
 - editable_context.rs
 - config.py
 - CreaseId
-- ToolPermissionDecision
+- src/tool_permissions.rs
 - ToolCall
 - Editor
-- context_server/src/client.rs
+- app/context.rs
 - notebook_ui.rs
 - auto_update.rs
 - ButtonLike
 - ThreadItem
-- ToolchainSelector
+- toolchain_selector.rs
 - SessionActivity
-- reconcile.rs
-- build_root_plan
-- LanguageScope
+- SettingsObserver
+- thread_worktree_archive.rs
+- components/indent_guides.rs
 - definitions
-- wayland/clipboard.rs
+- ai_discovery.rs
 - ZedSyntaxToken
-- ConfigurationView
+- gpui_macos.rs
 - SkillCreatorPage
 - repl_editor.rs
 - agent_registry_ui.rs
-- .run
-- deferred
+- ToolCallEventStream
+- MacWindowState
 - FileStatus
 - workflows/extension_tests.rs
 - mouse_context_menu.rs
-- HttpTransport
+- fallible_options.rs
 - convert.rs
 - TestAppContext
 - AgentRegistryPage
 - PopupOptions
 - merge.rs
 - Vim
-- AssetSource
-- after_release.yml
-- util/src/util.rs
-- lsp_store/semantic_tokens.rs
+- SharedString
+- body
+- ShellKind
+- debug_log.rs
 - format_prompt.rs
 - windows_resources.rs
 - AbsPath
 - Reservation
-- Disclosure
+- Bundle
 - checks.rs
 - project_bookmarks.rs
 - .navigate_to_hover_links
-- extension_cli/src/main.rs
+- Action
 - ExtensionCard
 - threaded_dispatcher.rs
 - examples/test_app.rs
 - outline/src/outline.rs
-- user_service.rs
+- agent_ui.rs
 - src/copilot_chat.rs
 - BookmarkStore
 - agent/src/db.rs
 - Rope
-- snippets_ui.rs
-- SanitizedPath
+- models.rs
+- PendingKeystrokesIndicator
 - Entity
 - extension_cli/src/main.rs
-- WasmState
-- FakeTransport
+- TableRow<T>
+- DebugAdapterClient
 - repeat.rs
 - src/web.rs
 - T
@@ -635,38 +636,38 @@
 - CodeActionProvider
 - ProfilerWindow
 - IntelliJ / JetBrains Markdown view modes and preview (bundled Markdown plugin)
-- delete.rs
-- BufferLineHeight
-- gitiles.rs
+- App
+- autofix_pr.rs
+- ParsedGitRemote
 - Reservation
 - wgpu_renderer.rs
 - mermaid_render/src/render.rs
 - Mode
-- Breakpoint
+- Context
 - ToolResponseContent
-- UnixStream
+- MarkdownTag
 - archive.rs
 - .navigate_to_hover_links
 - LineEndingIndicator
 - DiffMultibuffer
 - Git
-- OnceLock
+- AudioStack
 - Schema
 - TerminalCodegen
 - FakeEditPredictionDelegate
-- AvailableCommand
+- WorkspaceSettings
 - DockerExecConnection
 - keychain.rs
-- kernel_options.rs
+- layout_line.rs
 - repeat.rs
 - init_test
 - UpdateVersion
-- ChannelModalDelegate
+- rodio_ext.rs
 - edit_prediction_metrics/src/main.rs
-- SearchQuery
+- tab_switcher_tests.rs
 - migrator/src/migrations.rs
 - TerminalBounds
-- editor/src/edit_prediction.rs
+- TerminalProgramValidation
 - watcher_debug.rs
 - SettingsSync
 - WasmState
@@ -674,7 +675,7 @@
 - LspLocationsDelegate
 - sandbox_settings.rs
 - http_client
-- native.rs
+- integration/channel_tests.rs
 - project_bookmarks.rs
 - BackgroundExecutor
 - with
@@ -685,20 +686,20 @@
 - fake_definition_lsp.rs
 - release.rs
 - text_diff.rs
-- arena.rs
+- src/gpui.rs
 - theme_selector.rs
-- AnyElement
+- Navigable
 - Diff
 - Object
 - migrate_settings
 - Reservation
-- CharBag
+- Snapshot
 - macos_seatbelt.rs
 - eslint.rs
 - Humanizer: Remove AI Writing Patterns
 - with
-- fs_watcher/diagnostics.rs
-- tools/tool_permissions.rs
+- Credentials
+- tab_switcher.rs
 - watcher_debug.rs
 - ServerType
 - examples/end_to_end.rs
@@ -707,19 +708,19 @@
 - with
 - .to_taffy
 - lints/src/lib.rs
-- ListOrDirect
+- Kernel
 - Zed Markdown preview: current state and feasibility of an IntelliJ-style three-mode view
 - src/cloud.rs
 - sink.rs
-- Envelope
+- Chunks<'a>
 - snippets_ui.rs
 - examples/test_app.rs
 - KernelSpecification
 - src/cloud.rs
 - streaming_parser.rs
 - with
-- TestAction
-- draft_prompt_store.rs
+- Autoscroll
+- ztracing/src/lib.rs
 - WorktreeDelegate
 - document_selector_matches
 - buffers.rs
@@ -728,79 +729,79 @@
 - action_log.rs
 - pattern_extraction.rs
 - NodeRuntimeTrait
-- Templates
-- EvalOutput
+- terminal_updates.rs
+- CallHierarchyDelegate
 - supervisor.rs
 - gpui/src/subscription.rs
 - Components<'a>
 - memory.rs
-- github_releases.rs
+- edit_prediction_registry.rs
 - legacy_thread.rs
-- .then
-- Component
+- .perform_format
+- LanguageServerId
 - MergeFrom
 - settings_sync/src/engine.rs
 - language_selector.rs
-- settings_sync/src/github.rs
+- HttpClient
 - theme_settings/src/schema.rs
-- RustLspAdapter
+- libc_type.rs
 - platform_linux.rs
 - tests/command.rs
-- pattern_extraction.rs
+- App
 - workflows: community_close_stale_issues.y
 - workflows: community_pr_cleanup.yml
 - workflows: compliance_check.yml
 - workflows: guild_assignment_status.yml
 - workflows: wezel.yml
-- multi_select_tests.rs
+- App
 - replace.rs
-- quote
-- project_symbols.rs
-- .DrawGlyphRun
+- Formatter
+- KeybindUpdateOperation
+- UiDensity
 - SignatureHelpState
 - UiDensity
-- RepositorySnapshot
+- spawn_posix_spawn
 - search: registrar.rs
-- TestDispatcher
+- gpui/src/test.rs
 - LanguageModelCompletionError
 - Zed Documentation Conventions
 - with
 - with
 - env
 - ChannelBuffer
-- .selected_entry
+- Context
 - gpui_macos/src/system_notifications.rs
-- .new
+- DiffOperations
 - App
 - App
 - ChunkBrackets<'a>
 - migrator/src/migrations.rs
-- editor/src/edit_prediction_tests.rs
+- DiagnosticSeverity
 - ErrorCode
-- GoogleLanguageModelProvider
+- F
 - scheduler/src/tests.rs
-- contact_finder.rs
+- open_path_prompt_tests.rs
 - with
 - vega_ci.yml
-- DropdownMenu
+- src/new_process_modal.rs
 - subagent_card.rs
 - window/a11y.rs
-- hang_detection.rs
-- .render
+- TaskTiming
+- extract_commands_from_command
 - mention_crease.rs
 - GitJobDebugQueue
 - directx_devices.rs
-- Model
-- StyledExt
-- WindowButton
+- connect_and_keepalive
+- snippet.rs
+- OwnerLogin
 - HoveredWord
 - git_picker.rs
 - multi_workspace_tests.rs
-- EditorEvent
+- internal_api.rs
 - inspector_render.rs
 - normal/scroll.rs
 - content.rs
-- GraphicalEnvironment
+- git_ui_core/src/notifications.rs
 - MessageQueue
 - extension_api.rs
 - components/input_field.rs
@@ -809,149 +810,149 @@
 - permissions_modal.rs
 - ModelSelectorListItem
 - RemoteTrack
-- MigrationBanner
-- inspector_ui/src/inspector.rs
+- Value
+- session/src/session.rs
 - GitEntry
 - WasmState
 - .add_buffer_entries
 - example_spec.rs
 - is_scope_enabled
-- DataTable
+- keys.rs
 - properties
-- Result
+- arc
 - audio_test_window.rs
 - StatusBar
 - Using Language Server Features
 - GetDocumentDiagnostics
 - ReviewSuccess
 - vars.rs
-- open_listener.rs
+- src/journal.rs
 - visual_test_runner.rs
 - extensions_ui.rs
 - rodio_ext.rs
-- channel_view.rs
-- open_remote_project
-- command_json.rs
+- EditorEvent
+- open_startup_request
+- GithubLogin
 - VisualContext
-- DiagnosticBlock
-- action_log.rs
+- RealCratesIoClient
+- .insert_blocks
 - ModalHeader
 - CallStatsModal
 - Loader
-- PermissionOptions
+- S
 - html/src/html.rs
 - git_runtime_diagnostics.rs
 - Vim
 - TokenPermissions
-- sqlez/src/connection.rs
+- KeyBindingContextPredicate
 - WindowId
 - project_panel
 - Shell
 - compute_summary
 - onboarding_banner.rs
-- UniformListScrollHandle
+- ConnectionQuality
 - elements/animation.rs
-- OpenAiSubscribedProvider
-- IconThemeSelectorDelegate
+- validate_terminal_command
+- crates_io_client/src/types.rs
 - compute_summary
 - call_impl/diagnostics.rs
-- nested_symbol
-- crates_io_client/src/tests.rs
+- BedrockAdaptiveThinkingEffort
+- setup_modal_test
 - How to Set Up Python in Zed
 - match_benchmark.rs
 - with
 - render_consumer/src/lib.rs
-- context_menu/preview.rs
-- RequestMessage
+- WorktreeEntry
+- Url
 - platform_scheduler.rs
 - WindowButtonLayoutContent
-- WslPickerDelegate
+- NativeRunningKernel
 - util/src/markdown.rs
 - DebugSession
 - diagnostics_tests.rs
 - darwin.rs
 - fuzzy_nucleo/src/paths.rs
 - Session
-- InitializedContextServerProtocol
+- InitializeResponse
 - HighlightedLabel
 - Troubleshooting
 - with
 - with
 - Point
-- google_ai.rs
+- collab/src/db.rs
 - Troubleshooting
 - WasmState
 - git_runtime_diagnostics.rs
 - VisualTestAppContext
-- XAiSubscribedProvider
+- WslRunningKernel
 - text/src/tests.rs
 - gpui_apple/src/dispatcher.rs
 - feature_flags_macros.rs
 - ErrorCode
-- OllamaModelPickerDelegate
+- Crate
 - PointUtf16
 - mock_client.rs
 - src/filter.rs
-- GitSummary
+- editor_render.rs
 - deploy_docs.rs
 - EditorSettings
 - hang_detection/logging.rs
 - outline_panel
 - profiler/journal.rs
-- project_with_rust_server
+- integration/lsp_store.rs
 - Event
 - UnboundedSyncSender
-- Context
+- CallHierarchyView
 - ChunkSlice<'a>
 - surround.rs
 - Markdown viewing/editing/preview in VS Code and other non-JetBrains editors (baseline vs. IntelliJ's Editor / Editor + Preview / Preview)
 - EncodingSelectorDelegate
 - InlineInputState
 - env
-- ManageProfilesModal
+- CloudflareIpCountryHeader
 - Connection
-- git_timestamp.rs
+- CrashServer
 - deferred
-- UpdateButton
+- TestClock
 - ProxyError
 - pinned_host.rs
 - upstream.rs
 - tabular_data_preview/src/parser.rs
 - WasmState
-- Context
-- init_test
-- edit_prediction_context_view.rs
+- map_completion_events
+- outline_panel.rs
+- ResponseContent
 - ThreadStore
-- ClientApiError
+- canonical_path.rs
 - Appearance
-- bracket_colorization.rs
+- extension_cli/src/main.rs
 - phpactor.rs
 - with
 - os
-- PredictionProvider
-- RepositorySelectorDelegate
-- ToolPickerDelegate
+- WorktreeSettings
+- from_pixels_constructor/before.rs
+- translate_doc_comments/before.rs
 - type
-- MarkdownElement
-- HistoryDelegate
-- SignInWindow
+- AgentRegistryCard
+- ChannelCount
+- Event
 - SettingsStore
-- unicode_confusables.rs
+- AgentSessionModes
 - RandomizedElementTreeMutationKind
 - provider/bedrock.rs
 - migrate_settings
 - Bitbucket
 - PythonDebugAdapter
-- init_bookmarks_tab_test
-- ToolInput<T>
-- LabelLike
-- ProfilePickerDelegate
+- LineEnding
+- stash.rs
+- FontWeight
+- AgentProfileId
 - SharedString
 - WasmState
 - remote_output.rs
-- aws_http_client.rs
+- RemoteVideoTrackView
 - reconcile.rs
-- gpui_windows/src/util.rs
+- AutoHideState
 - outputs/json.rs
 - CommandAliasTarget
 - Overview {#overview}
@@ -969,7 +970,7 @@
 - deployment_ui.rs
 - CodeActionProvider
 - SettingsProfileSelectorDelegate
-- sh.md
+- editor_block_comment_tests.rs
 - GithubLogin
 - TerminalToolHeader
 - format_distance.rs
@@ -978,44 +979,44 @@
 - init_bookmarks_tab_test
 - LineIndent
 - fuzzy_nucleo/src/strings.rs
-- Configuration
+- lsp_command/signature_help.rs
 - refresh_linked_ranges
 - GPUI Benchmarks
 - bundle-windows.ps1
 - edit_prediction_registry.rs
 - KeybindSource
 - .new
-- rodio_ext.rs
+- Source
 - How to Migrate from IntelliJ IDEA to Zed
-- e2e_tests.rs
+- EditPredictionPromptFormatContent
 - steps
-- WslRemoteConnection
+- remote/src/transport.rs
 - MermaidTheme
-- LocalClient
+- ApiErrorCode
 - ToolCall
-- sys.rs
+- helper.rs
 - PhpSettingsWindow
 - Priority
-- rate_limiter.rs
+- stream_completion
 - windows_prefix.rs
 - type
 - terminal_element.rs
 - AgentThreadEntry
 - OffsetUtf16
 - LibraryRows
-- AiSettingItem
+- HarmCategory
 - AppState
 - autofix_pr.rs
 - protection.rs
 - Provider Notes {#provider-notes}
 - Editor
-- WasmState
+- Handler
 - examples/test_app.rs
 - proxy_handshake.rs
-- ToggleButtonGroup<T, COLS, ROWS>
-- IconThemePickerDelegate
-- HttpClient
-- ReasoningEffort
+- KeepAlive
+- BaseKeymapContent
+- LanguageModel
+- Model
 - init_ctrl_hover_hyperlink_test_with_window
 - SoloDiffView
 - playback.rs
@@ -1025,25 +1026,25 @@
 - BatchingLlmClient
 - Refinement
 - components/input_field.rs
-- head.rs
+- .create_row_identifier_cell
 - AcpThreadEvent
-- ScaledPixels
+- IgnoreStackEntry
 - env
-- steps
+- SampleRate
 - dangerfile.ts
 - compliance.rs
 - editor/src/edit_prediction.rs
-- CopilotChatLanguageModelProvider
+- .map_event
 - Bring IntelliJ's three Markdown modes to VEGA
 - SearchHistory
 - ConversationView
-- StreamEvent
+- merged_highlight_runs
 - render_local_action_button
 - editor/src/rewrap.rs
-- translate_doc_comments/before.rs
+- Format
 - protection.rs
-- end_trial_upsell.rs
-- HandleTag
+- Thinking
+- MarkdownWriter
 - release_channel/src/lib.rs
 - vega_docs.rs
 - Logger
@@ -1055,16 +1056,17 @@
 - Project Panel
 - KernelListItem
 - nudge-contributor
-- Client
+- EditPredictionOnboarding
 - internal_api.rs
 - allowlist.rs
 - tool_schema.rs
+- BenchFile
 - render_agent_markdown
 - ViMotion
 - .iter_rows
-- Symbol
-- HighlightStyle
-- WebWindow
+- .render
+- SyntaxTheme
+- Modifiers
 - Configuration
 - T
 - External Agents
@@ -1073,21 +1075,20 @@
 - name
 - with
 - CellControlType
-- SymbolKind
+- channel_store_tests.rs
 - darwin.rs
-- catalog.rs
-- search_bar.rs
-- XimHandler
-- vscode_import.rs
+- Client
+- .push
+- start_wayland_desktop_capture
 - direct_write.rs
 - update_version.rs
 - TabularDataPreviewPane
 - RingOperation
 - RequestId
-- ApiKeysWithProviders
-- RecursiveMode
+- RemoteMatch
+- channel_chat_participant.rs
 - BaseKeymap
-- src/modal.rs
+- languages/src/go.rs
 - Model
 - Zed Brand Writer
 - Terminal
@@ -1097,22 +1098,22 @@
 - runners.rs
 - pool.rs
 - Target
-- PromptLevel
+- ui_prompt.rs
 - TextRenderer_Impl
 - PreviewBackend
 - visual_tests.rs
-- Fs
+- rules_to_skills_migration.rs
 - UiDensity
 - Task
 - Status
 - Transform
-- SafeHwnd
+- ItemSummary
 - SessionActivity
 - .new
-- ScrollHandle
+- pages/feature_flags.rs
 - KeyTest
-- PromptEditor
-- fuzzy/src/matcher.rs
+- handle_from
+- Resource
 - integration/trusted_worktrees.rs
 - SessionEvent
 - destination_list.rs
@@ -1120,21 +1121,19 @@
 - name
 - SpringTarget
 - vsync.rs
-- SvgRenderer
 - sqlez/src/migrations.rs
 - LspButton
-- State
-- editable_setting_control.rs
+- assert_has_syntax_errors
+- Version
 - zlog.rs
-- .details_for_entry
-- .map
+- project_panel.rs
 - blob_store
 - lsp_button.rs
 - ContextCompactionStatus
-- SubagentCardId
+- search
 - zed_actions/src/lib.rs
-- StreamEvent
-- RelPathBuf
+- ConnectionPoolGuard
+- RelPath
 - Connection
 - T
 - SpringTarget
@@ -1144,66 +1143,67 @@
 - packageExportsFallback
 - deployment_menu.rs
 - outputs/markdown.rs
+- CompletionReference
 - simulated_crates_io_client.rs
 - HTML
 - User Keymaps
 - m_2026_02_04/settings.rs
-- from_pixels_constructor/before.rs
+- Format
 - content.rs
-- git_ui_core.rs
+- GithubRelease
 - GPUI Test Debugging
 - Procedure
-- X11WindowStatePtr
+- ToolCallAccumulator
 - Swift
 - Vue
 - subagents.rs
 - DiagnosticsToolbarEditor
 - editor/src/persistence.rs
 - MultiBufferPoint
-- ChatGptModel
-- tests/command.rs
+- src/openai_subscribed.rs
+- resolve.rs
 - Feature
-- .on_main_thread
-- Vector
+- postprocess.rs
+- m_2026_08_26/settings.rs
 - EditPredictionContextView
 - Forgejo
-- StyledTypography
+- Replay
 - SecurityModal
 - SpinnerLabel
 - ztracing/src/lib.rs
 - create_directory_tool.rs
 - MarkdownWriter
 - telemetry_snapshot.rs
-- e2e_tests.rs
+- chat_completion.rs
 - Project
 - Taboo Phrases
 - digraph.rs
 - Terminal Threads
 - Refinement
 - SETTINGS_NESTED_KEY_VALUE_PATTERN
-- DirectWriteComponents
-- cpp.rs
+- Architecture
+- .toggle_commit_editor
 - Target
 - AgentModelId
 - ProxySpec
-- copy_button.rs
-- InlineValueLocation
+- .map_stream
+- project/src/project.rs
 - zed_urls.rs
-- .new
+- m_2025_01_02/settings.rs
 - .refresh_folding_ranges
-- StatusToast
+- dismissevent
 - editable_setting_control.rs
 - GitBlameEntrySummary
-- ModelSelectorListItem
+- m_2025_11_12/settings.rs
 - ListEntry
 - src/clangd_ext.rs
 - ComponentScope
 - Crate
-- Editor
-- shell.rs
+- src/code_lens.rs
+- Using a debugger
 - Gitea
 - integration/signature_help.rs
-- EscapeAction
+- OwnerAddition
 - tangled.rs
 - multi_select_tests.rs
 - KeyContextView
@@ -1213,26 +1213,27 @@
 - PanelEntry
 - devcontainer_api.rs
 - archive.rs
-- GoDebugAdapter
+- mcp_message_content_to_acp_content_block
 - ProtoType
 - linked_editing_ranges.rs
-- ExtensionVersionSelectorDelegate
+- InsertTextFormat
 - scroll/actions.rs
 - set_menus.rs
-- TabBar
+- Tab
 - AgentSessionList
-- Context
-- .is_empty
-- .clone
-- Message
+- .fetch_stream
+- GithubRelease
+- capture_ref
+- .stats_task
+- ExtensionCapabilityContent
 - BaseKeymapSelectorDelegate
 - Java
 - benches/streaming_diff.rs
 - .refresh_folding_ranges
-- run_grep_tool
+- Formatter
 - Command
 - .run
-- RequestId
+- Customizing Token Colors
 - m_2026_04_10/settings.rs
 - Amazon Bedrock {#amazon-bedrock}
 - Troubleshooting
@@ -1242,16 +1243,16 @@
 - deploy_collab.yml
 - 16. General Terms
 - cargo-timing-info.js
-- ResponseInputItem
+- Formatter
 - provide_inline_values
 - ActionRegistry
-- keybinding.rs
+- Color
 - google_ai.rs
 - ChannelVisibility
 - m_2025_04_15/keymap.rs
 - path_trie.rs
-- m_2025_03_29/settings.rs
-- AgentNotification
+- ThreadTitleRegenerationResult
+- linear_color_stop
 - channel
 - secrets
 - DevelopmentCredentialsProvider
@@ -1269,18 +1270,18 @@
 - editor/src/rewrap.rs
 - NodeDiscoveryError
 - rpc/src/auth.rs
-- make_state
+- StatusMessage
 - path_range.rs
 - m_2026_04_10/settings.rs
-- SidebarRecentProjectsDelegate
+- TcpArgumentsTemplate
 - runners.rs
 - telemetry/src/telemetry.rs
-- Grammar
-- AlertModal
+- Language
+- .drop
 - CompletionTotal
-- SecurityModal
+- DiffTarget
 - Configuring Zed
-- perf/src/main.rs
+- SurfaceInputIndex
 - Go
 - Brand Voice Rubric
 - update_sha_in_extensions
@@ -1292,13 +1293,14 @@
 - StyledAnsiTextHandler
 - livekit.yaml
 - ExtensionProvides
-- HtmlElement
+- StatusBarContentStyle
+- WindowDecorationsExt
 - git_clone_progress.rs
-- tables/user.rs
+- DetectError
 - BedrockAuthMethod
 - with
-- .new
-- language_model_selector.rs
+- .arbitrary_with
+- RasterizationOptions
 - LanguageServerId
 - markdown_writer.rs
 - AnyEntity
@@ -1310,20 +1312,19 @@
 - Quick Start
 - Examples
 - PHP
-- State
+- RasterizationOptions
 - IgnoreStackEntry
-- MarkdownWriter
-- go_language
-- .render
-- lsp_log_view_tests.rs
+- RegistryFilter
+- AgentInitialContent
+- CallHierarchySettings
 - env
 - gpui_web/src/dispatcher.rs
 - duplicate.rs
 - create_scratch
 - tasks/gpui.rs
 - LanguageServerLogType
-- control_characters.rs
-- CompletionKind
+- FetchState
+- DownloadedFileType
 - channel_member.rs
 - DiffOperations
 - RepositorySelectorDelegate
@@ -1342,20 +1343,19 @@
 - m_2026_04_17/settings.rs
 - ProjectSymbolsDelegate
 - UnboundedSyncSender
-- ToastLayer
+- LanguageServerInstallationStatus
 - JobEvent
 - json_language_server_ext.rs
-- is_scope_enabled
-- CommandPaletteFilter
-- Edit Predictions
+- Record
+- SettingsLocation
+- Env
 - Role Types {#roles}
-- Troubleshooting
+- System Requirements
 - HtmlExtension
 - steps
-- db/src/db.rs
-- FakeCredentialsProvider
-- StdioTransport
-- m_2025_01_30/settings.rs
+- kvp.rs
+- FactoryResponse
+- AllAgentServersSettings
 - feedback.rs
 - .build_removal_prompt
 - VEGA
@@ -1368,7 +1368,7 @@
 - go_language
 - CollapseSelectedEntry
 - postprocess.rs
-- FeatureFlagAppExt
+- extract_commands_from_extended_test_expr
 - CopyPath
 - Cut
 - emitBOM
@@ -1378,32 +1378,30 @@
 - isolatedModules
 - TcpArgumentsTemplate
 - get_settings
-- feature_flags/src/store.rs
-- Cursor
+- Notifications
+- bundle_mac_aarch64
 - ShowScrollbar
 - Model
-- MessageEditorAddon
+- check_scripts
 - m_2026_02_25/settings.rs
 - Appearance
-- BaseKeymapSelectorDelegate
+- create_draft_release
 - ThemePreview
 - code_completion_tests.rs
-- DisconnectedOverlay
-- KeybindingEditorDb
+- AuthRequired
 - body
 - promote_to_stable
-- AgentInitialContent
+- external_source_prompt.rs
 - m_2026_04_17/settings.rs
-- m_2025_11_25/settings.rs
+- RetainExcerpts
 - AwaitVisitor<'_, 'tcx>
-- App
 - NoReceiverError
 - path_trie.rs
-- ListHeader
+- ArchiveType
 - StatusKind
 - tables/room.rs
 - Example
-- Entity
+- BASE_MODAL_WIDTH
 - TcpArgumentsTemplate
 - .manipulate_mutable_lines_in_markdown
 - AttachRequest
@@ -1425,30 +1423,23 @@
 - external_libraries.rs
 - VEGA: next plan (everything except Deployment)
 - mac_only_instance.rs
-- XdebugAdapter
+- dap_adapters.rs
 - Search
-- AskPassSession
+- RemoteClient
 - LspStoreEvent
-- FeatureFlagStore
-- StringMatchOptions
+- feature_flags/src/store.rs
+- Languages
 - GlslExtension
-- PickerPromptDelegate
-- build_llama_cpp_request
 - tables/buffer.rs
 - third-party-terms.md
-- MessagePart
+- asyncreadext
 - AiProviderSetup
 - WindowsCaptionButton
 - tabs
 - MultiBufferOffsetUniformSampler
-- NotebookEditor
 - SessionEvent
 - Step
 - ProxyScheme
-- sqlez/src/migrations.rs
-- Event
-- .run_and_advance
-- MistralLanguageModelProvider
 - .new
 - The Zed Rust Extension API
 - RasterizationOptions
@@ -1461,7 +1452,6 @@
 - moduleSuffixes
 - Event
 - target
-- shell_env.rs
 - HtmlExtension
 - deserialize
 - Expectation
@@ -1470,14 +1460,12 @@
 - integration/search.rs
 - Admin Controls
 - ToastLayer
-- .from_input
 - C
 - JSON
 - kotlin.md
 - DisconnectedOverlay
 - Proto
 - Modelines
-- File
 - Preview tabs
 - File Finder
 - sqlez/src/connection.rs
@@ -1489,16 +1477,15 @@
 - message
 - vscode_format.rs
 - Resume here
-- FakeAgentConnection
-- Symbol
+- AgentId
+- Worktree
 - tests/engine.rs
 - Building Zed for FreeBSD
 - ZedAiOnboarding
 - Step
 - gallery.js
 - ProxyScheme
-- DisplayRow
-- SharedThreadId
+- RowExt
 - IconDecorationKind
 - composite
 - EnabledStatus
@@ -1508,10 +1495,8 @@
 - exactOptionalPropertyTypes
 - inlineSources
 - .read_only
-- ImageInfo
 - jsxFragmentFactory
 - jsxImportSource
-- language_models.rs
 - noResolve
 - contact.rs
 - preserveSymlinks
@@ -1544,18 +1529,15 @@
 - run_tests_mac
 - build_nix_linux_x86_64
 - 13. Confidentiality
-- CratesIoError
+- simulated_crates_io_client.rs
 - check-licenses
 - install.sh
 - ayu.json
 - CachedEntriesUpdate
-- RunningFetch<T>
 - command_palette
-- LanguageServerId
 - LanguageModelId
 - .stream_llama_cpp_request
 - BuildTaskDefinition
-- open_selector
 - StartDebuggingRequestArgumentsRequest
 - TaskTemplate
 - Tool
@@ -1619,9 +1601,7 @@
 - word_diff.rs
 - Request IDs
 - code_completion_tests.rs
-- GitSettings
-- components/popover.rs
-- CommandTemplate
+- project_settings.rs
 - Entity
 - Entity
 - Entity
@@ -1629,10 +1609,7 @@
 - Entity
 - Entity
 - Entity
-- OffsetDateTime
 - plan_summary_label
-- Chip
-- .start
 - flask--add-and-rename-test-function.md
 - flask--add-import-statement.md
 - flask--add-test-function.md
@@ -1680,15 +1657,13 @@
 - bundle_mac_aarch64
 - check_scripts
 - UnboundedReceiver
-- SelectionHistoryEntry
 - bundle_linux_x86_64
 - bundle_windows_aarch64
 - 15. Governing Law, Dispute Resolution and Arbitration
 - Linux sandbox VM tests
 - bundle-flatpak
 - run-local-minio
-- src/deepseek.rs
-- SemanticTokenState
+- src/semantic_tokens.rs
 - .to_alacritty
 - dart.md
 - centered_layout
@@ -1709,7 +1684,6 @@
 - tables/worktree.rs
 - latest::Command
 - latest::CodeLabel
-- CursorPosition
 - CountingAllocator<A>
 - latest::CodeLabelSpan
 - latest::CodeLabelSpanLiteral
@@ -1739,7 +1713,6 @@
 - extension::SlashCommandArgumentCompletion
 - extension::SlashCommandOutput
 - spring.rs
-- DirectWriteTextSystem
 - gpui/src/bench.rs
 - .fmt
 - .fmt
@@ -1750,10 +1723,8 @@
 - ServerCapabilities
 - instrument
 - Voice and Tone
-- RefreshLlmTokenListener
+- client/src/llm_token.rs
 - Vue
-- report_anthropic_event
-- EsLintLspAdapter
 - SyntaxTheme
 - PathMatch
 - .render
@@ -1933,162 +1904,74 @@
 - PresenceFlag
 - A
 - SmallVec
-- wikipedia.rs
 - .poll
 - dap_types::StackFrame
 - .poll
 - DisplayActions
 - remote_debug.rs
-- MultibufferHint
-- buffer_operation.rs
-- buffer_snapshot.rs
-- tables/extension.rs
-- language_server.rs
-- project_repository.rs
-- tables/worktree.rs
-- MessageContent
 - linux/dispatcher.rs
 - html_to_markdown.rs
-- SystemWindowTabs
-- ActivateScript
-- ViMotion
-- Event
-- word_diff.rs
-- FetchHttpClient
-- font_face_to_font
-- open_test_image
-- ThemePickerDelegate
+- settings_content/src/terminal.rs
 - Building Zed for Linux
 - channel_buffer_collaborator.rs
 - triage_queue_board.yml
 - danger/package.json
-- zed_urls.rs
 - MessageContent
-- CodeLldbDebugAdapter
-- TcpTransport
-- PendingRequests
-- extension_events.rs
-- PresenceFlag
-- FileIcons
-- .from
-- PathMatchCandidateSet
-- StringMatch
+- src/feature_flags.rs
 - Tab Switcher
-- DirectWriteState
 - inputs
-- additionalProperties
-- ChatMessage
 - ViewPhase
 - project_collaborator.rs
-- ChoiceCard
 - excerpt_ranges.rs
-- watch
-- MTime
 - deployment_menu.rs
-- CallbackSlot<T>
-- NotificationSubscription
-- ChatMessage
 - fonts.rs
-- DiagnosticIndicator
-- .render
-- ActiveBufferEncoding
 - AnimationPhase
-- App
-- ChatMessage
-- .select_entry
 - CacheableCommand
 - derive_refineable.rs
-- .run
 - Logger
-- TransportError
 - cargo-timing-info.js
 - RunningFetch<T>
-- edit_prediction_cli/src/paths.rs
-- Erlang
 - IndentGuide
-- redact.rs
-- examples/system_notifications.rs
+- connection
 - declaration
-- parse_discovered_models
-- WorkingDirectory
-- HighlightedMatchWithPaths
-- dev_container_suggest.rs
 - focus_cleanup.rs
 - AssistantPhase
 - m_2025_01_29/settings.rs
-- tab.rs
 - split_repository_update
 - parse
-- .run
+- Item
 - client/src/proxy.rs
-- ProjectSearchView
+- search/src/project_search.rs
 - .to_proto
-- TransportDelegate
-- paste_plan
-- pump_response_body
-- .new
-- .render
-- ImageMetadata
-- label/label.rs
+- remote_host_panel.rs
 - src/clangd_ext.rs
-- .reject_edits_in_ranges
-- FindPathToolOutput
 - LoggingLevel
 - RandomizedChildMutation
-- Status
 - Model
-- InputPanel
 - env
-- ActiveBufferLanguage
 - dirs.rs
-- rel_path_buf
 - extension_suggest.rs
 - fuzzy_nucleo/src/matcher.rs
-- markdown_writer.rs
 - worktree_names.rs
-- Domain
 - SpringConfig
 - Interpolate
-- .cmp
 - cherry_pick.yml
-- QuickActionBar
-- FlakyAgentServer
 - ViewEvent
 - steps
-- CodexCredentials
-- compact
 - BenchmarkRemoteClient
-- steps
-- net/src/util.rs
 - tables/user.rs
-- poll_read_buf
-- ProfileModalHeader
 - AgentPanelOnboarding
 - ClientNotification
 - m_2025_03_06/keymap.rs
 - ProtoConversion
-- Request
-- .buffer_outline_items
-- get_settings
-- Window
 - Tunneled<S>
-- ExecutionStatus
-- Position
-- VimOption
 - .render
 - Extension Publishing Prerequisites {#extension-publishing-prerequisites}
-- RequestMessage
-- MessageContent
 - SpringPlayback
-- WikipediaCodeHandler
 - m_2025_12_15/settings.rs
 - VEGA: next plan (everything except Deployment)
 - TerminalProviderCommand
-- check_unicode_separator_cursor
-- WindowsSystemSettings
-- .label_for_completion
-- ConnectionResult
-- net/src/listener.rs
+- system_settings.rs
 - Formatting: floating toolbar, shortcuts, Insert popup, header level
 - Structure and navigation
 - Links and images
@@ -2099,247 +1982,145 @@
 - What users value or complain about
 - Tables
 - Lists
-- Role
 - AuthErrorSource
-- json_log.rs
-- TestProfileProvider
-- OpenBehavior
-- TcpArguments
 - Role
-- EventHandlerError
-- ProjectSearch
-- Role
-- UnixSocket
-- Role
-- CatalogModel
-- CollapsedEntry
-- App
-- SshConnectionHost
-- active_settings_profile_picker
-- util/src/test.rs
-- notification_kind.rs
-- tables/server.rs
-- worktree_diagnostic_summary.rs
-- worktree_entry.rs
 - Publishing Guide {#publishing-your-extension}
-- GenerationMode
-- StubAgentServer<C>
+- agent_ui/src/test_support.rs
 - JetBrains IDE Markdown editing features (source-editor side, bundled Markdown plugin)
-- .process_response
-- start
-- CompletionsQuery
-- ViewOptions
-- create_test_workspace
 - DiagramType
 - branch
 - pr_number
-- map_ret
-- CustomToolFormat
-- make_fresh_credentials
-- GitDateFormat
 - ThemeAppearanceJson
-- CursorHideModeSetting
-- .render_repl_menu
+- Settings
 - .language_server_binary
-- PerBufferUndo
 - FileLinkTestLogger
-- Assets
 - contributor.rs
 - dap_types::Checksum
 - dap_types::CompletionItem
-- extension/src/types.rs
-- LineIndicatorFormat
 - ownership_post.rs
-- .render
-- A11yActionHandler
-- TableHandler
-- FakeCredentialsProvider
-- Model
 - PathExt
-- SaturatingBool
-- .new
-- ToastAction
 - Developing Extensions {#developing-extensions}
 - Deno
-- AskUserToolOutput
-- CreateThreadToolOutput
-- SkillToolOutput
+- github-track-duplicate-bot-effectiveness.py
+- ask_user_tool.rs
+- schema_as_acp
 - DapStatus
-- Transport
-- CompletionMenuScrollBarSetting
-- ContextMenuPlacement
-- Task
-- family_summary
-- ArenaBox<T>
-- ModelMode
-- EnvironmentOrigin
-- ImageItemEvent
 - Debugger Extensions
-- bundle_linux_aarch64
-- Repository<'a>
-- TrackedBufferStatus
-- ContentType
-- undo_reject_toast.rs
-- NeedsLlmTokenRefresh
-- ReasoningEffort
-- ThinkingType
-- BreakpointPromptEditAction
-- SelectSyntaxNodeScrollBehavior
-- Backend
 - GitPanelAddon
-- init
-- Override<T>
-- Event
 - GitPathStyle
-- SubPageType
-- setup_test
-- setup_test
-- zed/build.rs
-- EnabledStatus
-- Editing Code
+- settings_ui.rs
+- is_scope_enabled
 - MCP Server Extensions
-- GDScript
 - Shell Scripts
 - Svelte
 - Configuration
 - Snippets
-- Zed and trusted worktrees
 - blob-store.ps1
-- SessionCloseErrors
 - dap_types::SourcePresentationHint
 - dap_types::StackFrame
 - dap_types::SteppingGranularity
 - dap_types::Variable
-- ssh_args
 - UuidVersion
-- ColumnarSelectionState
-- SlashCommandOutputSection
-- DemoFlag
-- Intensity
-- GitPanelTab
-- runtime
-- LanguageModelProviderId
-- LanguageModelProviderName
-- DragTarget
-- EntryTransferOperation
 - GitAccess
-- ArchiveWorktreeOutcome
-- NewEntryTarget
-- format_localized_timestamp
-- DeleteMarks
 - Snapshot<T>
-- business-support.md
-- Contacts and Private Calls {#contacts}
-- Completions
 - Icon Themes
 - Installing Extensions {#installing-extensions}
 - Language Support in Zed
-- Biome
 - CSS
 - Docker
 - Elm
-- Env
 - Haskell
-- Luau
-- opentofu.md
 - Rego
-- Scala
 - Standard ML
-- SQL
-- Running & Testing
-- image_viewer
-- StickyProjectPanelCandidate
-- LoadingRemoteImage
-- CURRENT_LOCALE
-- perf
+- util
 
 ## God Nodes (most connected - your core abstractions)
 1. `TestAppContext` - 6664 edges
 2. `Task` - 1973 edges
 3. `Pixels` - 1611 edges
-4. `SharedString` - 1557 edges
-5. `Workspace` - 1529 edges
+4. `SharedString` - 1566 edges
+5. `Workspace` - 1533 edges
 6. `px()` - 1384 edges
-7. `AsyncApp` - 1314 edges
-8. `Project` - 1309 edges
+7. `AsyncApp` - 1316 edges
+8. `Project` - 1311 edges
 9. `Editor` - 1267 edges
-10. `Editor` - 723 edges
+10. `FocusHandle` - 725 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `Code Lens` --references--> `Benchmark`  [INFERRED]
-  docs/src/languages/go.md → crates/eval_cli/zed_eval/benchmarks.py
 - `Customizing Semantic Token Styles` --references--> `background_color()`  [INFERRED]
   docs/src/extensions/languages.md → crates/gpui_apple/src/shaders.metal
 - `Semantic Token Rules {#global-lsp-semantic-token-rules}` --references--> `background_color()`  [INFERRED]
   docs/src/reference/all-settings.md → crates/gpui_apple/src/shaders.metal
 - `Rule Structure` --references--> `background_color()`  [INFERRED]
   docs/src/semantic-tokens.md → crates/gpui_apple/src/shaders.metal
-- `validate_header()` --references--> `UserId`  [INFERRED]
-  crates/collab/src/auth.rs → tooling/crates_io_client/src/types.rs
+- `Code Lens` --references--> `Benchmark`  [INFERRED]
+  docs/src/languages/go.md → crates/eval_cli/zed_eval/benchmarks.py
+- `find_secret()` --references--> `search`  [INFERRED]
+  crates/settings_sync/src/merge.rs → assets/settings/default.json
 
 ## Import Cycles
-- 1-file cycle: `crates/extension_api/src/http_client.rs -> crates/extension_api/src/http_client.rs`
+- 1-file cycle: `crates/title_bar/src/title_bar.rs -> crates/title_bar/src/title_bar.rs`
 - 2-file cycle: `crates/language_model_core/src/language_model_core.rs -> crates/language_model_core/src/rate_limiter.rs -> crates/language_model_core/src/language_model_core.rs`
-- 2-file cycle: `crates/agent/src/agent.rs -> crates/agent/src/native_agent_server.rs -> crates/agent/src/agent.rs`
 - 2-file cycle: `crates/agent/src/agent.rs -> crates/agent/src/thread.rs -> crates/agent/src/agent.rs`
+- 2-file cycle: `crates/agent/src/agent.rs -> crates/agent/src/native_agent_server.rs -> crates/agent/src/agent.rs`
 - 2-file cycle: `crates/agent/src/tools.rs -> crates/agent/src/tools/read_file_tool.rs -> crates/agent/src/tools.rs`
+- 2-file cycle: `crates/editor/src/editor.rs -> crates/editor/src/runnables.rs -> crates/editor/src/editor.rs`
 - 2-file cycle: `crates/editor/src/editor.rs -> crates/editor/src/element.rs -> crates/editor/src/editor.rs`
 - 2-file cycle: `crates/editor/src/editor.rs -> crates/editor/src/scroll.rs -> crates/editor/src/editor.rs`
 - 2-file cycle: `crates/editor/src/editor.rs -> crates/editor/src/split_editor_view.rs -> crates/editor/src/editor.rs`
-- 2-file cycle: `crates/editor/src/editor.rs -> crates/editor/src/inlays/inlay_hints.rs -> crates/editor/src/editor.rs`
-- 2-file cycle: `crates/editor/src/editor.rs -> crates/editor/src/runnables.rs -> crates/editor/src/editor.rs`
+- 2-file cycle: `crates/editor/src/editor.rs -> crates/editor/src/linked_editing_ranges.rs -> crates/editor/src/editor.rs`
 - 2-file cycle: `crates/editor/src/editor.rs -> crates/editor/src/selections_collection.rs -> crates/editor/src/editor.rs`
+- 2-file cycle: `crates/editor/src/editor.rs -> crates/editor/src/semantic_tokens.rs -> crates/editor/src/editor.rs`
+- 2-file cycle: `crates/editor/src/editor.rs -> crates/editor/src/inlays.rs -> crates/editor/src/editor.rs`
 - 2-file cycle: `crates/editor/src/editor.rs -> crates/editor/src/hover_links.rs -> crates/editor/src/editor.rs`
 - 2-file cycle: `crates/editor/src/editor.rs -> crates/editor/src/split.rs -> crates/editor/src/editor.rs`
 - 2-file cycle: `crates/editor/src/editor.rs -> crates/editor/src/git/blame.rs -> crates/editor/src/editor.rs`
-- 2-file cycle: `crates/editor/src/editor.rs -> crates/editor/src/linked_editing_ranges.rs -> crates/editor/src/editor.rs`
-- 2-file cycle: `crates/editor/src/editor.rs -> crates/editor/src/semantic_tokens.rs -> crates/editor/src/editor.rs`
+- 2-file cycle: `crates/editor/src/editor.rs -> crates/editor/src/inlays/inlay_hints.rs -> crates/editor/src/editor.rs`
 - 2-file cycle: `crates/editor/src/editor.rs -> crates/editor/src/movement.rs -> crates/editor/src/editor.rs`
 - 2-file cycle: `crates/editor/src/editor.rs -> crates/editor/src/indent_guides.rs -> crates/editor/src/editor.rs`
-- 2-file cycle: `crates/editor/src/editor.rs -> crates/editor/src/inlays.rs -> crates/editor/src/editor.rs`
-- 2-file cycle: `crates/editor/src/editor.rs -> crates/editor/src/hover_popover.rs -> crates/editor/src/editor.rs`
+- 2-file cycle: `crates/editor/src/editor.rs -> crates/editor/src/scroll/autoscroll.rs -> crates/editor/src/editor.rs`
 
-## Communities (2934 total, 1082 thin omitted)
+## Communities (2715 total, 997 thin omitted)
 
-### Community 0 - "wayland/client.rs"
-Cohesion: 0.02
-Nodes (47): cursor_style_to_icon_names(), builds_empty_uri_list_without_convertible_paths(), builds_terminated_uri_list_for_each_dragged_path(), caches_cursor_rectangle_committed_after_done(), DataSourceKind, Clipboard, Drag, detect_compositor_gpu() (+39 more)
+### Community 0 - "tools/tool_permissions.rs"
+Cohesion: 0.03
+Nodes (118): CopyPathTool, .NAME, CopyPathToolInput, init_test(), test_copy_path_global_skill_directory_to_project(), test_copy_path_project_directory_to_global_skill_directory(), test_copy_path_symlink_escape_confirm_requires_single_approval(), test_copy_path_symlink_escape_denied() (+110 more)
 
-### Community 1 - "thread.rs"
-Cohesion: 0.00
-Nodes (430): AgentSettings, DbLanguageModel, SystemPromptTemplate, .TEMPLATE_NAME, Template, .TEMPLATE_NAME, Templates, CancellationAwareTool (+422 more)
+### Community 1 - "AgentTool"
+Cohesion: 0.01
+Nodes (79): CancellationAwareTool, .NAME, CancellationAwareToolInput, DelayTool, .NAME, DelayToolInput, EchoTool, .NAME (+71 more)
 
 ### Community 2 - "App"
-Cohesion: 0.02
-Nodes (44): App, app_borrow_diagnostics(), ApplicationHandle, AppLifecycleHandler, AppRef, AppRefMut, async_app_refresh_flushes_refresh_effect(), CursorHideMode (+36 more)
+Cohesion: 0.01
+Nodes (206): init(), notification_window_options(), main(), A11yDemo, main(), run_example(), start(), Example (+198 more)
 
 ### Community 3 - "TestAppContext"
 Cohesion: 0.01
-Nodes (967): empty_file_is_ignored(), init_test(), loads_initial_content(), reacts_to_file_changes(), test_dap_adapter_config_conversion_and_validation(), test_get_deserialized_response(), copilot_settings_url(), test_copilot_settings_url_with_enterprise_uri() (+959 more)
+Nodes (892): test_dap_adapter_config_conversion_and_validation(), assert_columnar_action_work(), separated_columnar_ranges(), set_columnar_action_state(), test_columnar_selection_actions_batch_work(), test_columnar_selection_actions_join_skipped_rows_work(), test_columnar_selection_actions_skip_replaced_source_rows(), test_actions_gated_by_lsp_data() (+884 more)
 
 ### Community 4 - "AsyncApp"
-Cohesion: 0.02
-Nodes (49): compute_bracket_ranges(), deserialize_excerpt_range(), FormatMultiBufferAsMarkedText, AutoindentMode, Block, EachLine, PreserveSingleLine, BufferEdit (+41 more)
+Cohesion: 0.01
+Nodes (88): compute_bracket_ranges(), element_range_for_partial_tag(), enclosing_element_range(), expand_over_partial_tags(), trim_whitespace(), FormatMultiBufferAsMarkedText, AnchorRangeExt, AnchorSeekTarget (+80 more)
 
 ### Community 5 - "manager.rs"
 Cohesion: 0.04
-Nodes (43): Server, password_account(), connect_interactive(), ConnectContext, connection_key(), ConnectionSettings, ctx(), detect_root() (+35 more)
+Nodes (51): HostKeyPolicy, AcceptNew, Ask, No, Yes, Server, WebdavAuth, Basic (+43 more)
 
 ### Community 6 - "ElementId"
 Cohesion: 0.01
-Nodes (198): lane_center_x(), to_row_center(), main(), PrepaintState, run_example(), start(), TextElement, DeepStatefulTree (+190 more)
+Nodes (180): AnchorDemo, ButtonDemo, main(), resolved_position(), run_example(), start(), PrepaintState, button() (+172 more)
 
 ### Community 7 - "MultiBufferSnapshot"
 Cohesion: 0.01
-Nodes (285): clear_copilot_dir(), download_server_binary(), AssetKind, Gz, TarBz2, TarGz, Zip, build_asset_url() (+277 more)
+Nodes (134): download_server_binary(), GitHubLspBinaryVersion, Symbol, build_code_label(), ExtensionLspAdapter, extract_int(), labels_from_extension(), lsp_completion_item_kind_to_extension() (+126 more)
 
 ### Community 8 - "LspStore"
-Cohesion: 0.02
-Nodes (86): PendingWork, CachedLspAdapter, ServerBinaryCache, LanguageServerId, LanguageServerSelector, Id, Name, applicable_lsp_command_capabilities_for_buffer() (+78 more)
+Cohesion: 0.01
+Nodes (212): PendingWork, server_precedences(), CachedLspAdapter, LanguageServerId, LanguageServerSelector, Id, Name, applicable_lsp_command_capabilities_for_buffer() (+204 more)
 
-### Community 9 - "PlatformWindow"
-Cohesion: 0.00
-Nodes (144): HeadlessConnection, HeadlessWindow, HeadlessWindowState, InProgressOutput, Output, wayland_anchor(), wayland_anchor(), wayland_constraint_adjustment() (+136 more)
+### Community 9 - "wayland/client.rs"
+Cohesion: 0.01
+Nodes (133): cursor_style_to_icon_names(), open_uri_internal(), PIPE_READ_TIMEOUT, reveal_path_internal(), run_open_commands(), builds_empty_uri_list_without_convertible_paths(), builds_terminated_uri_list_for_each_dragged_path(), caches_cursor_rectangle_committed_after_done() (+125 more)
 
 ### Community 10 - "FontId"
 Cohesion: 0.03
@@ -2347,31 +2128,31 @@ Nodes (224): active_thread(), add_to_workspace(), add_to_workspace_with_size(), 
 
 ### Community 11 - "Editor"
 Cohesion: 0.01
-Nodes (208): animated_corners_overlap_target(), EditorMargins, StickyHeaderExcerpt, HighlightedChunk, column_pixels(), EditorSnapshot, EditorStyle, GutterDimensions (+200 more)
+Nodes (255): buffer_line_height, icon_theme, ScrollbarMarkerState, animated_corners_overlap_target(), BlockContext, EditorMargins, StickyHeaderExcerpt, HighlightedChunk (+247 more)
 
 ### Community 12 - "px"
 Cohesion: 0.03
-Nodes (121): init_test(), test_copy_path_tool_deny_rule_blocks_copy(), test_fetch_tool_allow_rule_skips_confirmation(), test_fetch_tool_deny_rule_blocks_url(), test_fetch_tool_follows_same_host_redirect(), test_fetch_tool_granted_host_skips_prompt(), test_fetch_tool_prompts_for_ungranted_host(), test_fetch_tool_reauthorizes_redirect_to_new_host() (+113 more)
+Nodes (115): init_test(), test_copy_path_tool_deny_rule_blocks_copy(), test_fetch_tool_allow_rule_skips_confirmation(), test_fetch_tool_deny_rule_blocks_url(), test_fetch_tool_follows_same_host_redirect(), test_fetch_tool_granted_host_skips_prompt(), test_fetch_tool_prompts_for_ungranted_host(), test_fetch_tool_reauthorizes_redirect_to_new_host() (+107 more)
 
 ### Community 13 - "tools/terminal_tool.rs"
-Cohesion: 0.02
-Nodes (23): AddSelectionsGroup, AddSelectionsState, BackgroundHighlight, consume_contiguous_rows(), Editor, EditorActionId, Full, ending_row() (+15 more)
+Cohesion: 0.01
+Nodes (23): make_suggestion_styles(), AccentData, BackgroundHighlight, Editor, EditorActionId, EditorMode, AutoHeight, Full (+15 more)
 
 ### Community 14 - "FocusHandle"
 Cohesion: 0.01
-Nodes (138): SUPPRESSED_EXTENSIONS, AnyTooltip, InputPreference, CharacterInput, KeyBindings, SystemWindowTab, atomic_incr_if_not_zero(), ceil_to_device_pixel() (+130 more)
+Nodes (167): connect_and_write_prompt(), main(), main_from_args(), AnyTooltip, InputPreference, CharacterInput, KeyBindings, E (+159 more)
 
 ### Community 15 - "ActivityIndicator"
 Cohesion: 0.11
-Nodes (10): ActivityIcon, Icon, LoadingSpinner, ActivityIndicator, Content, DeferredScanMessage, Dismissed, Pending (+2 more)
+Nodes (13): ActivityIcon, Icon, LoadingSpinner, ActivityIndicator, Content, DEFERRED_SCAN_MESSAGE_TIMEOUT, DeferredScanMessage, Dismissed (+5 more)
 
 ### Community 16 - "gpui_macos/src/platform.rs"
-Cohesion: 0.02
-Nodes (41): get_key_equivalents(), MacKeyboardLayout, MacKeyboardMapper, activation_policy_for(), APP_CLASS, APP_DELEGATE_CLASS, did_finish_launching(), get_mac_platform() (+33 more)
+Cohesion: 0.05
+Nodes (33): get_key_equivalents(), MacKeyboardLayout, MacKeyboardMapper, APP_CLASS, APP_DELEGATE_CLASS, did_finish_launching(), get_mac_platform(), handle_dock_menu() (+25 more)
 
-### Community 17 - "Size"
+### Community 17 - "Bounds"
 Cohesion: 0.01
-Nodes (180): ScrollbarMarkerState, ScrollbarMarkerState, SettledScrollRange, AtlasUpload, AtlasUpload<'a>, create_atlas(), insert_tile(), make_image_key() (+172 more)
+Nodes (265): create_highlight_endpoints_benchmark(), highlighted_chunks_benchmark(), to_fold_point_benchmark(), to_tab_point_benchmark(), SettledScrollRange, lane_center_x(), to_row_center(), AtlasUpload (+257 more)
 
 ### Community 18 - "DisplaySnapshot"
 Cohesion: 0.23
@@ -2379,147 +2160,147 @@ Nodes (12): describe_todo(), display_environment(), handle_command(), main(), op
 
 ### Community 19 - "Buffer"
 Cohesion: 0.02
-Nodes (64): ProjectId, append_pattern_to_ignore_file(), AutoFetchState, branch_to_proto(), BufferGitState, CommitDataState, Loaded, Loading (+56 more)
+Nodes (66): BufferDiff, ProjectId, append_pattern_to_ignore_file(), BufferGitState, CommitDataState, Loaded, Loading, compute_snapshot() (+58 more)
 
-### Community 20 - "ios/window.rs"
-Cohesion: 0.01
-Nodes (83): main_thread_marker(), main_thread_marker_rejects_background_threads(), check_notification_lifecycle(), notifications_are_deferred_and_cancelled_on_drop(), observe_power_mode(), observe_thermal_state(), post_notification(), power_mode() (+75 more)
+### Community 20 - "AnyWindowHandle"
+Cohesion: 0.00
+Nodes (224): KillRing, main_thread_marker(), main_thread_marker_rejects_background_threads(), check_notification_lifecycle(), notifications_are_deferred_and_cancelled_on_drop(), observe_power_mode(), observe_thermal_state(), post_notification() (+216 more)
 
-### Community 21 - "pane_group.rs"
-Cohesion: 0.03
-Nodes (56): ActiveScrollbarState, Axis, Horizontal, Vertical, AnyWeakView, get_or_create_tool(), init(), build_serialized_pane_group() (+48 more)
+### Community 21 - "SplitDirection"
+Cohesion: 0.06
+Nodes (18): ActivePaneDecorator, ActivePaneDecorator<'a>, LeaderDecoration, Member, Axis, Pane, PaneGroup, PaneLeaderDecorator (+10 more)
 
 ### Community 22 - "LspStore"
-Cohesion: 0.02
-Nodes (75): TypeIdHashMap, FocusFollowsMouse, T, add_saved_rows(), ActivateInDirectionTarget, Dock, Pane, Sidebar (+67 more)
+Cohesion: 0.01
+Nodes (261): init(), init(), TypeIdHashMap, open_disabled_globs_setting_in_editor(), WindowHandle, ProjectHost, Local, Remote (+253 more)
 
 ### Community 23 - "markdown/src/markdown.rs"
-Cohesion: 0.03
-Nodes (139): assert_code_block_copy(), assert_link_hit_testing(), assert_link_mouse_interactions(), assert_mappings(), assert_non_link_mouse_interactions(), cached_code_block_highlights(), Custom, CodeSpanLinkCallback (+131 more)
+Cohesion: 0.01
+Nodes (229): SignatureHelp, HelloWorld, main(), MARKDOWN_EXAMPLE, MarkdownExample, Context, apply_html_highlight_style(), ensure_theme_initialized() (+221 more)
 
 ### Community 24 - "AgentConnection"
 Cohesion: 0.01
-Nodes (193): RulesLoadingError, codeblock_fence_for_path(), collect_diagnostics(), DiagnosticsOptions, disambiguated_labels_for_uris(), ImageHover, MentionImage, project_path_for_skill() (+185 more)
+Nodes (103): SiblingThreadInfo, SiblingThreadRequest, search_paths(), insert_mention_for_project_path(), Event, Dismissed, Selected, Manager (+95 more)
 
-### Community 25 - "LinuxPlatform"
-Cohesion: 0.04
-Nodes (5): LinuxPlatform, StartupEnvironment, maps_profiles_without_guessing_unknown_values(), monitor_power_mode(), power_mode()
+### Community 25 - "src/worktree.rs"
+Cohesion: 0.03
+Nodes (66): Watcher, IgnoreStack, BackgroundScanner, BackgroundScannerPhase, Events, EventsReceivedDuringInitialScan, InitialScan, BackgroundScannerState (+58 more)
 
 ### Community 26 - "Hsla"
 Cohesion: 0.01
-Nodes (207): buffer_line_height, icon_theme, adjacent_distance(), adjust_color_for_background(), adjusted_lightness_candidate(), background_contrast(), bracket_colorization_accents(), compare_candidates() (+199 more)
+Nodes (238): EditPredictionStyles, DataTable, FIELDS, main(), Quote, run_example(), SCROLLBAR_THUMB_HEIGHT, SCROLLBAR_THUMB_WIDTH (+230 more)
 
 ### Community 27 - "AsyncApp"
 Cohesion: 0.01
-Nodes (107): AcpTerminalHandle, TerminalHandle, Global, AsyncApp, register_zed_scheme(), FakeCredentialsProvider, TestCredentialsProvider, TestCredentialsProvider (+99 more)
+Nodes (158): AcpTerminalHandle, TerminalHandle, Global, AsyncApp, FakeCredentialsProvider, TestCredentialsProvider, NoCredentialsProvider, TestCredentialsProvider (+150 more)
+
+### Community 28 - "ExtensionHostProxy"
+Cohesion: 0.03
+Nodes (30): DebugAdapterRegistryProxy, init(), ExtensionContextServerProxy, ExtensionDebugAdapterProviderProxy, ExtensionGrammarProxy, ExtensionHostProxy, ExtensionLanguageModelProviderProxy, ExtensionLanguageProxy (+22 more)
 
 ### Community 29 - "px"
-Cohesion: 0.01
-Nodes (266): main(), test_minimap_thumb_not_draggable_without_room_to_move(), resolved_position(), AnimationExample, clicking_spring_position_changes_the_target(), GradientViewer, main(), run_example() (+258 more)
+Cohesion: 0.02
+Nodes (192): test_agent_command_palette_visibility(), main(), test_debug_panel_default_size(), collect_invisibles_from_new_editor(), test_all_invisibles_drawing(), test_invisibles_dont_appear_in_certain_editors(), test_minimap_thumb_not_draggable_without_room_to_move(), test_multibyte_whitespace_uses_utf8_byte_offsets() (+184 more)
 
 ### Community 30 - "PathKey"
 Cohesion: 0.02
-Nodes (139): acp_v2::ContentBlock, agent_text_message(), AgentMessage, AgentMessageContent, RedactedThinking, Text, Thinking, ToolUse (+131 more)
+Nodes (167): DbLanguageModel, acp_v2::ContentBlock, agent_text_message(), AgentMessage, AgentMessageContent, RedactedThinking, Text, Thinking (+159 more)
 
 ### Community 31 - "Editor"
-Cohesion: 0.01
-Nodes (16): Addon, all_edits_insertions_or_deletions(), BackgroundHighlight, ContextMenuOptions, Editor, .EDIT_PREDICTION_POPOVER_PADDING_X, .EDIT_PREDICTION_POPOVER_PADDING_Y, FocusedBlock (+8 more)
-
-### Community 32 - "MultiBufferOffset"
 Cohesion: 0.02
-Nodes (44): create_highlight_endpoints(), CustomHighlightsChunks, CustomHighlightsChunks<'a>, HighlightEndpoint, test_random_chunk_bitmaps(), SemanticTokensHighlights, TextHighlights, element_range_for_partial_tag() (+36 more)
+Nodes (23): Addon, BackgroundHighlight, ContextMenuOptions, Editor, .EDIT_PREDICTION_POPOVER_PADDING_X, .EDIT_PREDICTION_POPOVER_PADDING_Y, FocusedBlock, GutterHighlight (+15 more)
+
+### Community 32 - "MultiBuffer"
+Cohesion: 0.04
+Nodes (29): AutoIndentExclusion, FollowingLine, PrecedingLine, Capability, Read, ReadOnly, ReadWrite, BufferState (+21 more)
 
 ### Community 33 - "Pane"
 Cohesion: 0.02
-Nodes (168): deserialize_line_height(), treat_error_as_none(), VimSave, ActivateItem, ActivateNextItem, ActivatePreviousItem, ActivationHistoryEntry, add_labeled_item() (+160 more)
+Nodes (183): EntityId, Reservation<T>, deserialize_line_height(), treat_error_as_none(), ActivateItem, ActivateNextItem, ActivatePreviousItem, ActivationHistoryEntry (+175 more)
 
 ### Community 34 - "FontId"
 Cohesion: 0.01
-Nodes (273): append_system_fallbacks(), apply_features_and_fallbacks(), generate_fallback_array(), generate_feature_array(), AppleTextSystem, AppleTextSystemState, bounds_from_rect(), bounds_from_rect_i() (+265 more)
+Nodes (256): append_system_fallbacks(), apply_features_and_fallbacks(), generate_fallback_array(), generate_feature_array(), AppleTextSystem, AppleTextSystemState, bounds_from_rect(), family_name() (+248 more)
 
 ### Community 35 - "agent/src/agent.rs"
-Cohesion: 0.03
-Nodes (78): AgentThreadEntry, AssistantMessage, ContextCompaction, Elicitation, SessionMessage, ToolCall, UserMessage, AssistantMessage (+70 more)
+Cohesion: 0.02
+Nodes (83): AgentThreadEntry, AssistantMessage, ContextCompaction, Elicitation, SessionMessage, ToolCall, UserMessage, AssistantMessage (+75 more)
 
 ### Community 36 - "ConversationView"
 Cohesion: 0.02
-Nodes (132): AskPassDelegate, PasswordPrompt, Blame, CommitDiffEntry, CommitDiffObject, CommitDiffObjectKind, Blob, Gitlink (+124 more)
+Nodes (162): AskPassDelegate, PasswordPrompt, BlobReadGateState, FakeCommitSnapshot, FakeGitRepositoryState, Waiter, WaiterGuard, Blame (+154 more)
 
 ### Community 37 - "Repository"
-Cohesion: 0.02
-Nodes (189): Anchor, assert_headers_resolve(), DisplayPoint, DisplaySnapshot, Point, Selection<T>, SelectionExt, chars_after() (+181 more)
+Cohesion: 0.01
+Nodes (276): Anchor, assert_headers_resolve(), DisplayPoint, DisplayPointConverter, DisplaySnapshot, Point, ToDisplayPoint, Selection<T> (+268 more)
 
 ### Community 38 - "terminal/src/terminal.rs"
 Cohesion: 0.03
-Nodes (120): cursor_blinking(), make_content(), new_term(), to_vte_rgb(), assert_content_eventually(), assert_foreground_process_command_eventually(), build_test_subprocess_terminal(), build_test_terminal() (+112 more)
+Nodes (98): cursor_blinking(), to_vte_rgb(), assert_content_eventually(), assert_foreground_process_command_eventually(), build_test_subprocess_terminal(), build_test_terminal(), build_test_terminal_with_arguments(), convert_lf_to_crlf() (+90 more)
 
 ### Community 39 - "acp_thread.rs"
 Cohesion: 0.03
-Nodes (205): append_keyed_chunk(), assert_failed_tool_update_resumes_sleep_prevention(), assert_process_terminal_can_stop(), assert_stale_completion_does_not_affect_follow_up_turn(), COMMAND_CATEGORY_META_KEY, ContextCompactionId, idle_with(), init_test() (+197 more)
+Nodes (202): append_keyed_chunk(), assert_failed_tool_update_resumes_sleep_prevention(), assert_process_terminal_can_stop(), assert_stale_completion_does_not_affect_follow_up_turn(), COMMAND_CATEGORY_META_KEY, ContextCompactionId, idle_with(), init_test() (+194 more)
 
-### Community 40 - "div.rs"
-Cohesion: 0.06
-Nodes (32): predict_anthropic(), predict_openai(), predict_teacher(), CompletedTask, format_duration(), get_terminal_width(), GLOBAL, InfoStyle (+24 more)
+### Community 40 - "gestures.rs"
+Cohesion: 0.05
+Nodes (85): ActiveTouch, bezier_time_and_position(), cancelled_pan_emits_cancelled_scroll_and_no_tap(), catching_a_fling_pans_immediately_and_never_taps(), catching_a_fling_takes_the_axis_from_the_new_touch(), claimed_long_press_emits_cancelled_for_its_touch_only(), claimed_long_press_emits_phased_stream_without_tap(), claimed_touch_drag_emits_phased_stream_without_pan_or_tap() (+77 more)
 
 ### Community 41 - "AnyProtoClient"
-Cohesion: 0.03
-Nodes (53): format_history_entry_timestamp(), ActivatableEntry, Terminal, Thread, ActiveEntry, Terminal, Thread, ActiveThreadInfo (+45 more)
+Cohesion: 0.02
+Nodes (74): NewThread, format_history_entry_timestamp(), AgentThreadWorktreeLabel, Both, Branch, Worktree, apply_title_bar_insets(), ActivatableEntry (+66 more)
 
 ### Community 42 - "NativeAgent"
-Cohesion: 0.05
-Nodes (19): expand_project_skills_directories(), expand_worktree_directory(), NativeAgent, NativeAgentSessionList, NativeAgentSessionTruncate, NativeSessionSubmissions, NativeSubagentHandle, PendingSession (+11 more)
+Cohesion: 0.04
+Nodes (28): Command<'a>, expand_project_skills_directories(), expand_worktree_directory(), NativeAgent, NativeAgentSessionList, NativeAgentSessionTruncate, NativeRetryAction, Compact (+20 more)
 
-### Community 43 - "motion.rs"
-Cohesion: 0.02
-Nodes (135): TextLayoutDetails, SelectionGoal, HorizontalPosition, HorizontalRange, None, WrappedHorizontalPosition, BRACKET_PAIRS, comment_delimiter_pair() (+127 more)
+### Community 43 - "src/x_ai_subscribed.rs"
+Cohesion: 0.04
+Nodes (62): advertised_reasoning_efforts(), authorize_url_uses_public_client_and_s256(), build_authorize_request(), CALLBACK_HOST, CALLBACK_PATH, CALLBACK_PORT, CLIENT_ID, CREDENTIALS_KEY (+54 more)
 
 ### Community 44 - "HighlightKey"
 Cohesion: 0.06
 Nodes (28): HighlightKey, BufferSearchHighlights, ColorizeBracket, ConsoleAnsiHighlight, DebugStackFrameLine, DocumentHighlightRead, DocumentHighlightWrite, Editor (+20 more)
 
-### Community 45 - "BackgroundExecutor"
-Cohesion: 0.01
-Nodes (284): config_option_search_matches_all_searchable_fields(), config_option_search_preserves_name_order_with_different_metadata(), config_option_search_ranks_names_before_metadata(), config_option_search_returns_more_than_one_hundred_matches(), fuzzy_search_options(), option_names(), search(), test_model_search_builds_candidates_in_background() (+276 more)
-
-### Community 46 - "MarkdownElement"
+### Community 45 - "git_tests.rs"
 Cohesion: 0.06
-Nodes (21): HtmlSourceAllocator, MarkdownElement, alignment_to_text_align(), AnyDiv, Div, Stateful, apply_heading_style(), BlockQuoteKindColors (+13 more)
+Nodes (34): assert_initial_graph_commits_eq(), assert_remote_cache_matches_local_cache(), branch_list_snapshot(), build_git_graph(), collect_diff_stats(), load_commit_data_batch(), render_git_graph(), test_blob_read_rpcs_are_bounded_on_host() (+26 more)
 
-### Community 47 - "Sidebar"
-Cohesion: 0.06
-Nodes (6): AtMouse, Delete, FoldedDirectoryDragTarget, git_status_indicator(), item_width_estimate(), NEW_ENTRY_ID
+### Community 46 - "title_bar/src/title_bar.rs"
+Cohesion: 0.05
+Nodes (19): SidebarWindowControls, Chrome, chrome(), .HIDDEN, .SHOWN, init_test(), MAX_BRANCH_NAME_LENGTH, MAX_PROJECT_NAME_LENGTH (+11 more)
 
 ### Community 48 - "src/mistral.rs"
 Cohesion: 0.03
-Nodes (34): agent_panel_dock_position(), AgentPanel, AgentPanelTerminalInfo, AgentTerminal, AgentThread, apply_native_model_override(), assert_loading_selection_removal(), BaseView (+26 more)
+Nodes (53): agent_panel_dock_position(), AgentPanel, AgentPanelSiblingHost, AgentPanelTerminalInfo, AgentTerminal, AgentThread, apply_native_model_override(), assert_loading_selection_removal() (+45 more)
 
 ### Community 49 - "ItemHandle"
 Cohesion: 0.01
 Nodes (300): IconName, AcpRegistry, AiAnthropic, AiAnthropicCompat, AiBedrock, AiClaude, AiDeepSeek, AiEdit (+292 more)
 
 ### Community 50 - "git_graph.rs"
-Cohesion: 0.01
-Nodes (59): DapMessageHandler, DebugAdapterClient, init_test(), SessionId, test_calls_event_handler(), test_calls_event_handler_for_reverse_request(), test_initialize_client(), Arc<T> (+51 more)
+Cohesion: 0.02
+Nodes (51): SessionId, Arc<T>, Attach, ConfigurationDone, ContinueCommand, dap_client_capabilities(), dap::WriteMemoryArguments, DapCommand (+43 more)
 
 ### Community 51 - "WorktreeDelegate"
 Cohesion: 0.02
-Nodes (25): AnyView, Box<dyn ItemHandle>, Dedup, KeepExisting, ReplaceExisting, dyn ItemHandle, Entity<T>, FollowableItem (+17 more)
+Nodes (38): HighlightedText, AnyView, Box<dyn ItemHandle>, Dedup, KeepExisting, ReplaceExisting, dyn ItemHandle, Entity<T> (+30 more)
 
 ### Community 52 - "Motion"
-Cohesion: 0.02
-Nodes (272): active_session_id(), open_thread_with_connection(), VisualTestContext, add_agent_panel(), add_test_project(), assert_active_draft(), assert_active_thread(), assert_project_header_has_threads() (+264 more)
+Cohesion: 0.03
+Nodes (240): TestTerminalMetadataDbName, active_session_id(), open_thread_with_connection(), VisualTestContext, add_agent_panel(), add_test_project(), assert_active_draft(), assert_active_thread() (+232 more)
 
 ### Community 53 - "IconName"
 Cohesion: 0.02
-Nodes (104): commit_context_menu(), CommitContextMenuSource, GitGraph, GitPanel, CUSTOM_GIT_COMMANDS_DOCS_SLUG, git_context_menu_tasks(), git_task_context(), build_changed_file_tree_entries() (+96 more)
+Nodes (94): LogSource, All, Path, commit_context_menu(), COMMIT_TAG_LIST_WIDTH_IN_REMS, CommitContextMenuData, CommitContextMenuSource, GitGraph (+86 more)
 
-### Community 54 - "SharedString"
+### Community 54 - "App"
 Cohesion: 0.00
-Nodes (924): DiffPatch, DiffPatchFile, DiffPatchHunk, DEFERRED_SCAN_MESSAGE_TIMEOUT, Event, ShowStatus, GIT_OPERATION_DELAY, MAX_MESSAGE_LEN (+916 more)
+Nodes (213): AgentSessionClientUserMessageIds, AgentSessionTruncate, StubAgentSessionClientUserMessageIds, StubAgentSessionEditor, preview_notice(), session_notice_list(), SessionNotice, SessionNoticePreview (+205 more)
 
 ### Community 55 - "components/data_table.rs"
-Cohesion: 0.03
-Nodes (83): base_cell_style(), base_cell_style_text(), build_resize_dividers(), column_is_visible(), ColumnWidthConfig, Redistributable, Resizable, Static (+75 more)
+Cohesion: 0.04
+Nodes (49): base_cell_style(), base_cell_style_text(), build_resize_dividers(), column_is_visible(), ColumnWidthConfig, Redistributable, Resizable, Static (+41 more)
 
 ### Community 56 - "Styled"
 Cohesion: 0.02
@@ -2527,143 +2308,143 @@ Nodes (244): assert_hunks(), assert_entry_git_state(), assert_line_endings_after
 
 ### Community 57 - "Context"
 Cohesion: 0.02
-Nodes (6): Confirm, FormatTarget, Buffers, Ranges, insert_extra_newline_tree_sitter(), MultiBufferRow
+Nodes (4): all_edits_insertions_or_deletions(), MultiBufferRow, SelectSyntaxNodeHistory, SelectSyntaxNodeHistoryState
 
 ### Community 58 - "workspace/src/persistence.rs"
 Cohesion: 0.02
-Nodes (114): ComponentPreviewDb, .MIGRATIONS, .NAME, test_save_and_get_file_folds(), test_save_and_get_serialized_editor(), GlobalHistoryManager, HistoryManager, HistoryManagerEntry (+106 more)
+Nodes (152): ComponentPreviewDb, .MIGRATIONS, .NAME, query!, StoreData, docker_identity_ignores_display_name_and_runtime_fields(), RemoteConnectionIdentity, Docker (+144 more)
 
 ### Community 59 - "Statement"
-Cohesion: 0.03
-Nodes (45): CacheRow, CacheRow, BreakpointState, Disabled, Enabled, Arc<Path>, Arc<str>, Bind (+37 more)
+Cohesion: 0.04
+Nodes (39): CacheRow, CacheRow, BreakpointState, Disabled, Enabled, (), Arc<Path>, Arc<str> (+31 more)
 
 ### Community 60 - "settings"
-Cohesion: 0.09
-Nodes (207): acp_thread, acp_tools, action_log, activity_indicator, agent, agent_servers, agent_settings, agent_skills (+199 more)
+Cohesion: 0.19
+Nodes (73): acp_tools, activity_indicator, breadcrumbs, call_hierarchy, command_palette, command_palette_hooks, debugger_tools, debugger_ui (+65 more)
 
 ### Community 61 - "syntax_map.rs"
-Cohesion: 0.02
-Nodes (49): BenchFile, DiskState, Deleted, Historic, New, Present, File, LocalFile (+41 more)
-
-### Community 62 - "ClipboardItem"
 Cohesion: 0.03
-Nodes (23): KillRing, Backend, Wayland, X11, DisplayConnection, Headless, Wayland, X11 (+15 more)
+Nodes (51): CaptureId, HighlightCaptureRef, ChangedRegion, ChangeRegionSet, ChangeStartPosition, flatten_capture_regions(), flattened_highlight_regions(), get_injections() (+43 more)
+
+### Community 62 - "vega_branch_popup.rs"
+Cohesion: 0.05
+Nodes (46): a_query_unfolds_every_group_with_matches(), ActionKind, .ALL, CheckoutRevision, Commit, NewBranch, Push, UpdateProject (+38 more)
 
 ### Community 63 - "Styled"
-Cohesion: 0.01
-Nodes (132): GIT_BLAME_AVATAR_SIZE, GIT_BLAME_GUTTER_GAP, GIT_BLAME_GUTTER_MARGIN, LayerShellExample, yellow(), AbsoluteLength, Pixels, Rems (+124 more)
+Cohesion: 0.02
+Nodes (24): AskPassModal, dismisses_when_password_request_is_cancelled(), rems(), Styled, E, Headline, HeadlineSize, Large (+16 more)
 
 ### Community 64 - "Worktree"
-Cohesion: 0.02
-Nodes (64): ClickState, TestAppWindow<V>, Along, bounds(), Bounds<T>, Corners<T>, Edges<T>, IsZero (+56 more)
+Cohesion: 0.01
+Nodes (96): DraggedRemoteView, GitGraphContextMenu, content_insets(), AbsoluteLength, Pixels, Rems, Along, auto() (+88 more)
 
 ### Community 65 - "open_ai/src/completion.rs"
-Cohesion: 0.02
-Nodes (145): LanguageModelToolUseId, LanguageModelRequestMessage, Speed, Fast, Standard, Ultrafast, Role, Assistant (+137 more)
+Cohesion: 0.01
+Nodes (509): BatchingOpenAiClient, content_to_string(), message_content_to_string(), message_role_to_string(), Batch, Plain, PlainOpenAiClient, SerializableMessage (+501 more)
 
 ### Community 66 - "Terminal"
 Cohesion: 0.03
-Nodes (73): ScrollEvent, cursor_line(), history_size(), update_selection(), alt_scroll(), grid_point(), grid_point_and_side(), mouse_button_report() (+65 more)
+Nodes (79): Terminals, cursor_line(), history_size(), grid_point(), grid_point_and_side(), ctrl_mouse_down_at(), ctrl_mouse_drag_to(), ctrl_mouse_up_at() (+71 more)
 
 ### Community 67 - ".stdio"
-Cohesion: 0.06
-Nodes (12): repeated_spawns_preserve_command_and_stdio(), spawn_stdio(), StdioProcess, AcpConnectionDefaults, connect(), initial_config_options_are_sorted_and_typed(), startup_returns_error_when_agent_exits_before_initialization(), AgentServerCommand (+4 more)
+Cohesion: 0.23
+Nodes (3): AcpConnectionDefaults, connect(), initial_config_options_are_sorted_and_typed()
 
 ### Community 68 - "App"
 Cohesion: 0.02
-Nodes (130): AwsHttpClient, MantleModel, Custom, Gpt5_4, Gpt5_5, Gpt5_6Luna, Gpt5_6Sol, Gpt5_6Terra (+122 more)
+Nodes (137): AwsHttpClient, MantleModel, Custom, Gpt5_4, Gpt5_5, Gpt5_6Luna, Gpt5_6Sol, Gpt5_6Terra (+129 more)
 
 ### Community 69 - "BlameEntry"
 Cohesion: 0.01
-Nodes (178): EditPredictionUsage, CachedLlmApiToken, LlmApiToken, OrganizationId, EditPredictionRejectReason, Canceled, CurrentPreferred, Discarded (+170 more)
+Nodes (210): EditPredictionRejectReason, Canceled, CurrentPreferred, Discarded, Empty, InterpolatedEmpty, InterpolateFailed, PatchApplyFailed (+202 more)
 
 ### Community 70 - "settings"
 Cohesion: 0.03
-Nodes (24): DataBreakpointContext, Address, Expression, Variable, client_source(), DataBreakpointState, IsEnabled, KillCompanionBrowserParams (+16 more)
+Nodes (27): VariableReference, DataBreakpointContext, Address, Expression, Variable, client_source(), CompletionsQuery, DataBreakpointState (+19 more)
 
-### Community 71 - "linux/platform.rs"
-Cohesion: 0.04
-Nodes (53): abandoned_acquisition_is_an_error(), acquisition_error_passes_through(), assert_error_contains(), await_idle_sleep_prevention(), Blank, capslock_from_xkb(), compositor_gpu_hint_from_dev_t(), display_modes_limit_switching() (+45 more)
+### Community 71 - "blame_ui.rs"
+Cohesion: 0.06
+Nodes (19): GitRemote, activate_existing_blame_editor(), deploy_blame_entry_context_menu(), existing_blame_editor(), format_blame_text(), GIT_BLAME_MAX_AUTHOR_CHARS_DISPLAYED, GitBlameRenderer, GitBlameStatus (+11 more)
 
 ### Community 72 - "Example"
-Cohesion: 0.05
-Nodes (72): ContentBlock, build_chunks_from_creases(), command_input(), current_completion_labels(), current_completion_labels_with_documentation(), find_matching_bracket(), fold_ranges(), Text (+64 more)
+Cohesion: 0.04
+Nodes (89): ContentBlock, AvailableCommand, leading_native_command(), mcp_command(), native_command(), test_leading_native_command_matches_bare_and_with_remainder(), load_external_image_from_path(), build_chunks_from_creases() (+81 more)
 
-### Community 73 - "workspace/src/workspace.rs"
-Cohesion: 0.03
-Nodes (167): ProjectHost, Local, Remote, ActivatePane, add_an_item_to_active_pane(), assert_active_pane_is_replaced_after_removal(), assert_zoomed_pane_is_padded(), BuildProjectItemFn (+159 more)
+### Community 73 - "render_window_title_format"
+Cohesion: 0.14
+Nodes (15): parse_window_title_format(), render_window_title_format(), test_render_window_title_format_omits_empty_segments(), test_render_window_title_format_omits_unknown_variables(), test_render_window_title_format_renders_new_variables(), WindowTitleContext, WindowTitleTemplatePart, Literal (+7 more)
 
 ### Community 74 - "acp_thread.rs"
 Cohesion: 0.02
-Nodes (77): HEADER_DELIMITER, INCOMING_MESSAGE_QUEUE_CAPACITY, LspStdoutHandler, read_headers(), test_backpressure_when_messages_are_not_consumed(), test_read_headers(), AnyResponse, CONTENT_LEN_HEADER (+69 more)
+Nodes (55): LspStdoutHandler, test_backpressure_when_messages_are_not_consumed(), deserialize_params(), deserialize_result(), FakeLanguageServer, framed_test_message(), i64, IoHandler (+47 more)
 
 ### Community 75 - "agent_panel.rs"
-Cohesion: 0.02
-Nodes (155): AGENT_PANEL_KEY, AgentPanelEntryKind, Terminal, Thread, build_conflict_resolution_prompt(), build_conflicted_files_resolution_prompt(), conflict_resource_block(), expect_resource_block() (+147 more)
+Cohesion: 0.03
+Nodes (135): AGENT_PANEL_KEY, AgentPanelEntryKind, Terminal, Thread, build_conflict_resolution_prompt(), build_conflicted_files_resolution_prompt(), conflict_resource_block(), expect_resource_block() (+127 more)
 
 ### Community 76 - "Motion"
-Cohesion: 0.03
-Nodes (76): IndentDirection, Auto, In, Out, Vim, Motion, CurrentLine, Down (+68 more)
+Cohesion: 0.02
+Nodes (112): Motion, CurrentLine, Down, EndOfLine, EndOfLineDownward, EndOfParagraph, FindBackward, FindForward (+104 more)
 
 ### Community 77 - "anthropic/src/completion.rs"
 Cohesion: 0.03
-Nodes (24): CommitDetails, CommitOptions, GitCommitTemplate, commit_message_editor(), git_panel_context_menu(), GitPanel, panel_editor_container(), prompt() (+16 more)
+Nodes (10): git_panel_context_menu(), GitPanel, prompt(), StashKind, All, Staged, Tracked, StashMessageModal (+2 more)
 
 ### Community 78 - "block_map.rs"
 Cohesion: 0.02
-Nodes (67): parse_zed_link(), ZedLink, Channel, ChannelNotes, AddSelectionAbove, AddSelectionBelow, CancelEditReviewComment, ComposeCompletion (+59 more)
+Nodes (46): parse_zed_link(), ZedLink, Channel, ChannelNotes, CancelEditReviewComment, ComposeCompletion, ConfirmCodeAction, ConfirmCompletion (+38 more)
 
 ### Community 79 - "Anchor"
 Cohesion: 0.03
-Nodes (26): AutocloseRegion, BufferOffset, choose_completion_range(), CodeActionProvider, CollaborationHub, CompletionProvider, Entity<Project>, get_uncommitted_diff_for_buffer() (+18 more)
+Nodes (24): AutocloseRegion, BufferOffset, choose_completion_range(), CodeActionProvider, CollaborationHub, CompletionProvider, DiagnosticRenderer, Entity<Project> (+16 more)
 
-### Community 80 - "LanguageRegistry"
+### Community 80 - "LanguageServerName"
 Cohesion: 0.01
-Nodes (261): ServerStatus, AgentProfileSettings, ASK, ContextServerPreset, explicit_false_disables_tool_when_enable_all_is_true(), explicit_true_enables_tool_when_enable_all_is_false(), MINIMAL, preset() (+253 more)
+Nodes (112): Event, ShowStatus, ServerStatus, IndexSet, find_specific_language_server_in_selection(), lsp_task_context(), lsp_tasks(), ExtensionLanguageServerProxy (+104 more)
 
 ### Community 81 - "AcpThread"
-Cohesion: 0.03
-Nodes (53): ActionArgumentsEditor, ActionInformation, ActionMapping, base_button_style(), binding_is_unbound_by_unbind(), binding_is_unbound_by_unbind_respects_precedence(), ConflictKeybindMapping, ConflictOrigin (+45 more)
+Cohesion: 0.02
+Nodes (65): ActionArgumentsEditor, ActionInformation, ActionMapping, base_button_style(), binding_is_unbound_by_unbind(), binding_is_unbound_by_unbind_respects_precedence(), collect_contexts_from_assets(), COLS (+57 more)
 
 ### Community 82 - "App"
 Cohesion: 0.03
-Nodes (125): AgentProfile, is_builtin(), unmodified_default_detection(), AgentProfileId, always_allow_tools(), collect_events_until_stop(), disable_sandboxing(), expect_tool_call() (+117 more)
+Nodes (123): ProcessOutput, always_allow_tools(), collect_events_until_stop(), disable_sandboxing(), expect_tool_call(), expect_tool_call_update_fields(), FakeSubagentHandle, FakeTerminalHandle (+115 more)
 
-### Community 83 - "LanguageModel"
-Cohesion: 0.03
-Nodes (20): fail_transiently_and_retry(), finish_compaction(), finish_tool_round(), last_pending_intent(), start_turn_and_compact(), test_auto_compaction_runs_again_later_in_the_same_turn(), test_overflow_after_compaction_compacts_next_prompt(), test_partial_reply_after_compaction_does_not_compact_again() (+12 more)
+### Community 83 - "FakeLanguageModelProvider"
+Cohesion: 0.07
+Nodes (4): FakeLanguageModelProvider, FakeProviderState, PendingCompletion, ToolUseRequest
 
 ### Community 84 - "disable_cursor_blinking/before.rs"
 Cohesion: 0.01
-Nodes (106): ActiveDebugLine, AddSelectionsState, BreakpointPromptEditAction, Condition, HitCondition, Log, BreakpointPromptEditor, .MAX_LINES (+98 more)
+Nodes (117): ActiveDebugLine, BreakpointPromptEditAction, Condition, HitCondition, Log, BreakpointPromptEditor, .MAX_LINES, char_len_with_expanded_tabs() (+109 more)
 
 ### Community 85 - "language_models_cloud.rs"
 Cohesion: 0.03
 Nodes (109): acknowledge_buffer_version(), acknowledge_channel_message(), broadcast(), broadcast_project_message_from_host(), build_channels_update(), build_update_user_channels(), call(), cancel_call() (+101 more)
 
-### Community 86 - "PlatformKeyboardLayout"
-Cohesion: 0.08
-Nodes (5): IosKeyboardLayout, LinuxKeyboardLayout, PlatformKeyboardLayout, TestKeyboardLayout, WebKeyboardLayout
+### Community 86 - "external_agents_page.rs"
+Cohesion: 0.07
+Nodes (44): ExternalAgentSource, Custom, Registry, add_custom_agent_settings_entry(), AgentRow, build_settings_from_form(), build_settings_from_values(), builds_custom_agent() (+36 more)
 
 ### Community 87 - "DockPosition"
 Cohesion: 0.03
-Nodes (25): AnyView, Dock, DockPosition, Bottom, Left, Right, DockRestoreState, Finished (+17 more)
+Nodes (26): AnyView, Dock, DockPosition, Bottom, Left, Right, DockRestoreState, Finished (+18 more)
 
 ### Community 88 - "Oid"
 Cohesion: 0.02
-Nodes (149): ExtensionCapabilityContent, DownloadFile, NpmInstallPackage, ProcessExec, ExtensionSettingsContent, deserialize(), FallibleOption, Foo (+141 more)
+Nodes (116): CopilotSettingsContent, NodeBinarySettings, SessionSettingsContent, serialize_f32_with_two_decimal_places(), serialize_optional_f32_with_two_decimal_places(), AudioInputDeviceName, AudioOutputDeviceName, AudioSettingsContent (+108 more)
 
 ### Community 89 - "devcontainer_manifest.rs"
-Cohesion: 0.02
-Nodes (122): IncomingCall, IncomingCallNotification, IncomingCallNotificationState, init(), init(), ProjectSharedNotification, open_resolved_target(), test_open_resolved_target_at_non_ascii_column() (+114 more)
+Cohesion: 0.03
+Nodes (83): init(), assert_editor_is_active_and_focused(), assert_editor_replaced_by_preview(), assert_no_markdown_preview_items(), assert_resolved_preview_image_path(), automatic_preview_preserves_pane_activation_and_focus(), automatic_previews_preserve_temporary_tab_semantics(), click_tab_menu_target() (+75 more)
 
-### Community 90 - "Size"
-Cohesion: 0.01
-Nodes (242): AvailableAudioDevices, RenderBreadcrumbText, RenderBreadcrumbTextFn, NotesVersion, notification_window_options(), init(), TypeIdHashSet, GlobalCommandPaletteFilter (+234 more)
+### Community 90 - "gpui_tokio.rs"
+Cohesion: 0.21
+Nodes (4): GlobalTokio, init(), init_from_handle(), Tokio
 
-### Community 91 - "PathStyle"
-Cohesion: 0.01
-Nodes (256): EncryptedPassword, IKnowWhatIAmDoingAndIHaveReadTheDocs, LengthWithoutPadding, GLOBAL_KEY_VALUE_STORE, GlobalKeyValueStore, .MIGRATIONS, .NAME, KeyValueStore (+248 more)
+### Community 91 - "Envelope"
+Cohesion: 0.03
+Nodes (37): MessageId, ChannelClient, connect(), Setup, ConnectionPool, ConnectionPoolEntry, Connected, Connecting (+29 more)
 
 ### Community 92 - "Anchor"
 Cohesion: 0.03
@@ -2671,227 +2452,227 @@ Nodes (167): assert_drag_state_cleared(), click_project_entry(), create_drag_tes
 
 ### Community 93 - "disable_cursor_blinking/before.rs"
 Cohesion: 0.01
-Nodes (202): Accessible Mode {#accessible-mode}, Agent Buffer Font Family {#agent-buffer-font-family}, Agent Buffer Font Size {#agent-buffer-font-size}, Agent Servers {#agent-servers}, Agent UI Font Family {#agent-ui-font-family}, Agent UI Font Size, Allow Rewrap, Always Treat Brackets As Autoclosed (+194 more)
+Nodes (200): Accessible Mode {#accessible-mode}, Agent Buffer Font Family {#agent-buffer-font-family}, Agent Buffer Font Size {#agent-buffer-font-size}, Agent Servers {#agent-servers}, Agent UI Font Family {#agent-ui-font-family}, Agent UI Font Size, Allow Rewrap, Always Treat Brackets As Autoclosed (+192 more)
 
 ### Community 94 - "AssistantPhase"
 Cohesion: 0.03
-Nodes (50): (), Cursor, Cursor<'a, 'b, T, D>, Cursor<'_, '_, T, D>, End, End<D>, FilterCursor, FilterCursor<'a, 'b, F, T, D> (+42 more)
+Nodes (47): (), Cursor, Cursor<'a, 'b, T, D>, End, End<D>, FilterCursor, FilterCursor<'a, 'b, F, T, D>, FilterCursor<'a, 'b, F, T, U> (+39 more)
 
 ### Community 95 - "scratches/src/rows.rs"
 Cohesion: 0.03
-Nodes (69): active_entry_directory_active_dir(), active_entry_directory_active_file(), active_entry_directory_no_active_entry(), active_entry_worktree_is_dir(), active_entry_worktree_is_file(), add_display_only_terminal(), altgr_character_input_is_not_swallowed_as_meta_sequence(), assert_drop_writes_to_terminal() (+61 more)
+Nodes (61): active_entry_directory_active_dir(), active_entry_directory_active_file(), active_entry_directory_no_active_entry(), active_entry_worktree_is_dir(), active_entry_worktree_is_file(), add_display_only_terminal(), altgr_character_input_is_not_swallowed_as_meta_sequence(), assert_drop_writes_to_terminal() (+53 more)
 
-### Community 96 - "terminal_element.rs"
-Cohesion: 0.03
-Nodes (25): ConfirmInput, ContainerKind, List, UniformList, DEFAULT_MODAL_MAX_HEIGHT, DEFAULT_MODAL_WIDTH, Direction, Down (+17 more)
+### Community 96 - "Picker"
+Cohesion: 0.01
+Nodes (71): ContactFinder, ContactFinderDelegate, ExtensionVersionSelector, ExtensionVersionSelectorDelegate, PickerPrompt, PickerPromptDelegate, prompt(), display_name_of() (+63 more)
 
 ### Community 97 - "src/git_store.rs"
 Cohesion: 0.03
-Nodes (176): ExcerptRanges, ActiveBufferDiagnostic, adjust_cursor_region(), apply_edit(), apply_edit_commands(), apply_prompt_budget_margin(), apply_variable_edit(), assemble_fim_prompt() (+168 more)
+Nodes (172): ExcerptRanges, ActiveBufferDiagnostic, adjust_cursor_region(), apply_edit(), apply_edit_commands(), apply_prompt_budget_margin(), apply_variable_edit(), assemble_fim_prompt() (+164 more)
 
 ### Community 98 - "VisualTestContext"
 Cohesion: 0.03
-Nodes (84): Cursor, assert_excerpts_resolve(), assert_wrap_edits_cover_changes(), balancing_block(), Block, BufferHeader, Custom, ExcerptBoundary (+76 more)
+Nodes (82): Cursor, ActiveDiagnosticGroup, assert_excerpts_resolve(), assert_wrap_edits_cover_changes(), balancing_block(), Block, BufferHeader, Custom (+74 more)
 
 ### Community 99 - "collab/src/rpc.rs"
-Cohesion: 0.03
-Nodes (116): platform_input_from_native(), NSRange, TISCopyCurrentKeyboardInputSource(), accepts_first_mouse(), add_mouse_tracking_area(), add_titlebar_accessory_view_controller(), apply_simple_fullscreen_plan(), attributed_substring_for_proposed_range() (+108 more)
+Cohesion: 0.04
+Nodes (101): accepts_first_mouse(), add_titlebar_accessory_view_controller(), attributed_substring_for_proposed_range(), BLURRED_VIEW_CLASS, blurred_view_init_with_frame(), blurred_view_update_layer(), build_classes(), build_window_class() (+93 more)
 
 ### Community 100 - "SessionId"
 Cohesion: 0.03
-Nodes (17): AgentSessionClientUserMessageIds, AgentSessionRetry, AgentSessionSetTitle, AgentSessionTruncate, ProtocolErrorInfo, ReceiptSessionSubmissions, SessionListUpdate, Refresh (+9 more)
+Nodes (11): FakeAgentSessionSetTitle, AgentSessionRetry, AgentSessionSetTitle, ProtocolErrorInfo, ReceiptSessionSubmissions, StubAgentConnection, StubAgentSessionRetry, StubPromptUpdate (+3 more)
 
 ### Community 101 - "running.rs"
-Cohesion: 0.06
-Nodes (16): build_serialized_layout(), build_serialized_pane_layout(), DebuggerPaneItem, BreakpointList, Console, Frames, LoadedSources, MemoryView (+8 more)
+Cohesion: 0.05
+Nodes (28): resolve_path(), build_serialized_layout(), build_serialized_pane_layout(), DEBUGGER_PANEL_PREFIX, DebuggerPaneItem, BreakpointList, Console, Frames (+20 more)
 
 ### Community 102 - "Action"
-Cohesion: 0.08
-Nodes (22): assert_models_eq(), create_models(), create_models_with_favorites(), GetActiveModel, LanguageModelPickerDelegate, LanguageModelPickerEntry, Model, Separator (+14 more)
+Cohesion: 0.05
+Nodes (35): IndexMap, all_models(), assert_models_eq(), create_models(), create_models_with_favorites(), FavoritesIndex, GetActiveModel, GroupedModels (+27 more)
 
 ### Community 103 - "Worktree"
-Cohesion: 0.06
-Nodes (34): init(), init_test(), init_workspace_with_panel(), is_enabled_in_workspace(), new_terminal_pane(), open_center_display_terminal(), renders_error_if_default_shell_fails(), set_max_tabs() (+26 more)
+Cohesion: 0.03
+Nodes (66): RevealStrategy, Always, Never, NoFocus, build_serialized_pane_group(), deserialize_pane_group(), deserialize_terminal_panel(), deserialize_terminal_views() (+58 more)
 
 ### Community 104 - "StatusKind"
-Cohesion: 0.02
-Nodes (87): Corners, Position, Absolute, Relative, taffy::style::Position, AnimationState, InProgress, Stale (+79 more)
+Cohesion: 0.03
+Nodes (77): AnimationState, InProgress, Stale, BORDER_WIDTH, DELTA_MAX, EDITOR_SCROLLBAR_WIDTH, get_scrollbar_state(), Handle (+69 more)
 
 ### Community 105 - "v1.rs"
 Cohesion: 0.02
-Nodes (134): AgentTelemetry, handle_v2_complete_elicitation(), terminal_auth_task_id(), abandoned_new_session_closes_late_response(), abandoned_new_session_releases_registration_barrier(), AcpConnection, AcpSessionConfigOptions, AcpSessionList (+126 more)
+Nodes (131): AgentTelemetry, abandoned_new_session_closes_late_response(), abandoned_new_session_releases_registration_barrier(), AcpConnection, AcpSessionConfigOptions, AcpSessionList, AcpSessionModes, additional_directories_support_respects_agent_capability() (+123 more)
 
 ### Community 106 - "CharClassifier"
 Cohesion: 0.03
-Nodes (89): AgentContextSelection, Editor, Terminal, AgentContextSource, Editor, TerminalPanel, TerminalView, BranchDiffMatch (+81 more)
+Nodes (82): AgentContextSelection, Editor, Terminal, AgentContextSource, Editor, TerminalPanel, TerminalView, AvailableSkill (+74 more)
 
 ### Community 107 - "terminal_view.rs"
 Cohesion: 0.02
-Nodes (52): AutoindentRequest, AutoindentRequestEntry, Buffer, BufferBranchState, BufferEditSource, Agent, Remote, User (+44 more)
+Nodes (46): MTime, proto::Timestamp, AutoindentMode, Block, EachLine, PreserveSingleLine, Buffer, BufferBranchState (+38 more)
 
 ### Community 108 - "patch_metrics.rs"
-Cohesion: 0.03
-Nodes (151): classify_retrieved_rows(), classify_values(), count_missing_rows(), counts_false_negatives_and_file_false_positives(), deletion_counts_deleted_old_line_as_true_positive(), editable_context_coverage(), EditableContextCoverage, empty_patch_with_no_context_has_perfect_f1() (+143 more)
+Cohesion: 0.04
+Nodes (115): EditableContextCoverage, PatchLocationMatch, EvaluationReport, Hunk, braces_disbalance(), CHR_F_BETA, CHR_F_CHAR_ORDER, chr_f_ngram_counts() (+107 more)
 
 ### Community 109 - "rules_to_skills_migration.rs"
 Cohesion: 0.02
-Nodes (24): VerifiedSandboxStatus, loading_contents_spinner(), plan_label_markdown_style(), CatNumberedCodeBlock, full_path_for_empty_project_path(), NumberedOutputView, open_markdown_in_workspace(), subagent_label() (+16 more)
+Nodes (16): VerifiedSandboxStatus, loading_contents_spinner(), FileLinkWarningCapture, full_path_for_empty_project_path(), NumberedOutputView, open_markdown_in_workspace(), subagent_label(), ThreadFeedbackState (+8 more)
 
 ### Community 110 - "scrollbar.rs"
 Cohesion: 0.04
-Nodes (77): thread_metadata_to_debug_json(), delete(), acp_thread::AgentSessionInfo, ArchivedGitWorktree, clear_thread_metadata_remote_connection_backfill(), DbOperation, Delete, Upsert (+69 more)
+Nodes (90): blocks_have_user_content(), clean_mention_links(), delete(), display_label_for_draft(), draft_has_user_content(), empty_draft_placeholder_label(), MAX_LABEL_CHARS, NAMESPACE (+82 more)
 
-### Community 111 - "ComponentScope"
-Cohesion: 0.02
-Nodes (31): ComponentScope, Agent, Collaboration, DataDisplay, Editor, Images, Input, Layout (+23 more)
+### Community 111 - "application.rs"
+Cohesion: 0.04
+Nodes (11): MetalDisplayLinkDelegate, MetalDisplayLinkDelegateIvars, MetalFrameSource, application_callbacks_are_not_shared_between_platforms(), browsing_activity_delivers_url_without_losing_query_or_fragment(), IosApplicationState, launch_callback_runs_once_and_can_register_callbacks(), lifecycle_callback_replacement_survives_dispatch() (+3 more)
 
-### Community 112 - "DeleteEntryOutcome"
-Cohesion: 0.20
-Nodes (8): DeleteEntryOutcome, Deleted, Failed, Trashed, RemoveEntryTask, Delete, Trash, UpdateVisibleEntriesTask
+### Community 112 - "Database"
+Cohesion: 0.05
+Nodes (26): Database, DatabaseTestOptions, convert_time_to_chrono(), Database, metadata_from_extension_and_version(), assert_channel_tree_matches(), test_channel_buffers(), test_channel_buffers_last_operations() (+18 more)
 
-### Community 113 - "anthropic/src/completion.rs"
-Cohesion: 0.02
-Nodes (92): AnthropicModelMode, AdaptiveThinking, Default, Thinking, Usage, UsageIteration, UsageIterationType, Compaction (+84 more)
+### Community 113 - "MacPlatform"
+Cohesion: 0.04
+Nodes (3): MacPlatform, path_from_objc(), new_std_command()
 
-### Community 114 - "lsp_ext_command.rs"
-Cohesion: 0.03
-Nodes (36): EMMET_SERVER_NAME, ExpandAbbreviation, ExpandAbbreviationOptions, ExpandAbbreviationParams, LanguageServerToQuery, FirstCapable, CargoRunnableArgs, DocsUrls (+28 more)
+### Community 114 - "TaskSourceKind"
+Cohesion: 0.07
+Nodes (26): BasicContextProvider, context_with_greeting(), DebugScenario, .GLOBAL_SOURCE_FILE, .LABEL, DebugScenarioContext, greeting_template(), InventoryContents (+18 more)
 
-### Community 115 - "src/elicitation.rs"
-Cohesion: 0.11
-Nodes (14): content_value_to_v1(), elicitation_request_adapter_preserves_schema_scopes_and_extensions(), elicitation_response_and_error_adapter_preserves_payloads(), ElicitationRequest, enum_option_from_v1(), items_from_v1(), property_from_v1(), request_from_v1() (+6 more)
+### Community 115 - "ios/text_input.rs"
+Cohesion: 0.07
+Nodes (21): allowed_range(), checked_offset(), checked_range(), composed_character_range(), contains_range(), document_range(), insertion_geometry_has_a_visible_caret_width(), native_protocol_smoke_test() (+13 more)
 
 ### Community 116 - "ContextServerRegistry"
 Cohesion: 0.03
-Nodes (44): Client, ClientCredentialsProvider, ClientState, Credentials, EstablishConnectionError, InvalidHeaderValue, Io, Other (+36 more)
+Nodes (43): Client, ClientCredentialsProvider, ClientState, EstablishConnectionError, InvalidHeaderValue, Io, Other, Unauthorized (+35 more)
 
-### Community 117 - "raw_to_buffer_semantic_tokens"
-Cohesion: 0.18
-Nodes (11): SemanticTokensEdit, applies_delta_edit(), applies_out_of_bounds_delta_edit_without_panic(), debug_parse_tokens(), extract_semantic_tokens(), modifier_names(), parses_sample_tokens(), raw_to_buffer_semantic_tokens() (+3 more)
+### Community 117 - "bracket_colorization.rs"
+Cohesion: 0.07
+Nodes (48): adjacent_distance(), ADJACENT_OKLAB_DARK, ADJACENT_OKLAB_DARK_INTERVENTION, ADJACENT_OKLAB_LIGHT, ADJACENT_OKLAB_LIGHT_INTERVENTION, adjust_color_for_background(), adjusted_lightness_candidate(), BACKGROUND_APCA_DARK (+40 more)
 
-### Community 118 - "agent/src/agent.rs"
-Cohesion: 0.03
-Nodes (79): builtin_skills(), parse_builtin_skill(), ProjectSkillGroup, Skill, SkillIndex, SkillScopeId, SkillSummary, test_skill_summary_from_skill() (+71 more)
+### Community 118 - "Skill"
+Cohesion: 0.07
+Nodes (37): Skill, SkillSummary, test_skill_summary_from_skill(), Where to start reading, ambiguous_mcp_prompt_names(), apply_skill_overrides(), combine_skills(), log_skill_conflicts() (+29 more)
 
 ### Community 119 - "src/openai_subscribed.rs"
 Cohesion: 0.03
-Nodes (66): DirectXDevices, AGS_CURRENT_VERSION, AGSContext, agsDeInitialize_t, AGSGPUInfo, agsInitialize_t, Annotation, Annotation<'a> (+58 more)
+Nodes (67): quad_depth(), quad_depth_scale(), AGS_CURRENT_VERSION, AGSContext, agsDeInitialize_t, AGSGPUInfo, agsInitialize_t, Annotation (+59 more)
 
 ### Community 120 - "terminal_panel.rs"
 Cohesion: 0.04
-Nodes (15): ProjectGroupKey, DraggedSidebar, Entity<T>, HeldWorkspace, MultiWorkspace, MultiWorkspaceEvent, ActiveWorkspaceChanged, ProjectGroupsChanged (+7 more)
+Nodes (27): ProjectGroupKey, DraggedSidebar, Entity<T>, HeldWorkspace, MultiWorkspace, MultiWorkspaceEvent, ActiveWorkspaceChanged, ProjectGroupsChanged (+19 more)
 
 ### Community 121 - "gpui_macos/src/events.rs"
 Cohesion: 0.03
-Nodes (18): always_use_command_layout(), BACKSPACE_KEY, BACKSPACE_KEY_EQUIVALENT, chars_for_modified_key(), CMD_MOD, DELETE_KEY_EQUIVALENT, ENTER_KEY, ESCAPE_KEY (+10 more)
+Nodes (24): always_use_command_layout(), BACKSPACE_KEY, BACKSPACE_KEY_EQUIVALENT, chars_for_modified_key(), CMD_MOD, DELETE_KEY_EQUIVALENT, ENTER_KEY, ESCAPE_KEY (+16 more)
 
 ### Community 122 - "init_test"
-Cohesion: 0.07
-Nodes (15): AnyView, Entity<T>, FilteredSearchRange, Default, Selection, SearchableItem, SearchableItemHandle, SearchEvent (+7 more)
+Cohesion: 0.04
+Nodes (25): active_match_index(), SearchInputs, SearchQuery, Regex, Text, regex_search_for_query(), PathMatcher, AnyView (+17 more)
 
 ### Community 123 - "edit_prediction/src/edit_prediction.rs"
 Cohesion: 0.05
-Nodes (41): MentionLink, MentionUri, Diagnostics, Directory, Fetch, File, GitDiff, MergeConflict (+33 more)
+Nodes (49): MentionLink, MentionUri, Diagnostics, Directory, Fetch, File, GitDiff, MergeConflict (+41 more)
 
 ### Community 124 - "metal_renderer.rs"
 Cohesion: 0.02
-Nodes (72): All Actions, Command Palette, Extensions, Extension License Requirements {#extension-license-requirements}, Publishing Extensions {#publishing-extensions}, Updating an Extension {#updating-an-extension}, Publishing your extension, Slash Commands (+64 more)
+Nodes (116): All Actions, Business Support, Open-source issues, Adding a Contact, Contacts and Private Calls {#contacts}, Private Calls, Command Palette, Completions (+108 more)
 
 ### Community 125 - "crashes.rs"
-Cohesion: 0.05
-Nodes (44): abort_message_address(), abort_message_read_len(), abort_message_read_len_requires_page_rounded_total(), AbortMessageLocation, connect_and_keepalive(), CRASH_HANDLER_CONNECT_TIMEOUT, CRASH_HANDLER_PING_TIMEOUT, CrashInfo (+36 more)
+Cohesion: 0.11
+Nodes (18): abort_message_read_len(), abort_message_read_len_requires_page_rounded_total(), AbortMessageLocation, CRASH_HANDLER_CONNECT_TIMEOUT, CRASH_HANDLER_PING_TIMEOUT, Panic, panic_hook(), PANIC_THREAD_ID (+10 more)
 
 ### Community 126 - "src/git_store.rs"
 Cohesion: 0.02
-Nodes (127): CommitFileStatus, Added, Deleted, Modified, InitialGraphCommitData, LogOrder, AuthorDateOrder, DateOrder (+119 more)
+Nodes (130): CommitDetails, LogOrder, AuthorDateOrder, DateOrder, ReverseChronological, TopoOrder, UnmergedStatusCode, Added (+122 more)
 
 ### Community 127 - "patch_metrics.rs"
 Cohesion: 0.01
-Nodes (159): accessible_mode, agent_buffer_font_family, agent_buffer_font_size, agent_ui_font_family, agent_ui_font_size, allow_rewrap, always_treat_brackets_as_autoclosed, auto_indent (+151 more)
+Nodes (161): accessible_mode, agent_buffer_font_family, agent_buffer_font_size, agent_ui_font_family, agent_ui_font_size, allow_rewrap, always_treat_brackets_as_autoclosed, auto_indent (+153 more)
 
-### Community 128 - "Session"
-Cohesion: 0.03
-Nodes (145): auth_server_metadata_urls(), AuthServerMetadata, AuthServerMetadataResponse, BearerError, InsufficientScope, InvalidRequest, InvalidToken, Other (+137 more)
+### Community 128 - "oauth.rs"
+Cohesion: 0.01
+Nodes (207): AnyNotification, AnyRequest, AnyResponse, Client, ContextServerId, CspResult, Error, Ok (+199 more)
 
 ### Community 129 - "MultiWorkspace"
-Cohesion: 0.05
-Nodes (48): Tab, BufferSearchBar, display_points_of(), init(), init_globals(), init_multibuffer_test(), init_test(), MAX_BUFFER_SEARCH_HISTORY_SIZE (+40 more)
+Cohesion: 0.04
+Nodes (60): Tab, BufferSearchBar, display_points_of(), Event, Dismissed, UpdateLocation, init(), init_globals() (+52 more)
 
 ### Community 130 - "BufferStore"
 Cohesion: 0.04
-Nodes (71): Branch, CommitSummary, Upstream, BRANCH_DELETE_FORCE_DELETE_PROMPTS, branch_filter_menu(), branch_matches_ref(), branch_remote_name(), BranchDeleteForceDeletePrompt (+63 more)
+Nodes (73): Branch, BranchesScanResult, CommitSummary, Upstream, BRANCH_DELETE_FORCE_DELETE_PROMPTS, branch_filter_menu(), branch_matches_ref(), branch_remote_name() (+65 more)
 
 ### Community 131 - "PathKey"
-Cohesion: 0.03
-Nodes (56): deserialize_path_key(), AutoIndentExclusion, FollowingLine, PrecedingLine, AnchorRangeExt, AnchorSeekTarget, Empty, Excerpt (+48 more)
+Cohesion: 0.07
+Nodes (19): AnchorSeekTarget<'_>, BufferStateSnapshot, BufferStatus, BufferStatusCounts, DiffStateSummary, ExcerptSummary, ExpandExcerptDirection, Down (+11 more)
 
 ### Community 132 - "init_test"
 Cohesion: 0.02
 Nodes (81): active_secondaries(), allocation_stats(), AllocationCounter, AllocationMetric, AllocatedBytes, Allocations, allocations_name(), AllocationStats (+73 more)
 
-### Community 133 - "oauth.rs"
-Cohesion: 0.03
-Nodes (104): Stateful, ActionLink, ACTIVE_LANGUAGE, active_language_mut(), all_language_names(), all_projects(), AnySettingField, check_navbar_toggle() (+96 more)
+### Community 133 - "SettingsWindow"
+Cohesion: 0.07
+Nodes (33): all_projects(), check_navbar_toggle(), draw_settings_page(), last_setting_preserves_focused_input_across_reflow(), navbar_double_click_toggle(), navbar_focus_navigation_reaches_last_section(), navbar_navigation_reaches_last_section(), navbar_selection_follows_content_scroll() (+25 more)
 
 ### Community 134 - "directx_renderer.rs"
 Cohesion: 0.02
-Nodes (145): &'a FileTypeMap, AllLanguageSettingsContent, AutoIndentMode, None, PreserveIndent, SyntaxAware, CodestralSettingsContent, CompletionSettingsContent (+137 more)
+Nodes (115): &'a FileTypeMap, AllLanguageSettingsContent, AutoIndentMode, None, PreserveIndent, SyntaxAware, CodestralSettingsContent, CompletionSettingsContent (+107 more)
 
 ### Community 135 - "servers_modal.rs"
-Cohesion: 0.07
-Nodes (81): is_resource_not_found(), bounded(), config_option_supports_value(), initial_response(), meta(), ResponseCallbackDropped, session_capabilities(), session_path() (+73 more)
+Cohesion: 0.06
+Nodes (89): bounded(), Harness, initial_response(), meta(), ResponseCallbackDropped, session_agent_response(), session_capabilities(), session_path() (+81 more)
 
 ### Community 136 - "K"
-Cohesion: 0.04
-Nodes (31): ContextLessSummary, Item, KeyedItem, NoSummary, K, MapEntry, MapEntry<K, V>, MapKey (+23 more)
+Cohesion: 0.08
+Nodes (20): Item, K, MapEntry, MapEntry<K, V>, MapKey, MapKeyRef, MapKeyRef<'a, K>, MapKeyRef<'_, K> (+12 more)
 
-### Community 137 - "TerminalProgramValidation"
-Cohesion: 0.05
-Nodes (59): and_or_list_validation(), assignment_validation(), combine_validations(), command_prefix_validation(), command_suffix_validation(), command_validation(), compound_command_validation(), compound_list_validation() (+51 more)
+### Community 137 - "extract_terminal_command_prefix"
+Cohesion: 0.09
+Nodes (24): extract_commands_from_assignment(), extract_commands_from_command_prefix(), extract_commands_from_command_suffix(), extract_commands_from_parameter_expr(), extract_commands_from_prefix_or_suffix_item(), extract_commands_from_program(), extract_commands_from_simple_command(), extract_commands_from_word() (+16 more)
 
 ### Community 138 - "v1.rs"
 Cohesion: 0.04
-Nodes (52): AUTO_OUTLINE_SIZE, BufferContent, get_buffer_content_or_outline(), render_entries(), render_outline(), test_large_file_fallback_to_subset(), Anchor, BufferDiff (+44 more)
+Nodes (46): AUTO_OUTLINE_SIZE, BufferContent, get_buffer_content_or_outline(), render_entries(), render_outline(), test_large_file_fallback_to_subset(), Anchor, BufferDiffEvent (+38 more)
 
 ### Community 139 - "SettingsWindow"
 Cohesion: 0.03
-Nodes (119): AGENTS_DIR_NAME, BUILTIN_SKILL_ENTRIES, CREATE_SKILL_CONTENT, decode_skill_share_link(), decode_skill_share_link_rejects_non_skill_links(), encode_skill_share_link(), extract_frontmatter(), extract_skill_frontmatter() (+111 more)
+Nodes (125): AGENTS_DIR_NAME, BUILTIN_SKILL_ENTRIES, builtin_skills(), CREATE_SKILL_CONTENT, decode_skill_share_link(), decode_skill_share_link_rejects_non_skill_links(), encode_skill_share_link(), extract_frontmatter() (+117 more)
 
 ### Community 140 - "MacWindow"
-Cohesion: 0.02
-Nodes (15): bool, BoolExt, *mut AnyObject, ns_string(), .ENCODING, .ENCODING_REF, NSStringExt, A11yActionHandler (+7 more)
+Cohesion: 0.03
+Nodes (11): ns_string(), A11yActionHandler, A11yActivationHandler, apply_simple_fullscreen_plan(), if_window_not_closed(), MacWindow, push_simple_fullscreen_presentation_options(), UserTabbingPreference (+3 more)
 
 ### Community 141 - "BufferDiff"
-Cohesion: 0.03
-Nodes (132): parse_markdown_example(), read_example_files(), FailedHandling, Keep, Skip, SkipNoFiles, apply_edits(), count_lines() (+124 more)
+Cohesion: 0.04
+Nodes (98): edit_locations(), EditLocation, locate_edited_line(), test_locate_edited_line(), AnnotatedCommit, assert_generated_split_kind(), CandidateSplit, classify_generated_split_commit() (+90 more)
 
 ### Community 142 - "theme_settings.rs"
-Cohesion: 0.04
-Nodes (24): Example, example(), Shadow, cursor_line_and_offset(), Editor, EditorText, next_boundary(), offset_from_utf16() (+16 more)
+Cohesion: 0.05
+Nodes (25): cursor_line_and_offset(), Editor, EditorText, next_boundary(), offset_from_utf16(), offset_to_utf16(), previous_boundary(), range_from_utf16() (+17 more)
 
 ### Community 143 - "search/src/project_search.rs"
-Cohesion: 0.03
-Nodes (58): AcpSession, apply_subagent_update(), apply_v2_session_notification(), beta_selection_uses_fresh_v1_fallback_only_for_version_mismatch(), claude_adapter_initialize_smoke(), ClientDisconnectWork, close_undelivered_session(), ConfigOptions (+50 more)
+Cohesion: 0.02
+Nodes (72): AcpSession, apply_subagent_update(), apply_v2_session_notification(), beta_selection_uses_fresh_v1_fallback_only_for_version_mismatch(), claude_adapter_initialize_smoke(), ClientContext, ClientDisconnectWork, close_undelivered_session() (+64 more)
 
 ### Community 144 - "Window"
-Cohesion: 0.02
-Nodes (46): allowed_range(), checked_offset(), checked_range(), composed_character_range(), contains_range(), document_range(), insertion_geometry_has_a_visible_caret_width(), native_protocol_smoke_test() (+38 more)
+Cohesion: 0.03
+Nodes (24): ConfigurationTestView, ElementInputHandler, ElementInputHandler<V>, EntityInputHandler, text_input_configuration_and_focus_state_are_forwarded_on_change(), text_notifications_require_a_focused_input_and_track_field_changes(), Autocapitalize, Characters (+16 more)
 
-### Community 145 - "EditorEvent"
-Cohesion: 0.02
-Nodes (52): EditorEvent, Blurred, BreadcrumbsChanged, BufferEdited, BufferFoldToggled, BufferRangesUpdated, BuffersEdited, BuffersRemoved (+44 more)
+### Community 145 - "text_diff_view.rs"
+Cohesion: 0.08
+Nodes (21): DiffClipboardWithSelectionData, base_test(), build_clipboard_buffer(), init_test(), RECALCULATE_DIFF_DEBOUNCE, selection_location_text(), test_diffing_clipboard_against_empty_selection_uses_full_buffer_selection(), test_diffing_clipboard_against_line_with_leading_whitespace() (+13 more)
 
 ### Community 146 - "Oid"
-Cohesion: 0.03
-Nodes (75): load_commit_data_batch(), get_messages(), get_messages_impl(), BISECT_LOG, COMMIT_MESSAGE, decode_hex_digit(), DOT_GIT, FETCH_HEAD (+67 more)
+Cohesion: 0.02
+Nodes (83): FakeCommitDataEntry, Fail, Success, BlameSource, Contents, Revision, GitBlameParser, run_git_blame() (+75 more)
 
 ### Community 147 - "LanguageModel"
 Cohesion: 0.05
-Nodes (27): build_terminal_prompt_editor(), CompletionState, Generated, Pending, Rated, extract_message_creases(), init_test(), inline_assistant_model_selector() (+19 more)
+Nodes (31): build_terminal_prompt_editor(), CompletionState, Generated, Pending, Rated, extract_message_creases(), GenerationMode, Generate (+23 more)
 
 ### Community 148 - "Diagnostic"
-Cohesion: 0.05
-Nodes (75): PathEvent, case_insensitive_path(), case_insensitive_registration_matches_differently_cased_event(), case_insensitive_registration_survives_case_only_rename(), case_sensitive_registration_ignores_differently_cased_event(), changed(), coalesce_pending_rescans(), Coverage (+67 more)
+Cohesion: 0.04
+Nodes (99): PathEvent, PathEventKind, Changed, Created, Removed, Rescan, case_insensitive_path(), case_insensitive_registration_matches_differently_cased_event() (+91 more)
 
 ### Community 149 - "buffer_search.rs"
 Cohesion: 0.04
@@ -2899,75 +2680,75 @@ Nodes (68): AppliedRandomizedElementTreeMutation, assert_matches_reference(), bo
 
 ### Community 150 - "BufferSnapshot"
 Cohesion: 0.01
-Nodes (65): Lamport, .MAX, .MIN, Seq, BufferOffsetUtf16, History, MultiBuffer, Transaction (+57 more)
+Nodes (64): Lamport, .MAX, .MIN, Seq, AnchorRangeExt, OffsetRangeExt, Range<Anchor>, Range<T> (+56 more)
 
 ### Community 151 - "RemoteServerProjects"
 Cohesion: 0.05
-Nodes (48): DevContainerConfig, user_ssh_config_file(), AddWslDistro, CreateRemoteDevContainer, CreateRemoteServer, DevContainerCreationProgress, Creating, Error (+40 more)
+Nodes (40): user_ssh_config_file(), AddWslDistro, CreateRemoteDevContainer, CreateRemoteServer, DevContainerCreationProgress, Creating, Error, SelectingConfig (+32 more)
 
-### Community 152 - "gpui_windows/src/events.rs"
-Cohesion: 0.08
-Nodes (20): DrawCoordinator, DrawWindowGuard, get_frame_thicknessy(), ImeContext, is_virtual_key_pressed(), parse_ime_composition_string(), parse_immutable(), parse_normal_key() (+12 more)
+### Community 152 - "PathKey"
+Cohesion: 0.06
+Nodes (18): EntrySummary, GitSummary, PathEntrySummary, PathKey, PathProgress, PathProgress<'a>, PathSummary, PathSummary<S> (+10 more)
 
-### Community 153 - "settings_content/src/language.rs"
-Cohesion: 0.04
-Nodes (63): CompletionBody, anthropic_request(), ApiError, authenticated_llm_request(), bind_test_model(), cloud_anthropic_explicit_compaction_uses_paused_completion(), cloud_anthropic_supports_explicit_compaction_after_minimum_input(), cloud_anthropic_test_config() (+55 more)
+### Community 153 - "zed"
+Cohesion: 0.12
+Nodes (56): ai_onboarding, askpass, assets, audio, auto_update, auto_update_ui, call, channel (+48 more)
 
 ### Community 154 - "CompletionsMenu"
-Cohesion: 0.06
-Nodes (30): CODE_ACTION_MENU_MAX_WIDTH, CODE_ACTION_MENU_MIN_WIDTH, CodeActionsMenu, CodeContextMenu, CodeActions, Completions, COMPLETION_MENU_MAX_WIDTH, COMPLETION_MENU_MIN_WIDTH (+22 more)
+Cohesion: 0.05
+Nodes (27): AvailableCodeAction, CodeActionContents, CodeActionsMenu, CodeContextMenu, CodeActions, Completions, CompletionMatchResults, CompletionMenuEntry (+19 more)
 
 ### Community 155 - "FakeFs"
-Cohesion: 0.07
-Nodes (103): parse_file_search_query(), parse_line_range_query(), active_file_picker(), advance_worktree_update_refresh(), assert_match_at_position(), assert_match_selection(), bind_default_keymap(), build_find_picker() (+95 more)
+Cohesion: 0.05
+Nodes (113): test_reorder_channels_independently_of_favorites(), test_reorder_favorite_channels_independently_of_channels(), parse_file_search_query(), parse_line_range_query(), SEARCH_DEBOUNCE, active_file_picker(), advance_worktree_update_refresh(), assert_match_at_position() (+105 more)
 
 ### Community 156 - "IndexMap"
-Cohesion: 0.03
-Nodes (27): A11yActivationHandler, A11yState, calculate_client_rect(), calculate_window_rect(), Callbacks, ClickState, Color, dwm_set_window_composition_attribute() (+19 more)
+Cohesion: 0.02
+Nodes (37): DrawCoordinator, DrawWindowGuard, window_procedure(), get_window_long(), set_window_long(), A11yActionHandler, A11yActivationHandler, A11yState (+29 more)
 
 ### Community 157 - "fallible_options.rs"
-Cohesion: 0.03
-Nodes (47): Request, Response, drain_foreground_queue(), enqueue_notification(), ForegroundWork, is_disconnect_error(), map_acp_error(), mcp_configurations_for_project() (+39 more)
+Cohesion: 0.04
+Nodes (35): Request, Response, drain_foreground_queue(), enqueue_notification(), enqueue_request(), ForegroundWork, is_disconnect_error(), is_resource_not_found() (+27 more)
 
-### Community 158 - "search/src/project_search.rs"
-Cohesion: 0.10
-Nodes (76): ActiveSettings, assert_all_highlights_match_query(), buffer_search_query(), contains_uppercase(), enable_search_on_type(), init_test(), match_count(), match_texts() (+68 more)
+### Community 158 - "src/buffer_tests.rs"
+Cohesion: 0.06
+Nodes (45): assert_bracket_pairs(), color_index_for_open(), erb_lang(), file(), get_tree_sexp(), html_lang(), javascript_lang(), local_file() (+37 more)
 
 ### Community 159 - "Onboarding"
 Cohesion: 0.10
-Nodes (4): go_to_welcome_page(), Onboarding, SettingsImportState, show_onboarding_view()
+Nodes (6): go_to_welcome_page(), handle_import_vscode_settings(), init(), Onboarding, SettingsImportState, show_onboarding_view()
 
 ### Community 160 - "Point"
 Cohesion: 0.03
-Nodes (38): consume_contiguous_rows(), ContextMenuPlacement, Above, Below, DisplayDiffHunk, Folded, Unfolded, DisplayRow (+30 more)
+Nodes (32): consume_contiguous_rows(), DisplayDiffHunk, Folded, Unfolded, DisplayRow, EditorSnapshot, EditorStyle, EditPredictionPreview (+24 more)
 
 ### Community 161 - "x11/client.rs"
-Cohesion: 0.03
-Nodes (65): Window, capslock_toggle_produces_uppercase(), check_compositor_present(), check_gtk_frame_extents_supported(), current_pointer_device_states(), detect_compositor_gpu(), DpiMode, NotSet (+57 more)
+Cohesion: 0.01
+Nodes (133): DEFAULT_CURSOR_ICON_NAME, log_cursor_icon_warning(), Window, Cursor, LoadedTheme, ResizeEdge, ResizeEdgeWaylandExt, capslock_toggle_produces_uppercase() (+125 more)
 
 ### Community 162 - "skill_creator.rs"
 Cohesion: 0.04
-Nodes (59): project_skills_relative_path(), BODY_FIELD_TAB_INDEX, derived_description_from_markdown(), derived_skill_name_from_url(), derived_skill_name_strips_markdown_extension_case_insensitively(), DESCRIPTION_FIELD_TAB_INDEX, DISABLE_MODEL_INVOCATION_TAB_INDEX, ensure_markdown_path() (+51 more)
+Nodes (56): project_skills_relative_path(), BODY_FIELD_TAB_INDEX, derived_description_from_markdown(), derived_skill_name_from_url(), derived_skill_name_strips_markdown_extension_case_insensitively(), DESCRIPTION_FIELD_TAB_INDEX, DISABLE_MODEL_INVOCATION_TAB_INDEX, ensure_markdown_path() (+48 more)
 
 ### Community 163 - "branch_picker.rs"
 Cohesion: 0.02
-Nodes (32): try_to_recover_from_device_lost(), check_can_show_windows(), check_device_lost(), encode_restart_arguments(), file_open_dialog(), file_save_dialog(), handle_gpu_device_lost(), has_package_identity() (+24 more)
+Nodes (37): DEFAULT_VIEWPORT_SIZE, check_can_show_windows(), check_device_lost(), encode_restart_arguments(), file_open_dialog(), file_save_dialog(), handle_gpu_device_lost(), has_package_identity() (+29 more)
 
 ### Community 164 - "debug_log.rs"
-Cohesion: 0.05
-Nodes (43): test_rollback_on_canceled_receiver(), BufferCodegen, CodegenAlternative, CodegenEvent, Finished, Undone, Diff, failure_tool_use() (+35 more)
+Cohesion: 0.06
+Nodes (46): test_rollback_on_canceled_receiver(), BufferCodegen, CodegenAlternative, CodegenEvent, Finished, Undone, Diff, FAILURE_MESSAGE_TOOL_NAME (+38 more)
 
 ### Community 165 - "FakeFs"
-Cohesion: 0.03
-Nodes (16): FakeFs, .SYSTEMTIME_INTERVAL, FakeFsEntry, Dir, File, Symlink, FakeFsState, FakeWatches (+8 more)
+Cohesion: 0.02
+Nodes (23): CreateOptions, FakeFs, .SYSTEMTIME_INTERVAL, FakeFsEntry, Dir, File, Symlink, FakeFsState (+15 more)
 
 ### Community 166 - "Stateful"
 Cohesion: 0.04
-Nodes (37): last_layout_key(), layout_as_str(), load_last_preview_layout(), parse_layout(), parse_shape(), PickerConfig, PICKERS_NAMESPACE, shape_key() (+29 more)
+Nodes (37): Stateful, last_layout_key(), layout_as_str(), load_last_preview_layout(), parse_layout(), parse_shape(), PickerConfig, PICKERS_NAMESPACE (+29 more)
 
 ### Community 167 - "remote_servers.rs"
-Cohesion: 0.04
-Nodes (18): CellControl, CellEvent, FocusedIn, Run, CellPosition, First, Last, Middle (+10 more)
+Cohesion: 0.03
+Nodes (42): assert_layer_languages(), Cell, Code, Markdown, Raw, CellControl, CellEvent, FocusedIn (+34 more)
 
 ### Community 168 - "Editor"
 Cohesion: 0.03
@@ -2978,183 +2759,179 @@ Cohesion: 0.40
 Nodes (4): TokenUsageRatio, Exceeded, Normal, Warning
 
 ### Community 170 - "OutlinePanel"
-Cohesion: 0.06
-Nodes (8): ActiveItem, Event, Focus, init(), OutlinePanel, SerializedOutlinePanel, subscribe_for_editor_events(), workspace_active_editor()
+Cohesion: 0.08
+Nodes (17): ActiveItem, CachedEntry, Dir, Event, Focus, FsChildren, ExternalFile, Excerpt (+9 more)
 
-### Community 171 - "node_runtime.rs"
-Cohesion: 0.02
-Nodes (107): AgentCliAppState, init(), AgentOutcome, Completed, Interrupted, Timeout, ANTHROPIC_AVAILABLE_MODELS_ENV, anthropic_available_models_override() (+99 more)
+### Community 171 - "zed/src/main.rs"
+Cohesion: 0.03
+Nodes (70): AgentOutcome, Completed, Interrupted, Timeout, ANTHROPIC_AVAILABLE_MODELS_ENV, anthropic_available_models_override(), anthropic_dated_model_id_matches_base(), anthropic_latest_alias_matches_listed_base_model() (+62 more)
 
 ### Community 172 - "policy.rs"
 Cohesion: 0.03
-Nodes (77): Access, Allow, Ask, Deny, AddressClass, LocalNetwork, Loopback, Public (+69 more)
+Nodes (76): Access, Allow, Ask, Deny, AddressClass, LocalNetwork, Loopback, Public (+68 more)
 
 ### Community 173 - "Picker"
-Cohesion: 0.03
-Nodes (79): BooleanHandler, display_url_segments(), display_url_segments_never_elide_url_characters(), display_url_segments_use_larger_url_boundaries(), ELICITATION_PATTERN_BACKTRACK_LIMIT, ELICITATION_PATTERN_COMPILED_SIZE_LIMIT, ELICITATION_PATTERN_DFA_SIZE_LIMIT, ElicitationCard (+71 more)
+Cohesion: 0.04
+Nodes (80): BooleanHandler, display_url_segments(), display_url_segments_never_elide_url_characters(), display_url_segments_use_larger_url_boundaries(), ELICITATION_PATTERN_BACKTRACK_LIMIT, ELICITATION_PATTERN_COMPILED_SIZE_LIMIT, ELICITATION_PATTERN_DFA_SIZE_LIMIT, ElicitationCard (+72 more)
 
 ### Community 174 - "tab_map.rs"
 Cohesion: 0.04
-Nodes (16): ChannelId, test_reorder_channels_independently_of_favorites(), test_reorder_favorite_channels_independently_of_channels(), ChannelEditingState, Create, Rename, ChannelMoveClipboard, CollabNotificationToast (+8 more)
+Nodes (12): ChannelEditingState, Create, Rename, CollabNotificationToast, CollabPanel, ContactContextMenu, DraggedChannelView, init() (+4 more)
 
 ### Community 175 - "metal_renderer.rs"
 Cohesion: 0.03
-Nodes (47): build_depth_stencil_state(), build_pipeline_state(), Context, display_link_mode_consumes_and_clears_drawables(), DisplayLinkMode, Attached, Detached, GlobalInputIndex (+39 more)
+Nodes (40): build_depth_stencil_state(), build_pipeline_state(), Context, display_link_mode_consumes_and_clears_drawables(), DisplayLinkMode, Attached, Detached, GlobalInputIndex (+32 more)
 
-### Community 176 - "add_multi_buffer_editor"
-Cohesion: 0.19
-Nodes (38): active_outline_panel(), add_diff_editor(), add_multi_buffer_editor(), assert_directory_paths(), assert_tree(), click_outline_row(), click_test_selection(), ClickTestRow (+30 more)
+### Community 176 - "PanelEntry"
+Cohesion: 0.11
+Nodes (18): assert_directory_paths(), click_outline_row(), click_test_selection(), ClickTestRow, CollapsedEntry, Excerpt, ExternalFile, File (+10 more)
 
 ### Community 177 - "Selection"
 Cohesion: 0.05
-Nodes (37): SelectMode, All, Character, Line, Word, serialize_selection(), coalesce_selections(), columnar_selection_batch_joins_different_starts_and_skips() (+29 more)
+Nodes (36): ColumnarSelectionRows, SelectMode, All, Character, Line, Word, coalesce_selections(), columnar_selection_batch_joins_different_starts_and_skips() (+28 more)
 
 ### Community 178 - "provider/bedrock.rs"
-Cohesion: 0.04
-Nodes (77): TasksIncluded, CompletedAndRunning, OnlyCompleted, ActiveTiming, begin_input_at(), clear_trace_buffers(), disabling_tracing_clears_frame_events(), draw_and_present() (+69 more)
+Cohesion: 0.05
+Nodes (70): begin_input_at(), clear_trace_buffers(), disabling_tracing_clears_frame_events(), draw_and_present(), DrawPhases, event_matches_window(), excludes_input_that_arrives_during_a_draw(), FRAME (+62 more)
 
 ### Community 179 - "branch_diff.rs"
 Cohesion: 0.04
-Nodes (13): LocalParticipant, RemoteParticipant, LiveKitRoom, LocalTrack, None, Pending, Published, Room (+5 more)
+Nodes (9): LocalParticipant, RemoteParticipant, LiveKitRoom, Room, RoomStatus, Offline, Online, Rejoining (+1 more)
 
 ### Community 180 - "WindowsWindow"
 Cohesion: 0.04
 Nodes (43): ChunkRenderer, ChunkRendererContext, ChunkRendererId, Fold, Inlay, consolidate_fold_edits(), consolidate_inlay_edits(), ElementId (+35 more)
 
 ### Community 181 - "inlay_map.rs"
-Cohesion: 0.05
-Nodes (31): DisplayPointConverter, Highlights, HighlightStyles, BufferOffsetToInlayPointCursor, create_inlay_highlights(), init_test(), InlayBufferRows, InlayChunks (+23 more)
+Cohesion: 0.04
+Nodes (44): create_highlight_endpoints(), CustomHighlightsChunks, CustomHighlightsChunks<'a>, HighlightEndpoint, test_random_chunk_bitmaps(), Highlights, HighlightStyles, BufferOffsetToInlayPointCursor (+36 more)
 
-### Community 183 - "ClientOperation"
+### Community 183 - "Theme"
 Cohesion: 0.07
-Nodes (28): ClientOperation, AcceptIncomingCall, AddWorktreeToProject, CloseBuffer, CloseRemoteProject, CreateWorktreeEntry, EditBuffer, GitOperation (+20 more)
+Nodes (16): CHILD_RADIUS, ThemePreviewStyle, Bordered, Borderless, SideBySide, ThemePreviewTile, .CHILD_BORDER, .ROOT_BORDER (+8 more)
 
-### Community 184 - "LlamaCppLanguageModelProvider"
-Cohesion: 0.09
-Nodes (17): authenticate_does_not_fetch_models_when_ai_is_disabled(), authenticate_fetches_models_after_loading_api_key(), capability_cells_update_when_a_model_loads(), CapabilityCells, compute_effective_models(), config_uses_live_capabilities_for_a_stable_model_id(), disables_model_event_stream_when_ai_is_disabled(), does_not_fetch_models_when_ai_is_disabled() (+9 more)
+### Community 184 - "provider/llama_cpp.rs"
+Cohesion: 0.02
+Nodes (91): add_message_content_part(), API_KEY_ENV_VAR, API_KEY_ENV_VAR_NAME, append_reasoning_content(), ASSUMED_UNLOADED_CONTEXT, authenticate_does_not_fetch_models_when_ai_is_disabled(), authenticate_fetches_models_after_loading_api_key(), build_llama_cpp_request() (+83 more)
 
-### Community 186 - "ProtoMessageHandlerSet"
-Cohesion: 0.03
-Nodes (24): Envelope, REMOTE_SERVER_PEER_ID, AnyTypedEnvelope, EntityMessage, EnvelopedMessage, .NAME, .PRIORITY, LspRequestMessage (+16 more)
+### Community 186 - "AnyProtoClient"
+Cohesion: 0.02
+Nodes (58): Client, LiveKitClient, admin_token_not_before_remains_unset(), assert_claims_timestamp(), ClaimGrants, create(), create_with_issued_at(), create_with_timestamp_source() (+50 more)
 
 ### Community 187 - "mermaid.rs"
 Cohesion: 0.08
-Nodes (53): ParsedSvg, MarkdownOptions, MERMAID_ZOOM_DEBOUNCE, MermaidZoomCallback, build_mermaid_theme(), CachedMermaidDiagram, draw_markdown_element(), ensure_theme_initialized() (+45 more)
+Nodes (51): ParsedSvg, MERMAID_ZOOM_DEBOUNCE, MermaidZoomCallback, build_mermaid_theme(), CachedMermaidDiagram, draw_markdown_element(), ensure_theme_initialized(), extract_mermaid_diagrams() (+43 more)
 
 ### Community 188 - "google_ai.rs"
-Cohesion: 0.03
-Nodes (98): completed_stream_emits_stop_once(), convert_usage(), GoogleEventMapper, incomplete_stream_reports_unexpected_end(), into_google(), into_google_nests_tool_result_images_in_function_response(), into_google_replays_signed_thinking_as_thought_text_part(), into_google_requests_thought_summaries_and_thinking_level() (+90 more)
-
-### Community 189 - "WasmState"
-Cohesion: 0.05
-Nodes (8): convert_request(), convert_response(), ExtensionHttpResponseStream, ExtensionKeyValueStore, ExtensionProject, github::GithubRelease, ::http_client::Method, WasmState
+Cohesion: 0.02
+Nodes (110): completed_stream_emits_stop_once(), convert_usage(), GoogleEventMapper, incomplete_stream_reports_unexpected_end(), into_google(), into_google_nests_tool_result_images_in_function_response(), into_google_replays_signed_thinking_as_thought_text_part(), into_google_requests_thought_summaries_and_thinking_level() (+102 more)
 
 ### Community 190 - "copilot_chat/src/responses.rs"
-Cohesion: 0.04
-Nodes (24): active_match_index(), assert_chunks_are_contiguous(), chunk_search_range_for_test(), compute_format_target(), deserialize_anchor(), deserialize_editor(), deserialize_path_excerpts_and_wait_for_anchors(), deserialize_selection() (+16 more)
+Cohesion: 0.03
+Nodes (51): ActiveDebugLine, FormatTarget, Buffers, assert_chunks_are_contiguous(), chunk_search_range(), chunk_search_range_for_test(), clip_ranges(), compute_format_target() (+43 more)
 
 ### Community 191 - "WorktreeStore"
-Cohesion: 0.05
-Nodes (19): ContextServerDescriptor, ContextServerDescriptorRegistryProxy, extension_project(), ExtensionProject, init(), WorktreeHandle, Strong, Weak (+11 more)
+Cohesion: 0.03
+Nodes (46): missing_parent_dirs(), ContextServerDescriptor, ContextServerDescriptorRegistryProxy, extension_project(), ExtensionProject, init(), DefaultPrettier, format_with_prettier() (+38 more)
 
 ### Community 192 - "GitPanel"
 Cohesion: 0.04
-Nodes (104): RestoreFile, GitCommitter, assert_editor_opened_with_path(), assert_entry_paths(), await_git_panel_entries(), BulkStaging, directory_index_for_repo_path(), discard_row() (+96 more)
+Nodes (90): assert_editor_opened_with_path(), assert_entry_paths(), await_git_panel_entries(), directory_index_for_repo_path(), discard_row(), entry_index_for_repo_path(), GIT_PANEL_KEY, GitPanelViewOptionsMenuState (+82 more)
 
 ### Community 193 - "ElicitationEntryId"
 Cohesion: 0.06
 Nodes (47): ElicitationRequested, Elicitation, elicitation_status_for_response(), ElicitationChange, Responded, Updated, ElicitationEntryId, ElicitationStatus (+39 more)
 
-### Community 195 - "MessageNotification"
-Cohesion: 0.04
-Nodes (26): AppNotifications, AutoHideFade, FadingIn, FadingOut, AutoHideState, dismiss_app_notification(), duration_progress(), markdown_style() (+18 more)
+### Community 195 - "NotificationId"
+Cohesion: 0.11
+Nodes (20): AppNotifications, dismiss_app_notification(), emit_language_server_prompt(), NotificationId, Composite, Named, Unique, show_app_notification() (+12 more)
 
 ### Community 196 - "State"
-Cohesion: 0.05
-Nodes (25): AgentSessionConfigOptions, AgentServer, config_defaults_wait_for_authoritative_response(), ConfigOptionPickerDelegate, ConfigOptionPickerEntry, Option, Separator, ConfigOptionSelector (+17 more)
+Cohesion: 0.04
+Nodes (37): AgentSessionConfigOptions, config_defaults_wait_for_authoritative_response(), config_option_search_matches_all_searchable_fields(), config_option_search_preserves_name_order_with_different_metadata(), config_option_search_ranks_names_before_metadata(), config_option_search_returns_more_than_one_hundred_matches(), ConfigOptionPickerDelegate, ConfigOptionPickerEntry (+29 more)
 
 ### Community 197 - "remote_host_panel.rs"
 Cohesion: 0.07
 Nodes (34): acp_thread::AgentSessionInfo, DataType, Json, Zstd, DbMessage, DbSummary, DbThread, .VERSION (+26 more)
 
-### Community 198 - "node_runtime.rs"
-Cohesion: 0.02
-Nodes (174): CodeLabel, labels_from_extension(), lsp_completion_to_extension(), symbol_kind_to_extension(), assert_bracket_pairs(), assert_has_syntax_errors(), c_lang(), color_index_for_open() (+166 more)
+### Community 198 - "syntax_map_tests.rs"
+Cohesion: 0.11
+Nodes (52): markdown_inline_lang(), assert_capture_ranges(), assert_language_range_count_at_text(), assert_language_range_count_at_text_offset(), assert_layers_for_range(), check_interpolation(), comment_lang(), elixir_lang() (+44 more)
 
 ### Community 199 - "zed.rs"
-Cohesion: 0.02
-Nodes (100): local_tasks_file_relative_path(), initial_project_settings_content(), MarkdownString, accessibility_tree_dump(), AI_ACTION_NAMESPACES, assert_key_bindings_for(), assert_workspace_item_paths(), bind_on_window_closed() (+92 more)
+Cohesion: 0.01
+Nodes (318): CliRequest, DebugState, Open, SetOpenBehavior, CliResponse, Exit, Ping, PromptOpenBehavior (+310 more)
 
 ### Community 200 - "dev_container/src/lib.rs"
 Cohesion: 0.06
-Nodes (100): allow_anchor_prevents_middle(), allow_exact_match(), allow_middle_pattern(), allow_no_match_confirms(), allow_no_match_global_allows(), allow_no_match_tool_allow_overrides_global_confirm(), allow_no_match_tool_confirm_overrides_global_allow(), allow_one_of_many_patterns() (+92 more)
+Nodes (96): allow_anchor_prevents_middle(), allow_exact_match(), allow_middle_pattern(), allow_no_match_confirms(), allow_no_match_global_allows(), allow_no_match_tool_allow_overrides_global_confirm(), allow_no_match_tool_confirm_overrides_global_allow(), allow_one_of_many_patterns() (+88 more)
 
 ### Community 201 - "BufferStore"
-Cohesion: 0.02
-Nodes (32): split_operations(), apply_initial_line_ending(), BufferStore, BufferStoreEvent, BufferAdded, BufferChangedFilePath, BufferDropped, SharedBufferClosed (+24 more)
+Cohesion: 0.03
+Nodes (26): apply_initial_line_ending(), BufferStore, BufferStoreEvent, BufferAdded, BufferChangedFilePath, BufferDropped, SharedBufferClosed, BufferStoreState (+18 more)
 
 ### Community 202 - "markdown/src/markdown.rs"
-Cohesion: 0.05
-Nodes (51): ChunkReplacement, Renderer, Str, chunks(), diagnostic_style(), DisplayMap, FoldStatus, Foldable (+43 more)
+Cohesion: 0.06
+Nodes (40): ChunkReplacement, Renderer, Str, chunks(), Companion, DisplayMap, FoldStatus, Foldable (+32 more)
 
 ### Community 203 - "policy.rs"
 Cohesion: 0.02
-Nodes (105): OutputTokensUpdate, LegacyAdd, Snapshot, Unchanged, AuthorizeToolCall, open_abs_path_at_point(), project_path_for_file_link(), SelectPermissionGranularity (+97 more)
+Nodes (98): OutputTokensUpdate, LegacyAdd, Snapshot, Unchanged, AuthorizeToolCall, open_abs_path_at_point(), project_path_for_file_link(), SelectPermissionGranularity (+90 more)
 
 ### Community 204 - "settings_content.rs"
 Cohesion: 0.04
-Nodes (27): EditPredictionOnboarding, Contact, ContactEventKind, Accepted, Cancelled, Requested, ContactRequestStatus, None (+19 more)
+Nodes (30): make_get_authenticated_user_response(), Contact, ContactEventKind, Accepted, Cancelled, Requested, ContactRequestStatus, None (+22 more)
 
 ### Community 205 - "worktree_picker.rs"
-Cohesion: 0.07
-Nodes (32): DeleteWorktreeTooltip, deleting_worktree_paths(), init_test(), init_worktree_picker_test(), open_remote_worktree(), picker_contains_worktree(), remove_worktree_command(), repo_contains_worktree() (+24 more)
+Cohesion: 0.08
+Nodes (29): create_new_list_item(), DeleteWorktreeTooltip, deleting_worktree_paths(), force_delete_prompt_for_worktree_remove_error(), init_test(), init_worktree_picker_test(), open_remote_worktree(), picker_contains_worktree() (+21 more)
 
 ### Community 206 - "event_coalescer.rs"
-Cohesion: 0.08
+Cohesion: 0.09
 Nodes (3): DebuggerProvider, DebugPanel, register_session_inner()
 
 ### Community 207 - "ReasoningEffort"
-Cohesion: 0.03
-Nodes (83): ACCEPTED_PREDICTION_MARKER, CURSOR_POSITION_HEADING, EDIT_HISTORY_HEADING, ExampleSpec, EXPECTED_PATCH_HEADING, FrontMatter, HumanFeedback, MAX_CURSOR_FILE_SIZE (+75 more)
+Cohesion: 0.04
+Nodes (62): test_encode_cursor_in_patch_is_idempotent(), test_expected_patches_with_cursor_positions(), resolve_hunk_edits_in_buffer(), apply_diff_to_string(), apply_diff_to_string_with_hunk_offset(), CURSOR_POSITION_MARKER, DiffEvent, FileEnd (+54 more)
 
 ### Community 208 - "HeadlessProject"
-Cohesion: 0.03
-Nodes (55): CliBehaviorSetting, ExistingWindow, NewWindow, anonymous_fd(), App, Args, Bundle, App (+47 more)
+Cohesion: 0.04
+Nodes (37): CliBehaviorSetting, ExistingWindow, NewWindow, anonymous_fd(), Args, collect_files(), create_empty_stub(), cwd() (+29 more)
 
 ### Community 209 - "conversation_view/elicitation.rs"
 Cohesion: 0.02
-Nodes (110): CenteredPaddingSettings, .DEFAULT_PADDING, .MAX_PADDING, .MIN_PADDING, InactiveOpacity, DockSide, Left, Right (+102 more)
+Nodes (111): CenteredPaddingSettings, .DEFAULT_PADDING, .MAX_PADDING, .MIN_PADDING, InactiveOpacity, DockSide, Left, Right (+103 more)
 
-### Community 210 - "CommandRange"
-Cohesion: 0.11
-Nodes (14): command_interceptor(), CommandRange, commands(), generate_commands(), generate_positions(), GoToLine, OnMatchingLines, ParsedQuery (+6 more)
+### Community 210 - "vim/src/command.rs"
+Cohesion: 0.03
+Nodes (78): HashMap, HashSet, TypeIdHashSet, CommandInterceptItem, CommandInterceptResult, CommandPaletteFilter, GlobalCommandPaletteInterceptor, init() (+70 more)
 
 ### Community 211 - "agent_settings.rs"
 Cohesion: 0.03
-Nodes (76): AutoCompactSettings, AutoCompactThreshold, .DEFAULT, Percentage, TokensRemaining, TokensUsed, check_hardcoded_security_rules(), COMPACTION_PROMPT (+68 more)
+Nodes (72): AgentSettings, AutoCompactSettings, AutoCompactThreshold, .DEFAULT, Percentage, TokensRemaining, TokensUsed, check_hardcoded_security_rules() (+64 more)
 
 ### Community 212 - "PathList"
-Cohesion: 0.07
-Nodes (27): AgentPanelEvent, ActiveViewChanged, ActiveViewFocused, EntryChanged, TerminalCloseRequested, ThreadInteracted, compose_terminal_thread_title(), DbOperation (+19 more)
+Cohesion: 0.03
+Nodes (46): AgentPanelEvent, ActiveViewChanged, ActiveViewFocused, EntryChanged, TerminalCloseRequested, ThreadInteracted, compose_terminal_thread_title(), DbOperation (+38 more)
 
 ### Community 213 - "synthesize.rs"
-Cohesion: 0.03
-Nodes (54): StageStatus, PartiallyStaged, Staged, Unstaged, DiffTarget, Staged, Uncommitted, Unstaged (+46 more)
+Cohesion: 0.04
+Nodes (45): StageStatus, PartiallyStaged, Staged, Unstaged, DiscardScope, All, Unstaged, DiscardTarget (+37 more)
 
 ### Community 214 - "BufferId"
 Cohesion: 0.02
-Nodes (43): assert_color_render_modes(), Editor, extract_color_inlays(), LspColorData, test_document_colors(), collect_runnable_labels(), Editor, RunnableData (+35 more)
+Nodes (57): COMMAND_HINT_INLAY_ID, SpawnNearestTask, assert_color_render_modes(), BufferColors, Editor, extract_color_inlays(), LspColorData, test_document_colors() (+49 more)
 
 ### Community 215 - "file_finder.rs"
 Cohesion: 0.05
-Nodes (22): buffer_range_for_line_range(), FileFinder, FileFinderDelegate, FileSearchQuery, FoundPath, full_path_budget(), init(), Match (+14 more)
+Nodes (26): buffer_range_for_line_range(), FileFinder, FileFinderDelegate, FileSearchQuery, FoundPath, full_path_budget(), init(), Match (+18 more)
 
 ### Community 216 - "CodegenAlternative"
 Cohesion: 0.02
-Nodes (112): CodeLens, Menu, Off, On, CompletionDetailAlignment, Left, Right, CompletionMenuItemKind (+104 more)
+Nodes (111): CodeLens, Menu, Off, On, CompletionDetailAlignment, Left, Right, CompletionMenuItemKind (+103 more)
 
 ### Community 217 - "arc"
-Cohesion: 0.05
+Cohesion: 0.06
 Nodes (27): agent_diff_renderer(), AgentDiff, AgentDiffAddon, AgentDiffGlobal, AgentDiffHunkRenderer, AgentDiffPane, AgentDiffToolbar, AgentDiffToolbarItem (+19 more)
 
 ### Community 218 - "fs_watcher.rs"
@@ -3162,68 +2939,64 @@ Cohesion: 0.04
 Nodes (112): assert_migrate_keymap(), assert_migrate_settings(), assert_migrate_with_migrations(), assert_migrated_correctly(), EDIT_PREDICTION_SETTINGS_MIGRATION_QUERY, define_query!, migrate(), migrate_edit_prediction_provider_settings() (+104 more)
 
 ### Community 219 - "t"
-Cohesion: 0.04
-Nodes (94): AnchorContractOp, BiasAnchor, ChangeBaseText, CreateAnchor, EditBuffer, RekeyPath, SwapDiff, ToggleSecondBuffer (+86 more)
+Cohesion: 0.03
+Nodes (98): DiskState, Deleted, Historic, New, Present, AnchorContractOp, BiasAnchor, ChangeBaseText (+90 more)
 
-### Community 220 - "OpenPathDelegate"
-Cohesion: 0.07
-Nodes (32): DirectoryState, Create, List, None, OpenPathDelegate, OpenPathPrompt, build_open_path_prompt(), collect_match_candidates() (+24 more)
+### Community 220 - "code_context_menus.rs"
+Cohesion: 0.02
+Nodes (106): candidates(), expected_values(), inputs(), model_search(), options(), OptionValue, SearchInput, ValidatedResults (+98 more)
 
 ### Community 221 - "terminal/src/terminal.rs"
-Cohesion: 0.07
-Nodes (11): close_dialog(), task_dialog_cancellation_requires_cancel_button_or_internal_request(), current_capslock(), current_modifiers(), get_frame_thicknessx(), handle_key_event(), notify_frame_changed(), WindowsWindowInner (+3 more)
+Cohesion: 0.05
+Nodes (27): current_capslock(), current_modifiers(), get_frame_thicknessx(), get_frame_thicknessy(), handle_key_event(), ImeContext, is_virtual_key_pressed(), notify_frame_changed() (+19 more)
 
-### Community 222 - "provider/anthropic.rs"
-Cohesion: 0.08
-Nodes (15): adaptive_mode_maps_to_adaptive_thinking_with_all_effort_levels(), AnthropicLanguageModelProvider, available_model_to_anthropic_model(), default_mode_disables_thinking(), direct_anthropic_explicit_compaction_uses_paused_completion(), direct_anthropic_supports_explicit_compaction_after_minimum_input(), direct_anthropic_test_model(), direct_anthropic_test_provider() (+7 more)
+### Community 222 - "src/modal.rs"
+Cohesion: 0.09
+Nodes (16): ContextProviderWithLspTaskSource, emulate_task_schedule(), MAX_TAGS_LINE_LEN, open_spawn_tasks(), Picker<TasksModalDelegate>, query(), ShowAttachModal, string_match_candidates() (+8 more)
 
 ### Community 223 - "DisassociationTrackingConnection"
-Cohesion: 0.04
-Nodes (13): DelayedSelectionAgentServer, DisassociationTrackingConnection, SerializedActiveThread, SessionTrackingConnection, worktree_info_from_thread_paths(), WorktreePaths, test_worktree_info_branch_names_for_linked_worktrees(), test_worktree_info_branch_names_for_main_worktrees() (+5 more)
+Cohesion: 0.07
+Nodes (4): DelayedSelectionAgentServer, DisassociationTrackingConnection, SessionTrackingConnection, test_reopening_visible_thread_keeps_thread_usable()
 
 ### Community 224 - "edit_prediction/src/edit_prediction_tests.rs"
 Cohesion: 0.02
 Nodes (113): ThemeColorField, Background, Border, BorderDisabled, BorderFocused, BorderSelected, BorderTransparent, BorderVariant (+105 more)
 
 ### Community 225 - "external-agents.md"
-Cohesion: 0.17
-Nodes (14): Agent Path vs. LLM Provider {#agent-path-vs-llm-provider}, Agents, Thread Types {#thread-types}, Migrating to Skills {#migrating-to-skills}, `.rules` Files {#rules-files}, Rules {#rules}, Text Threads, How It Differs from Other Agent Paths {#other-agent-paths} (+6 more)
+Cohesion: 0.12
+Nodes (22): Agent Path vs. LLM Provider {#agent-path-vs-llm-provider}, Agents, Thread Types {#thread-types}, Migrating to Skills {#migrating-to-skills}, `.rules` Files {#rules-files}, Rules {#rules}, Text Threads, How It Differs from Other Agent Paths {#other-agent-paths} (+14 more)
 
 ### Community 226 - "threads_archive_view.rs"
-Cohesion: 0.04
-Nodes (88): PredictEditsV3Request, PredictEditsV3Response, RawCompletionRequest, PredictEditsV4Request, PredictEditsV4Response, EDIT_PREDICTION_SETTLED_QUIESCENCE, REJECT_REQUEST_DEBOUNCE, REQUEST_TIMEOUT_BACKOFF (+80 more)
+Cohesion: 0.05
+Nodes (85): PredictEditsV3Request, PredictEditsV3Response, RawCompletionRequest, PredictEditsV4Request, PredictEditsV4Response, should_show_upsell_modal(), apply_collaborator_edit(), apply_edit_prediction() (+77 more)
 
 ### Community 227 - "auto_update_helper/src/dialog.rs"
 Cohesion: 0.05
-Nodes (12): ColumnarMode, FromMouse, FromSelection, DeferredSelectionEffectsState, SelectPhase, Begin, BeginColumnar, End (+4 more)
+Nodes (8): DeferredSelectionEffectsState, SelectionEffects, Option<Autoscroll>, Editor, SelectNextOrigin, Caret, Selection, MutableSelectionsCollection
 
 ### Community 228 - "livekit_client/src/test.rs"
 Cohesion: 0.04
-Nodes (26): LocalAudioTrack, LocalVideoTrack, RemoteAudioTrack, RemoteVideoTrack, assert_token_was_revoked(), ConnectionState, Connected, Disconnected (+18 more)
+Nodes (24): LocalAudioTrack, LocalVideoTrack, RemoteAudioTrack, RemoteVideoTrack, assert_token_was_revoked(), ConnectionState, Connected, Disconnected (+16 more)
 
 ### Community 229 - "settings_content/src/workspace.rs"
-Cohesion: 0.02
-Nodes (71): BedrockAdaptiveThinkingEffort, High, Low, Max, Medium, XHigh, BedrockModelCacheConfiguration, BedrockModelMode (+63 more)
+Cohesion: 0.03
+Nodes (53): ConverseModel, ClaudeFable5, ClaudeFable5_1, ClaudeHaiku4_5, ClaudeOpus4_1, ClaudeOpus4_5, ClaudeOpus4_6, ClaudeOpus4_7 (+45 more)
 
 ### Community 230 - "Copilot"
-Cohesion: 0.08
-Nodes (26): Copilot, CopilotServer, Disabled, Error, Running, Starting, Event, CopilotAuthSignedIn (+18 more)
-
-### Community 231 - "migrator.rs"
-Cohesion: 0.03
-Nodes (39): BlobReadGateState, FakeBlobReadGate, FakeCommitDataEntry, Fail, Success, FakeCommitSnapshot, FakeGitRepository, FakeGitRepositoryState (+31 more)
+Cohesion: 0.06
+Nodes (35): clear_copilot_dir(), Completion, CompletionSource, InlineCompletion, NextEditSuggestion, Copilot, copilot_lsp_native_binary_path(), CopilotEditPrediction (+27 more)
 
 ### Community 232 - "keystroke_input.rs"
 Cohesion: 0.04
-Nodes (109): extract_marker_span_allow_same(), apply_marker_span(), apply_marker_span_impl(), apply_marker_span_v0316(), apply_marker_span_v0317(), apply_marker_span_v0318(), collect_line_info(), collect_marker_tags() (+101 more)
+Nodes (111): extract_marker_span_allow_same(), apply_marker_span(), apply_marker_span_impl(), apply_marker_span_v0316(), apply_marker_span_v0317(), apply_marker_span_v0318(), collect_line_info(), collect_marker_tags() (+103 more)
 
 ### Community 234 - "agent_settings.rs"
-Cohesion: 0.04
-Nodes (99): build_tarball(), check_for_existing_container_errors_when_multiple_match(), compose_fragment_declares_name(), compose_fragment_declares_name_detects_top_level_name_key(), ComposeUpBehavior, Create, Resume, DEFAULT_REMOTE_PROJECT_DIR (+91 more)
-
-### Community 235 - "language_model_core.rs"
 Cohesion: 0.03
-Nodes (66): AuthenticateError, ConnectionRefused, CredentialsNotFound, Other, category_from_cloud_failure(), CompactionUpdate, Failed, Finished (+58 more)
+Nodes (138): DevContainerError, CommandFailed, ContainerNotValid, DevContainerNotFound, DevContainerParseFailed, DevContainerScriptsFailed, DevContainerTemplateApplyFailed, DevContainerValidationFailed (+130 more)
+
+### Community 235 - "editorconfig_store.rs"
+Cohesion: 0.06
+Nodes (20): apply_relevant_properties(), Editorconfig, EditorconfigEvent, ExternalConfigChanged, EditorconfigProperties, EditorconfigStore, EditorconfigWorktreeState, test_nested_config_overrides_and_irrelevant_keys() (+12 more)
 
 ### Community 236 - "KeyValueStore"
 Cohesion: 0.04
@@ -3235,195 +3008,199 @@ Nodes (26): domain_target(), http_connect_completes_on_200_and_preserves_leftove
 
 ### Community 238 - "livekit_client/src/test.rs"
 Cohesion: 0.07
-Nodes (14): BackgroundExecutor, box_dedicated(), DedicatedExecutor, Spawned, LocalExecutor, SendLocalExecutor, spawn_local_with_source_location(), RunnableMeta (+6 more)
+Nodes (17): BackgroundExecutor, box_dedicated(), DedicatedExecutor, Spawned, LocalExecutor, SendLocalExecutor, spawn_local_with_source_location(), TaskState (+9 more)
 
 ### Community 239 - "copilot/src/request.rs"
 Cohesion: 0.05
-Nodes (46): syntax_overrides(), adjust_agent_buffer_font_size(), adjust_agent_ui_font_size(), adjust_buffer_font_size(), adjust_git_commit_buffer_font_size(), adjust_markdown_preview_font_size(), adjust_ui_font_size(), adjusted_font_size() (+38 more)
+Nodes (51): syntax_overrides(), adjust_agent_buffer_font_size(), adjust_agent_ui_font_size(), adjust_buffer_font_size(), adjust_git_commit_buffer_font_size(), adjust_markdown_preview_font_size(), adjust_ui_font_size(), adjusted_font_size() (+43 more)
 
-### Community 240 - "key_dispatch.rs"
-Cohesion: 0.12
-Nodes (32): capture_observed_keystrokes(), dispatch_altgr_key_down(), ObservedKeystroke, PendingInputTestView, PendingInputTimeoutPauseOwner, query_prefers_ime_for_printable_keys(), setup_altgr_test(), setup_pending_input_test() (+24 more)
+### Community 240 - "tabular_data_preview/src/parser.rs"
+Cohesion: 0.08
+Nodes (38): compact_json(), create_table_row(), editor_file_extension(), from_buffer_with_delimiter(), from_json_lines(), parse_delimited_text_with_positions(), REPARSE_DEBOUNCE, snapshot() (+30 more)
 
 ### Community 242 - "TableView"
-Cohesion: 0.04
-Nodes (39): format_performance_metrics(), TableView, TableView, TableView, append_dev_only_entries(), settings_popover_menu(), toggle_entry(), create_table_cell() (+31 more)
+Cohesion: 0.07
+Nodes (22): format_performance_metrics(), TableView, CellSelection, dispatch(), PerformanceMetrics, selection_bounds(), selection_cells(), setup_test_view() (+14 more)
 
 ### Community 243 - "SshRemoteConnection"
 Cohesion: 0.05
-Nodes (24): bracket_ipv6(), build_command_windows(), command_output(), command_output_drains_output_while_writing_input(), command_output_preserves_stderr_when_input_fails(), environment_posix_probe_retries_when_stdin_is_consumed(), find_existing_control_master(), ignores_os_version_when_query_fails() (+16 more)
+Nodes (25): command_output(), command_output_drains_output_while_writing_input(), command_output_preserves_stderr_when_input_fails(), environment_posix_probe_retries_when_stdin_is_consumed(), find_existing_control_master(), ignores_os_version_when_query_fails(), MasterProcess, .CONNECTION_ESTABLISHED_MAGIC (+17 more)
 
 ### Community 244 - "settings_content/src/editor.rs"
 Cohesion: 0.02
-Nodes (25): Args, init_log(), main(), parse_args(), run(), show_error(), test_parse_args(), test_parse_args_preserves_launch_arguments() (+17 more)
+Nodes (24): Args, init_log(), main(), parse_args(), run(), show_error(), test_parse_args(), test_parse_args_preserves_launch_arguments() (+16 more)
 
 ### Community 245 - "ThemeColorField"
-Cohesion: 0.04
-Nodes (77): collect_local(), collect_remote(), detect_conflict(), download_to(), ensure_remote_dir(), fetch_for_compare(), local_meta(), LocalMeta (+69 more)
+Cohesion: 0.05
+Nodes (60): collect_remote(), detect_conflict(), download_to(), local_meta(), LocalMeta, remember(), same_time(), sha1_bytes() (+52 more)
 
-### Community 246 - "src/lsp_store.rs"
-Cohesion: 0.02
-Nodes (125): buffer_diagnostic_identifier(), ChunkFetch, Cached, Running, compile_document_filter_glob(), compiled_selector(), CompiledDocumentFilter, CompiledDocumentSelector (+117 more)
+### Community 246 - "lsp_store/semantic_tokens.rs"
+Cohesion: 0.06
+Nodes (23): SemanticTokenHighlight, buffer_into_editor_highlights(), convert_token(), applies_delta_edit(), applies_out_of_bounds_delta_edit_without_panic(), debug_parse_tokens(), extract_semantic_tokens(), LspStore (+15 more)
 
 ### Community 247 - "TextFinder"
-Cohesion: 0.08
-Nodes (11): QuerySeed, Query, Text, load_last_search(), query_language_name(), remove_project_search_tab(), TextFinder, SearchSeed (+3 more)
+Cohesion: 0.07
+Nodes (17): QuerySeed, Query, Text, init(), init_test(), load_last_search(), query_language_name(), remove_project_search_tab() (+9 more)
 
-### Community 248 - ".new_internal"
-Cohesion: 0.03
-Nodes (26): Direction, Next, Prev, AccentData, BreadcrumbsVisibility, BufferSerialization, All, NonDirtyBuffers (+18 more)
+### Community 248 - "editor/src/editor.rs"
+Cohesion: 0.01
+Nodes (107): Direction, Next, Prev, ActiveDiagnostic, All, Group, None, InlineDiagnostic (+99 more)
 
 ### Community 249 - "Room"
-Cohesion: 0.03
-Nodes (123): extract_commands(), extract_commands_from_parameter_expr(), extract_commands_from_program(), extract_commands_from_word_piece(), extract_commands_from_word_string(), TerminalCommandValidation, Safe, Unsafe (+115 more)
+Cohesion: 0.04
+Nodes (101): extract_commands(), test_and_operator(), test_append_output_and_error_redirect(), test_append_output_and_error_redirect_to_dev_null_skipped(), test_append_redirect_to_dev_null_skipped(), test_arithmetic_expansion_doubly_nested_command_substitution(), test_arithmetic_expansion_inside_double_quotes(), test_arithmetic_expansion_nested_backtick_substitution() (+93 more)
 
-### Community 250 - "KeyBinding"
-Cohesion: 0.03
-Nodes (62): whitespace_map, space, tab, key_to_menu_equivalent(), is_no_action(), is_unbind(), Unbind, binding_is_unbound() (+54 more)
+### Community 250 - "src/keymap.rs"
+Cohesion: 0.09
+Nodes (34): whitespace_map, space, tab, is_no_action(), is_unbind(), Unbind, binding_is_unbound(), BindingIndex (+26 more)
 
 ### Community 251 - "context_server/src/types.rs"
-Cohesion: 0.06
-Nodes (54): BlobResourceContents, CallToolParams, ClientCapabilities, CompletionArgument, CompletionCompleteParams, CompletionCompleteResponse, CompletionContext, CompletionReference (+46 more)
+Cohesion: 0.10
+Nodes (25): CompletionArgument, CompletionCompleteParams, CompletionContext, LATEST_PROTOCOL_VERSION, ListResourceTemplatesResponse, notification!, request!, ModelHint (+17 more)
 
-### Community 252 - "SecretModal"
-Cohesion: 0.18
-Nodes (3): SecretAnswer, SecretRequest, SecretModal
+### Community 252 - "reorder_patch.rs"
+Cohesion: 0.10
+Nodes (36): apply_edits(), count_lines(), DiffStats, EditType, Deletion, Insertion, extract_edits(), Hunk (+28 more)
 
 ### Community 253 - "TerminalBackendEvent"
 Cohesion: 0.10
 Nodes (17): ClipboardFormatter, ColorFormatter, TerminalBackendEvent, Bell, ClipboardLoad, ClipboardStore, ColorRequest, CursorBlinkingChange (+9 more)
 
-### Community 254 - "gpui_windows/src/system_notifications.rs"
-Cohesion: 0.12
-Nodes (4): register_app_user_model_id(), ResponseCallback, SystemNotificationState, toast_document()
+### Community 254 - "PromptLevel"
+Cohesion: 0.07
+Nodes (16): opaque_grey(), PromptButton, Cancel, Other, PromptLevel, Critical, Info, Warning (+8 more)
 
 ### Community 255 - "handshake.rs"
-Cohesion: 0.04
-Nodes (69): GotoDefinitionKind, Declaration, Implementation, Symbol, Type, assert_inlay_hint_acceptance_available(), DefinitionLocations, document_link_target_to_hover_link() (+61 more)
+Cohesion: 0.03
+Nodes (84): GotoDefinitionKind, Declaration, Implementation, Symbol, Type, assert_inlay_hint_acceptance_available(), DefinitionLocations, document_link_target_to_hover_link() (+76 more)
 
 ### Community 256 - "VsCodeSettings"
-Cohesion: 0.07
-Nodes (3): skip_default(), translate_vscode_window_title_format(), VsCodeSettings
+Cohesion: 0.05
+Nodes (20): imported_reduce_motion(), imported_soft_wrap_indent(), skip_default(), test_import_command_palette_history(), test_import_disabled_globs_extends_inherited_patterns(), test_import_disabled_globs_omits_empty_results(), test_import_file_exclusions(), test_import_file_exclusions_without_usable_patterns() (+12 more)
 
-### Community 257 - "pull_examples.rs"
-Cohesion: 0.06
-Nodes (56): sort_examples_by_repo_and_rev(), load_examples(), MIN_CAPTURE_VERSION, accepted_examples_from_response(), build_accepted_example(), build_captured_example(), build_cursor_position(), build_example_from_snowflake() (+48 more)
-
-### Community 258 - "Window"
+### Community 257 - "tasks_ui.rs"
 Cohesion: 0.10
-Nodes (15): copy_branch_name(), create_tag_at_commit(), create_tag_at_head(), CreateTagModal, file_diff_entry(), git_status_icon(), GitStatusIcon, init() (+7 more)
+Nodes (44): TaskOverrides, apply_rerun_overrides(), assert_global_task_spawned_in_project_root(), assert_reevaluated_rerun_in_project_root(), assert_task_spawned_by_name_in_project_root(), GLOBAL_TASKS_JSON, init(), init_project_with_worktree_task() (+36 more)
+
+### Community 258 - "FocusHandle"
+Cohesion: 0.01
+Nodes (178): nav_button(), SEARCH_UPDATE_DEBOUNCE, ToolCallEntry, announcement_for_version(), AnnouncementContent, AnnouncementToastNotification, DeltaAnnouncement, .KEY (+170 more)
 
 ### Community 259 - "SplittableEditor"
 Cohesion: 0.05
-Nodes (44): C0_SYMBOLS, DEL, FIXED_WIDTH_SPACE, IDEOGRAPHIC_SPACE, is_format_or_other_invisible_character(), is_invisible(), is_standalone_grapheme(), replacement() (+36 more)
+Nodes (43): C0_SYMBOLS, DEL, FIXED_WIDTH_SPACE, IDEOGRAPHIC_SPACE, is_format_or_other_invisible_character(), is_invisible(), is_standalone_grapheme(), replacement() (+35 more)
 
-### Community 260 - "provider/x_ai.rs"
-Cohesion: 0.09
-Nodes (9): default_thinking_reasoning_effort(), grok_43_request_uses_none_when_thinking_is_disabled(), grok_43_request_uses_selected_reasoning_effort(), grok_43_supports_selectable_thinking_effort_levels(), language_model(), reasoning_effort_for_request(), supported_thinking_effort_levels(), x_ai_reasoning_efforts() (+1 more)
+### Community 260 - "rust_lang"
+Cohesion: 0.08
+Nodes (48): init_settings(), test_async_autoindents_preserve_preview(), test_autoindent_adjusts_lines_when_only_text_changes(), test_autoindent_block_mode(), test_autoindent_block_mode_multiple_adjacent_ranges(), test_autoindent_block_mode_with_hard_tabs(), test_autoindent_block_mode_with_newline(), test_autoindent_block_mode_without_original_indent_columns() (+40 more)
+
+### Community 261 - "NotebookEditor"
+Cohesion: 0.06
+Nodes (5): init(), NotebookEditor, NotebookItem, test_run_cell_with_missing_interpreter_shows_error(), test_save_goes_through_the_project()
 
 ### Community 262 - "agent_ui/src/config_options.rs"
 Cohesion: 0.05
-Nodes (63): SandboxPermissions, DbSandboxGrants, all_access_covers_any_concrete_write(), any_host_grant_covers_specific_and_any_host(), covers(), db_form_drops_unparsable_persisted_hosts(), db_form_preserves_any_host_and_write_all(), effective() (+55 more)
+Nodes (62): SandboxPermissions, DbSandboxGrants, all_access_covers_any_concrete_write(), any_host_grant_covers_specific_and_any_host(), covers(), db_form_drops_unparsable_persisted_hosts(), db_form_preserves_any_host_and_write_all(), effective() (+54 more)
 
 ### Community 263 - "Formatter"
 Cohesion: 0.02
-Nodes (80): AlternateScroll, Off, On, CursorShapeContent, Bar, Block, Hollow, Underline (+72 more)
+Nodes (80): LanguageModelParameters, LanguageModelProviderSetting, AccentContent, BufferLineHeight, Comfortable, Custom, Standard, CodeFade (+72 more)
 
 ### Community 264 - "examples/end_to_end.rs"
-Cohesion: 0.07
-Nodes (63): assert_batch_points(), assert_plain_rows(), assert_row_boundaries(), BoundaryCursor, BoundaryQuery, Check, Next, Previous (+55 more)
+Cohesion: 0.08
+Nodes (59): assert_batch_points(), assert_plain_rows(), assert_row_boundaries(), BoundaryCursor, BoundaryQuery, Check, Next, Previous (+51 more)
 
 ### Community 265 - "project_diff.rs"
 Cohesion: 0.05
-Nodes (64): frame_cost(), a_hang_outliving_the_frame_deadline_keeps_its_frame_association(), a_journal_gap_suppresses_budget_inference_but_retains_observed_hangs(), a_slow_frame_with_little_foreground_spend_is_not_an_incident(), active_use_counts_time_within_a_minute_of_deliberate_input(), ACTIVE_USE_WINDOW, ActiveUse, an_interval_of_small_work_over_budget_is_an_incident() (+56 more)
+Nodes (59): frame_cost(), a_hang_outliving_the_frame_deadline_keeps_its_frame_association(), a_journal_gap_suppresses_budget_inference_but_retains_observed_hangs(), a_slow_frame_with_little_foreground_spend_is_not_an_incident(), active_use_counts_time_within_a_minute_of_deliberate_input(), ACTIVE_USE_WINDOW, ActiveUse, an_interval_of_small_work_over_budget_is_an_incident() (+51 more)
 
 ### Community 266 - "github-community-pr-board.py"
 Cohesion: 0.05
-Nodes (74): closing_issues_in_repository(), compute_contributor(), compute_signals(), compute_size_bucket(), connection_nodes(), count_interested_people(), current_field_values(), engaged_users() (+66 more)
+Nodes (78): closing_issues_in_repository(), compute_contributor(), compute_signals(), compute_size_bucket(), connection_nodes(), count_interested_people(), current_field_values(), engaged_users() (+70 more)
 
-### Community 267 - "vercel_ai_gateway.rs"
-Cohesion: 0.08
-Nodes (6): language_model(), PROVIDER_ID, PROVIDER_NAME, restart_fetch_models_task_records_error_on_failure(), State, VercelAiGatewayLanguageModelProvider
+### Community 267 - "Rope"
+Cohesion: 0.10
+Nodes (8): clip_offset(), Cursor<'a>, Rope, test_all_4_byte_chars(), test_random_rope(), is_line_end(), is_line_start(), LineDiff
 
 ### Community 268 - "split.rs"
 Cohesion: 0.04
-Nodes (52): Match, test_split_words(), test_split_words_for_snippet_prefix(), assert_split_content(), assert_split_content_with_widths(), buffer_range_to_base_text_range(), buffer_with_diff(), DiffStyleControls (+44 more)
+Nodes (54): Match, test_split_words(), test_split_words_for_snippet_prefix(), assert_split_content(), assert_split_content_with_widths(), buffer_range_to_base_text_range(), buffer_with_diff(), DiffStyleControls (+46 more)
 
 ### Community 269 - "src/debugger_panel.rs"
-Cohesion: 0.04
+Cohesion: 0.05
 Nodes (93): bad_request_errors_do_not_claim_sandboxing_is_unavailable(), build_bwrap_args(), bwrap_allows_network_when_requested(), bwrap_binds_explicit_writable_file_paths(), bwrap_blocks_wsl_interop_by_default(), bwrap_blocks_wsl_interop_even_with_fs_write(), bwrap_denies_network_by_default(), bwrap_does_not_forward_windows_specific_env() (+85 more)
 
 ### Community 270 - "v2.rs"
 Cohesion: 0.03
-Nodes (102): AutoFetchSettingsContent, BinarySettings, BlameSettings, BranchPickerSettingsContent, CommitViewSettingsContent, ContextServerCommand, ContextServerSettingsContent, Extension (+94 more)
+Nodes (95): AutoFetchSettingsContent, BinarySettings, BlameSettings, BranchPickerSettingsContent, CommitViewSettingsContent, ContextServerCommand, ContextServerSettingsContent, Extension (+87 more)
 
-### Community 271 - "collab/src/db.rs"
-Cohesion: 0.03
-Nodes (32): Contact, Accepted, Incoming, Outgoing, DatabaseTestOptions, db_status_to_proto(), ExtensionVersionConstraints, Invite (+24 more)
+### Community 271 - "Project"
+Cohesion: 0.08
+Nodes (16): Contact, Accepted, Incoming, Outgoing, LanguageServer, LeftProject, LeftRoom, LocalSettingsKind (+8 more)
 
 ### Community 272 - "gpui_windows/src/dispatcher.rs"
-Cohesion: 0.05
-Nodes (78): absolute_docs_url(), add_llms_markdown_directive(), add_markdown_alternate_link(), copy_markdown_sources(), docs_page_description(), docs_page_metadata(), docs_pages(), docs_path() (+70 more)
+Cohesion: 0.06
+Nodes (47): ActionDef, ActionManifest, actions_available(), ALL_ACTIONS, chapter_breadcrumbs(), find_action_by_name(), find_binding(), find_binding_in_keymap() (+39 more)
 
 ### Community 273 - "insert_crease_for_mention"
-Cohesion: 0.04
-Nodes (27): Database, JoinRoom, LeftProject, LeftRoom, Database, Database, TransactionGuard, TransactionGuard<T> (+19 more)
+Cohesion: 0.06
+Nodes (11): db_status_to_proto(), Capability, ReadOnly, ReadWrite, JoinRoom, proto_status_to_db(), Database, Database (+3 more)
 
-### Community 274 - "OpenRouterLanguageModelProvider"
-Cohesion: 0.07
-Nodes (7): language_model(), OpenRouterLanguageModelProvider, PROVIDER_ID, PROVIDER_NAME, restart_fetch_models_task_records_error_on_failure(), State, Model
+### Community 274 - "provider/open_router.rs"
+Cohesion: 0.02
+Nodes (131): ResponseStreamEvent, add_message_content_part(), API_KEY_ENV_VAR, API_KEY_ENV_VAR_NAME, cache_control(), into_open_router(), language_model(), open_router_session_id() (+123 more)
 
 ### Community 275 - "playback.rs"
-Cohesion: 0.04
-Nodes (21): NEXT_WAYLAND_SHARE_ID, PIPEWIRE_TIMEOUT_S, start_wayland_desktop_capture(), WaylandScreenCaptureStream, _AssertSend, AudioMixerSource, AudioStack, AudioStream (+13 more)
+Cohesion: 0.06
+Nodes (14): NEXT_WAYLAND_SHARE_ID, PIPEWIRE_TIMEOUT_S, _AssertSend, CoreAudioDefaultDeviceChangeListener, create_buffer_pool(), DeviceChangeListener, DeviceChangeListenerApi, NoopOutputDeviceChangelistener (+6 more)
 
 ### Community 276 - "Editor"
-Cohesion: 0.12
-Nodes (3): Editor, .EDIT_PREDICTION_POPOVER_PADDING_X, .EDIT_PREDICTION_POPOVER_PADDING_Y
+Cohesion: 0.05
+Nodes (30): all_edits_insertions_or_deletions(), edit_prediction_edit_text(), edit_prediction_fallback_text(), EditDisplayMode, DiffPopover, Inline, TabAccept, Editor (+22 more)
 
 ### Community 277 - "provider/cloud.rs"
 Cohesion: 0.05
-Nodes (18): ClientTokenProvider, CloudLanguageModelProvider, ConfigurationView, init_test(), override_authenticate(), provided_models_surface_disabled_reason(), provider_authenticate_does_not_start_sign_in_when_signed_out(), provider_authenticate_returns_error_when_sign_in_fails() (+10 more)
+Nodes (21): Credentials, ClientTokenProvider, CloudLanguageModelProvider, ConfigurationView, init_test(), MODELS_REFRESH_DEBOUNCE, override_authenticate(), provided_models_surface_disabled_reason() (+13 more)
 
 ### Community 278 - "InvalidSettingsError"
 Cohesion: 0.06
 Nodes (52): add_vscode_user_data_paths(), agents_file(), APP_NAME, APP_NAME_LOWERCASE, CONFIG_DIR, config_dir(), copilot_dir(), crashes_dir() (+44 more)
 
 ### Community 279 - "TransportDelegate"
-Cohesion: 0.03
-Nodes (63): case_group_key(), compare_lowercase(), compare_numeric_segments(), compare_paths(), compare_paths_case_semi_sensitive(), compare_paths_with_dots(), compare_paths_with_same_name_different_extensions(), compare_rel_paths() (+55 more)
+Cohesion: 0.02
+Nodes (80): path_to_string(), Arc<SanitizedPath>, case_group_key(), compare_lowercase(), compare_numeric_segments(), compare_paths(), compare_paths_case_semi_sensitive(), compare_paths_mixed_case_numeric_ordering() (+72 more)
 
-### Community 280 - "line.rs"
-Cohesion: 0.11
-Nodes (34): StrikethroughStyle, TextAlign, Center, Left, Right, UnderlineStyle, aligned_origin_x(), assert_underline_primitives_eq() (+26 more)
+### Community 280 - "agent_ui"
+Cohesion: 0.18
+Nodes (49): acp_thread, action_log, agent, agent_servers, agent_settings, agent_skills, agent_ui, buffer_diff (+41 more)
 
 ### Community 281 - "windows_wsl.rs"
 Cohesion: 0.08
-Nodes (24): Command, CommandPalette, CommandPaletteDelegate, CommandUsage, init(), init_test(), normalize_action_query(), open_palette_with_history() (+16 more)
+Nodes (25): Command, CommandPalette, CommandPaletteDelegate, CommandUsage, init(), init_test(), normalize_action_query(), open_palette_with_history() (+17 more)
 
 ### Community 282 - "hashed_regions.rs"
-Cohesion: 0.07
-Nodes (65): build_prompt(), push_delimited(), assemble_patch_from_edits(), assign_tags(), BASE64_URL_SAFE_ALPHABET, build_editable_marker_table(), build_marker_table(), build_marker_table_with_filter() (+57 more)
+Cohesion: 0.06
+Nodes (66): assemble_patch_from_edits(), assign_tags(), BASE64_URL_SAFE_ALPHABET, build_editable_marker_table(), build_marker_table(), build_marker_table_with_filter(), build_patch_from_spans(), common_prefix_suffix() (+58 more)
 
 ### Community 283 - "gpui_windows/src/clipboard.rs"
-Cohesion: 0.05
-Nodes (17): build_buffer(), build_buffer_diff(), CommitDiffAddon, CommitView, CommitViewToolbar, folded_files(), GitBlob, init() (+9 more)
+Cohesion: 0.04
+Nodes (27): CommitFileStatus, Added, Deleted, Modified, build_buffer(), build_buffer_diff(), CommitDiffAddon, CommitView (+19 more)
 
 ### Community 284 - "channel_view.rs"
 Cohesion: 0.04
-Nodes (60): MetalDisplayLinkDelegate, MetalDisplayLinkDelegateIvars, MetalFrameSource, CVDisplayLink, CVDisplayLinkCreateWithActiveCGDisplays(), CVDisplayLinkOutputCallback, CVDisplayLinkRelease(), CVDisplayLinkRetain() (+52 more)
+Nodes (58): CVDisplayLink, CVDisplayLinkCreateWithActiveCGDisplays(), CVDisplayLinkOutputCallback, CVDisplayLinkRelease(), CVDisplayLinkRetain(), CVDisplayLinkSetCurrentCGDisplay(), CVDisplayLinkSetOutputCallback(), CVDisplayLinkStart() (+50 more)
 
-### Community 285 - "Subscription"
-Cohesion: 0.07
-Nodes (11): Context, Context<'a, T>, Context<'_, T>, invoke_listener(), invoke_observer(), invoke_observer_in(), invoke_subscriber(), invoke_subscriber_in() (+3 more)
+### Community 285 - "Context<'a, T>"
+Cohesion: 0.19
+Nodes (3): Context, Context<'a, T>, invoke_listener()
 
 ### Community 286 - "src/anthropic.rs"
-Cohesion: 0.02
-Nodes (172): AdaptiveThinkingDisplay, Omitted, Summarized, ANTHROPIC_API_URL, AnthropicError, ApiError, BuildRequestBody, DeserializeResponse (+164 more)
+Cohesion: 0.01
+Nodes (220): AdaptiveThinkingDisplay, Omitted, Summarized, ANTHROPIC_API_URL, AnthropicError, ApiError, BuildRequestBody, DeserializeResponse (+212 more)
 
 ### Community 287 - "settings_content/src/theme.rs"
-Cohesion: 0.06
-Nodes (16): SELECT_DEBUGGER_LABEL, SharedString, UNKNOWN_BYTE, DapEntry, Scope, Variable, Watcher, EntryColors (+8 more)
+Cohesion: 0.05
+Nodes (18): SELECT_DEBUGGER_LABEL, suggested_label(), SharedString, DraggedTabPreview, UNKNOWN_BYTE, DapEntry, Scope, Variable (+10 more)
 
 ### Community 288 - "BufferId"
 Cohesion: 0.04
@@ -3435,75 +3212,79 @@ Nodes (58): absolute_path_mention(), bare_path_target(), decode_path_escapes(), 
 
 ### Community 290 - "path_link.rs"
 Cohesion: 0.05
-Nodes (51): HoveredWord, PathLikeTarget, WithLineAndId, hover_path_like_target(), init_test(), issue_28339(), issue_28339_remote(), issue_28407_nesting() (+43 more)
+Nodes (50): HoveredWord, PathLikeTarget, WithLineAndId, hover_path_like_target(), init_test(), issue_28339(), issue_28339_remote(), issue_28407_nesting() (+42 more)
 
 ### Community 291 - "src/image_store.rs"
-Cohesion: 0.04
-Nodes (73): compile_metal_shaders(), emit_stitched_shaders(), find_gpui_crate_dir(), generate_shader_bindings(), main(), run(), absolute_file_iri(), alacritty_bugs_with_two_columns() (+65 more)
+Cohesion: 0.05
+Nodes (67): absolute_file_iri(), alacritty_bugs_with_two_columns(), build_term_from_test_lines(), build_test_term(), cargo_hyperlink_benchmark(), CheckHyperlinkMatch, CheckHyperlinkMatch<'a>, colons_galore() (+59 more)
 
 ### Community 292 - "broker.rs"
 Cohesion: 0.05
-Nodes (32): norm_remote(), Auth, Basic, Digest, None, body_stream(), Chunks, cnonce() (+24 more)
+Nodes (38): connect(), Auth, Basic, Digest, None, body_stream(), ChallengeParams, CHUNK (+30 more)
 
 ### Community 293 - "VariableList"
-Cohesion: 0.03
-Nodes (105): collect_image_alt_text(), task_list_marker_for_item(), test_collect_image_alt_text(), test_table_checkbox_detection(), test_task_list_marker_for_item(), assert_code_block_does_not_emit_links(), build_footnote_definitions(), build_heading_slugs() (+97 more)
+Cohesion: 0.04
+Nodes (77): test_table_checkbox_detection(), assert_code_block_does_not_emit_links(), build_footnote_definitions(), build_heading_slugs(), CodeBlockKind, Fenced, FencedLang, FencedSrc (+69 more)
 
 ### Community 294 - "delegate.rs"
 Cohesion: 0.06
-Nodes (28): SearchResults, SearchResult, Buffer, LimitReached, Searching, WaitingForScan, Delegate, Entry (+20 more)
+Nodes (33): CLICK_THRESHOLD, Delegate, DOUBLE_CLICK_THRESHOLD, Entry, Header, Match, Separator, get_ongoing_search() (+25 more)
 
 ### Community 295 - "inline_assistant.rs"
 Cohesion: 0.04
-Nodes (60): AddFd, Broker, IOPRIO_WHO_PGRP, IOPRIO_WHO_PROCESS, is_controlling_terminal_device(), is_deleted(), is_directory_entry(), NotificationResponse (+52 more)
+Nodes (73): AddFd, Broker, handle(), IOPRIO_WHO_PGRP, IOPRIO_WHO_PROCESS, is_controlling_terminal_device(), is_deleted(), is_directory_entry() (+65 more)
 
 ### Community 296 - "TransactionGuard"
-Cohesion: 0.07
-Nodes (52): BRIDGE_TIMEOUT, Caller, canonical(), connect_and_wait(), connect_host(), connect_raw(), connect_tcp(), connect_upstream() (+44 more)
+Cohesion: 0.06
+Nodes (70): serve_tcp(), serve_udp(), add_local_route(), BRIDGE_TIMEOUT, Caller, canonical(), configure_namespace(), connect_and_wait() (+62 more)
 
 ### Community 297 - "copilot/src/request.rs"
 Cohesion: 0.04
 Nodes (59): CheckStatus, .METHOD, CheckStatusParams, DidChangeStatus, .METHOD, DidChangeStatusParams, DidFocus, .METHOD (+51 more)
 
 ### Community 299 - "test_server.rs"
-Cohesion: 0.03
-Nodes (50): assert_active_item_is_screen_share_for_peer(), assert_no_screen_share_tabs_exist(), AutoWatchTestSetup, setup_auto_watch_late_joiner_test(), setup_auto_watch_test(), setup_auto_watch_test_with_initial_participants(), start_screen_share(), stop_screen_share() (+42 more)
+Cohesion: 0.02
+Nodes (84): assert_active_item_is_screen_share_for_peer(), assert_no_screen_share_tabs_exist(), AutoWatchTestSetup, setup_auto_watch_late_joiner_test(), setup_auto_watch_test(), setup_auto_watch_test_with_initial_participants(), start_screen_share(), stop_screen_share() (+76 more)
 
 ### Community 300 - "recent_projects.rs"
-Cohesion: 0.06
-Nodes (45): assert_pinned_to_bottom(), assert_scroll_top_is(), assert_selected_entry_is_recent_project(), build_picker(), default_open_in_new_window(), delete_recent_project_in_picker(), deleting_last_recent_project_preserves_scroll_position(), deleting_middle_recent_project_preserves_scroll_position() (+37 more)
+Cohesion: 0.03
+Nodes (56): HighlightedMatch, HighlightedMatchWithPaths, join_offsets_positions_by_bytes_not_chars(), add_wsl_distro(), assert_pinned_to_bottom(), assert_scroll_top_is(), assert_selected_entry_is_recent_project(), build_picker() (+48 more)
 
 ### Community 301 - "ContextServerStore"
-Cohesion: 0.05
-Nodes (29): ContextServer, ContextServerId, Custom, ContextServerConfiguration, Custom, Extension, Http, ContextServerFactory (+21 more)
+Cohesion: 0.04
+Nodes (42): ContextServer, ContextServerId, ContextServerTransport, Custom, Stdio, OAuthSession, ContextServerConfiguration, Custom (+34 more)
+
+### Community 302 - "InputField"
+Cohesion: 0.04
+Nodes (17): InputField, accepts_ancestor_or_equal(), accepts_windows_style_ancestor(), expands_leading_tilde(), rejects_non_ancestor_relative_or_empty(), rejects_rooted_tilde_suffix(), rejects_windows_style_non_ancestor(), remote_host_label() (+9 more)
 
 ### Community 303 - "MarkdownElement"
-Cohesion: 0.05
-Nodes (38): expand_home(), ConnectHooks, ExecOutput, InsecureHooks, askpass_env(), auth_keyboard_interactive(), auth_with_agent(), auth_with_agent_client() (+30 more)
+Cohesion: 0.04
+Nodes (46): SftpAuth, Agent, Key, Openssh, Password, expand_home(), Config, ConnectHooks (+38 more)
 
 ### Community 304 - "sys"
 Cohesion: 0.05
 Nodes (39): model, AutoUpload, Always, Never, OnExplicitSave, DEFAULT_EXCLUDE_NAMES, GlobalConfig, LogLevel (+31 more)
 
 ### Community 305 - "protocol/ftp.rs"
-Cohesion: 0.04
-Nodes (18): CloudflareIpCountryHeader, SystemIdHeader, Executor, Deterministic, Production, AppVersionHeader, ConnectionGuard, handle_metrics() (+10 more)
+Cohesion: 0.05
+Nodes (16): Executor, Deterministic, Production, AppVersionHeader, ConnectionGuard, handle_metrics(), handle_websocket_request(), MessageHandler (+8 more)
 
 ### Community 306 - "WriteToolTest"
 Cohesion: 0.06
 Nodes (74): add_curve_winding(), background_color(), blurred_rounded_rect(), clip_to_mask(), ClippedVertex, position, unit_vertex, corner_dash_velocity() (+66 more)
 
 ### Community 307 - "LPARAM"
-Cohesion: 0.07
-Nodes (55): humanize_action_name(), test_humanize_action_name(), advance_past_pending_timeout(), assert_chord_progress_dismisses_popover(), binding(), counted_bindings(), indicator_snapshot(), IndicatorRenderState (+47 more)
+Cohesion: 0.11
+Nodes (49): humanize_action_name(), advance_past_pending_timeout(), assert_chord_progress_dismisses_popover(), binding(), counted_bindings(), indicator_snapshot(), IndicatorSnapshot, move_pointer_outside() (+41 more)
 
 ### Community 308 - "project/src/project_search.rs"
-Cohesion: 0.07
-Nodes (28): AdaptiveBatcher<T>, FindAllMatchesRequest, FindSearchCandidates, Local, OpenBuffersOnly, Remote, InputPath, is_utf8_prefix() (+20 more)
+Cohesion: 0.05
+Nodes (39): AdaptiveBatcher, AdaptiveBatcher<T>, FindAllMatchesRequest, FindSearchCandidates, Local, OpenBuffersOnly, Remote, InputPath (+31 more)
 
 ### Community 309 - "EditorTestContext"
-Cohesion: 0.04
-Nodes (60): test_active_buffer_diagnostics_fetching(), ToggleBlockComments, assert_columnar_action_work(), separated_columnar_ranges(), set_columnar_action_state(), test_columnar_selection_actions_batch_work(), test_columnar_selection_actions_join_skipped_rows_work(), test_columnar_selection_actions_skip_replaced_source_rows() (+52 more)
+Cohesion: 0.06
+Nodes (16): test_setup(), assert_state_with_diff(), AssertionContextManager, ContextHandle, EditorTestContext, test_apply_diff(), generate_marked_text(), marked_text_offsets() (+8 more)
 
 ### Community 310 - "repl_editor.rs"
 Cohesion: 0.09
@@ -3511,11 +3292,11 @@ Nodes (52): test_client_can_wrap_with_emmet_abbreviation(), apply_related_action
 
 ### Community 311 - "test_tools.rs"
 Cohesion: 0.02
-Nodes (92): AI Policy, Before you start, Bird's-eye view of Zed, Contributing to Zed, Packaging Zed, Resources, Sending changes, Things we will (probably) not merge (+84 more)
+Nodes (83): AI Policy, Before you start, Bird's-eye view of Zed, Contributing to Zed, Packaging Zed, Resources, Sending changes, Things we will (probably) not merge (+75 more)
 
 ### Community 312 - "entry_view_state.rs"
 Cohesion: 0.05
-Nodes (22): ArchiveListItem, BucketSeparator, Entry, ProjectPickerDelegate, Header, ThreadFilter, All, ArchivedOnly (+14 more)
+Nodes (23): ArchiveListItem, BucketSeparator, Entry, fuzzy_match_positions(), ProjectPickerDelegate, ProjectPickerEntry, Header, ProjectPickerModal (+15 more)
 
 ### Community 313 - "markdown_editing.rs"
 Cohesion: 0.07
@@ -3523,35 +3304,35 @@ Nodes (57): apply(), commands_leave_other_text_alone(), init(), insert_link(), i
 
 ### Community 314 - "extension_store_test.rs"
 Cohesion: 0.07
-Nodes (70): MAX_REMOTE_SYNC_ATTEMPTS, MAX_REMOTE_SYNC_RETRY_DELAY, RELOAD_DEBOUNCE_DURATION, remote_sync_retry_delay(), REMOTE_SYNC_TIMEOUT, advance_through_sync_backoff(), create_extension_store(), create_extension_store_with() (+62 more)
+Nodes (75): ExtensionIndex, ExtensionIndexIconThemeEntry, ExtensionIndexLanguageEntry, ExtensionIndexThemeEntry, MAX_REMOTE_SYNC_ATTEMPTS, MAX_REMOTE_SYNC_RETRY_DELAY, RELOAD_DEBOUNCE_DURATION, remote_sync_retry_delay() (+67 more)
 
-### Community 315 - "deployment/src/engine.rs"
-Cohesion: 0.07
-Nodes (33): DevContainerError, CommandFailed, ContainerNotValid, DevContainerNotFound, DevContainerParseFailed, DevContainerScriptsFailed, DevContainerTemplateApplyFailed, DevContainerValidationFailed (+25 more)
+### Community 315 - "EditorSettings"
+Cohesion: 0.08
+Nodes (14): CommitViewSettings, CursorAnimationSettings, DragAndDropSelection, EditorSettings, EditorSettingsScrollbarProxy, FileDiffSettings, Gutter, Jupyter (+6 more)
 
 ### Community 316 - "AsyncBody"
-Cohesion: 0.04
-Nodes (29): validate_header(), Request, Choice, Secret, fetch(), global_fetch(), read_body_to_bytes(), response_chunk() (+21 more)
+Cohesion: 0.01
+Nodes (110): AwsHttpConnector, convert_to_async_body(), convert_to_sdk_body(), parse_authorization_header(), Authentication, Credentials, Session, build_credentials_authenticated_request_with_authorization_header() (+102 more)
 
 ### Community 317 - "util/src/paths.rs"
 Cohesion: 0.10
-Nodes (40): CompatibleProviderKind, Anthropic, OpenAi, get_or_create_configuration_view(), LlmProviderForm, LlmProviderFormValues, ModelInput, ModelValues (+32 more)
+Nodes (39): CompatibleProviderKind, Anthropic, OpenAi, get_or_create_configuration_view(), LlmProviderForm, LlmProviderFormValues, ModelInput, ModelValues (+31 more)
 
-### Community 318 - "acp_tools.rs"
-Cohesion: 0.09
-Nodes (14): AcpTools, AcpToolsEvent, AcpToolsToolbarItemView, collapsed_params_md(), expanded_params_md(), init(), MessageType, Notification (+6 more)
+### Community 318 - "Subscription"
+Cohesion: 0.01
+Nodes (82): AcpTools, AcpToolsEvent, AcpToolsToolbarItemView, collapsed_params_md(), expanded_params_md(), init(), MessageType, Notification (+74 more)
 
 ### Community 319 - "HighlightsTreeView"
 Cohesion: 0.03
-Nodes (60): test_subagent_thread_model_selection(), agent_config_option_value_merge_replaces_existing_value(), agent_config_option_value_serializes_value_id_as_string(), agent_profile_tools_schema(), AgentConfigOptionValue, Boolean, AgentProfileContent, AgentSettingsContent (+52 more)
+Nodes (56): agent_config_option_value_merge_replaces_existing_value(), agent_config_option_value_serializes_value_id_as_string(), AgentConfigOptionValue, Boolean, AgentProfileContent, AgentSettingsContent, AutoCompactSettingsContent, AutoCompactThreshold (+48 more)
 
 ### Community 320 - "test_scheduler.rs"
-Cohesion: 0.06
-Nodes (29): DevContainerMessage, ConfirmWriteDevContainer, ErrorRetrievingTemplates, FailedToWriteTemplate, FeaturesRetrieved, FeaturesSelected, GoBack, NeedConfirmWriteDevContainer (+21 more)
+Cohesion: 0.04
+Nodes (52): apply_devcontainer_template(), expand_template_options(), insert_features_into_devcontainer_json(), deserialize_string_or_bool(), devcontainer_features_repository(), devcontainer_templates_repository(), DevContainerFeature, DevContainerFeaturesResponse (+44 more)
 
 ### Community 322 - "settings_content/src/language_model.rs"
-Cohesion: 0.04
-Nodes (76): ModelMode, Adaptive, Default, Thinking, get_max_tokens(), Model, AllLanguageModelSettingsContent, AmazonBedrockSettingsContent (+68 more)
+Cohesion: 0.05
+Nodes (71): ModelMode, Adaptive, Default, Thinking, AllLanguageModelSettingsContent, AmazonBedrockSettingsContent, AnthropicAvailableModel, AnthropicCompatibleAvailableModel (+63 more)
 
 ### Community 323 - "MarkdownElement"
 Cohesion: 0.03
@@ -3562,40 +3343,40 @@ Cohesion: 0.05
 Nodes (26): clean_line(), convert_body(), get_release_info(), add_issue_to_project(), assign_issue(), count_open_assignments(), eligible_areas(), execute_graphql() (+18 more)
 
 ### Community 325 - "LanguageModelRegistry"
-Cohesion: 0.05
-Nodes (35): Option<DbLanguageModel>, ThreadModel, Unresolved, Unset, BuiltinProviderHidingFn, ConfigurationError, ModelNotFound, NoProvider (+27 more)
+Cohesion: 0.06
+Nodes (28): BuiltinProviderHidingFn, ConfigurationError, ModelNotFound, NoProvider, ProviderNotAuthenticated, Event, AddedProvider, CommitMessageModelChanged (+20 more)
 
 ### Community 326 - "gpui_macos/src/display_link.rs"
-Cohesion: 0.06
-Nodes (20): Model, Relation, Channel, Model, Relation, Room, Connection, ConnectionId (+12 more)
+Cohesion: 0.08
+Nodes (16): Model, Relation, Room, ConnectionId, ConnectionState, init_logger(), Peer, test_disconnect() (+8 more)
 
-### Community 327 - "OpenCodeLanguageModelProvider"
-Cohesion: 0.10
-Nodes (12): add_discovered_model(), catalog_results(), language_model(), model_id(), model_supports_thinking(), OpenCodeLanguageModelProvider, test_default_reasoning_effort(), test_none_only_reasoning_does_not_enable_thinking() (+4 more)
+### Community 327 - "provider/opencode.rs"
+Cohesion: 0.03
+Nodes (67): add_discovered_model(), API_KEY_ENV_VAR, API_KEY_ENV_VAR_NAME, apply_discovery_results(), assert_generated_session_id(), catalog_results(), ConfigurationView, fetch_catalog_resource() (+59 more)
 
 ### Community 328 - "protocol/sftp.rs"
-Cohesion: 0.08
-Nodes (3): ButtonStates, ProjectDiff, ProjectDiffToolbar
+Cohesion: 0.05
+Nodes (22): ButtonStates, DeployBranchDiff, init_test(), ProjectDiff, ProjectDiffDb, .MIGRATIONS, .NAME, ProjectDiffToolbar (+14 more)
 
 ### Community 329 - ".update"
 Cohesion: 0.05
 Nodes (11): AnyWindowHandle, Entity<T>, Entity<V>, test_memory_warning_subscriptions(), test_mobile_lifecycle_subscriptions(), test_simulate_path_prompt_cancellation(), test_simulate_path_prompt_response(), test_system_notification_body_and_action_responses() (+3 more)
 
-### Community 330 - "LanguageModelCompletionError"
-Cohesion: 0.04
-Nodes (54): exponential_backoff(), LanguageModelCompletionError, ApiReadResponseError, BuildRequestBody, DataRetentionConsentRequired, DeserializeResponse, HttpSend, ModelUnavailable (+46 more)
+### Community 330 - "codestral.rs"
+Cohesion: 0.08
+Nodes (27): Choice, codestral_api_key(), CODESTRAL_API_KEY_ENV_VAR, codestral_api_key_state(), CODESTRAL_API_URL, codestral_api_url(), CodestralEditPredictionDelegate, CodestralRequest (+19 more)
 
 ### Community 331 - "src/docker.rs"
-Cohesion: 0.06
-Nodes (46): main(), bump_patch_version(), run_bump_patch_version(), bump_main(), bump_zed_version(), create_preview_branch(), promote_to_stable(), resolve_versions() (+38 more)
+Cohesion: 0.05
+Nodes (54): run_bump_patch_version(), bump_main(), bump_zed_version(), create_preview_branch(), promote_to_stable(), resolve_versions(), ResolvedOutputs, bump_extension_version() (+46 more)
 
 ### Community 332 - "modal_app.py"
-Cohesion: 0.08
-Nodes (36): function, _age_days(), prune_artifacts(), load_json(), safe_extract_archive(), utc_now(), write_json(), build_eval_cli() (+28 more)
+Cohesion: 0.06
+Nodes (40): function, eval_cli_with_log_command(), _age_days(), prune_artifacts(), load_json(), safe_extract_archive(), utc_now(), write_json() (+32 more)
 
 ### Community 333 - "gpui_windows/src/dispatcher.rs"
-Cohesion: 0.05
-Nodes (9): AppleDispatcher, PlatformDispatcher, RunnableVariant, TimerEntry, TimerQueueState, TimerResolutionGuard, run_timer_callback(), run_work_callback() (+1 more)
+Cohesion: 0.06
+Nodes (6): TimerResolutionGuard, run_timer_callback(), run_work_callback(), WindowsDispatcher, SafeCursor, SafeHwnd
 
 ### Community 334 - "provider/open_ai_compatible.rs"
 Cohesion: 0.04
@@ -3611,79 +3392,79 @@ Nodes (30): Participant, Local, Remote, RoomEvent, ActiveSpeakersChanged, Connec
 
 ### Community 337 - "TextSummary"
 Cohesion: 0.08
-Nodes (39): Runnable, collect_runnables(), collect_runnables_in(), FirstRunResolver, group_runnable_matches(), GROUPED_QUERY, GROUPED_SOURCE, GroupedRunnableMatches (+31 more)
+Nodes (38): collect_runnables(), collect_runnables_in(), FirstRunResolver, group_runnable_matches(), GROUPED_QUERY, GROUPED_SOURCE, GroupedRunnableMatches, LocalExtrasResolver (+30 more)
 
 ### Community 339 - "PopoverMenuHandle"
 Cohesion: 0.05
 Nodes (35): Clipboard, CLIPBOARD, ClipboardData, ClipboardKind, Clipboard, Primary, Secondary, Error (+27 more)
 
-### Community 340 - "welcome.rs"
-Cohesion: 0.04
-Nodes (24): CONTENT, OpenRecentProject, project_name(), Section, Section<COLS>, SectionButton, SectionEntry, SectionHeader (+16 more)
+### Community 340 - "MultiDiffView"
+Cohesion: 0.06
+Nodes (8): common_prefix(), Entry, load_entries(), MultiDiffView, register_entry(), Section<COLS>, SectionHeader, WelcomePage
 
 ### Community 341 - "mcp_servers_page.rs"
 Cohesion: 0.06
-Nodes (16): edits_dir(), Engine, EngineSettings, FsEvent, Changed, Removed, Renamed, LogLine (+8 more)
+Nodes (20): collect_local(), Target, edits_dir(), Engine, EngineSettings, Failure, FsEvent, Changed (+12 more)
 
-### Community 342 - "Editor"
-Cohesion: 0.03
-Nodes (49): assert_blame_rows(), blame_entry(), BlameRenderer, build_blame_entry_sum_tree(), gen_blame_entries(), GitBlame, GitBlameBuffer, GitBlameEntry (+41 more)
+### Community 342 - "Community 342"
+Cohesion: 0.08
+Nodes (26): (), assert_blame_rows(), blame_entry(), BlameRenderer, build_blame_entry_sum_tree(), gen_blame_entries(), GitBlame, GitBlameBuffer (+18 more)
 
-### Community 343 - "delete_run_git_blame/before.rs"
+### Community 343 - "Deserialize"
+Cohesion: 0.01
+Nodes (193): assert_eq_golden(), Blame, BlameEntry, GIT_BLAME_NO_COMMIT_ERROR, GIT_BLAME_NO_PATH, parse_git_blame(), ParsedCommitMessage, read_test_data() (+185 more)
+
+### Community 344 - "image_viewer.rs"
 Cohesion: 0.05
-Nodes (40): assert_eq_golden(), Blame, BlameEntry, GIT_BLAME_NO_COMMIT_ERROR, GIT_BLAME_NO_PATH, parse_git_blame(), ParsedCommitMessage, read_test_data() (+32 more)
-
-### Community 344 - "ImageView"
-Cohesion: 0.11
-Nodes (6): displayed_render_image(), ImageView, ImageViewEvent, TitleChanged, ImageViewToolbarControls, test_releasing_one_split_keeps_shared_atlas_entry()
+Nodes (32): BASE_SQUARE_SIZE, breadcrumbs_text_for_image(), displayed_render_image(), displayed_source_id(), DisplayedImage, draw_window(), image_is_cached(), ImageView (+24 more)
 
 ### Community 345 - "ExtensionStore"
 Cohesion: 0.05
-Nodes (26): ExtensionApiManifest, ExtensionMetadata, GetExtensionsResponse, Event, ExtensionFailedToLoad, ExtensionInstalled, ExtensionsUpdated, ExtensionUninstalled (+18 more)
+Nodes (24): ExtensionApiManifest, ExtensionMetadata, GetExtensionsResponse, Event, ExtensionFailedToLoad, ExtensionInstalled, ExtensionsUpdated, ExtensionUninstalled (+16 more)
 
-### Community 346 - "DisplayId"
-Cohesion: 0.03
-Nodes (25): refresh_interval_from_millihertz(), test_refresh_interval_from_millihertz(), WaylandDisplay, X11Display, DisplayEvent, Added, Changed, Removed (+17 more)
+### Community 346 - "gpui_macos/src/display.rs"
+Cohesion: 0.05
+Nodes (11): CGDisplayCreateUUIDFromDisplayID(), MacDisplay, refresh_interval_from_hz(), test_refresh_interval_from_hz(), available_monitors(), generate_uuid(), get_monitor_info(), get_scale_factor_for_monitor() (+3 more)
 
 ### Community 347 - "inspector_render.rs"
-Cohesion: 0.06
-Nodes (69): ContextServerStatus, Authenticating, AuthRequired, ClientSecretRequired, Error, Running, Starting, Stopped (+61 more)
+Cohesion: 0.07
+Nodes (62): ContextServerSettings, Extension, Http, Stdio, build_settings_from_form(), build_settings_from_values(), builds_local_server(), builds_remote_server() (+54 more)
 
 ### Community 348 - "key_dispatch.rs"
 Cohesion: 0.06
-Nodes (16): InsertSnippet, ToggleComments, MultiBufferOffsetUtf16, comment_delimiter_for_newline(), documentation_delimiter_for_newline(), Editor, is_list_prefix_row(), list_delimiter_for_newline() (+8 more)
+Nodes (16): InsertSnippet, ToggleComments, MultiBufferOffsetUtf16, AutocloseRegion, comment_delimiter_for_newline(), documentation_delimiter_for_newline(), Editor, is_list_prefix_row() (+8 more)
 
 ### Community 349 - "AnyElement"
 Cohesion: 0.06
-Nodes (38): handle_v2_session_notification(), route_v2_session_notification(), byte_limit_is_bounded_and_does_not_poison_later_creations(), InboundSessionNotification, InboundSessionUpdate, AgentMessage, AgentMessageChunk, AgentThought (+30 more)
+Nodes (36): byte_limit_is_bounded_and_does_not_poison_later_creations(), InboundSessionNotification, InboundSessionUpdate, AgentMessage, AgentMessageChunk, AgentThought, AgentThoughtChunk, AvailableCommands (+28 more)
 
-### Community 350 - "EditorLspTestContext"
+### Community 350 - "json_schema_store.rs"
 Cohesion: 0.08
-Nodes (19): EditorLspTestContext, active_picker(), assert_cmd_click(), cmd_click_request(), open(), references(), rust_cx(), test_cmd_click_cached_locations() (+11 more)
+Nodes (30): ACTION_SCHEMA_CACHE, all_lsp_adapter_names(), all_schema_file_associations(), ChangedSchemas, DebugTasks, Settings, denormalize_action_name(), DYNAMIC_SCHEMA_CACHE (+22 more)
 
-### Community 351 - "provider/open_ai.rs"
-Cohesion: 0.07
-Nodes (12): stream_in_background(), default_thinking_reasoning_effort(), language_model(), models_supporting_only_none_have_no_selectable_thinking_effort(), normalize_open_ai_response_thinking_effort(), open_ai_reasoning_effort_is_supported(), OpenAiLanguageModelProvider, State (+4 more)
+### Community 351 - "highlight_cache.rs"
+Cohesion: 0.10
+Nodes (20): APPROXIMATE_LRU_NODE_BYTES, ChunkHighlightCache, chunks_match_text(), CostBudgetedLru, CostBudgetedLru<K, V>, .ENTRY_OVERHEAD_BYTES, MAX_CHUNK_HIGHLIGHT_CACHE_BYTES, MAX_TEXT_HIGHLIGHT_CACHE_BYTES (+12 more)
 
 ### Community 352 - "seccomp.rs"
-Cohesion: 0.12
-Nodes (11): create_gpui_image(), Entity<LocalImageStore>, Entity<RemoteImageStore>, ImageId, ImageItem, ImageStore, ImageStoreEvent, ImageAdded (+3 more)
+Cohesion: 0.05
+Nodes (32): create_gpui_image(), Entity<LocalImageStore>, Entity<RemoteImageStore>, ImageColorInfo, ImageFormat, Raster, Svg, ImageId (+24 more)
 
 ### Community 353 - "Frequently Asked Questions {#faq}"
 Cohesion: 0.15
 Nodes (13): Do I have to maintain my extension? {#do-i-have-to-maintain-my-extension}, Do the prerequisites also apply to already published extensions? {#prerequisites-for-existing-extensions}, Frequently Asked Questions {#faq}, How long will the review of my submission take? {#review-duration}, I found a bug in an extension or want to improve it. What should I do? {#reporting-issues-and-improvements}, I have questions about these policies or disagree with them. Where can I raise that? {#policy-discussion}, I no longer want to maintain my extension. What now? {#stepping-back}, What happens when an extension owner stops responding to reported issues? {#unresponsive-owner} (+5 more)
 
 ### Community 354 - "tests/engine.rs"
-Cohesion: 0.09
-Nodes (24): is_utf8_char_boundary(), Bitmap, char_offsets(), char_offsets_with_end(), Chunk, .MASK_BITS, ChunkSlice, log_err_char_boundary() (+16 more)
+Cohesion: 0.10
+Nodes (23): is_utf8_char_boundary(), Bitmap, char_offsets(), char_offsets_with_end(), Chunk, .MASK_BITS, ChunkSlice, log_err_char_boundary() (+15 more)
 
 ### Community 355 - "workflow_checks.rs"
-Cohesion: 0.07
-Nodes (39): CompletionEdit, parse_choices(), parse_int(), parse_snippet(), parse_tabstop(), Snippet, TabStop, tabstop_choices() (+31 more)
+Cohesion: 0.08
+Nodes (22): ConsoleLogger, first_line_span(), PermissionsError, ExcessiveDefault, Missing, validate_permissions(), GITHUB_INPUT_PATTERN, RunValidationError (+14 more)
 
 ### Community 356 - "crate_graph.rs"
 Cohesion: 0.04
-Nodes (37): TerminalProviderEvent, Created, Exit, Output, TitleChanged, create_terminal_entity(), disable_pagers_through_env(), DisplayCommand (+29 more)
+Nodes (36): TerminalProviderEvent, Created, Exit, Output, TitleChanged, create_terminal_entity(), disable_pagers_through_env(), DisplayCommand (+28 more)
 
 ### Community 357 - "Editor"
 Cohesion: 0.07
@@ -3691,139 +3472,135 @@ Nodes (4): FoldAtLevel, Editor, EditorSnapshot, GutterDimensions
 
 ### Community 358 - "with"
 Cohesion: 0.08
-Nodes (15): BranchBase, BranchList, ChangesMode, Branch, Uncommitted, DefaultBranch, Found, Loading (+7 more)
+Nodes (18): BranchBase, BranchList, ChangesMode, Branch, Uncommitted, DefaultBranch, Found, Loading (+10 more)
 
 ### Community 359 - "Autoscroll"
 Cohesion: 0.05
-Nodes (67): absolute_form_is_rewritten_to_origin_form(), absolute_form_rewrite_keeps_non_default_port_in_host_header(), build_origin_form_request(), ClientStream, Tcp, Unix, CONNECT_TIMEOUT, connect_to_any() (+59 more)
+Nodes (62): absolute_form_is_rewritten_to_origin_form(), absolute_form_rewrite_keeps_non_default_port_in_host_header(), build_origin_form_request(), ClientStream, Tcp, Unix, CONNECT_TIMEOUT, connect_to_any() (+54 more)
 
 ### Community 360 - "BreakpointStore"
 Cohesion: 0.05
-Nodes (14): assert_correct_thread(), exclude_wakers_from_trace(), PENDING_TRACES_VAR_NAME, schedule_local_dispatch(), ScheduledRunnable, ScheduledTimer, SchedulerState, SharedRng (+6 more)
+Nodes (15): SessionId, assert_correct_thread(), exclude_wakers_from_trace(), PENDING_TRACES_VAR_NAME, schedule_local_dispatch(), ScheduledRunnable, ScheduledTimer, SchedulerState (+7 more)
 
 ### Community 361 - "FileStatus"
-Cohesion: 0.05
-Nodes (27): FileStatus, Ignored, Tracked, Unmerged, Untracked, TreeDiffStatus, Added, Deleted (+19 more)
+Cohesion: 0.03
+Nodes (56): DiffStat, FileStatus, Ignored, Tracked, Unmerged, Untracked, GitDiffStat, GitSummary (+48 more)
 
 ### Community 362 - "split_dataset.rs"
-Cohesion: 0.07
-Nodes (63): assert_resolved_path_eq(), DEFAULT_UI_TEXT, EditFileTool, .NAME, EditFileToolInput, init_test(), setup_test(), setup_test_with_fs() (+55 more)
+Cohesion: 0.03
+Nodes (114): assert_resolved_path_eq(), DEFAULT_UI_TEXT, EditFileTool, .NAME, init_test(), setup_test(), setup_test_with_fs(), test_streaming_authorize() (+106 more)
 
 ### Community 363 - "Engine"
-Cohesion: 0.07
+Cohesion: 0.06
 Nodes (27): EditorEvent, Blurred, BufferEdited, BufferFoldToggled, Closed, CursorShapeChanged, DiffBaseChanged, DirtyChanged (+19 more)
 
 ### Community 364 - "inlays/inlay_hints.rs"
-Cohesion: 0.03
-Nodes (94): COMMAND_HINT_INLAY_ID, debounce_value(), test_hover_inlay_label_parts(), Editor, Inlay, allowed_hint_kinds_for_editor(), cached_hint_labels(), check_multi_server_identical_hints() (+86 more)
+Cohesion: 0.05
+Nodes (66): debounce_value(), find_hovered_hint_part(), test_find_hovered_hint_part_with_multibyte_characters(), allowed_hint_kinds_for_editor(), cached_hint_labels(), check_multi_server_identical_hints(), check_none_hint_bias(), Editor (+58 more)
 
 ### Community 365 - "PanelEntry"
 Cohesion: 0.19
 Nodes (8): Model, Relation, Collaborators, HostUser, LanguageServers, Repositories, Room, Worktrees
 
-### Community 366 - "HttpClientWithUrl"
-Cohesion: 0.04
-Nodes (17): FetchStep, Complete, Redirect, FetchTool, .NAME, host_pattern_for_url(), normalize_url(), verify_host_allows_public_literal() (+9 more)
+### Community 366 - "FetchTool"
+Cohesion: 0.17
+Nodes (5): FetchStep, Complete, Redirect, FetchTool, .NAME
 
 ### Community 367 - "normal/paste.rs"
 Cohesion: 0.07
 Nodes (37): HelixPaste, replacement_texts(), test_helix_paste_honors_system_clipboard_by_default(), test_helix_paste_ignores_system_clipboard_when_disabled(), test_line_mode_paste(), test_multi_cursor_paste(), test_paste(), test_paste_in_expanded_deleted_hunk() (+29 more)
 
 ### Community 368 - "GitPanel"
+Cohesion: 0.09
+Nodes (57): all_lsp_data_server_capabilities(), edit_and_receive_change(), fetch_all_lsp_data(), lsp_data_labels(), LspDataLabels, LspRequestCounts, observe_refresh_events(), RecordingProtoClient (+49 more)
+
+### Community 369 - "rc"
+Cohesion: 0.03
+Nodes (61): AnimationExample, ARROW_CIRCLE_SVG, Assets, main(), run_example(), start(), ARROW_CIRCLE_SVG, main() (+53 more)
+
+### Community 370 - "rope.rs"
 Cohesion: 0.08
-Nodes (60): SemanticToken, SemanticTokenValue, TokenType, all_lsp_data_server_capabilities(), edit_and_receive_change(), fetch_all_lsp_data(), lsp_data_labels(), LspDataLabels (+52 more)
-
-### Community 369 - "Transformation"
-Cohesion: 0.04
-Nodes (39): AnimationElement, ease_in_out(), ease_out_quint(), heartbeat(), linear(), quadratic(), animate(), AnimatedSvgView (+31 more)
-
-### Community 370 - "runnable.rs"
-Cohesion: 0.05
-Nodes (32): Bytes, Bytes<'a>, Chunk, Chunks, Chunks<'a>, ChunkWithBitmaps, ChunkWithBitmaps<'a>, clip_offset() (+24 more)
+Nodes (24): Chunk, ChunkBitmaps, Chunks, ChunkWithBitmaps, ChunkWithBitmaps<'a>, Cursor, Lines, test_ceil_char_boundary() (+16 more)
 
 ### Community 371 - "KeyBindingContextPredicate"
 Cohesion: 0.06
 Nodes (70): aliases_of_two_generated_keys(), already_uses_entry_and_modify(), already_uses_entry_insert_entry(), already_uses_entry_key(), already_uses_entry_or_default(), already_uses_entry_or_insert(), already_uses_entry_or_insert_with(), already_uses_entry_or_insert_with_key() (+62 more)
 
-### Community 372 - "RenderImage"
-Cohesion: 0.04
-Nodes (34): ImageGallery, simple_lru_cache(), SimpleLruCache, SimpleLruCacheProvider, Resource, Embedded, Path, Uri (+26 more)
+### Community 372 - "img.rs"
+Cohesion: 0.02
+Nodes (93): ImageGallery, IMAGES_IN_GALLERY, main(), run_example(), simple_lru_cache(), SimpleLruCache, SimpleLruCacheProvider, start() (+85 more)
 
 ### Community 373 - "ConnectionId"
-Cohesion: 0.11
-Nodes (15): build_assist_editor_renderer(), EditorInlineAssists, init(), InlineAssist, InlineAssistant, InlineAssistDecorations, InlineAssistGroup, InlineAssistGroupId (+7 more)
+Cohesion: 0.06
+Nodes (36): build_assist_editor_renderer(), EditorInlineAssists, eval_cant_do(), eval_empty_buffer(), eval_single_cursor_edit(), eval_unclear(), exact_buffer_match(), init() (+28 more)
 
-### Community 374 - "Agent"
-Cohesion: 0.08
-Nodes (20): AgentConnectedState, AgentConnectionEntry, Connected, Connecting, Error, AgentConnectionEntryEvent, LoadingStatusChanged, NewVersionAvailable (+12 more)
+### Community 374 - "AgentServer"
+Cohesion: 0.04
+Nodes (25): LoadError, Exited, FailedToInstall, Unsupported, AgentServer, ActiveAcpConnection, AgentConnectedState, AgentConnectionEntry (+17 more)
 
 ### Community 375 - "chat_completion.rs"
-Cohesion: 0.05
-Nodes (85): editor_multi_cursor_input(), editor_render(), editor_render_highlighted(), editor_render_highlighted_minimap(), editor_render_with_editorconfig(), indented_code_text(), init_context(), jetbrains_editorconfig() (+77 more)
+Cohesion: 0.06
+Nodes (69): cached_element_style(), cached_full_refresh(), cached_hover(), cached_input(), cached_insert_remove(), cached_leaf_bounds(), cached_mixed(), cached_reorder() (+61 more)
 
-### Community 376 - "integration/dynamic_registration.rs"
-Cohesion: 0.11
-Nodes (24): AssertionFn, EditEvalOutput, EditToolTest, eval_add_overwrite_test(), eval_delete_function(), eval_disable_cursor_blinking(), eval_extract_handle_command_output(), eval_from_pixels_constructor() (+16 more)
+### Community 376 - "edit_file.rs"
+Cohesion: 0.05
+Nodes (68): contains(), SystemPromptTemplate, .TEMPLATE_NAME, Template, .TEMPLATE_NAME, Templates, test_system_prompt_does_not_render_legacy_zed_rules_section(), test_system_prompt_linux_sandbox_section_omits_tmpdir() (+60 more)
 
 ### Community 377 - "pane_group.rs"
-Cohesion: 0.05
-Nodes (26): DEBUGGER_PANEL_PREFIX, deserialize_pane_layout(), get_serialized_layout(), serialize_pane(), serialize_pane_layout(), SerializedLayout, SerializedPane, SerializedPaneLayout (+18 more)
+Cohesion: 0.07
+Nodes (15): ActiveBreakpointStripMode, Condition, HitCondition, Log, BreakpointEntry, BreakpointEntryKind, DataBreakpoint, ExceptionBreakpoint (+7 more)
 
 ### Community 378 - "DebuggerHoverView"
-Cohesion: 0.10
-Nodes (13): debugger_hover_row_selector(), debugger_hover_toggle_selector(), debugger_hover_variable_colors(), DebuggerHoverChildren, Failed, Loaded, Loading, Unloaded (+5 more)
+Cohesion: 0.09
+Nodes (15): build_debugger_hover_view(), debugger_hover_row_selector(), debugger_hover_toggle_selector(), debugger_hover_type_suffix(), DebuggerHoverChildren, Failed, Loaded, Loading (+7 more)
 
 ### Community 379 - "breakpoint_list.rs"
-Cohesion: 0.04
-Nodes (33): autofix_pr(), commit_changes(), download_patch_artifact(), PATCH_ARTIFACT_NAME, PATCH_FILE_PATH, upload_patch_artifact(), BotCommitStep, CheckoutStep (+25 more)
+Cohesion: 0.05
+Nodes (22): FluentBuilder, BotCommitStep, CheckoutStep, CreatePrStep, FetchDepth, Custom, Full, Shallow (+14 more)
 
 ### Community 380 - "remote_host_panel.rs"
-Cohesion: 0.06
-Nodes (17): RemoteItem, Clipboard, dir_of(), dock_position_from_str(), dock_position_to_str(), dock_positions_round_trip(), DraggedRemote, folders_between() (+9 more)
+Cohesion: 0.07
+Nodes (6): dir_of(), remote_parent(), RemoteHostPanel, Row, ServerChoice, summary_result()
 
 ### Community 381 - "test_extension.rs"
-Cohesion: 0.11
-Nodes (4): CodeLabelSpan, Command, strip_newlines_from_detail(), TestExtension
+Cohesion: 0.14
+Nodes (6): CodeLabelSpan, lsp::CompletionKind, lsp::CompletionKind, CompletionKind, strip_newlines_from_detail(), TestExtension
 
 ### Community 382 - "ModelPickerDelegate"
-Cohesion: 0.07
-Nodes (37): Allowlist, allowlist_allows_member(), empty_allowlist_denies_everything(), ProxyConfig, ProxyEvent, Ready, RequestAttempt, RequestCompleted (+29 more)
+Cohesion: 0.08
+Nodes (40): ConnectionSlot, MAX_CONCURRENT_CONNECTIONS, ProxyConfig, ProxyEvent, Ready, RequestAttempt, RequestCompleted, ProxyHandle (+32 more)
 
 ### Community 383 - "TokenUsageRatio"
-Cohesion: 0.05
-Nodes (45): automated_change_detects_preview_release_channel(), automated_change_detects_stable_release_channel(), automated_change_detects_version_bump(), automated_change_rejects_trailing_text(), automated_change_rejects_wrong_prefix(), automated_change_returns_none_for_regular_commit(), co_authors_parsed_from_body(), CommitDetails (+37 more)
+Cohesion: 0.06
+Nodes (42): automated_change_detects_preview_release_channel(), automated_change_detects_stable_release_channel(), automated_change_detects_version_bump(), automated_change_rejects_trailing_text(), automated_change_rejects_wrong_prefix(), automated_change_returns_none_for_regular_commit(), co_authors_parsed_from_body(), CommitDetails (+34 more)
 
 ### Community 384 - "platform_title_bar.rs"
-Cohesion: 0.06
-Nodes (15): WindowButtonLayout, PlatformTitleBar, render_left_window_controls(), render_right_window_controls(), String, TitleBarSettingsContent, TitleBarVisibility, Always (+7 more)
+Cohesion: 0.04
+Nodes (22): WindowButton, Close, Maximize, Minimize, WindowButtonLayout, PlatformTitleBar, render_left_window_controls(), render_right_window_controls() (+14 more)
 
 ### Community 385 - "worktree_service.rs"
-Cohesion: 0.06
-Nodes (47): format_git_error_toast_message(), git_error_toast_title(), is_non_fast_forward_error(), open_output(), rpc_error_raw_message_from_chain(), show_error_toast(), test_format_git_error_toast_message_prefers_raw_rpc_message(), test_format_git_error_toast_message_prefers_raw_rpc_message_when_wrapped() (+39 more)
+Cohesion: 0.08
+Nodes (35): await_and_rollback_on_failure(), classify_worktrees(), CountingTerminalProvider, create_worktree_askpass_delegate(), create_worktree_workspace(), create_worktree_workspace_inner(), CreatedWorktreeWorkspace, do_create_worktree() (+27 more)
 
 ### Community 386 - "Editor"
-Cohesion: 0.05
-Nodes (29): effective_connection_quality(), metric_quality(), ConnectionQuality, Excellent, Good, Lost, Poor, LocalTrack (+21 more)
+Cohesion: 0.06
+Nodes (15): ConnectionState, LocalParticipant, LocalTrackPublication, Participant, participant_from_livekit(), ParticipantIdentity, publication_from_livekit(), remote_track_from_livekit() (+7 more)
 
 ### Community 387 - "syntax_tree_view.rs"
-Cohesion: 0.10
-Nodes (6): BufferState, EditorState, format_node_range(), init(), SyntaxTreeToolbarItemView, SyntaxTreeView
+Cohesion: 0.05
+Nodes (16): ModuleList, ScrollStrategy, Bottom, Center, Nearest, Top, UniformListScrollHandle, OwnedSyntaxLayer (+8 more)
 
 ### Community 388 - "Editor"
 Cohesion: 0.03
-Nodes (19): DiffHunkSecondaryStatus, HasSecondaryHunk, NoSecondaryHunk, OverlapsWithSecondaryHunk, SecondaryHunkAdditionPending, SecondaryHunkRemovalPending, DiffHunkStatus, DiffHunkKey (+11 more)
+Nodes (22): DiffHunkSecondaryStatus, HasSecondaryHunk, NoSecondaryHunk, OverlapsWithSecondaryHunk, SecondaryHunkAdditionPending, SecondaryHunkRemovalPending, DiffHunkStatus, DefaultDiffHunkRenderer (+14 more)
 
-### Community 389 - "ProjectPanel"
-Cohesion: 0.04
-Nodes (12): ClipboardEntry, Copied, Cut, ContextMenuPlacement, AtEntry, DeployedContextMenu, get_item_color(), init() (+4 more)
-
-### Community 390 - "startup_windows"
-Cohesion: 0.10
-Nodes (69): active_window_roots(), add_unsaved_buffer(), cli_connection(), cli_environment_of(), cli_open_request(), cli_request(), init_startup_test(), open_on_startup() (+61 more)
-
-### Community 391 - "DeploymentStore"
+### Community 389 - "App"
 Cohesion: 0.08
-Nodes (13): CONFIG_PATH, ConfigLocation, existing_config(), import_iremote_config(), imports_iremote_config_once(), IREMOTE_CONFIG_PATH, locate_config(), missing_config() (+5 more)
+Nodes (8): FileDragPaths, test_on_events(), ClipboardEntry, Copied, Cut, DeployedContextMenu, DraggedSelection, SelectedEntry
+
+### Community 391 - "deployment/src/project.rs"
+Cohesion: 0.31
+Nodes (9): CONFIG_PATH, ConfigLocation, existing_config(), import_iremote_config(), imports_iremote_config_once(), IREMOTE_CONFIG_PATH, locate_config(), missing_config() (+1 more)
 
 ### Community 392 - "chunk.rs"
 Cohesion: 0.08
@@ -3831,111 +3608,119 @@ Nodes (33): create_execution_view(), Entity<V>, ExecutionView, ExecutionViewFini
 
 ### Community 393 - "pending_bindings.rs"
 Cohesion: 0.08
-Nodes (7): BranchDiff, BranchDiffAddon, BranchDiffToolbar, init_test(), test_branch_diff(), test_branch_diff_action_matches_existing_item_by_base_ref(), test_split_diff_conflict_path_transition_with_dirty_buffer_invalid_anchor_panics()
+Nodes (8): BranchDiff, BranchDiffAddon, BranchDiffToolbar, init_test(), test_branch_diff(), test_branch_diff_action_matches_existing_item_by_base_ref(), test_split_diff_conflict_path_transition_with_dirty_buffer_invalid_anchor_panics(), render_send_review_to_agent_button()
 
 ### Community 394 - "command_palette.rs"
-Cohesion: 0.04
-Nodes (37): ConsoleLogger, Event, Bell, BreadcrumbsChanged, CloseTerminal, Open, OutputReplaced, SelectionsChanged (+29 more)
+Cohesion: 0.05
+Nodes (38): Event, Bell, BreadcrumbsChanged, CloseTerminal, Open, OutputReplaced, SelectionsChanged, TitleChanged (+30 more)
 
 ### Community 395 - "EntityId"
 Cohesion: 0.03
-Nodes (30): AccessedEntities, AnyEntity, AnyWeakEntity, BacktraceFormatter, double_lease_panic(), Entity, Entity<T>, EntityId (+22 more)
+Nodes (32): AccessedEntities, AnyEntity, AnyWeakEntity, BacktraceFormatter, double_lease_panic(), Entity, Entity<T>, EntityLeakData (+24 more)
 
 ### Community 396 - "compliance/src/github.rs"
-Cohesion: 0.05
-Nodes (19): commit_sha_short_returns_first_8_chars(), CommitSha, build_commit_metadata_query(), CommitAuthor, CommitFileChange, CommitMetadata, CommitMetadataBySha, .SHA_PREFIX (+11 more)
+Cohesion: 0.06
+Nodes (16): MockGithubApi, commit_sha_short_returns_first_8_chars(), CommitSha, build_commit_metadata_query(), CommitFileChange, CommitMetadataBySha, .SHA_PREFIX, CommitMetadataResponse (+8 more)
 
-### Community 397 - "copilot_edit_prediction_delegate.rs"
-Cohesion: 0.02
-Nodes (65): codestral_api_key(), codestral_api_key_state(), codestral_api_url(), CodestralEditPredictionDelegate, CurrentCompletion, load_codestral_api_key(), Completion, CompletionSource (+57 more)
+### Community 397 - "App"
+Cohesion: 0.04
+Nodes (23): EditPredictionUsage, DataCollectionState, Disabled, Enabled, Unsupported, EditPrediction, Jump, Local (+15 more)
 
 ### Community 398 - "alacritty.rs"
 Cohesion: 0.02
-Nodes (84): add_alacritty_mode(), add_terminal_mode(), adjusted_last_hovered_word(), alacritty_cursor_shape(), alacritty_cursor_style(), AlacrittyCell, AlacrittyGridIterator, AlacrittyHyperlink (+76 more)
+Nodes (86): add_alacritty_mode(), add_terminal_mode(), adjusted_last_hovered_word(), alacritty_cursor_shape(), alacritty_cursor_style(), AlacrittyCell, AlacrittyGridIterator, AlacrittyHyperlink (+78 more)
 
 ### Community 399 - "TestApp"
-Cohesion: 0.08
-Nodes (6): test_basic_usage(), test_entity_creation(), test_globals(), test_simulate_scale_factor_change(), TestApp, TestAppWindow
+Cohesion: 0.07
+Nodes (9): Counter, test_basic_usage(), test_entity_creation(), test_globals(), test_simulate_scale_factor_change(), TestApp, TestAppWindow, TestAppWindow<V> (+1 more)
 
-### Community 400 - "KeyContext"
-Cohesion: 0.03
-Nodes (39): DispatchNode, DispatchNodeId, DispatchResult, DispatchTree, KeyListener, ModifiersChangedListener, Replay, ReusedSubtree (+31 more)
+### Community 400 - "key_dispatch.rs"
+Cohesion: 0.04
+Nodes (52): capture_observed_keystrokes(), dispatch_altgr_key_down(), DispatchActionListener, DispatchNode, DispatchNodeId, DispatchResult, DispatchTree, KeyListener (+44 more)
+
+### Community 401 - "KeystrokeInput"
+Cohesion: 0.11
+Nodes (6): CloseKeystrokeResult, Close, None, Partial, KeystrokeInput, .KEYSTROKE_COUNT_MAX
 
 ### Community 402 - "example_editor.rs"
 Cohesion: 0.07
-Nodes (14): DapLogView, init(), log_contents(), LogStore, LogStoreEntryIdentifier, LogStoreMessage, MessageKind, Receive (+6 more)
+Nodes (14): DapLogView, DapMenuItem, Event, NewLogEntry, init(), log_contents(), LogStore, LogStoreEntryIdentifier (+6 more)
 
 ### Community 403 - "mermaid.rs"
-Cohesion: 0.06
-Nodes (56): CLOSE_KEYSTROKE_CAPTURE_END_TIMEOUT, CloseKeystrokeResult, Close, None, Partial, init_dispatch_test(), init_test(), KEY_CONTEXT_VALUE (+48 more)
+Cohesion: 0.11
+Nodes (50): CLOSE_KEYSTROKE_CAPTURE_END_TIMEOUT, init_dispatch_test(), init_test(), KEY_CONTEXT_VALUE, KeystrokeInputTestHelper, KeystrokeUpdateTracker, simulate_shift_f1(), simulate_standalone_shift() (+42 more)
 
-### Community 404 - "OpenAiCompatibleLanguageModelProvider"
-Cohesion: 0.07
-Nodes (24): available_model(), chat_completion_max_tokens_parameter(), chat_completion_max_tokens_parameter_defaults_to_max_completion_tokens(), chat_completion_max_tokens_parameter_uses_max_tokens_when_configured(), chat_completion_reasoning_effort(), chat_completion_reasoning_effort_honors_request_and_configured_effort(), chat_completion_reasoning_effort_omits_missing_effort(), chat_completion_reasoning_effort_preserves_explicit_none() (+16 more)
+### Community 404 - "provider/open_ai_compatible.rs"
+Cohesion: 0.03
+Nodes (45): AnthropicPromptCacheMode, Automatic, Disabled, Legacy, adaptive_mode_maps_to_adaptive_thinking_with_all_effort_levels(), AnthropicCompatibleLanguageModelProvider, AnthropicCompatibleSettings, API_KEY_PLACEHOLDER (+37 more)
+
+### Community 405 - "component.rs"
+Cohesion: 0.08
+Nodes (11): COMPONENT_DATA, ComponentFn, ComponentId, ComponentMetadata, ComponentRegistry, components(), ComponentStatus, Deprecated (+3 more)
 
 ### Community 406 - "repeat.rs"
-Cohesion: 0.06
-Nodes (21): ClipboardItem, MarkLocation, Buffer, Path, MarksMatch, MarksMatchInfo, Content, Path (+13 more)
+Cohesion: 0.05
+Nodes (26): ClipboardItem, Mark, Buffer, Local, Path, MarkLocation, Buffer, Path (+18 more)
 
 ### Community 407 - "launch.py"
-Cohesion: 0.03
-Nodes (10): SelectedBreakpointKind, Data, Exception, Source, build_markdown_body(), extract_duplicate_info(), fetch_canonical_issues_with_duplicates(), parse_args() (+2 more)
+Cohesion: 0.04
+Nodes (8): SelectedBreakpointKind, Data, Exception, Source, build_markdown_body(), extract_duplicate_info(), fetch_canonical_issues_with_duplicates(), parse_args()
 
 ### Community 408 - "ScrollManager"
 Cohesion: 0.05
-Nodes (18): hide_hover(), Editor, ScrollAmount, Column, Line, Page, PageWidth, ScrollDirection (+10 more)
+Nodes (19): ActiveScrollbarState, Editor, ScrollAnchor, SCROLLBAR_SHOW_INTERVAL, ScrollbarThumbState, Dragging, Hovered, Idle (+11 more)
 
-### Community 409 - "edit_prediction/src/udiff.rs"
-Cohesion: 0.04
-Nodes (60): PlainLlmClient, deserialize_null_as_empty_string(), ExamplePrompt, ExampleState, ensure_repo_cloned(), fetch_if_needed(), lock_repo(), parse_repo_url() (+52 more)
+### Community 409 - "text_diff.rs"
+Cohesion: 0.10
+Nodes (28): compute_diff_stats(), apply_diff_patch(), apply_reversed_diff_patch(), char_diff(), diff_internal(), DiffOptions, line_diff(), MAX_WORD_DIFF_LEN (+20 more)
 
-### Community 410 - "settings_sync/src/settings_sync.rs"
-Cohesion: 0.06
-Nodes (21): account_avatar(), AccountButton, add_account_entries(), add_sign_out_entry(), idle_status_shows_the_last_sync(), observe_account(), status_label(), sync_state() (+13 more)
+### Community 410 - "account_button.rs"
+Cohesion: 0.09
+Nodes (10): account_avatar(), AccountButton, add_account_entries(), add_sign_out_entry(), idle_status_shows_the_last_sync(), observe_account(), status_label(), sync_state() (+2 more)
 
 ### Community 411 - "hashed_regions.rs"
-Cohesion: 0.13
-Nodes (16): BookmarkTestContext, test_active_bookmarks(), test_bookmark_navigation_lands_at_column_zero(), test_bookmark_set_from_nonzero_column_toggles_off_from_column_zero(), test_bookmark_survives_edits(), test_bookmark_toggle_deduplicates_by_row(), test_bookmark_toggling(), test_bookmark_toggling_unnamed_with_multiple_selections() (+8 more)
+Cohesion: 0.08
+Nodes (46): bookmark_path(), bookmarked_paths(), BookmarkTestContext, close_bookmarks_editor(), cursor_line_text(), display_row_for(), excerpt_count(), failed_paths() (+38 more)
 
-### Community 412 - "ClientContext"
-Cohesion: 0.05
-Nodes (35): ClientContext, enqueue_request(), FlattenAcpResult, handle_elicitation(), handle_v2_create_elicitation(), handle_v2_request_permission(), NotificationForegroundWork, NotificationForegroundWork<Notif> (+27 more)
+### Community 412 - "permission_outcome_to_v1"
+Cohesion: 0.33
+Nodes (4): permission_option_from_v1(), permission_outcome_to_v1(), test_v1_permission_conversion_preserves_cancellation(), test_v1_permission_conversion_preserves_options_and_arc_ids()
 
 ### Community 413 - "KeymapFile"
-Cohesion: 0.06
-Nodes (21): load_keymap(), ActionBuildError, BuildError, NotFound, dyn Action, generate_list_of_all_registered_actions(), ActionSequence, can_deserialize_keymap_with_trailing_comma() (+13 more)
+Cohesion: 0.05
+Nodes (23): KeyBinding, KeyBindingMetaIndex, ActionSequence, can_deserialize_keymap_with_trailing_comma(), KEY_BINDING_VALIDATORS, KeyBindingValidator, Base, Default (+15 more)
 
 ### Community 414 - "outputs.rs"
-Cohesion: 0.09
-Nodes (26): accent_class_name(), ACCENT_CLASSES, AccentColors, AccentColors<'theme, I>, add_class(), add_to_event(), chart_color_class_name(), CHART_COLOR_CLASSES (+18 more)
+Cohesion: 0.12
+Nodes (17): accent_class_name(), ACCENT_CLASSES, AccentColors<'theme, I>, add_class(), add_to_event(), chart_color_class_name(), CHART_COLOR_CLASSES, ClassDiagramAccents (+9 more)
 
-### Community 415 - "integration/git_store.rs"
-Cohesion: 0.05
-Nodes (39): ConflictsOurs, ConflictsOursMarker, ConflictsOuter, ConflictsTheirs, ConflictsTheirsMarker, StatusCode, Added, Copied (+31 more)
+### Community 415 - "conflict_view.rs"
+Cohesion: 0.02
+Nodes (35): TransfersIndicator, DiagnosticIndicator, ConflictsOurs, ConflictsOursMarker, ConflictsOuter, ConflictsTheirs, ConflictsTheirsMarker, ActiveBufferEncoding (+27 more)
 
 ### Community 416 - "AnthropicLanguageModelProvider"
-Cohesion: 0.07
-Nodes (17): compute_disambiguation_details(), test_deeper_conflict(), test_duplicate_paths_from_multiple_groups(), test_empty_input(), test_identical_items_terminates(), test_mixed_conflicting_and_unique(), test_no_conflicts(), test_simple_two_way_conflict() (+9 more)
+Cohesion: 0.05
+Nodes (27): path_suffix(), compute_disambiguation_details(), test_deeper_conflict(), test_duplicate_paths_from_multiple_groups(), test_empty_input(), test_identical_items_terminates(), test_mixed_conflicting_and_unique(), test_no_conflicts() (+19 more)
 
-### Community 417 - "RealFs"
-Cohesion: 0.03
-Nodes (19): atomic_replace(), CopyOptions, CreateOptions, FakeWatchBackend, file_id(), JobEventReceiver, JobEventSender, JobTracker (+11 more)
+### Community 417 - "test_journal"
+Cohesion: 0.17
+Nodes (24): a_pending_frame_prevents_idle_until_presentation(), a_present_without_a_draw_clears_the_window_pending_state(), an_expired_frame_no_longer_blocks_idle_boundaries(), an_immediately_ready_runnable_prevents_an_idle_boundary_between_polls(), closing_a_window_unblocks_idle_boundaries(), completed_skips_seal_without_retiring_pending_demand(), Action, TaskPoll (+16 more)
 
 ### Community 418 - "KeystrokeInput"
-Cohesion: 0.08
-Nodes (5): ActiveCall, ActiveCallEntity, init(), OneAtATime, test_one_at_a_time()
+Cohesion: 0.06
+Nodes (9): ActiveCall, ActiveCallEntity, IncomingCall, init(), OneAtATime, test_one_at_a_time(), IncomingCallNotification, IncomingCallNotificationState (+1 more)
 
 ### Community 419 - "BufferSnapshot"
 Cohesion: 0.02
-Nodes (78): EditDisplayMode, DiffPopover, Inline, TabAccept, InlineCompletion, Edit, Move, collect_buffer_diagnostics() (+70 more)
+Nodes (50): context_range_for_entry(), heuristic_syntactic_expand(), is_line_blank_or_indented_less(), normalize_hint_biases(), AutoindentRequest, AutoindentRequestEntry, BufferChunkHighlights, BufferChunks (+42 more)
 
 ### Community 420 - ".new"
-Cohesion: 0.04
-Nodes (22): ChangeList, EditorMode, AutoHeight, Full, SingleLine, InlayHintRefreshReason, BufferEdited, ExcerptsRemoved (+14 more)
+Cohesion: 0.05
+Nodes (15): ChangeList, ContextMenuPlacement, Above, Below, EditorMode, AutoHeight, Full, SingleLine (+7 more)
 
 ### Community 421 - "lsp_log_view.rs"
-Cohesion: 0.04
-Nodes (37): EnabledLogStreams, IoKind, StdErr, StdIn, StdOut, Event, NewServerLogEntry, format_duration() (+29 more)
+Cohesion: 0.03
+Nodes (50): EnabledLogStreams, init(), initialize_new_editor(), log_contents(), LogMenuItem, LspLogToolbarItemView, LspLogView, open() (+42 more)
 
 ### Community 422 - "rows.rs"
 Cohesion: 0.08
@@ -3943,79 +3728,79 @@ Nodes (16): EXPANDED_KEY, LibraryRows, note(), PHP, ROOT, Row, RowKind, Dir (+8 
 
 ### Community 423 - "extensions.md"
 Cohesion: 0.05
-Nodes (8): ChunkSummary, DimensionPair<K, V>, Dimensions<D1, D2, ()>, OffsetUtf16, Point, TextDimension, TextSummary, usize
+Nodes (9): ChunkSummary, DimensionPair<K, V>, Dimensions<D1, D2, ()>, OffsetUtf16, Point, PointUtf16, TextDimension, TextSummary (+1 more)
 
 ### Community 424 - "MessageKind"
 Cohesion: 0.05
 Nodes (57): barrier_wait_with_app(), BlockingRenderView, canonicalize_with_app(), child_wait_with_app(), child_wait_with_output_with_app(), command_output_with_app(), command_spawn_with_app(), command_status_with_app() (+49 more)
 
 ### Community 425 - "solo_diff_view.rs"
-Cohesion: 0.09
-Nodes (5): SoloDiffButtonStates, SoloDiffGitToolbar, SoloDiffStyleToolbar, SoloDiffView, test_changes_only_multibuffer_has_one_buffer_and_expand_controls()
+Cohesion: 0.08
+Nodes (9): SoloDiffButtonStates, SoloDiffGitToolbar, SoloDiffStyleToolbar, SoloDiffView, test_changes_only_multibuffer_has_one_buffer_and_expand_controls(), description, required, type (+1 more)
 
 ### Community 426 - "SkillCreatorPage"
 Cohesion: 0.07
 Nodes (28): ConfigurationSource, Existing, Extension, ConfigurationTarget, Existing, ExistingHttp, Extension, ConfigureContextServerModal (+20 more)
 
 ### Community 427 - "TitleBar"
-Cohesion: 0.08
-Nodes (11): format_stat(), pick_default_screen(), TitleBar, toggle_deafen(), toggle_mute(), toggle_screen_sharing(), apply_title_bar_visibility(), init() (+3 more)
+Cohesion: 0.16
+Nodes (5): apply_title_bar_visibility(), init(), set_window_layout(), TitleBar, update_layout_action_filter()
 
 ### Community 428 - "Editor"
 Cohesion: 0.05
-Nodes (6): Editor, SoftWrap, Bounded, EditorWidth, GitDiff, None
+Nodes (9): Editor, MinimapVisibility, Disabled, Enabled, SoftWrap, Bounded, EditorWidth, GitDiff (+1 more)
 
 ### Community 429 - "integration/bookmark_store.rs"
-Cohesion: 0.08
-Nodes (39): HangMonitorConfig, HangMonitorError, AlreadyStarted, Spawn, HangMonitorPoll, HangMonitorPollReason, Flush, Interval (+31 more)
+Cohesion: 0.07
+Nodes (45): HangIncident, HangTrigger, .ALL, BlockingWork, LateFrame, Threshold, HangMonitorConfig, HangMonitorError (+37 more)
 
-### Community 430 - ".new"
-Cohesion: 0.11
-Nodes (10): NotebookItem, SaveDestination, CurrentPath, NewPath, test_open_single_file_notebook(), test_run_cell_with_missing_interpreter_shows_error(), test_save_goes_through_the_project(), test_upgrade_notebook_preserves_cell_ids() (+2 more)
+### Community 430 - "notebook_ui.rs"
+Cohesion: 0.05
+Nodes (19): CONTROL_SIZE, LARGE_SPACING_SIZE, MAX_TEXT_BLOCK_WIDTH, MEDIUM_SPACING_SIZE, NOTEBOOK_EXTENSION, NOTEBOOK_WITH_ONE_CODE_CELL, NotebookMode, Edit (+11 more)
 
 ### Community 431 - "eslint.rs"
-Cohesion: 0.07
-Nodes (36): Tree, swap_rgba_pa_to_bgra(), BundledFonts, cached_fallback_face(), db_with_bundled_fonts(), EMOJI_FONT_FAMILIES, fallback_faces_are_remembered_until_excluded(), fix_generic_font_families() (+28 more)
+Cohesion: 0.04
+Nodes (56): swap_rgba_pa_to_bgra(), FunctionReflection, FunctionReflection<T>, InspectedElement, Inspector, InspectorElementRegistry, InspectorElementRenderer, BundledFonts (+48 more)
 
 ### Community 432 - "pasteboard.rs"
 Cohesion: 0.09
 Nodes (9): Pasteboard, simulate_external_file_copy(), test_custom_types_survive_creation_autorelease_pool(), test_read_external_path(), test_read_external_paths_with_spaces(), test_read_image(), test_read_multiple_external_paths(), test_string() (+1 more)
 
 ### Community 433 - "RandomizedElementTreeMutationKind"
-Cohesion: 0.08
-Nodes (21): hover_targets(), MixedWorkload, RandomizedElementTreeMutationKind, .ALL, ChildBorder, ChildBounds, ChildClipping, ChildColor (+13 more)
+Cohesion: 0.06
+Nodes (29): ChurnPanel, ChurnRoot, hover_targets(), MixedRun, MixedWorkload, ScrollPane, ScrollRoot, ScrollStaticPanel (+21 more)
 
 ### Community 434 - "devcontainer_api.rs"
 Cohesion: 0.06
-Nodes (12): add_message_content_part(), authenticate_does_not_fetch_models_when_ai_is_disabled(), ConfigurationView, does_not_fetch_models_when_ai_is_disabled(), enabling_ai_discovers_models_with_stored_credentials(), language_model(), LmStudioLanguageModelProvider, PROVIDER_ID (+4 more)
+Nodes (17): add_message_content_part(), API_KEY_ENV_VAR, API_KEY_ENV_VAR_NAME, authenticate_does_not_fetch_models_when_ai_is_disabled(), ConfigurationView, does_not_fetch_models_when_ai_is_disabled(), enabling_ai_discovers_models_with_stored_credentials(), language_model() (+9 more)
 
 ### Community 435 - "vim/src/state.rs"
-Cohesion: 0.07
-Nodes (30): CategoryInfo, FailKind, BadMetadata, Profile, Skipped, Triage, VersionMismatch, Importance (+22 more)
-
-### Community 436 - "Checkbox"
 Cohesion: 0.05
-Nodes (20): Checkbox, checkbox(), Color, Switch, switch(), SwitchColor, Accent, Custom (+12 more)
+Nodes (45): CategoryInfo, FailKind, BadMetadata, Profile, Skipped, Triage, VersionMismatch, Importance (+37 more)
+
+### Community 436 - "pending_bindings.rs"
+Cohesion: 0.13
+Nodes (26): text_for_keybinding_keystrokes(), binding(), binding_after_first_keystroke(), binding_row(), group_bindings(), HEADER_LABEL, MAX_KEY_COLUMN_WIDTH, MIN_KEY_COLUMN_WIDTH (+18 more)
 
 ### Community 437 - "bench_context.rs"
 Cohesion: 0.05
-Nodes (12): add_anthropic_available_models_env(), add_openai_compatible_provider_env(), add_zed_eval_env(), detect_workdir(), eval_cli_with_log_command(), patch_command(), populate_context_from_result(), provider_api_env() (+4 more)
+Nodes (10): add_anthropic_available_models_env(), add_openai_compatible_provider_env(), add_zed_eval_env(), detect_workdir(), patch_command(), populate_context_from_result(), provider_api_env(), ZedAgent (+2 more)
 
 ### Community 438 - "tests/end_to_end.rs"
-Cohesion: 0.08
-Nodes (54): _baseline_problems(), command_baseline_list(), command_baseline_record(), command_baseline_show(), _model_slug(), _print_recorded(), _print_refusal(), _record_from_provenance() (+46 more)
+Cohesion: 0.09
+Nodes (49): _baseline_problems(), command_baseline_list(), command_baseline_record(), command_baseline_show(), _model_slug(), _print_recorded(), _print_refusal(), _record_from_provenance() (+41 more)
 
 ### Community 439 - "scheduler/src/executor.rs"
-Cohesion: 0.06
-Nodes (47): prepare_build_request(), resolve_source(), validate_build_id(), dedupe_preserving_order(), default_namespace(), parse_comma_values(), parse_parts(), utc_timestamp() (+39 more)
+Cohesion: 0.07
+Nodes (51): Benchmark, benchmark_metadata(), get_benchmark(), validate_build_id(), dedupe_preserving_order(), default_namespace(), modal_call_id(), parse_comma_values() (+43 more)
 
 ### Community 440 - "syntax_map_tests.rs"
-Cohesion: 0.06
-Nodes (48): extract_all_codeblocks(), extract_last_codeblock(), line_start_offset(), make_example(), resolved_excerpt_ranges_for_format(), TeacherJumpsPrompt, .DEFAULT_RELATED_FILES_BUDGET, .MAX_HISTORY_TOKENS (+40 more)
+Cohesion: 0.08
+Nodes (39): extract_all_codeblocks(), extract_last_codeblock(), make_example(), resolved_excerpt_ranges_for_format(), TeacherJumpsPrompt, .DEFAULT_RELATED_FILES_BUDGET, .MAX_HISTORY_TOKENS, .NO_EDITS (+31 more)
 
 ### Community 441 - "src/component_preview.rs"
-Cohesion: 0.05
-Nodes (21): ActivePageId, ComponentPreview, ComponentPreviewPage, init(), PreviewEntry, AllComponents, Component, SectionHeader (+13 more)
+Cohesion: 0.10
+Nodes (12): ActivePageId, ComponentPreview, ComponentPreviewPage, init(), PreviewEntry, AllComponents, Component, SectionHeader (+4 more)
 
 ### Community 442 - "ui/blocking_io_on_foreground.rs"
 Cohesion: 0.15
@@ -4027,91 +3812,91 @@ Nodes (68): $ref, description, type, $ref, description, type, $ref, $ref (+60 mo
 
 ### Community 444 - "UnstagedDiff"
 Cohesion: 0.08
-Nodes (3): ButtonStates, UnstagedDiff, UnstagedDiffToolbar
+Nodes (4): ButtonStates, UnstagedDiff, UnstagedDiffHunkRenderer, UnstagedDiffToolbar
 
-### Community 445 - "find_or_create_repository"
-Cohesion: 0.23
-Nodes (14): all_open_workspaces(), archived_worktree_ref_name(), current_app_state(), find_or_create_repository(), persist_worktree_state(), remove_new_worktree_on_error(), remove_root(), remove_root_after_worktree_removal() (+6 more)
+### Community 445 - "settings/src/settings.rs"
+Cohesion: 0.06
+Nodes (18): KeyBindingValidatorRegistration, CopilotSettings, DEFAULT_KEYMAP_PATH, init(), initial_local_debug_tasks_content(), initial_project_settings_content(), initial_tasks_content(), SPECIFIC_OVERRIDES_KEYMAP_PATH (+10 more)
 
 ### Community 446 - "FeatureFlag"
 Cohesion: 0.06
-Nodes (28): DebuggerHistoryFeatureFlag, .NAME, EditPredictionJumpsFeatureFlag, .NAME, FeatureFlag, .NAME, AcpBetaFeatureFlag, .NAME (+20 more)
+Nodes (29): DebuggerHistoryFeatureFlag, .NAME, EditPredictionJumpsFeatureFlag, .NAME, FeatureFlag, .NAME, AcpBetaFeatureFlag, .NAME (+21 more)
 
-### Community 447 - "App"
-Cohesion: 0.14
-Nodes (4): edit_prediction_edit_text(), edit_prediction_fallback_text(), EditPredictionState, Color
+### Community 447 - "styles/colors.rs"
+Cohesion: 0.07
+Nodes (12): accent_colors_count(), apply_status_color_defaults(), apply_theme_color_defaults(), zed_default_dark(), zed_default_themes(), AccentColors, all_theme_colors(), ThemeColors (+4 more)
 
 ### Community 448 - "audio_pipeline.rs"
-Cohesion: 0.08
-Nodes (15): Channel, ChannelsForUser, InviteMemberResult, MembershipUpdated, NotificationBatch, Database, max_order(), Database (+7 more)
+Cohesion: 0.07
+Nodes (17): Channel, ChannelsForUser, InviteMemberResult, MembershipUpdated, NewUserResult, NotificationBatch, Database, max_order() (+9 more)
 
 ### Community 449 - "CopilotCodeVerification"
-Cohesion: 0.11
-Nodes (14): PromptUserDeviceFlow, ConfigurationMode, Chat, EditPrediction, ConfigurationView, copilot_toast(), CopilotChatCodeVerification, CopilotCodeVerification (+6 more)
+Cohesion: 0.07
+Nodes (32): CopilotChatStatus, Authorized, Error, SignedOut, SigningIn, Starting, Status, Authorized (+24 more)
 
 ### Community 450 - "Inner"
 Cohesion: 0.07
 Nodes (7): ActivePrediction, FeedbackCompletionProvider, .FAILURE_MODES, RatePredictionsModal, RatePredictionView, RawInput, SuggestedEdits
 
 ### Community 451 - "collab/src/db.rs"
-Cohesion: 0.08
-Nodes (13): input(), InputExample, long_single_line_selection_uses_one_geometry_fragment(), marked_selection_is_relative_to_inserted_text(), native_selection_and_length_use_utf16(), TextInput, OsAction, Copy (+5 more)
+Cohesion: 0.07
+Nodes (17): input(), InputExample, long_single_line_selection_uses_one_geometry_fragment(), main(), marked_selection_is_relative_to_inserted_text(), native_selection_and_length_use_utf16(), run_example(), start() (+9 more)
 
 ### Community 452 - "perf/src/main.rs"
 Cohesion: 0.07
-Nodes (19): bench_task_reports_long_task_without_window(), BenchAppContext<'a, 'measurement>, BenchReport, DurationHistogram, foreground_work_excludes_setup_before_trace_scope_starts(), foreground_work_reports_long_task_without_window_draw(), ForegroundWorkSummary, format_duration() (+11 more)
+Nodes (18): bench_task_reports_long_task_without_window(), BenchAppContext<'a, 'measurement>, BenchReport, DurationHistogram, foreground_work_excludes_setup_before_trace_scope_starts(), foreground_work_reports_long_task_without_window_draw(), ForegroundWorkSummary, format_duration() (+10 more)
 
-### Community 453 - "Diff"
-Cohesion: 0.02
-Nodes (150): AnthropicClient, Dummy, Plain, run_distill(), ActualCursor, Example, ExamplePrediction, ExampleScore (+142 more)
+### Community 453 - "Example"
+Cohesion: 0.01
+Nodes (394): AnthropicClient, Dummy, Plain, PlainLlmClient, run_distill(), ActualCursor, deserialize_null_as_empty_string(), Example (+386 more)
 
 ### Community 454 - "TestApp"
-Cohesion: 0.17
-Nodes (11): append_text(), editor_preview(), EditorPreview, EditorPreviewHandle, highlighted_rows(), init_preview(), show_match(), test_preview_clear_stops_single_row_highlight_updates() (+3 more)
+Cohesion: 0.11
+Nodes (19): append_text(), editor_preview(), EditorPreview, EditorPreviewHandle, highlighted_rows(), init_preview(), SearchMatchLineHighlight, show_match() (+11 more)
 
 ### Community 455 - "paths/src/paths.rs"
-Cohesion: 0.03
-Nodes (57): analyze_duplicates(), resolve_matches(), areas_match(), build_comment(), call_claude(), call_claude_tool(), check_team_membership(), _claude_request() (+49 more)
+Cohesion: 0.06
+Nodes (32): analyze_duplicates(), resolve_matches(), areas_match(), build_comment(), call_claude(), call_claude_tool(), check_team_membership(), _claude_request() (+24 more)
 
 ### Community 456 - "DivInspector"
-Cohesion: 0.11
-Nodes (17): assert_inspector_watchers(), completion_replace_range(), DivInspector, flush_teardown(), InspectorTarget, is_not_identifier_char(), render_layout_state(), RustStyleCompletionProvider (+9 more)
+Cohesion: 0.09
+Nodes (20): DivInspectorState, assert_inspector_watchers(), completion_replace_range(), DivInspector, flush_teardown(), InspectorTarget, is_not_identifier_char(), render_layout_state() (+12 more)
 
 ### Community 457 - "StepOutput"
-Cohesion: 0.13
-Nodes (8): ContextServerPrompt, ContextServerRegistry, ContextServerRegistryEvent, PromptsChanged, ToolsChanged, ContextServerTool, get_prompt(), RegisteredContextServer
+Cohesion: 0.08
+Nodes (24): ContextServerPrompt, ContextServerRegistry, ContextServerRegistryEvent, PromptsChanged, ToolsChanged, ContextServerTool, format_mcp_initial_title(), get_prompt() (+16 more)
 
 ### Community 458 - "timestamp.rs"
 Cohesion: 0.07
-Nodes (53): identical_new_content_inputs(), kept_rate_benchmark(), localized_rename_inputs(), repeated_function_lines(), repetitive_token_inputs(), analyze_masked_units(), annotate_kept_rate_tokens(), AnnotatedToken (+45 more)
+Nodes (48): analyze_masked_units(), annotate_kept_rate_tokens(), AnnotatedToken, build_comparison_units(), ComparisonUnit, compute_kept_rate(), count_unmasked_unit_chars(), dp_index() (+40 more)
 
-### Community 459 - "edit_prediction_registry.rs"
-Cohesion: 0.03
-Nodes (58): EditPredictionModel, Fim, Mercury, SweepPrompt, Zeta, clean_fim_completion(), FIM_CONTEXT_TOKENS, FIM_PROMPT_FORMATS (+50 more)
-
-### Community 460 - "table_view.rs"
-Cohesion: 0.02
-Nodes (86): compact_json(), create_table_row(), editor_file_extension(), from_buffer_with_delimiter(), from_json_lines(), parse_delimited_text_with_positions(), REPARSE_DEBOUNCE, snapshot() (+78 more)
+### Community 460 - "AnyColumn"
+Cohesion: 0.05
+Nodes (34): TableView, DisplayToDataMapping, apply_and_snapshot(), build_engine(), calculate_available_filters(), FilterEntry, FilterEntryState, Available (+26 more)
 
 ### Community 461 - "BufferSnapshot"
-Cohesion: 0.08
-Nodes (21): Change, Batched, Created, DirCreated, DirRemoved, Renamed, Restored, Trashed (+13 more)
+Cohesion: 0.07
+Nodes (22): Change, Batched, Created, DirCreated, DirRemoved, Renamed, Restored, Trashed (+14 more)
 
 ### Community 462 - "markdown_layout.rs"
-Cohesion: 0.07
+Cohesion: 0.08
 Nodes (45): add_toolbar_item(), apply_default_layout(), choosing_the_current_layout_changes_nothing(), close_preview(), current_layout(), default_layout_editor_leaves_the_editor_alone(), default_layout_preview_opens_the_preview_alone(), default_layout_split_opens_editor_and_preview() (+37 more)
 
-### Community 464 - "number_field.rs"
-Cohesion: 0.07
-Nodes (28): accounts(), Credentials, FakeStore, ImportedAccounts, imports_from_iremote_once(), init_keyring(), IREMOTE_SERVICE, KEYRING_INIT (+20 more)
+### Community 463 - "AsyncWindowContext"
+Cohesion: 0.10
+Nodes (4): Args, main(), parse_args(), AsyncWindowContext
 
-### Community 465 - "Connection"
-Cohesion: 0.06
-Nodes (18): open_test_db(), Connection, (), D, (D1, D2), (D1, D2, D3), (D1, D2, D3, D4), (D1, D2, D3, D4, D5) (+10 more)
+### Community 464 - "Global"
+Cohesion: 0.01
+Nodes (135): GlobalClient, should_install_crash_handler(), GlobalCommandPaletteFilter, CredentialsProvider, FakeCredentials, FakeCredentialsProvider, init_keyring(), KeyringStore (+127 more)
+
+### Community 465 - "db/src/db.rs"
+Cohesion: 0.02
+Nodes (65): ALL_FILE_DB_FAILED, AppDatabase, AppMigrator, CONNECTION_INITIALIZE_QUERY, DB_FILE_NAME, DB_INITIALIZE_QUERY, db_path(), DbScope (+57 more)
 
 ### Community 466 - "NeovimBackedTestContext"
-Cohesion: 0.03
-Nodes (58): APACHE_2_0_TXT, assert_matches_license(), BSD_0_TXT, canonicalize_license_text(), check_pattern(), detect_license(), is_char_count_within_range(), ISC_TXT (+50 more)
+Cohesion: 0.06
+Nodes (45): APACHE_2_0_TXT, assert_matches_license(), BSD_0_TXT, canonicalize_license_text(), check_pattern(), detect_license(), init_test(), is_char_count_within_range() (+37 more)
 
 ### Community 467 - "ExtensionsPage"
 Cohesion: 0.06
@@ -4119,71 +3904,71 @@ Nodes (47): ADDITIONAL_BINARY_HEADERS, analyze_byte_content(), binary_header_loo
 
 ### Community 468 - "SubmissionId"
 Cohesion: 0.04
-Nodes (30): SubmissionUpdated, IdleSleepPrevention, Acquiring, Active, Failed, Inactive, test_receipt_disconnect_settles_waiters_and_preserves_recovery(), Session (+22 more)
+Nodes (30): SubmissionUpdated, FakeAgentConnection, FakeAgentSessionClientUserMessageIds, IdleSleepPrevention, Acquiring, Active, Failed, Inactive (+22 more)
 
-### Community 469 - "benches/streaming_diff.rs"
-Cohesion: 0.09
-Nodes (37): edit_range(), EditFixture, EditPattern, InsertHelperBlocks, LocalizedRewrite, ManySmallChanges, fixtures(), insert_helper_blocks() (+29 more)
+### Community 469 - "jumps.rs"
+Cohesion: 0.12
+Nodes (35): classify_retrieved_rows(), classify_values(), count_missing_rows(), counts_false_negatives_and_file_false_positives(), deletion_counts_deleted_old_line_as_true_positive(), editable_context_coverage(), empty_patch_with_no_context_has_perfect_f1(), Excerpt (+27 more)
 
 ### Community 470 - "Toolbar"
-Cohesion: 0.12
-Nodes (3): Entity<T>, Toolbar, ToolbarItemViewHandle
+Cohesion: 0.11
+Nodes (4): Entity<T>, PaneSearchBarCallbacks, Toolbar, ToolbarItemViewHandle
 
 ### Community 471 - "DebugSession"
 Cohesion: 0.08
-Nodes (6): DebugPanel, SessionListEntry, DebugSession, Label, test_truncate_and_trailoff(), truncate_and_trailoff()
+Nodes (5): DebugPanel, SessionListEntry, DebugSession, test_truncate_and_trailoff(), truncate_and_trailoff()
 
-### Community 472 - "SharedScreen"
-Cohesion: 0.16
-Nodes (5): Event, Close, SharedScreen, App, observe_accessible_mode()
+### Community 472 - "gpui_macos/src/system_notifications.rs"
+Cohesion: 0.08
+Nodes (9): DelegateIvars, NotificationCenter, NotificationCommand, Dismiss, Show, NotificationResponseDelegate, ResponseCallback, SystemNotificationState (+1 more)
 
 ### Community 473 - "sandbox_linux.rs"
 Cohesion: 0.04
-Nodes (60): SocketKind, Diagnostics, TcpListener, Udp, AccessRequest, Decision, Handler, HandlerId (+52 more)
+Nodes (53): AccessRequest, Decision, Handler, HandlerId, SandboxPolicy, body_memfd(), Denial, FactoryRequest (+45 more)
 
 ### Community 474 - "github-check-new-issue-for-duplicates.py"
 Cohesion: 0.06
-Nodes (27): CHANNEL_COUNT, Audio, AudioDeviceInfo, BUFFER_SIZE, EchoCanceller, ensure_devices_initialized(), get_available_audio_devices(), init() (+19 more)
+Nodes (28): CHANNEL_COUNT, Audio, AudioDeviceInfo, AvailableAudioDevices, BUFFER_SIZE, EchoCanceller, ensure_devices_initialized(), get_available_audio_devices() (+20 more)
 
 ### Community 475 - "ConfigurationView"
 Cohesion: 0.07
 Nodes (18): collect_markdowns(), compaction_markdowns(), MatchKey, MatchTarget, Editor, Markdown, render_query_input(), ScannedTarget (+10 more)
 
-### Community 476 - "ErrorAction"
-Cohesion: 0.08
-Nodes (11): ActionIcon, anyhow::Error, ErrorAction, ErrorSeverity, Critical, Error, Warning, PortalError (+3 more)
+### Community 476 - "copilot_edit_prediction_delegate.rs"
+Cohesion: 0.11
+Nodes (13): common_prefix(), COPILOT_TEST_DEBOUNCE, CopilotEditPredictionDelegate, handle_completion_request(), handle_copilot_completion_request(), init_test(), test_accept_partial_copilot_suggestion(), test_copilot() (+5 more)
 
 ### Community 477 - "go_to_line.rs"
 Cohesion: 0.10
-Nodes (21): UserCaretPosition, assert_single_caret_at_buffer_row(), assert_single_caret_at_row(), current_position(), go_to_point(), GoToLine, highlighted_display_rows(), init() (+13 more)
+Nodes (22): UserCaretPosition, assert_single_caret_at_buffer_row(), assert_single_caret_at_row(), current_position(), go_to_point(), GoToLine, GoToLineRowHighlights, highlighted_display_rows() (+14 more)
 
 ### Community 478 - "conflict_view.rs"
 Cohesion: 0.15
 Nodes (4): SvgPreviewMode, Default, Follow, SvgPreviewView
 
 ### Community 479 - "provider/ollama.rs"
-Cohesion: 0.08
-Nodes (8): ConfigurationView, language_model(), merge_settings_into_models(), OllamaLanguageModelProvider, PROVIDER_ID, restart_fetch_models_task_records_error_on_failure(), State, test_merge_settings_preserves_display_names_for_similar_models()
+Cohesion: 0.02
+Nodes (66): CustomHeaders, AmazonBedrockSettings, BedrockAuthMethod, ApiKey, Automatic, NamedProfile, SingleSignOn, ZedDotDevSettings (+58 more)
 
 ### Community 480 - "ConverseModel"
-Cohesion: 0.06
-Nodes (62): attr_value(), cleanup_html(), consume_children(), consume_paragraph(), extract_html_blockquote(), extract_html_list(), extract_html_table(), extract_image() (+54 more)
+Cohesion: 0.07
+Nodes (55): attr_value(), cleanup_html(), consume_children(), consume_paragraph(), extract_html_blockquote(), extract_html_list(), extract_html_table(), extract_image() (+47 more)
 
 ### Community 481 - "number_field.rs"
-Cohesion: 0.04
-Nodes (22): EnumVariantDropdown, font_picker(), FontPicker, FontPickerDelegate, a11y_numeric_value(), a11y_value_to_field_value(), impl_newtype_numeric_stepper_float!, impl_newtype_numeric_stepper_int! (+14 more)
+Cohesion: 0.05
+Nodes (18): a11y_numeric_value(), a11y_value_to_field_value(), impl_newtype_numeric_stepper_float!, impl_newtype_numeric_stepper_int!, impl_numeric_stepper_float!, impl_numeric_stepper_int!, impl_numeric_stepper_nonzero_int!, NumberField (+10 more)
 
 ### Community 482 - "ClientApiError"
-Cohesion: 0.07
-Nodes (43): EditPipelineEntry, ResolvingOldText, StreamingNewText, apply_char_operations(), apply_line_operations(), char_ops_to_line_ops(), CharOperation, Delete (+35 more)
+Cohesion: 0.09
+Nodes (37): apply_char_operations(), apply_line_operations(), char_ops_to_line_ops(), CharOperation, Delete, Insert, Keep, LineOperation (+29 more)
 
 ### Community 483 - "etw_tracing.rs"
-Cohesion: 0.06
-Nodes (37): build_profile_collection(), BUILTIN_PROFILES, cancel_etw_recording(), Command, Cancel, Save, create_wpr(), EtwNotification (+29 more)
+Cohesion: 0.07
+Nodes (32): build_profile_collection(), BUILTIN_PROFILES, cancel_etw_recording(), Command, Cancel, Save, create_wpr(), EtwNotification (+24 more)
 
-### Community 484 - "add_overwrite_test/before.rs"
-Cohesion: 0.10
-Nodes (29): calculate_month_difference(), create_offset_datetime(), format_compound_year_month(), format_relative_date(), format_relative_time(), format_timestamp_naive(), format_timestamp_naive_time(), test_calculate_month_difference() (+21 more)
+### Community 484 - "time_format.rs"
+Cohesion: 0.05
+Nodes (67): absolute_formats_use_local_time(), blame_gutter_width_fits_longest_date(), format_git_date(), format_git_timestamp(), format_timestamp(), init(), locale_and_invalid_formats_preserve_surface_defaults(), longest_git_dates() (+59 more)
 
 ### Community 485 - "src/emmet_ext.rs"
 Cohesion: 0.09
@@ -4191,27 +3976,23 @@ Nodes (10): Drag, MemoryView, render_single_memory_view_line(), SelectedMemoryRa
 
 ### Community 486 - "unstaged_diff.rs"
 Cohesion: 0.04
-Nodes (37): MountDefinition, append_mount_with_target_override(), mount_definition_from_metadata(), parse_mount_definition_string(), deserialize_compose_top_level_volumes(), deserialize_compose_volumes(), deserialize_environment(), deserialize_labels() (+29 more)
-
-### Community 487 - "ProjectDiagnosticsEditor"
-Cohesion: 0.07
-Nodes (6): init(), ProjectDiagnosticsEditor, RetainExcerpts, All, Dirty, WeakEntity<ProjectDiagnosticsEditor>
+Nodes (48): CommandRunner, DefaultCommandRunner, deserialize_json_output(), deserialize_yaml_output(), evaluate_json_command(), evaluate_yaml_command(), success_output(), test_deserialize_empty_object() (+40 more)
 
 ### Community 488 - "ContextMenu"
-Cohesion: 0.04
-Nodes (61): parse_next_component(), arrow_key_with_pointer_on_submenu_trigger_navigates_the_submenu(), assert_focus_selection(), can_navigate_back_over_headers(), clicking_embedded_view_outside_its_focus_keeps_content_focused(), confirm_without_selection_dismisses(), confirming_submenu_trigger_focuses_its_content(), CONTEXT_MENU_MIN_WIDTH (+53 more)
+Cohesion: 0.02
+Nodes (115): menu_entry(), COPILOT_SETTINGS_PATH, copilot_settings_url(), COPILOT_SETTINGS_URL, CopilotErrorToast, disabled_globs_content_range(), EditPredictionButton, emit_edit_prediction_menu_opened() (+107 more)
 
 ### Community 489 - "PlatformInputHandler"
-Cohesion: 0.09
-Nodes (43): deserialize_maybe_stringified(), append_line_segment(), error_text(), format_with_line_numbers(), init_test(), LINE_TRUNCATION_MARKER, MAX_LINE_LEN, numbered() (+35 more)
+Cohesion: 0.10
+Nodes (42): append_line_segment(), error_text(), format_with_line_numbers(), init_test(), LINE_TRUNCATION_MARKER, MAX_LINE_LEN, numbered(), read_global_skill_file() (+34 more)
 
 ### Community 490 - "SymbolKind"
 Cohesion: 0.03
-Nodes (63): CodeLabel, Completion, CompletionKind, Class, Color, Constant, Constructor, Enum (+55 more)
+Nodes (69): CodeLabel, CodeLabelSpan, CodeRange, Literal, CodeLabelSpanLiteral, Command, EnvVars, Completion (+61 more)
 
 ### Community 491 - "kernels/mod.rs"
-Cohesion: 0.01
-Nodes (60): build_python_discovery_shell_script(), build_python_exec_shell_script(), extract_environment_kind(), Kernel, ErroredLaunch, Restarting, RunningKernel, Shutdown (+52 more)
+Cohesion: 0.03
+Nodes (19): build_python_exec_shell_script(), KernelSession, RunningKernel, SshRemoteKernelSpecification, start_kernel_tasks(), VENV_DIR_NAMES, WslKernelSpecification, local_kernel_specifications() (+11 more)
 
 ### Community 492 - "SkillCreatorPage"
 Cohesion: 0.09
@@ -4219,207 +4000,207 @@ Nodes (45): assert_location_resolution(), DELETION_COST, find_exact_matches(), f
 
 ### Community 493 - "MemoryView"
 Cohesion: 0.05
-Nodes (32): create_multibuffer_diff_editor(), create_terminal(), diff_editor_text_style_refinement(), AssistantMessage, ToolCall, EntryViewEvent, EntryViewState, init_test() (+24 more)
+Nodes (38): AssistantMessageEntry, create_multibuffer_diff_editor(), create_terminal(), diff_editor_text_style_refinement(), Entry, AssistantMessage, ContextCompaction, Elicitation (+30 more)
+
+### Community 494 - "ResolvedTask"
+Cohesion: 0.14
+Nodes (24): tasks_file(), Inventory, task_lru_comparator(), task_source_kind_preference(), task_variables_preference(), init_test(), list_tasks(), list_tasks_sorted_by_last_used() (+16 more)
 
 ### Community 495 - "StagedDiff"
 Cohesion: 0.08
-Nodes (7): ButtonStates, init_test(), StagedDiff, StagedDiffToolbar, test_staged_changes_deploy_as_a_separate_staged_diff_item(), test_staged_diff_restores_as_staged_diff(), test_toggle_staged_unstages_from_staged_view()
+Nodes (8): ButtonStates, init_test(), StagedDiff, StagedDiffHunkRenderer, StagedDiffToolbar, test_staged_changes_deploy_as_a_separate_staged_diff_item(), test_staged_diff_restores_as_staged_diff(), test_toggle_staged_unstages_from_staged_view()
 
 ### Community 496 - "src/bedrock.rs"
-Cohesion: 0.04
-Nodes (24): aws_document_to_value(), BedrockError, AccessDenied, InternalServer, Other, RateLimited, ServiceUnavailable, Validation (+16 more)
+Cohesion: 0.06
+Nodes (9): aws_document_to_value(), string_field(), test_adaptive_thinking_binding_controls(), test_adaptive_thinking_serializes_effort_in_output_config(), test_disabled_thinking_serializes_opt_out_without_effort(), test_enabled_thinking_serializes_budget_tokens(), test_gpt_6_astra_uses_openai_reasoning_fields(), thinking_request_fields() (+1 more)
 
 ### Community 497 - "edit_prediction_provider_setup.rs"
 Cohesion: 0.07
-Nodes (29): vega_action_link(), ApiKeyDocs, Custom, Link, codestral_settings(), copilot_settings(), mercury_settings(), OLLAMA_API_URL_PLACEHOLDER (+21 more)
+Nodes (20): EnumVariantDropdown, ApiKeyDocs, Custom, Link, codestral_settings(), copilot_settings(), mercury_settings(), OLLAMA_API_URL_PLACEHOLDER (+12 more)
 
 ### Community 498 - "PlatformScheduler"
 Cohesion: 0.07
-Nodes (12): dedicated_executor_tasks_share_one_thread(), PlatformClock, PlatformScheduler, SmokeDispatcher, spawn_dedicated_detached_child_outlives_root(), spawn_dedicated_dropping_task_cancels_future(), spawn_dedicated_returns_not_send_future_output(), spawn_dedicated_runs_on_a_real_separate_thread() (+4 more)
+Nodes (10): PlatformDispatcher, dedicated_executor_tasks_share_one_thread(), PlatformClock, PlatformScheduler, SmokeDispatcher, spawn_dedicated_detached_child_outlives_root(), spawn_dedicated_dropping_task_cancels_future(), spawn_dedicated_returns_not_send_future_output() (+2 more)
 
-### Community 499 - "ActionLog"
-Cohesion: 0.13
-Nodes (10): ActionLog, apply_non_conflicting_edits(), ChangeAuthor, Agent, User, ChangedBuffer, diff_snapshots(), DiffStats (+2 more)
+### Community 499 - "action_log.rs"
+Cohesion: 0.07
+Nodes (57): ActionLog, ActionLogMetrics, ActionLogTelemetry, apply_non_conflicting_edits(), ChangeAuthor, Agent, User, ChangedBuffer (+49 more)
 
 ### Community 500 - "Console"
 Cohesion: 0.09
-Nodes (6): assert_completion_range(), Console, ConsoleQueryBarCompletionProvider, test_determine_completion_replace_range(), OutputToken, CompletionResponse
+Nodes (5): assert_completion_range(), Console, ConsoleQueryBarCompletionProvider, test_determine_completion_replace_range(), OutputToken
 
 ### Community 501 - "tab_map.rs"
-Cohesion: 0.08
+Cohesion: 0.07
 Nodes (38): Chunk, assert_max_tab_chunk_bitmaps(), count_chars_in_byte_range(), MAX_EXPANSION_COLUMN, MAX_ROW_SCAN_CHUNKS, MAX_TABS, SPACES, TabChunks (+30 more)
 
 ### Community 502 - "docs_preprocessor/src/main.rs"
 Cohesion: 0.06
-Nodes (38): FindCommand, MoveToNext, MoveToPrevious, register(), Search, SearchUnderCursor, SearchUnderCursorPrevious, test_backwards_n() (+30 more)
+Nodes (39): MoveToNext, MoveToPrevious, register(), ReplaceCommand, Replacement, Search, SearchUnderCursor, SearchUnderCursorPrevious (+31 more)
 
 ### Community 503 - "StackFrameList"
 Cohesion: 0.07
 Nodes (32): Cancel, cancel_running_and_queued(), coalesces_queued_uploads_and_limits_concurrency(), Job, MAX_HISTORY, ProgressSink, Queued, QueueEvent (+24 more)
 
-### Community 504 - "ShellKind"
-Cohesion: 0.07
-Nodes (14): ShellKind, Cmd, Csh, Elvish, Fish, Nushell, Posix, PowerShell (+6 more)
+### Community 504 - "operation_queue.rs"
+Cohesion: 0.08
+Nodes (11): ContextLessSummary, NoSummary, MapKey<K>, Operation, OperationItem, OperationItem<T>, OperationKey, OperationQueue<T> (+3 more)
 
-### Community 505 - "Markdown"
-Cohesion: 0.05
-Nodes (16): HelloWorld, main(), MarkdownExample, Context, CodeBlockHighlights, compute_code_block_highlights(), highlight_code_block(), Markdown (+8 more)
+### Community 505 - "workspace/src/tasks.rs"
+Cohesion: 0.14
+Nodes (18): add_test_item(), create_fixture(), Fixture, ScheduledTaskResult, Cancelled, Failure, SpawnFailed, Success (+10 more)
 
 ### Community 506 - "ChannelRole"
-Cohesion: 0.06
-Nodes (17): ChannelRole, Admin, Banned, Guest, Member, Talker, proto::ChannelRole, Model (+9 more)
+Cohesion: 0.07
+Nodes (16): ChannelRole, Admin, Banned, Guest, Member, Talker, proto::ChannelRole, Model (+8 more)
 
 ### Community 507 - "CopilotChat"
-Cohesion: 0.04
-Nodes (31): make_request(), OllamaGenerateResponse, AllLanguageSettings, CodestralSettings, CompletionSettings, CopilotEditPredictionSettings, DisabledGlob, EditPredictionSettings (+23 more)
+Cohesion: 0.05
+Nodes (26): AllLanguageSettings, CodestralSettings, CompletionSettings, CopilotEditPredictionSettings, DisabledGlob, EditPredictionSettings, JsxTagAutoCloseSettings, LanguageSettings (+18 more)
 
 ### Community 508 - "Crease"
-Cohesion: 0.07
-Nodes (15): Anchor, Crease, Block, Inline, Crease<T>, CreaseItem, CreaseMap, CreaseMetadata (+7 more)
+Cohesion: 0.10
+Nodes (12): Crease, Block, Inline, Crease<T>, CreaseItem, CreaseMap, CreaseMetadata, CreaseSnapshot (+4 more)
 
 ### Community 509 - "ElicitationEntryId"
 Cohesion: 0.08
 Nodes (53): apply_diff_to_string_lenient(), char_diff(), compute_excerpt_aware_reversal_overlap(), compute_granular_edits(), compute_history_addition_ranges(), compute_history_deletion_ranges(), compute_lcs_length(), compute_prediction_reversal_ratio() (+45 more)
 
 ### Community 510 - "ReplicaId"
-Cohesion: 0.04
-Nodes (27): ReplicaId, .AGENT, .FIRST_COLLAB_ID, .LOCAL, .LOCAL_BRANCH, .REMOTE_SERVER, Envelope, Network (+19 more)
+Cohesion: 0.03
+Nodes (35): ReplicaId, .AGENT, .FIRST_COLLAB_ID, .LOCAL, .LOCAL_BRANCH, .REMOTE_SERVER, CompanionExcerptPatch, patch_for_excerpt() (+27 more)
 
-### Community 512 - "hover_popover.rs"
-Cohesion: 0.02
-Nodes (103): Author, BUILD_HOST, BUILD_TARGET, deserialize_parser_directories(), EMSCRIPTEN_TAG, GRAMMAR_NAME_REGEX, LanguageConfigurationJSON, Links (+95 more)
+### Community 512 - "use_wasi_sdk_in_compile_parser_to_wasm/before.rs"
+Cohesion: 0.05
+Nodes (53): Author, Bindings, BUILD_HOST, BUILD_TARGET, deserialize_parser_directories(), EMSCRIPTEN_TAG, Grammar, GRAMMAR_NAME_REGEX (+45 more)
 
 ### Community 513 - "ServerType"
 Cohesion: 0.07
 Nodes (35): register(), test_cgn_nomatch(), test_cgn_repeat(), test_dgn_repeat(), test_enter_visual_line_mode(), test_enter_visual_mode(), test_gl(), test_gn() (+27 more)
 
-### Community 514 - "LspLogView"
-Cohesion: 0.10
-Nodes (7): init(), initialize_new_editor(), log_contents(), LogMenuItem, LspLogView, open(), LanguageServerLogKey
+### Community 514 - "settingsstore"
+Cohesion: 0.08
+Nodes (11): init(), LANGUAGE_GIT_COMMIT, LanguageInfo, load_config(), register_language(), test_env_files_are_not_shell_scripts(), package_manager_from_dev_engine(), package_manager_from_package_json() (+3 more)
 
 ### Community 515 - "buf.rs"
-Cohesion: 0.04
-Nodes (21): Channel, channel_path_sorting_key(), ChannelIndex, ChannelPathsInsertGuard, ChannelCreated, ChannelRenamed, ChannelMembership, ChannelState (+13 more)
+Cohesion: 0.05
+Nodes (21): Channel, channel_path_sorting_key(), ChannelIndex, ChannelPathsInsertGuard, ChannelEvent, ChannelCreated, ChannelRenamed, ChannelMembership (+13 more)
 
 ### Community 516 - "NativeAgentConnection"
-Cohesion: 0.09
-Nodes (61): global_skills_dir(), init_test(), native_thread_for_session(), NativeAgentConnection, open_trusted_project_skills(), persist_thread_with_fake_corp_model(), request_texts_after_system(), setup_native_agent_session() (+53 more)
+Cohesion: 0.05
+Nodes (100): global_skills_dir(), AGENTS_PREFIX, assert_failed_native_command_context(), available_native_agent(), Command, COMPACT_COMMAND_NAME, init_test(), MAXIMUM_RETRY_JITTER_FRACTION (+92 more)
 
 ### Community 517 - "ThemeSelectorDelegate"
 Cohesion: 0.11
-Nodes (9): init(), open_theme_selector(), previewed_theme_name(), selected_theme_name(), test_theme_selector_preserves_selection_on_empty_filter(), ThemeSelector, ThemeSelectorDelegate, toggle_icon_theme_selector() (+1 more)
+Nodes (12): init(), init_test(), open_theme_selector(), previewed_theme_name(), register_test_themes(), selected_theme_name(), setup_test(), test_theme_selector_preserves_selection_on_empty_filter() (+4 more)
 
-### Community 518 - "BookmarkTestContext"
-Cohesion: 0.04
-Nodes (64): confirming_model_selects_model(), ModelPickerDelegate, attach_labels(), Call, call_display_path(), CallDisplay, CallHierarchyDelegate, CallHierarchyMode (+56 more)
+### Community 518 - "call_hierarchy.rs"
+Cohesion: 0.13
+Nodes (29): attach_labels(), Call, call_display_path(), CallHierarchyPreview, collapse_whitespace(), compute_call_display(), detail_from_label_suffix(), extract_call_detail() (+21 more)
 
 ### Community 519 - "increment.rs"
 Cohesion: 0.03
-Nodes (53): image_format_from_external_content(), load_external_image_from_path(), image_preview_task_for_mention(), resolve_pasted_context_items(), ResolvedPastedContextItem, Image, ProjectPath, AtlasTextureList<T> (+45 more)
+Nodes (46): image_format_from_external_content(), MentionImage, AtlasTextureList<T>, ClipboardEntry, ExternalPaths, Image, String, ClipboardString (+38 more)
 
 ### Community 520 - "indent_guides"
 Cohesion: 0.33
 Nodes (6): indent_guides, active_line_width, background_coloring, coloring, enabled, line_width
 
 ### Community 521 - "WasmState"
-Cohesion: 0.06
-Nodes (10): ExtensionKeyValueStore, ExtensionProject, github::GithubRelease, latest::DownloadedFileType, latest::github::GithubReleaseOptions, latest::LanguageServerInstallationStatus, latest::SettingsLocation, platform::Architecture (+2 more)
+Cohesion: 0.13
+Nodes (3): ExtensionKeyValueStore, ExtensionProject, WasmState
 
-### Community 522 - "FoldedAncestors"
-Cohesion: 0.18
-Nodes (8): EditState, FoldedAncestors, State, TemporaryUnfoldedPendingState, ValidationState, Error, None, Warning
+### Community 522 - ".render_folder_elements"
+Cohesion: 0.27
+Nodes (3): FoldedAncestors, FoldedDirectoryDragTarget, git_status_indicator()
 
 ### Community 523 - "MigrationPatterns"
-Cohesion: 0.06
-Nodes (29): replace_deprecated_settings_values(), SETTINGS_PATTERNS, UPDATED_SETTINGS, replace_bash_with_terminal_in_profiles(), SETTINGS_PATTERNS, rename_tools(), SETTINGS_PATTERNS, rename_path_search_tool() (+21 more)
+Cohesion: 0.05
+Nodes (33): replace_setting_name(), replace_setting_value(), SETTINGS_PATTERNS, replace_bash_with_terminal_in_profiles(), SETTINGS_PATTERNS, rename_tools(), SETTINGS_PATTERNS, rename_path_search_tool() (+25 more)
 
-### Community 524 - "TelemetryLogView"
-Cohesion: 0.14
-Nodes (6): collapsed_params_md(), expanded_params_md(), init(), TelemetryLogEntry, ShowToast, TelemetryLogView
+### Community 524 - "node_runtime.rs"
+Cohesion: 0.10
+Nodes (27): deserialize_npm_info_from_response(), deserialize_npm_info_time(), is_allowed_npm_version_before(), NODE_CA_CERTS_ENV_VAR, NodeRuntimeState, npm_version_was_published_before(), NpmConfig, NpmInfo (+19 more)
 
 ### Community 525 - "sweep_prompt.rs"
 Cohesion: 0.07
-Nodes (12): CommitModal, ForceMode, Amend, Commit, ModalContainerProperties, RestoreDock, commit_title_exceeds_limit(), git_commit_editor_style() (+4 more)
+Nodes (12): CommitModal, ForceMode, Amend, Commit, ModalContainerProperties, RestoreDock, commit_title_exceeds_limit(), test_commit_title_exceeds_limit() (+4 more)
 
 ### Community 526 - "reversal.rs"
-Cohesion: 0.16
+Cohesion: 0.17
 Nodes (11): Bookmark, BookmarkEntry, Loaded, Unloaded, BookmarkStore, BookmarkStoreEvent, BookmarksChanged, LabelChanged (+3 more)
 
 ### Community 527 - "LspStoreEvent"
-Cohesion: 0.08
-Nodes (12): ActiveDiagnostic, All, Group, None, ActiveDiagnosticGroup, DiagnosticRenderer, Editor, GlobalDiagnosticRenderer (+4 more)
+Cohesion: 0.09
+Nodes (10): DiagnosticRenderer, Editor, GlobalDiagnosticRenderer, inline_diagnostic_rows(), set_diagnostic_renderer(), setup_inline_diagnostics(), test_disabled_diagnostics_ignore_severity_changes(), test_toggle_diagnostics_refreshes_inline_diagnostics() (+2 more)
 
 ### Community 528 - "ExtensionCard"
 Cohesion: 0.04
 Nodes (57): $ref, additionalProperties, description, type, $ref, description, type, $ref (+49 more)
 
 ### Community 529 - "sandbox_linux.rs"
-Cohesion: 0.09
-Nodes (9): DisplayItem, Entry, ExcerptSeparator, EditorState, format_hsla_as_hex(), HighlightsTreeToolbarItemView, HighlightsTreeView, init() (+1 more)
+Cohesion: 0.07
+Nodes (21): build_highlight_entries(), DisplayItem, Entry, ExcerptSeparator, EditorState, excerpt_label_for(), format_anchor_range(), format_hsla_as_hex() (+13 more)
 
-### Community 530 - "cloud_api_types.rs"
-Cohesion: 0.05
-Nodes (38): AuthenticatedUser, CreateLlmTokenBody, CreateLlmTokenResponse, EditPredictionRecentFile, EditPredictionSettledKeptChars, GetAuthenticatedUserResponse, LlmToken, MAX_EDIT_PREDICTION_SETTLED_PER_REQUEST (+30 more)
+### Community 530 - "OrganizationId"
+Cohesion: 0.09
+Nodes (11): CachedLlmApiToken, LlmApiToken, OrganizationId, SubmitAgentThreadFeedbackBody, SubmitAgentThreadFeedbackCommentsBody, SubmitEditPredictionFeedbackBody, PredictEditsMode, Eager (+3 more)
 
 ### Community 531 - "UpdateButton"
-Cohesion: 0.06
-Nodes (42): DataProtection, Clear, Private, HostKeyPolicy, AcceptNew, Ask, No, Yes (+34 more)
+Cohesion: 0.07
+Nodes (31): DataProtection, Clear, Private, SshBackend, Builtin, Openssh, choice_label(), DATA_PROTECTION (+23 more)
 
 ### Community 532 - "cloud_llm_client.rs"
 Cohesion: 0.04
-Nodes (47): RequestUsage, AcceptEditPredictionBody, CLIENT_SUPPORTS_STATUS_MESSAGES_HEADER_NAME, CLIENT_SUPPORTS_STATUS_STREAM_ENDED_HEADER_NAME, CLIENT_SUPPORTS_X_AI_HEADER_NAME, CompletionEvent, Event, Status (+39 more)
+Nodes (45): AcceptEditPredictionBody, CLIENT_SUPPORTS_STATUS_MESSAGES_HEADER_NAME, CLIENT_SUPPORTS_STATUS_STREAM_ENDED_HEADER_NAME, CLIENT_SUPPORTS_X_AI_HEADER_NAME, CompletionEvent, Event, Status, CompletionEvent<T> (+37 more)
 
 ### Community 533 - "visual.rs"
-Cohesion: 0.06
-Nodes (25): VERSION, ErrorCode, Auth, Cancelled, Certificate, Config, Connection, Exists (+17 more)
+Cohesion: 0.05
+Nodes (31): VERSION, ErrorCode, Auth, Cancelled, Certificate, Connection, Exists, HostKey (+23 more)
 
-### Community 534 - "Telemetry"
-Cohesion: 0.07
-Nodes (21): calculate_json_checksum(), init_test(), is_empty_state(), os_name(), os_version(), Telemetry, test_dotnet_project_discovery(), test_pnpm_project_discovery() (+13 more)
+### Community 534 - "client/src/telemetry.rs"
+Cohesion: 0.04
+Nodes (47): ClientSettings, ProxySettings, TelemetrySettings, calculate_json_checksum(), DOTNET_PROJECT_FILES_REGEX, COALESCE_TIMEOUT, EventCoalescer, PeriodData (+39 more)
 
 ### Community 535 - "remote_servers/filter.rs"
-Cohesion: 0.08
-Nodes (41): Connection, DevContainer, Ssh, Wsl, RemoteConnectionOptions, RemoteSettings, DefaultState, build_entries() (+33 more)
+Cohesion: 0.12
+Nodes (34): DefaultState, build_entries(), build_filter_results(), build_server_result(), CandidateMeta, FilterData, FilteredProject, FilteredServer (+26 more)
 
 ### Community 536 - "commit_modal.rs"
-Cohesion: 0.06
-Nodes (25): AssertionFn, CommandAssertion, eval_git_log_uses_no_pager(), eval_git_rebase_implied_sets_git_editor(), eval_git_rebase_sets_git_editor(), EvalAssertionOutcome, EvalInput, EvalOutput (+17 more)
+Cohesion: 0.07
+Nodes (26): AssertionFn, CommandAssertion, eval_git_log_uses_no_pager(), eval_git_rebase_implied_sets_git_editor(), eval_git_rebase_sets_git_editor(), EvalAssertionOutcome, EvalInput, EvalOutput (+18 more)
 
 ### Community 537 - "default_colors.rs"
 Cohesion: 0.11
 Nodes (47): ADDED_COLOR, amber(), black(), blue(), bronze(), brown(), ColorScaleSet, crimson() (+39 more)
 
 ### Community 538 - "AgentProfileId"
-Cohesion: 0.06
-Nodes (26): FsSetup, CanonicalPathBuf, constructors_enforce_windows_grant_shape(), constructors_reject_relative_paths(), linux_fd_identity(), require_absolute(), require_windows_grant_shape(), canonicalize_allowing_missing_leaf() (+18 more)
+Cohesion: 0.08
+Nodes (20): FsSetup, canonicalize_allowing_missing_leaf(), canonicalize_allowing_missing_leaf_resolves_existing_parent(), canonical(), capture_of_plain_directory_is_not_a_redirect(), capture_resolves_symlink_and_reports_redirect(), HostFilesystemLocation, HostFilesystemLocationDisplay (+12 more)
 
-### Community 539 - "ios/window.rs"
-Cohesion: 0.06
-Nodes (40): write_atomic(), check_host_key(), fingerprint_format(), fingerprint_sha256(), hashed(), host_matches(), host_token(), HostKeyAnswer (+32 more)
+### Community 539 - "data_table/tests.rs"
+Cohesion: 0.11
+Nodes (34): is_pinned_layout(), all_pinned_falls_back_to_single_section(), check(), check_reset_size(), cols_to_str(), column_is_visible_respects_mask(), column_is_visible_without_filter_is_always_visible(), drag_below_min_clamps_to_min_size() (+26 more)
 
 ### Community 540 - "ExecuteProxyError"
-Cohesion: 0.11
-Nodes (31): assert_repositories(), build_project(), check_git_statuses(), init_test(), set_file_scan_depth(), test_active_repository_survives_file_scan_depth_tightening(), test_buffer_open_beyond_scan_horizon_activates_repository(), test_bump_mtime_of_git_repo_workdir() (+23 more)
-
-### Community 541 - "converter.rs"
 Cohesion: 0.07
-Nodes (20): FontFamilyName, FontFeaturesContent, FontSize, FontStyleContent, FontWeightContent, IntoGpui, ModifiersContent, PixelSetting (+12 more)
+Nodes (47): resolve_git_worktree_to_main_repo(), test_resolve_git_worktree_to_main_repo_ignores_submodule(), assert_repositories(), build_project(), check_git_statuses(), CONFLICT, init_test(), set_file_scan_depth() (+39 more)
 
-### Community 542 - "src/model.rs"
-Cohesion: 0.07
-Nodes (32): FunctionContent, ToolCall, ToolCallContent, Function, category_from_copilot_error(), chat_completions_stream_maps_reasoning_data(), compute_thinking_budget(), CopilotResponseMessageMetadata (+24 more)
+### Community 541 - "terminal_settings.rs"
+Cohesion: 0.06
+Nodes (20): dap_granularity_from_settings(), FontFamilyName, FontFeaturesContent, FontSize, IntoGpui, ModifiersContent, PixelSetting, WindowBackgroundContent (+12 more)
 
 ### Community 543 - "ChunkSlice<'a>"
-Cohesion: 0.09
-Nodes (25): base_sha_on_main(), build_toolchain_info(), commit_present(), compute_build_id(), current_base_sha(), current_ref_name(), current_tracked_patch(), default_namespace() (+17 more)
+Cohesion: 0.07
+Nodes (28): prepare_build_request(), resolve_source(), base_sha_on_main(), build_toolchain_info(), commit_present(), compute_build_id(), current_base_sha(), current_ref_name() (+20 more)
 
-### Community 544 - "basics_page.rs"
-Cohesion: 0.09
-Nodes (18): DARK_THEMES, FAMILY_NAMES, FEATURED_AGENT_IDS, LIGHT_THEMES, render_ai_section(), render_base_keymap_section(), render_basics_page(), render_import_settings_section() (+10 more)
+### Community 544 - "prelude"
+Cohesion: 0.01
+Nodes (135): init(), remove_context_server_settings(), show_configure_mcp_modal(), test_configure_extension_only_opens_modal_in_active_workspace(), init_test(), EndTrialUpsell, ELAPSED_DISPLAY_THRESHOLD, running_header_only_offers_stop_when_control_is_available() (+127 more)
 
 ### Community 545 - "page_data.rs"
-Cohesion: 0.11
-Nodes (37): ai_page(), appearance_page(), collaboration_page(), debugger_page(), DEFAULT_AUDIO_INPUT, DEFAULT_AUDIO_OUTPUT, DEFAULT_EMPTY_AUDIO_INPUT, DEFAULT_EMPTY_AUDIO_OUTPUT (+29 more)
+Cohesion: 0.06
+Nodes (53): ai_page(), appearance_page(), collaboration_page(), debugger_page(), DEFAULT_AUDIO_INPUT, DEFAULT_AUDIO_OUTPUT, DEFAULT_EMPTY_AUDIO_INPUT, DEFAULT_EMPTY_AUDIO_OUTPUT (+45 more)
 
 ### Community 546 - "containers"
 Cohesion: 0.04
@@ -4430,48 +4211,48 @@ Cohesion: 0.07
 Nodes (17): Entry, Entry<'a, K, V>, Occupied, Vacant, EntryRef, EntryRef<'key, 'map, K, V>, Occupied, Vacant (+9 more)
 
 ### Community 548 - "InlayHint"
-Cohesion: 0.08
-Nodes (17): ProfilingCollector, SerializedTaskTiming, SerializedThreadTaskTimings, ThreadTimingsDelta, append_to_thread(), filter_timings(), init(), kway_merge() (+9 more)
+Cohesion: 0.05
+Nodes (26): ProfilingCollector, SerializedTaskTiming, SerializedThreadTaskTimings, ThreadTimingsDelta, append_to_thread(), filter_timings(), init(), kway_merge() (+18 more)
 
-### Community 549 - "language/src/proto.rs"
-Cohesion: 0.03
-Nodes (58): DeserializedDiagnosticMessage, DeserializedMarkupContent, Diagnostic, DiagnosticMessage, DiagnosticMessageRendering, AdapterMarkdown, LspMarkup, Plain (+50 more)
+### Community 549 - "ToOffset"
+Cohesion: 0.02
+Nodes (91): collect_buffer_diagnostics(), collect_diagnostic(), collect_diagnostics(), DiagnosticsOptions, Operation, Compare, Download, Upload (+83 more)
 
-### Community 550 - ".compress_commit_diff"
-Cohesion: 0.29
-Nodes (4): test_compress_diff_no_truncation(), test_compress_diff_truncate_hunks(), test_compress_diff_truncate_long_lines(), TruncatedPatch
+### Community 550 - "Entity"
+Cohesion: 0.04
+Nodes (39): commit_history_from_response(), commit_message_editor(), CommitHistory, Error, Loaded, Loading, CommitHistoryEntry, DraggedGitEntryView (+31 more)
 
 ### Community 551 - "BreakpointStore"
-Cohesion: 0.03
-Nodes (43): BreakpointSessionState, BreakpointsInFile, BreakpointStore, BreakpointStoreEvent, BreakpointsCleared, BreakpointsUpdated, ClearDebugLines, SetDebugLine (+35 more)
+Cohesion: 0.05
+Nodes (31): ActiveStackFrame, BreakpointEditAction, EditCondition, EditHitCondition, EditLogMessage, InvertState, Toggle, BreakpointMessage (+23 more)
 
 ### Community 552 - "ModalLayer"
-Cohesion: 0.13
-Nodes (6): Dismiss, Entity<V>, focus_handle_is_reopenable(), ModalLayer, ModalOpenedEvent, ModalViewHandle
+Cohesion: 0.12
+Nodes (11): ActiveModal, deregister_reopenable_picker(), DismissDecision, Dismiss, Pending, Entity<V>, focus_handle_is_reopenable(), ModalLayer (+3 more)
 
-### Community 553 - "AgentId"
+### Community 553 - "Fs"
 Cohesion: 0.01
-Nodes (214): AcpDebugLogState, AcpDebugMessage, AcpDebugMessageContent, Notification, Stderr, AcpDebugMessageDirection, Incoming, Outgoing (+206 more)
+Nodes (196): load_proxy_env(), api_key_for_gemini_cli(), CLAUDE_AGENT_ID, CODEX_ID, CustomAgentServer, default_settings_for_agent(), init_registry_with_agents(), init_test() (+188 more)
 
 ### Community 554 - "running/console.rs"
 Cohesion: 0.04
 Nodes (54): definitions, fundingUrl, license, packageExportsEntry, packageExportsEntryOrFallback, packageExportsEntryPath, packageImportsEntry, packageImportsEntryOrFallback (+46 more)
 
 ### Community 555 - "editable_context.rs"
-Cohesion: 0.04
-Nodes (97): add_query_terms(), add_term_frequencies(), BM25_B, BM25_CONTEXT_CHUNK_COUNT, BM25_CONTEXT_CHUNK_LINE_COUNT, BM25_CONTEXT_CHUNK_OVERLAP_LINE_COUNT, BM25_CONTEXT_EDIT_HISTORY_QUERY_ENTRY_COUNT, BM25_CONTEXT_MAX_CHUNKS_PER_FILE (+89 more)
+Cohesion: 0.03
+Nodes (119): add_query_terms(), add_term_frequencies(), BM25_B, BM25_CONTEXT_CHUNK_COUNT, BM25_CONTEXT_CHUNK_LINE_COUNT, BM25_CONTEXT_CHUNK_OVERLAP_LINE_COUNT, BM25_CONTEXT_EDIT_HISTORY_QUERY_ENTRY_COUNT, BM25_CONTEXT_MAX_CHUNKS_PER_FILE (+111 more)
 
 ### Community 556 - "config.py"
-Cohesion: 0.08
-Nodes (25): Benchmark, benchmark_metadata(), DatasetRef, get_benchmark(), is_benchmark_selector(), resolve_benchmark_selector(), resolve_benchmarks(), get_judge() (+17 more)
+Cohesion: 0.09
+Nodes (21): DatasetRef, is_benchmark_selector(), resolve_benchmark_selector(), resolve_benchmarks(), get_judge(), judge_verifier_args(), JudgeConfig, orchestration_info() (+13 more)
 
 ### Community 557 - "CreaseId"
-Cohesion: 0.09
-Nodes (22): build_location_matches(), Entry, Header, Match, Separator, handle_definition_locations(), handle_nav_action(), init() (+14 more)
-
-### Community 558 - "ToolPermissionDecision"
 Cohesion: 0.06
-Nodes (33): decide_permission_for_path_allows_when_no_traversal_issue(), decide_permission_for_path_confirms_traversal_to_confirmed_dir(), decide_permission_for_path_denies_edit_file_traversal_to_dotenv(), decide_permission_for_path_denies_traversal_to_denied_dir(), decide_permission_for_path_dot_segment_only(), decide_permission_for_path_most_restrictive_wins(), decide_permission_for_path_no_change_when_already_simple(), decide_permission_for_path_raw_deny_still_works() (+25 more)
+Nodes (42): active_picker(), assert_cmd_click(), build_location_matches(), cmd_click_request(), Entry, Header, Match, Separator (+34 more)
+
+### Community 558 - "src/tool_permissions.rs"
+Cohesion: 0.05
+Nodes (64): ToolPermissions, ToolRules, check_commands(), check_hardcoded_security_rules(), check_invalid_patterns(), decide_permission_for_path(), decide_permission_for_path_allows_when_no_traversal_issue(), decide_permission_for_path_confirms_traversal_to_confirmed_dir() (+56 more)
 
 ### Community 559 - "ToolCall"
 Cohesion: 0.06
@@ -4481,9 +4262,9 @@ Nodes (11): DLL_INSTANCE, DllGetClassObject(), DllMain(), ExplorerCommandInjecto
 Cohesion: 0.08
 Nodes (7): Editor, Entity<Project>, has_strong_snippet_prefix_match(), snippet_candidate_suffixes(), snippet_completions(), split_words(), File
 
-### Community 562 - "context_server/src/client.rs"
-Cohesion: 0.09
-Nodes (22): AnyRequest, AnyResponse, CspResult, Error, Ok, DEFAULT_REQUEST_TIMEOUT, Error, INTERNAL_ERROR (+14 more)
+### Community 562 - "app/context.rs"
+Cohesion: 0.13
+Nodes (5): Context<'_, T>, invoke_observer(), invoke_observer_in(), invoke_subscriber(), invoke_subscriber_in()
 
 ### Community 563 - "notebook_ui.rs"
 Cohesion: 0.07
@@ -4494,92 +4275,92 @@ Cohesion: 0.04
 Nodes (63): AssetQuery, AutoUpdateEvent, UpToDate, AutoUpdater, AutoUpdateStatus, Checking, Downloading, Errored (+55 more)
 
 ### Community 565 - "ButtonLike"
-Cohesion: 0.14
-Nodes (22): Trash, batch_trash_warns_about_unsaved_changes(), cancel_partial_trash_batch(), create_dir_undo(), create_undo_redo(), cut_paste_undo(), drag_multiple_undo_redo(), drag_undo_redo() (+14 more)
+Cohesion: 0.15
+Nodes (21): batch_trash_warns_about_unsaved_changes(), cancel_partial_trash_batch(), create_dir_undo(), create_undo_redo(), cut_paste_undo(), drag_multiple_undo_redo(), drag_undo_redo(), excluded_create_is_not_recorded() (+13 more)
 
 ### Community 566 - "ThreadItem"
-Cohesion: 0.06
-Nodes (17): ThreadSwitcher, ThreadSwitcherEntry, Terminal, Thread, ThreadSwitcherEvent, Confirmed, Dismissed, Preview (+9 more)
+Cohesion: 0.05
+Nodes (23): ThreadSwitcher, ThreadSwitcherEntry, Terminal, Thread, ThreadSwitcherEvent, Confirmed, Dismissed, Preview (+15 more)
 
-### Community 567 - "ToolchainSelector"
-Cohesion: 0.09
-Nodes (13): ImageLoadingExample, pulsating_between(), AddToolchainState, init(), PathInputState, Resolving, WaitingForPath, SearchState (+5 more)
+### Community 567 - "toolchain_selector.rs"
+Cohesion: 0.04
+Nodes (34): EditPredictionContextView, RetrievalRun, Animation, AnimationElement, ease_out_quint(), AddState, Name, Path (+26 more)
 
 ### Community 568 - "SessionActivity"
-Cohesion: 0.09
-Nodes (12): cancel_pending_timers_wakes_waiters_without_waiting_for_deadline(), IdleTracker, is_idle_tracks_queued_work_but_ignores_undue_timers(), run_ready_main_tasks_advances_requeuing_work_one_batch_per_call(), run_ready_main_tasks_does_not_wait_for_background_handoffs(), run_until_idle_completes_background_to_main_handoffs(), run_until_returns_at_readiness_despite_requeuing_main_work(), run_until_waits_for_untracked_external_wakes() (+4 more)
+Cohesion: 0.07
+Nodes (16): cancel_pending_timers_wakes_waiters_without_waiting_for_deadline(), IdleTracker, is_idle_tracks_queued_work_but_ignores_undue_timers(), MIN_THREADS, run_ready_main_tasks_advances_requeuing_work_one_batch_per_call(), run_ready_main_tasks_does_not_wait_for_background_handoffs(), run_until_idle_completes_background_to_main_handoffs(), run_until_returns_at_readiness_despite_requeuing_main_work() (+8 more)
 
-### Community 569 - "reconcile.rs"
-Cohesion: 0.19
-Nodes (15): is_untouched(), Outcome, Adopt, Conflict, DeleteLocal, Pull, Push, Unchanged (+7 more)
+### Community 569 - "SettingsObserver"
+Cohesion: 0.12
+Nodes (19): local_settings_file_relative_path(), apply_local_settings(), local_settings_kind_from_proto(), local_settings_kind_to_proto(), SettingsObserver, SettingsObserverEvent, GlobalDebugScenariosUpdated, GlobalTasksUpdated (+11 more)
 
-### Community 570 - "build_root_plan"
-Cohesion: 0.22
-Nodes (15): fake_worktree_created_at(), record_zed_created_worktree(), build_root_plan(), fake_worktree_created_at(), init_test(), record_zed_created_worktree(), test_build_root_plan_returns_none_for_external_linked_worktree(), test_build_root_plan_returns_none_for_main_worktree() (+7 more)
+### Community 570 - "thread_worktree_archive.rs"
+Cohesion: 0.12
+Nodes (34): fake_worktree_created_at(), record_zed_created_worktree(), ArchivedGitWorktree, AffectedProject, all_open_workspaces(), archived_worktree_ref_name(), build_root_plan(), cleanup_archived_worktree_record() (+26 more)
+
+### Community 571 - "components/indent_guides.rs"
+Cohesion: 0.14
+Nodes (12): compute_indent_guides(), indent_guides(), IndentGuideColors, IndentGuideLayout, IndentGuides, IndentGuidesElement, IndentGuidesElementPrepaintState, Interactive (+4 more)
 
 ### Community 572 - "definitions"
-Cohesion: 0.07
-Nodes (32): append_top_level_array_value_in_json_text(), construct_json_value(), find_value_range_in_json_text(), handle_possible_array_value(), infer_json_indent_size(), object_remove_and_rename_find_an_escaped_key_by_its_own_range(), object_replace_escapes_new_key(), parse_index_key() (+24 more)
+Cohesion: 0.13
+Nodes (18): append_top_level_array_value_in_json_text(), construct_json_value(), find_value_range_in_json_text(), handle_possible_array_value(), infer_json_indent_size(), object_remove_and_rename_find_an_escaped_key_by_its_own_range(), object_replace_escapes_new_key(), parse_index_key() (+10 more)
 
-### Community 573 - "wayland/clipboard.rs"
-Cohesion: 0.07
-Nodes (19): PIPE_READ_TIMEOUT, complete_drag_uri_read(), drag_state(), DragState, DragState<DataOffer, Window>, drop_then_leave_discards_pending_drag_uri_read(), FakeDataOffer, leave_discards_pending_drag_uri_read() (+11 more)
+### Community 573 - "ai_discovery.rs"
+Cohesion: 0.14
+Nodes (32): absolute_docs_url(), add_llms_markdown_directive(), add_markdown_alternate_link(), copy_markdown_sources(), docs_page_description(), docs_page_metadata(), docs_pages(), docs_path() (+24 more)
 
 ### Community 574 - "ZedSyntaxToken"
-Cohesion: 0.05
-Nodes (40): ZedSyntaxToken, Attribute, Boolean, Comment, CommentDoc, Constant, Constructor, Embedded (+32 more)
+Cohesion: 0.04
+Nodes (45): VsCodeTokenColor, VsCodeTokenColorSettings, VsCodeTokenScope, Many, One, ZedSyntaxToken, Attribute, Boolean (+37 more)
 
-### Community 575 - "ConfigurationView"
-Cohesion: 0.06
-Nodes (21): AmazonBedrockSettings, BedrockAuth, ApiKey, Automatic, IamCredentials, NamedProfile, SingleSignOn, BedrockAuthMethod (+13 more)
+### Community 575 - "gpui_macos.rs"
+Cohesion: 0.08
+Nodes (8): bool, BoolExt, NSRange, .ENCODING, .ENCODING_REF, NSAppearanceNameAqua, NSAppearanceNameDarkAqua, window_appearance_from_native()
 
 ### Community 576 - "SkillCreatorPage"
-Cohesion: 0.10
-Nodes (10): render_skill_creator_page(), scope_for_settings_file(), SkillCreatorPage, UrlImportStatus, Error, Fetching, Idle, ErasedEditorEvent (+2 more)
+Cohesion: 0.09
+Nodes (13): render_skill_creator_page(), scope_for_settings_file(), SkillCreatorEvent, Dismissed, Saved, SkillCreatorPage, UrlImportStatus, Error (+5 more)
 
 ### Community 577 - "repl_editor.rs"
-Cohesion: 0.11
+Cohesion: 0.10
 Nodes (29): assign_kernelspec(), cell_range(), clear_current_output(), clear_outputs(), get_language(), install_ipykernel_and_assign(), interrupt(), jupytext_cells() (+21 more)
 
 ### Community 578 - "agent_registry_ui.rs"
 Cohesion: 0.09
 Nodes (16): all_tasks_get_yielded(), blocked_receivers_end_when_the_sender_drops(), Iter, Iter<T>, new_high_prio_task_get_scheduled_quickly(), PriorityQueueReceiver, PriorityQueueReceiver<T>, PriorityQueues (+8 more)
 
-### Community 579 - ".run"
-Cohesion: 0.14
-Nodes (22): init_test(), setup_test(), setup_test_with_fs(), test_streaming_create_content_streamed(), test_streaming_create_file_with_partials(), test_streaming_diff_finalization(), test_streaming_format_on_save(), test_streaming_input_recv_drains_partials() (+14 more)
+### Community 579 - "ToolCallEventStream"
+Cohesion: 0.04
+Nodes (64): ToolCallEventStream, test_resolve_path(), agent_edit_buffer(), apply_char_operations(), EditPipeline, EditPipelineEntry, ResolvingOldText, StreamingNewText (+56 more)
 
-### Community 580 - "deferred"
-Cohesion: 0.09
-Nodes (10): gpui::AnimationElement<T>, popover_opens_below_its_trigger_or_above_when_it_does_not_fit(), PopoverMenu<M>, PopoverMenuElementState, PopoverMenuElementState<M>, PopoverMenuFrameState, PopoverMenuHandle<M>, PopoverMenuHandleState (+2 more)
+### Community 580 - "MacWindowState"
+Cohesion: 0.11
+Nodes (9): add_mouse_tracking_area(), MacWindowState, SimpleFullscreenPlan, Enter, Exit, SimpleFullscreenState, TrafficLightButtons, TrafficLightFrames (+1 more)
 
 ### Community 581 - "FileStatus"
-Cohesion: 0.10
-Nodes (30): check_env_forwarding(), check_interop_blocked(), check_windows_drive_writable(), Checks, Cleanup, connect_script(), CREATE_NO_WINDOW, discover_peer() (+22 more)
+Cohesion: 0.05
+Nodes (55): install_helper(), launcher(), shell_launcher(), test_remote_command_inherits_default_shell_startup_environment(), test_remote_command_inherits_shell_environment(), test_remote_command_launcher_expands_home_in_nushell(), test_remote_command_launcher_expands_home_in_shell(), test_remote_command_launcher_quoting_in_tcsh() (+47 more)
 
 ### Community 582 - "workflows/extension_tests.rs"
-Cohesion: 0.08
-Nodes (35): create_fake_transport(), FakeTransport, assert_server_events(), FakeContextServerDescriptor, initialize_response(), json_response(), notification_accepted_response(), ServerEvents (+27 more)
+Cohesion: 0.13
+Nodes (34): create_fake_transport(), assert_server_events(), FakeContextServerDescriptor, initialize_response(), json_response(), notification_accepted_response(), ServerEvents, set_context_server_configuration() (+26 more)
 
 ### Community 583 - "mouse_context_menu.rs"
 Cohesion: 0.10
-Nodes (9): Rename, deploy_context_menu(), display_ranges(), MenuPosition, PinnedToEditor, PinnedToScreen, MouseContextMenu, test_mouse_context_menu() (+1 more)
+Nodes (8): Rename, deploy_context_menu(), MenuPosition, PinnedToEditor, PinnedToScreen, MouseContextMenu, test_mouse_context_menu(), test_mouse_context_menu_at_pixel_snapped_scroll_position()
 
-### Community 584 - "HttpTransport"
-Cohesion: 0.10
-Nodes (15): OAuthTokenProvider, FakeTokenProvider, HttpTransport, json_response(), make_fake_http_client(), test_401_after_successful_refresh_still_returns_auth_required(), test_401_returns_auth_required_when_refresh_fails(), test_401_returns_auth_required_without_provider() (+7 more)
+### Community 584 - "fallible_options.rs"
+Cohesion: 0.08
+Nodes (17): deserialize(), FallibleOption, Foo, flattened_deserialize!, Option<T>, parse_json(), recover_deserialization_error(), section() (+9 more)
 
 ### Community 585 - "convert.rs"
 Cohesion: 0.14
 Nodes (16): ConvertTarget, LowerCase, OppositeCase, Rot13, Rot47, UpperCase, test_change_case(), test_change_case_helix_mode() (+8 more)
 
 ### Community 586 - "TestAppContext"
-Cohesion: 0.05
-Nodes (54): assert_hovers(), diagnostics_markdown_style(), Editor, fallback_hover_range(), FallbackHoverState, get_hover_popover_delay(), handle_hover_requests(), hide_popovers() (+46 more)
-
-### Community 587 - "AgentRegistryPage"
-Cohesion: 0.09
-Nodes (10): AgentRegistryCard, AgentRegistryPage, RegistryFilter, All, Installed, NotInstalled, RegistryInstallStatus, InstalledCustom (+2 more)
+Cohesion: 0.04
+Nodes (90): debugger_hover_variable_colors(), assert_hovers(), BudgetFit, Fits, NeedsTruncation, TooSmall, CodeFence, combine_hover_blocks() (+82 more)
 
 ### Community 588 - "PopupOptions"
 Cohesion: 0.05
@@ -4590,28 +4371,28 @@ Cohesion: 0.10
 Nodes (17): Database, LeftChannelBuffer, Operation, operation_from_storage(), operation_from_wire(), operation_to_storage(), QueryOperationSerializationVersion, OperationSerializationVersion (+9 more)
 
 ### Community 590 - "Vim"
-Cohesion: 0.08
-Nodes (3): end_of_document(), start_of_document(), Vim
-
-### Community 591 - "AssetSource"
-Cohesion: 0.05
-Nodes (26): Assets, Assets, Assets, Assets, Assets, AssetSource, ChevronIcons, default_icon_theme() (+18 more)
-
-### Community 592 - "after_release.yml"
-Cohesion: 0.05
-Nodes (38): default, description, type, defaults, run, if, permissions, secrets (+30 more)
-
-### Community 593 - "util/src/util.rs"
-Cohesion: 0.04
-Nodes (39): truncate_variables(), default(), dev_repo_root(), emoji_regex(), expanded_and_wrapped_usize_range(), extend_sorted(), fs_embed_file_names(), __fs_embed_get() (+31 more)
-
-### Community 594 - "lsp_store/semantic_tokens.rs"
 Cohesion: 0.07
-Nodes (18): Client, LiveKitClient, admin_token_not_before_remains_unset(), assert_claims_timestamp(), ClaimGrants, create(), create_with_issued_at(), create_with_timestamp_source() (+10 more)
+Nodes (4): CharClassifier, end_of_document(), start_of_document(), Vim
+
+### Community 591 - "SharedString"
+Cohesion: 0.01
+Nodes (83): Session, StubAgentSessionSetTitle, StubReceiptSessionSubmissions, empty_file_is_ignored(), init(), init_test(), loads_initial_content(), probe_read_error() (+75 more)
+
+### Community 592 - "body"
+Cohesion: 0.14
+Nodes (14): default, description, type, body, prerelease, tag_name, workflow_dispatch, description (+6 more)
+
+### Community 593 - "ShellKind"
+Cohesion: 0.02
+Nodes (97): env_priority(), ENV_PRIORITY_LIST, EnvironmentApi, EnvironmentApi<'a>, get_venv_parent_dir(), get_worktree_venv_declaration(), is_python_env_global(), micromamba_shell_name() (+89 more)
+
+### Community 594 - "debug_log.rs"
+Cohesion: 0.12
+Nodes (19): AcpDebugLog, AcpDebugLogState, AcpDebugMessage, AcpDebugMessageContent, Notification, Stderr, AcpDebugMessageDirection, Incoming (+11 more)
 
 ### Community 595 - "format_prompt.rs"
-Cohesion: 0.10
-Nodes (12): active_buffer(), available_commands(), AvailableCommand, Execution, Failed, Idle, Running, init() (+4 more)
+Cohesion: 0.09
+Nodes (26): active_buffer(), available_commands(), AvailableCommand, Execution, Failed, Idle, Running, init() (+18 more)
 
 ### Community 596 - "windows_resources.rs"
 Cohesion: 0.47
@@ -4621,41 +4402,49 @@ Nodes (5): compile(), git_sha(), ICON_DIR, MANIFEST_PATH, product_version()
 Cohesion: 0.07
 Nodes (7): abs_path(), AbsPath, AbsPathBuf, Arc<AbsPath>, PathBuf, Rc<AbsPath>, test_canonicalize_restores_on_disk_spelling()
 
+### Community 599 - "Bundle"
+Cohesion: 0.07
+Nodes (15): App, Bundle, App, LocalPath, check_single_instance(), Detect, InfoPlist, InstalledApp (+7 more)
+
 ### Community 600 - "checks.rs"
-Cohesion: 0.05
-Nodes (28): GLOBAL, init(), __consume_all_tokens!, MAX_CALLSTACK_DEPTH, Span, absolute_now(), CompletedMeasure, Event (+20 more)
+Cohesion: 0.08
+Nodes (24): init(), absolute_now(), CompletedMeasure, Event, EVENT_BUFFER_CAPACITY, Close, Enter, Exit (+16 more)
 
 ### Community 601 - "project_bookmarks.rs"
-Cohesion: 0.10
+Cohesion: 0.11
 Nodes (14): add_bookmark(), assert_active_pane_items_len(), build_bookmarks_picker(), init(), init_test(), Match, open_bookmarks_picker(), ProjectBookmarksDelegate (+6 more)
 
 ### Community 602 - ".navigate_to_hover_links"
 Cohesion: 0.10
 Nodes (31): ActionLog, apply_non_conflicting_edits(), ChangeAuthor, Agent, User, ChangedBuffer, diff_snapshots(), HunkStatus (+23 more)
 
-### Community 603 - "extension_cli/src/main.rs"
-Cohesion: 0.07
-Nodes (45): Args, ExtensionFeatureError, IconThemesMixedWithOtherFeatures, NoFeatures, SlashCommandsDeprecated, ThemesMixedWithOtherFeatures, ExtensionManifestValidationError, DescriptionNotLongerThanName (+37 more)
+### Community 603 - "Action"
+Cohesion: 0.06
+Nodes (33): Action, AbstractUnixServer, Append, AssertNamespaces, AssertNoCapabilities, BindUnix, Connect, ConnectByName (+25 more)
 
 ### Community 604 - "ExtensionCard"
 Cohesion: 0.06
-Nodes (20): ExtensionStatus, Installed, Installing, NotInstalled, Removing, Upgrading, ContextMenuBuilder, ExtensionCard (+12 more)
+Nodes (21): ExtensionStatus, Installed, Installing, NotInstalled, Removing, Upgrading, ContextMenuBuilder, ExtensionCard (+13 more)
 
 ### Community 605 - "threaded_dispatcher.rs"
-Cohesion: 0.05
-Nodes (29): ChannelMember, ChannelMemberKind, Invitee, Member, ChannelMemberRole, Admin, Banned, Guest (+21 more)
+Cohesion: 0.07
+Nodes (10): ChannelMember, User, proto::User, channel_member_to_proto(), CloudUserService, FakeUserService, FakeUserServiceState, NewUserParams (+2 more)
+
+### Community 606 - "examples/test_app.rs"
+Cohesion: 0.17
+Nodes (4): LivekitWindow, main(), ParticipantState, quit()
 
 ### Community 607 - "outline/src/outline.rs"
-Cohesion: 0.10
-Nodes (19): Outline, assert_single_caret_at_row(), highlighted_display_rows(), init(), init_test(), open_outline_view(), outline_for_editor(), outline_names() (+11 more)
+Cohesion: 0.04
+Nodes (37): ChannelModal, ChannelModalDelegate, Mode, InviteMembers, ManageMembers, match_strings(), StringMatch, expand_tree() (+29 more)
 
-### Community 608 - "user_service.rs"
-Cohesion: 0.06
-Nodes (34): AgentModelGroupName, AgentModelIcon, Named, Path, AgentModelInfo, AgentModelList, Flat, Grouped (+26 more)
+### Community 608 - "agent_ui.rs"
+Cohesion: 0.03
+Nodes (59): AgentModelGroupName, AgentModelIcon, Named, Path, AgentModelInfo, AgentModelList, Flat, Grouped (+51 more)
 
 ### Community 609 - "src/copilot_chat.rs"
-Cohesion: 0.04
-Nodes (53): CENTS_PER_DOLLAR, ChatLocation, Agent, EditingSession, Editor, Other, Panel, Terminal (+45 more)
+Cohesion: 0.01
+Nodes (188): CENTS_PER_DOLLAR, ChatLocation, Agent, EditingSession, Editor, Other, Panel, Terminal (+180 more)
 
 ### Community 610 - "BookmarkStore"
 Cohesion: 0.04
@@ -4666,32 +4455,32 @@ Cohesion: 0.05
 Nodes (47): continue-on-error, env, if, runs-on, steps, timeout-minutes, continue-on-error, env (+39 more)
 
 ### Community 612 - "Rope"
-Cohesion: 0.08
+Cohesion: 0.09
 Nodes (13): AddNotificationsOptions, Count, GlobalNotificationStore, init(), NotificationEntry, NotificationEvent, NewNotification, NotificationRead (+5 more)
 
-### Community 613 - "snippets_ui.rs"
-Cohesion: 0.11
-Nodes (8): snippets_dir(), configure_snippets(), init(), open_folder(), register(), ScopeFileName, ScopeName, ScopeSelectorDelegate
+### Community 613 - "models.rs"
+Cohesion: 0.07
+Nodes (7): BedrockModelCacheConfiguration, BedrockThinkingConfig, custom_model(), test_custom_model_adaptive_thinking(), test_custom_model_defaults_disable_optional_capabilities(), test_custom_model_optional_capabilities(), test_custom_model_thinking_budget_tokens()
 
-### Community 614 - "SanitizedPath"
-Cohesion: 0.06
-Nodes (18): path_to_string(), Arc<SanitizedPath>, compare_paths_mixed_case_numeric_ordering(), home_dir(), insert_subtree(), normalize_path(), path_with_position_preserves_path_separators(), path_with_position_preserves_paths_without_positions() (+10 more)
+### Community 614 - "PendingKeystrokesIndicator"
+Cohesion: 0.18
+Nodes (5): IndicatorRenderState, IndicatorTimeout, PendingKeystrokesIndicator, PopoverState, TestInputHandler
 
 ### Community 615 - "Entity"
-Cohesion: 0.06
-Nodes (44): base_picker_open(), branch_base(), branch_diff_bases(), BranchModeTest, commit_history_from_response(), CommitHistory, Error, Loaded (+36 more)
+Cohesion: 0.12
+Nodes (30): base_picker_open(), branch_base(), branch_diff_bases(), BranchModeTest, listed_paths(), open_branch_diff_tab(), settle_branch_mode(), setup_branch_mode_test() (+22 more)
 
 ### Community 616 - "extension_cli/src/main.rs"
-Cohesion: 0.09
-Nodes (11): stack_frame_filter_key(), StackFrameEntry, Collapsed, Normal, StackFrameFilter, All, OnlyUserFrames, StackFrameList (+3 more)
+Cohesion: 0.07
+Nodes (14): StackFrameId, StackFrameEntry, Collapsed, Label, Normal, StackFrameFilter, All, OnlyUserFrames (+6 more)
 
-### Community 617 - "WasmState"
-Cohesion: 0.08
-Nodes (14): WasmState, Extension, V0_0_1, V0_0_4, V0_0_6, V0_1_0, V0_2_0, V0_3_0 (+6 more)
+### Community 617 - "TableRow<T>"
+Cohesion: 0.11
+Nodes (3): IntoTableRow, TableRow<T>, Vec<T>
 
-### Community 618 - "FakeTransport"
-Cohesion: 0.20
-Nodes (6): FakeTransport, FakeTransportKind, Stdio, Tcp, RequestHandler, ResponseHandler
+### Community 618 - "DebugAdapterClient"
+Cohesion: 0.03
+Nodes (41): TcpArguments, DapMessageHandler, DebugAdapterClient, init_test(), test_calls_event_handler(), test_calls_event_handler_for_reverse_request(), test_initialize_client(), FakeTransport (+33 more)
 
 ### Community 619 - "repeat.rs"
 Cohesion: 0.05
@@ -4703,7 +4492,7 @@ Nodes (46): allOf, allowTrailingCommas, $comment, description, type, properties,
 
 ### Community 621 - "T"
 Cohesion: 0.09
-Nodes (22): FallibleTask, FallibleTask<T>, FallibleTaskState, Downcast, Ready, Rendezvous, RendezvousReceiver, RendezvousSender (+14 more)
+Nodes (18): FallibleTask, FallibleTask<T>, FallibleTaskState, Downcast, Ready, Rendezvous, RendezvousReceiver, RendezvousReceiver<T> (+10 more)
 
 ### Community 622 - "page_data.rs"
 Cohesion: 0.09
@@ -4718,24 +4507,24 @@ Cohesion: 0.04
 Nodes (47): Action Reference, AI Support in Git, Branch Management, Changing the diff view, Commit Message Line Length, Committing, Configuration, Configuring Commit Line Length (+39 more)
 
 ### Community 625 - "ProfilerWindow"
-Cohesion: 0.05
-Nodes (60): if, runs-on, steps, GITHUB_TOKEN, SENTRY_AUTH_TOKEN, SENTRY_ORG, SENTRY_PROJECT, SLACK_MESSAGE (+52 more)
+Cohesion: 0.03
+Nodes (84): if, runs-on, steps, defaults, run, if, permissions, secrets (+76 more)
 
 ### Community 626 - "IntelliJ / JetBrains Markdown view modes and preview (bundled Markdown plugin)"
 Cohesion: 0.05
 Nodes (41): 1. The three view modes, their names, the switcher, and how the UI changed, 2. How the split works, 3. Settings under Settings | Languages & Frameworks | Markdown, with defaults, 4. Scroll synchronisation, 5. Preview rendering technology, 6. Diagram support (Mermaid, PlantUML), 7. Preview-only mode: selection, find, zoom, context menu, separate window/browser, export, 8. Known complaints and long-standing limitations (+33 more)
 
-### Community 628 - "delete.rs"
-Cohesion: 0.07
-Nodes (40): test_change_0(), test_change_b(), test_change_backspace(), test_change_cc(), test_change_e(), test_change_end_of_document(), test_change_end_of_line(), test_change_gg() (+32 more)
+### Community 628 - "App"
+Cohesion: 0.10
+Nodes (5): markdown_style(), NotifyTaskExt, Task<anyhow::Result<R>>, Task<std::result::Result<R, E>>, init()
 
-### Community 629 - "BufferLineHeight"
-Cohesion: 0.33
-Nodes (4): BufferLineHeight, Comfortable, Custom, Standard
-
-### Community 630 - "gitiles.rs"
+### Community 629 - "autofix_pr.rs"
 Cohesion: 0.09
-Nodes (27): android(), gerrit(), Gitiles, test_build_gitiles_commit_permalink(), test_build_gitiles_permalink(), test_build_gitiles_permalink_with_multi_line_selection(), test_build_gitiles_permalink_with_path_prefix(), test_build_gitiles_permalink_with_single_line_selection() (+19 more)
+Nodes (17): autofix_pr(), commit_changes(), download_patch_artifact(), PATCH_ARTIFACT_NAME, PATCH_FILE_PATH, upload_patch_artifact(), download_artifact(), DownloadArtifactStep (+9 more)
+
+### Community 630 - "ParsedGitRemote"
+Cohesion: 0.01
+Nodes (208): get_host_from_git_remote_url(), init(), register_additional_providers(), test_get_host_from_git_remote_url(), Azure, pull_request_regex(), test_azure_extract_pull_request(), test_build_azure_commit_permalink() (+200 more)
 
 ### Community 631 - "Reservation"
 Cohesion: 0.08
@@ -4743,79 +4532,75 @@ Nodes (6): ExtensionKeyValueStore, ExtensionProject, latest::DownloadedFileType,
 
 ### Community 632 - "wgpu_renderer.rs"
 Cohesion: 0.02
-Nodes (75): get_gamma_correction_ratios(), platform_info(), cursor_restore_listeners(), initialize_graphics(), PreparedWebWindow, set_body_cursor(), show_graphics_unavailable_message(), WebPlatform (+67 more)
+Nodes (62): get_gamma_correction_ratios(), CompositorGpuHint, device_errors_are_observed_independently(), device_errors_coalesce_and_new_observers_see_latest(), DeviceErrorState, parse_pci_id(), PreparedWebGraphics, test_parse_device_id() (+54 more)
 
 ### Community 633 - "mermaid_render/src/render.rs"
-Cohesion: 0.10
-Nodes (29): css_color(), postprocess(), attribute(), class_diagram_labels_keep_sixteen_pixel_font_size(), clipped_group_count(), diagram_directives_cannot_restyle_diagrams(), diagrams_with_too_much_text_to_measure_fail_to_render(), edge_label_backgrounds_use_theme_color() (+21 more)
+Cohesion: 0.11
+Nodes (26): css_color(), postprocess(), class_diagram_labels_keep_sixteen_pixel_font_size(), clipped_group_count(), diagram_directives_cannot_restyle_diagrams(), diagrams_with_too_much_text_to_measure_fail_to_render(), edge_label_backgrounds_use_theme_color(), html_labels_fit_their_viewports() (+18 more)
 
 ### Community 634 - "Mode"
 Cohesion: 0.03
-Nodes (41): Direction, Down, Left, Right, Up, register(), test_change_list_delete(), test_change_list_insert() (+33 more)
-
-### Community 635 - "Breakpoint"
-Cohesion: 0.05
-Nodes (16): ActiveDiagnostic, All, Group, None, ActiveDiagnosticGroup, DiagnosticRenderer, GlobalDiagnosticRenderer, set_diagnostic_renderer() (+8 more)
+Nodes (26): Vim, Mode, HelixNormal, HelixSelect, Insert, Normal, Replace, Visual (+18 more)
 
 ### Community 636 - "ToolResponseContent"
-Cohesion: 0.12
-Nodes (11): McpServerTool, .NAME, ToolResponse, CallToolResponse, ToolAnnotations, ToolResponseContent, Audio, Image (+3 more)
+Cohesion: 0.11
+Nodes (13): McpServerTool, .NAME, ToolResponse, CallToolResponse, ListToolsResponse, Tool, ToolAnnotations, ToolResponseContent (+5 more)
 
-### Community 637 - "UnixStream"
-Cohesion: 0.14
-Nodes (3): OwnedReadHalf, OwnedWriteHalf, UnixStream
+### Community 637 - "MarkdownTag"
+Cohesion: 0.07
+Nodes (25): CodeBlockMetadata, MarkdownTag, BlockQuote, CodeBlock, DefinitionList, DefinitionListDefinition, DefinitionListTitle, Emphasis (+17 more)
 
 ### Community 638 - "archive.rs"
 Cohesion: 0.03
-Nodes (31): AcpThread, EntriesRemoved, EntryUpdated, ActionLogTelemetry, AuthorizationKind, ActionChoice, PermissionGrant, can_merge_message_chunks() (+23 more)
+Nodes (36): AcpThread, EntryUpdated, ActionLogTelemetry, AuthorizationKind, ActionChoice, PermissionGrant, legacy_permission_request(), PermissionRequest (+28 more)
 
 ### Community 639 - ".navigate_to_hover_links"
-Cohesion: 0.05
-Nodes (12): collapse_multiline_range(), GotoDefinitionKind, Declaration, Implementation, Symbol, Type, MultibufferSelectionMode, All (+4 more)
+Cohesion: 0.10
+Nodes (9): collapse_multiline_range(), GotoDefinitionKind, Declaration, Implementation, Symbol, Type, Navigated, No (+1 more)
 
 ### Community 640 - "LineEndingIndicator"
 Cohesion: 0.13
 Nodes (39): alice_author(), approval_comment_by_org_member_succeeds(), approved_review_by_org_member_succeeds(), bob_author(), charlie_author(), co_author_org_member_succeeds(), comment(), comment_takes_precedence_over_co_author() (+31 more)
 
 ### Community 641 - "DiffMultibuffer"
-Cohesion: 0.11
-Nodes (3): BufferSubscriptions, DiffMultibuffer, project_diff_path_key()
+Cohesion: 0.06
+Nodes (14): BufferSubscriptions, CONFLICT_SORT_PREFIX, DiffMultibuffer, MAX_CONCURRENT_BUFFER_LOADS, name_sort_path(), NEW_SORT_PREFIX, project_diff_path_key(), project_diff_sort_path() (+6 more)
 
 ### Community 642 - "Git"
 Cohesion: 0.10
 Nodes (23): build_report(), command_report(), extract_trial(), _fill_run_location_from_index(), find_trial_dirs(), _fmt(), _fmt_rate(), format_report() (+15 more)
 
-### Community 643 - "OnceLock"
-Cohesion: 0.07
-Nodes (27): new_linker(), ExtensionWorktree, linker(), MIN_VERSION, ExtensionWorktree, linker(), MIN_VERSION, ExtensionWorktree (+19 more)
+### Community 643 - "AudioStack"
+Cohesion: 0.12
+Nodes (5): AudioMixerSource, AudioStack, AudioStream, RemoteAudioPlaybackCounters, TimestampedFrame
 
 ### Community 644 - "Schema"
-Cohesion: 0.14
-Nodes (4): GlobalLease<G>, ExtendingSet<T>, ExtendingVec<T>, FeatureFlagsMap
+Cohesion: 0.09
+Nodes (6): GlobalLease<G>, agent_profile_tools_schema(), ExtendingSet, ExtendingSet<T>, ExtendingVec<T>, FeatureFlagsMap
 
 ### Community 645 - "TerminalCodegen"
-Cohesion: 0.09
-Nodes (13): PromptEditorEvent, CancelRequested, ConfirmRequested, Resized, StartRequested, StopRequested, TerminalInlineAssistId, CodegenEvent (+5 more)
+Cohesion: 0.05
+Nodes (26): load_context(), CodegenStatus, Done, Error, Idle, Pending, PromptEditorEvent, CancelRequested (+18 more)
 
 ### Community 646 - "FakeEditPredictionDelegate"
-Cohesion: 0.08
-Nodes (8): EditPrediction, Edit, MoveOutside, MoveWithin, EditorWithRightOccluders, FakeCompletionMenuProvider, FakeEditPredictionDelegate, FakeNonZedEditPredictionDelegate
+Cohesion: 0.06
+Nodes (45): EditPrediction, Edit, MoveOutside, MoveWithin, accept_completion(), assert_edit_prediction_diff_popover_avoids_right_occluders(), assert_editor_active_edit_completion(), assert_editor_active_move_completion() (+37 more)
 
-### Community 647 - "AvailableCommand"
-Cohesion: 0.16
-Nodes (7): AvailableCommand, AvailableSkill, SessionCapabilities, slash_commands(), test_completion_commands_derive_category_from_meta(), test_only_command_entries_are_slash_commands(), test_session_capabilities_keep_commands_and_skills_separate()
+### Community 647 - "WorkspaceSettings"
+Cohesion: 0.10
+Nodes (5): ActivePanelModifiers, closing_last_window_quits_app(), FocusFollowsMouse, TabBarSettings, WorkspaceSettings
 
 ### Community 648 - "DockerExecConnection"
-Cohesion: 0.09
-Nodes (11): connection(), DockerExecConnection, preserves_argument_boundaries_and_escapes_control_characters(), push_environment(), redacted_docker_exec(), redacts_failure_message(), redacts_forwarded_env(), skips_invalid_env_names() (+3 more)
+Cohesion: 0.04
+Nodes (18): OpenWslPath, RemoteClientDelegate, RemoteOs, Linux, MacOs, Windows, RemotePlatform, DockerConnectionOptions (+10 more)
 
 ### Community 649 - "keychain.rs"
 Cohesion: 0.04
 Nodes (44): if, needs, permissions, secrets, uses, with, concurrency, cancel-in-progress (+36 more)
 
-### Community 650 - "kernel_options.rs"
-Cohesion: 0.13
-Nodes (6): build_grouped_entries(), KernelPickerDelegate, KernelPickerEntry, Kernel, SectionHeader, KernelSelector<T, TT>
+### Community 650 - "layout_line.rs"
+Cohesion: 0.11
+Nodes (15): identical_new_content_inputs(), kept_rate_benchmark(), localized_rename_inputs(), repeated_function_lines(), repetitive_token_inputs(), bench_layout_line(), code_text(), IBM_PLEX (+7 more)
 
 ### Community 651 - "repeat.rs"
 Cohesion: 0.07
@@ -4825,37 +4610,41 @@ Nodes (36): register(), repeatable_insert(), Replayer, ReplayerState, should_rep
 Cohesion: 0.07
 Nodes (21): add_credentials(), check_status(), create_reports_existing_items_without_error(), create_status(), delete_credentials(), delete_preserves_macos_missing_item_error(), KeychainError, InvalidResponse (+13 more)
 
-### Community 654 - "ChannelModalDelegate"
-Cohesion: 0.11
-Nodes (6): LegacyUserId, ChannelModal, ChannelModalDelegate, Mode, InviteMembers, ManageMembers
+### Community 653 - "UpdateVersion"
+Cohesion: 0.16
+Nodes (3): test_version_tooltip_message(), UP_TO_DATE_DISPLAY_DURATION, UpdateVersion
+
+### Community 654 - "rodio_ext.rs"
+Cohesion: 0.14
+Nodes (13): callback_gets_all_samples(), callback_modifies_yielded(), continues_after_history(), keeps_only_latest(), MAX_CHANNELS, Replayable, ReplayDurationTooShort, ReplayQueue (+5 more)
 
 ### Community 655 - "edit_prediction_metrics/src/main.rs"
 Cohesion: 0.09
 Nodes (46): applies_patch_in_file_mode(), applies_patch_in_json_excerpt_mode(), applies_patch_with_excerpt_relative_line_numbers(), apply_patch_to_excerpt(), CliInput, Files, Json, filter_hunk_to_excerpt() (+38 more)
 
-### Community 656 - "SearchQuery"
-Cohesion: 0.12
-Nodes (4): SearchInputs, SearchQuery, Regex, Text
+### Community 656 - "tab_switcher_tests.rs"
+Cohesion: 0.26
+Nodes (20): assert_match_at_position(), assert_match_selection(), assert_tab_switcher_is_closed(), get_active_tab_switcher(), init_test(), open_buffer(), open_tab_switcher(), open_tab_switcher_for_active_pane() (+12 more)
 
 ### Community 657 - "migrator/src/migrations.rs"
 Cohesion: 0.09
-Nodes (16): make_auto_indent_an_enum(), migrate_auto_indent(), flatten_code_actions_formatters(), remove_formatters_on_save(), remove_formatters_on_save_inner(), restore_code_actions_on_format(), restore_code_actions_on_format_inner(), make_relative_line_numbers_an_enum() (+8 more)
+Nodes (16): make_auto_indent_an_enum(), migrate_auto_indent(), flatten_code_actions_formatters(), remove_formatters_on_save(), remove_formatters_on_save_inner(), restore_code_actions_on_format(), restore_code_actions_on_format_inner(), migrate_one() (+8 more)
 
 ### Community 658 - "TerminalBounds"
 Cohesion: 0.07
-Nodes (23): resize(), TerminalBackendEvent, window_size_from_terminal_bounds(), Content, content_index_for_mouse(), convert_cells_to_content(), Cursor, CursorShape (+15 more)
+Nodes (23): new_term(), open_pty(), resize(), TerminalBackendEvent, window_size_from_terminal_bounds(), Content, content_index_for_mouse(), convert_cells_to_content() (+15 more)
 
-### Community 659 - "editor/src/edit_prediction.rs"
-Cohesion: 0.06
-Nodes (26): EditPredictionStyles, all_edits_insertions_or_deletions(), EditDisplayMode, DiffPopover, Inline, TabAccept, EditPredictionKeybindAction, Accept (+18 more)
+### Community 659 - "TerminalProgramValidation"
+Cohesion: 0.18
+Nodes (24): and_or_list_validation(), assignment_validation(), combine_validations(), command_prefix_validation(), command_suffix_validation(), command_validation(), compound_command_validation(), compound_list_validation() (+16 more)
 
 ### Community 660 - "watcher_debug.rs"
 Cohesion: 0.11
 Nodes (25): SettingsSectionHeader, add_network_host(), add_write_path(), canonicalize_host(), DOMAINS_DESCRIPTION, insert_write_path_subtree(), raw_sandbox_lists(), remove_network_host() (+17 more)
 
 ### Community 661 - "SettingsSync"
-Cohesion: 0.11
-Nodes (4): binding_multiple_statements_with_parameter_gaps(), blob_round_trips(), maybe_returns_options(), Statement<'a>
+Cohesion: 0.08
+Nodes (13): binding_multiple_statements_with_parameter_gaps(), blob_round_trips(), maybe_returns_options(), SqlType, Blob, Float, Integer, Null (+5 more)
 
 ### Community 662 - "WasmState"
 Cohesion: 0.08
@@ -4875,42 +4664,42 @@ Nodes (43): concurrency, cancel-in-progress, group, GITHUB_TOKEN, PROJECT_NUMBER
 
 ### Community 666 - "http_client"
 Cohesion: 0.10
-Nodes (48): gpui, anthropic, aws_http_client, bedrock, bench_metrics, cloud_api_client, cloud_llm_client, copilot_chat (+40 more)
+Nodes (47): gpui, anthropic, aws_http_client, bedrock, bench_metrics, copilot_chat, crates_io_client, credentials_provider (+39 more)
 
-### Community 667 - "native.rs"
-Cohesion: 0.07
-Nodes (15): forward_frame(), MessageStream, CloudApiClient, Connection, KEEPALIVE_INTERVAL, CloudApiClient, CONNECT_TIMEOUT, Connection (+7 more)
+### Community 667 - "integration/channel_tests.rs"
+Cohesion: 0.15
+Nodes (20): assert_channel_invitations(), assert_channels(), assert_channels_list_shape(), assert_members_eq(), assert_participants_eq(), ExpectedChannel, test_call_from_channel(), test_channel_jumping() (+12 more)
 
 ### Community 668 - "project_bookmarks.rs"
-Cohesion: 0.09
-Nodes (5): ExtensionKeyValueStore, latest::DownloadedFileType, latest::LanguageServerInstallationStatus, latest::SettingsLocation, WasmState
+Cohesion: 0.08
+Nodes (6): ExtensionKeyValueStore, ExtensionProject, latest::DownloadedFileType, latest::LanguageServerInstallationStatus, latest::SettingsLocation, WasmState
 
 ### Community 670 - "BackgroundExecutor"
 Cohesion: 0.01
-Nodes (316): ReadFileToolInput, AutoUpdateSetting, test_channel_guest_promotion(), test_channel_guests(), test_channel_requires_zed_cla(), blame_entry(), extract_color_inlays(), extract_hint_labels() (+308 more)
+Nodes (377): AutoUpdateSetting, test_channel_guest_promotion(), test_channel_guests(), test_channel_requires_zed_cla(), test_rejoining_channel_after_stale_connection_cleanup_connects_livekit(), channel_id(), room_participants(), RoomParticipants (+369 more)
 
 ### Community 671 - "with"
-Cohesion: 0.09
-Nodes (21): TabIndex, TabStopMap, TabStopMapTest, TabStopNode, TabStopOperation, Group, GroupEnd, Insert (+13 more)
+Cohesion: 0.11
+Nodes (20): underline_width(), TabIndex, TabStopMap, TabStopMapTest, TabStopNode, TabStopOperation, Group, GroupEnd (+12 more)
 
 ### Community 672 - "language_model/src/request.rs"
-Cohesion: 0.10
-Nodes (20): load_context(), LoadedContext, ImageSize, ANTHROPIC_SIZE_LIMIT, assert_downscaled_from_original(), base64_to_png_bytes(), DEFAULT_IMAGE_MAX_BYTES, encode_bytes_as_base64() (+12 more)
+Cohesion: 0.12
+Nodes (16): ANTHROPIC_SIZE_LIMIT, assert_downscaled_from_original(), base64_to_png_bytes(), DEFAULT_IMAGE_MAX_BYTES, encode_bytes_as_base64(), encode_png_bytes(), language_model_image_from_dynamic_image(), LanguageModelImage (+8 more)
 
 ### Community 673 - "with"
 Cohesion: 0.05
 Nodes (43): description, items, markdownDescription, type, uniqueItems, x-intellij-html-description, description, items (+35 more)
 
 ### Community 674 - "subagent_card.rs"
-Cohesion: 0.07
-Nodes (15): GitStatus, Reverted, RevertedUnstaged, Staged, Unchanged, Unstaged, JobStatus, Error (+7 more)
+Cohesion: 0.08
+Nodes (14): GitStatus, Reverted, RevertedUnstaged, Staged, Unchanged, Unstaged, JobStatus, Error (+6 more)
 
 ### Community 675 - "linux/dispatcher.rs"
 Cohesion: 0.10
 Nodes (39): escape_sandbox_path(), escape_sandbox_string(), generate_seatbelt_config(), NetworkAccess, All, LocalhostPort, None, protected_file_name_regex() (+31 more)
 
 ### Community 676 - "fake_definition_lsp.rs"
-Cohesion: 0.14
+Cohesion: 0.13
 Nodes (10): byte_offset_to_position(), byte_range_to_lsp_range(), DefinitionIndex, extract_base_type_name(), extract_declarations_from_tree(), extract_extra_definition_locations(), extract_type_annotations(), FileEntry (+2 more)
 
 ### Community 677 - "release.rs"
@@ -4921,45 +4710,41 @@ Nodes (42): 10. Rule of Three Overuse, 11. Synonym Cycling, 12. False Ranges, 13
 Cohesion: 0.05
 Nodes (42): cancel-in-progress, group, default, description, type, GITHUB_TOKEN, PR_NUMBER, dry-run (+34 more)
 
-### Community 679 - "arena.rs"
-Cohesion: 0.09
-Nodes (16): connect_and_write_prompt(), main(), main_from_args(), Arena, ArenaBox, ArenaElement, Chunk, test_arena() (+8 more)
+### Community 679 - "src/gpui.rs"
+Cohesion: 0.05
+Nodes (17): current_platform(), linux_platform(), wait_for_clipboard_handovers(), Arena, ArenaBox, ArenaBox<T>, ArenaElement, Chunk (+9 more)
 
 ### Community 680 - "theme_selector.rs"
 Cohesion: 0.05
 Nodes (42): agent, auto_compact, auto_generate_thread_titles, button, cancel_generation_on_terminal_stop, commit_message_include_project_rules, default_height, default_model (+34 more)
 
-### Community 681 - "AnyElement"
-Cohesion: 0.02
-Nodes (32): preview_notice(), session_notice_list(), SessionNotice, SessionNoticePreview, quit(), ComponentExample, ComponentExampleGroup, empty_example() (+24 more)
-
 ### Community 682 - "Diff"
 Cohesion: 0.07
-Nodes (38): build_buffer_diff(), build_finalized(), DeferredSource, Diff, diff_change_label(), diff_change_paths(), Finalized, Pending (+30 more)
+Nodes (41): build_buffer_diff(), build_finalized(), DeferredSource, Diff, diff_change_label(), diff_change_paths(), Finalized, Pending (+33 more)
 
 ### Community 683 - "Object"
-Cohesion: 0.05
-Nodes (53): Vim, Object, AngleBrackets, AnyBrackets, AnyPair, AnyQuotes, Argument, BackQuotes (+45 more)
+Cohesion: 0.03
+Nodes (112): BracketPair, Vim, AngleBrackets, CandidateRange, CandidateWithRanges, CurlyBrackets, DelimiterPredicate, get_visible_line_range() (+104 more)
 
 ### Community 684 - "migrate_settings"
-Cohesion: 0.07
-Nodes (20): make_file_finder_include_ignored_an_enum(), migrate_one(), migrate_one(), move_edit_prediction_provider_to_edit_predictions(), make_play_sound_when_agent_done_an_enum(), migrate_one(), make_git_gutter_width_an_enum(), migrate_one() (+12 more)
+Cohesion: 0.08
+Nodes (17): make_file_finder_include_ignored_an_enum(), migrate_one(), make_relative_line_numbers_an_enum(), migrate_one(), migrate_one(), move_edit_prediction_provider_to_edit_predictions(), migrate_experimental_sweep_mercury(), migrate_one() (+9 more)
 
 ### Community 685 - "Reservation"
-Cohesion: 0.13
+Cohesion: 0.14
 Nodes (3): BenchWindowContext, BenchWindowContext<'a, 'measurement>, Reservation
 
-### Community 686 - "CharBag"
-Cohesion: 0.10
-Nodes (8): CharBag, simple_lowercase(), match_fixed_path_set(), match_path_sets(), PathMatch, PathMatchCandidate, PathMatchCandidate<'a>, PathMatchCandidateSet
+### Community 686 - "Snapshot"
+Cohesion: 0.06
+Nodes (10): CharBag, PathMatchCandidate<'a>, PathMatchCandidateSetIter, PathMatchCandidateSetNucleoIter, KeyedItem, ChildEntriesIter, ChildEntriesOptions, PathEntry (+2 more)
 
 ### Community 687 - "macos_seatbelt.rs"
 Cohesion: 0.18
 Nodes (19): is_community_pull_request(), author_commented_at(), author_login(), author_pushed_since(), bot_commented_at(), changes_requested_action(), cla_action(), clock_start() (+11 more)
 
 ### Community 688 - "eslint.rs"
-Cohesion: 0.11
-Nodes (39): ancestor_directories(), assert_directory_result(), determine_working_directory(), DirectoryItem, eslint_settings_overrides_for(), EslintConfigKind, Flat, Legacy (+31 more)
+Cohesion: 0.06
+Nodes (60): ancestor_directories(), assert_directory_result(), determine_working_directory(), DirectoryItem, eslint_settings_overrides_for(), EslintConfigKind, Flat, Legacy (+52 more)
 
 ### Community 689 - "Humanizer: Remove AI Writing Patterns"
 Cohesion: 0.05
@@ -4969,37 +4754,37 @@ Nodes (41): description, required, type, concurrency, cancel-in-progress, group,
 Cohesion: 0.08
 Nodes (13): AsyncBlockWithoutAwait, AwaitVisitor, call_def_id(), emit_shared_string(), extract_literal_source(), gpui_fixture_rustc_flags(), is_interesting_shared_string_constructor(), is_shared_string() (+5 more)
 
-### Community 691 - "fs_watcher/diagnostics.rs"
-Cohesion: 0.13
-Nodes (12): DiagnosticRecorder, recording_is_opt_in_and_bounded(), recording_keeps_raw_events_errors_and_rescans(), recording_snapshots_existing_roots_and_registration_errors(), recording_snapshots_retained_roots_without_registrations(), RecordingState, rescan_report_contains_ten_preceding_paths_and_reason(), RescanHistory (+4 more)
+### Community 691 - "Credentials"
+Cohesion: 0.16
+Nodes (7): Credentials, FakeStore, ImportedAccounts, imports_from_iremote_once(), persists_to_the_store(), session_store(), vega_store_wins_over_iremote()
 
-### Community 692 - "tools/tool_permissions.rs"
-Cohesion: 0.09
-Nodes (24): init(), TabMatch, TabSwitcher, TabSwitcherDelegate, assert_match_at_position(), assert_match_selection(), assert_tab_switcher_is_closed(), get_active_tab_switcher() (+16 more)
+### Community 692 - "tab_switcher.rs"
+Cohesion: 0.03
+Nodes (33): init(), PANEL_WIDTH_REMS, TabMatch, TabSwitcher, TabSwitcherDelegate, TabSwitcherSettings, Toggle, AiSettingItem (+25 more)
 
 ### Community 693 - "watcher_debug.rs"
-Cohesion: 0.11
-Nodes (21): WatchSnapshot, create_editor(), editors_allow_copying_and_preserve_selections_on_updates(), event_rollover_preserves_retained_selection(), Export, format_event(), formats_local_times_event_names_and_plain_paths(), formats_pathless_rescans_and_errors() (+13 more)
+Cohesion: 0.12
+Nodes (21): create_editor(), editors_allow_copying_and_preserve_selections_on_updates(), event_rollover_preserves_retained_selection(), EXCLUSION_SCOPE, Export, format_event(), formats_local_times_event_names_and_plain_paths(), formats_pathless_rescans_and_errors() (+13 more)
 
 ### Community 694 - "ServerType"
 Cohesion: 0.06
-Nodes (37): ServerType, .ALL, Ftp, Ftps, FtpsImplicit, Group, InPlace, Local (+29 more)
+Nodes (30): ServerType, .ALL, Ftp, Ftps, FtpsImplicit, Group, InPlace, Local (+22 more)
 
 ### Community 695 - "examples/end_to_end.rs"
-Cohesion: 0.03
-Nodes (89): Action, AbstractUnixServer, Append, AssertNamespaces, AssertNoCapabilities, BindUnix, Connect, ConnectByName (+81 more)
+Cohesion: 0.06
+Nodes (56): Shell, Answer, Allow, Deny, Panic, Remember, answer_the(), Ask (+48 more)
 
 ### Community 696 - "settings_profile_selector.rs"
-Cohesion: 0.14
-Nodes (4): Populated, BookmarkTarget, Editor, set_bookmark_excerpts()
+Cohesion: 0.12
+Nodes (7): BookmarkRowHighlights, BookmarksTabEvent, Populated, BookmarksTabState, BookmarkTarget, Editor, set_bookmark_excerpts()
 
 ### Community 697 - "FileDiffView"
-Cohesion: 0.11
-Nodes (3): build_buffer_diff(), FileDiffView, test_diff_view()
+Cohesion: 0.10
+Nodes (8): build_buffer_diff(), FileDiffStyleToolbar, FileDiffView, init_test(), RECALCULATE_DIFF_DEBOUNCE, test_diff_view(), test_save_changes_in_diff_view(), test_split_diff_view_highlights_base_text_after_language_load()
 
 ### Community 698 - "with"
 Cohesion: 0.12
-Nodes (11): basic_testing(), MockNetwork, MockNetworkState, NetworkClient, NetworkedCounter, test_allow_parking(), test_app_sync(), test_async_operations() (+3 more)
+Nodes (16): basic_testing(), Counter, CounterEvent, main(), MockNetwork, MockNetworkState, NetworkClient, NetworkedCounter (+8 more)
 
 ### Community 699 - ".to_taffy"
 Cohesion: 0.11
@@ -5009,9 +4794,9 @@ Nodes (13): AbsoluteLength, border_widths_to_taffy(), border_widths_to_taffy_use
 Cohesion: 0.06
 Nodes (41): description, $ref, description, $ref, packageExportsEntryObject, packageImportsEntryObject, additionalProperties, properties (+33 more)
 
-### Community 701 - "ListOrDirect"
-Cohesion: 0.29
-Nodes (5): ListOrDirect, List, Single, Vec<String>, VsCodeSnippet
+### Community 701 - "Kernel"
+Cohesion: 0.09
+Nodes (15): Kernel, ErroredLaunch, Restarting, RunningKernel, Shutdown, ShuttingDown, StartingKernel, KernelStatus (+7 more)
 
 ### Community 702 - "Zed Markdown preview: current state and feasibility of an IntelliJ-style three-mode view"
 Cohesion: 0.05
@@ -5023,11 +4808,11 @@ Nodes (28): on_create, on_drop, on_paste, project_panel, auto_fold_dirs, auto_op
 
 ### Community 704 - "sink.rs"
 Cohesion: 0.09
-Nodes (23): ANSI_BLUE, ANSI_BOLD, ANSI_GREEN, ANSI_MAGENTA, ANSI_RED, ANSI_RESET, ANSI_YELLOW, ENABLED_SINKS_FILE (+15 more)
+Nodes (24): ANSI_BLUE, ANSI_BOLD, ANSI_GREEN, ANSI_MAGENTA, ANSI_RED, ANSI_RESET, ANSI_YELLOW, ENABLED_SINKS_FILE (+16 more)
 
-### Community 705 - "Envelope"
-Cohesion: 0.10
-Nodes (13): MessageId, ChannelClient, ResponseChannels, Signal<T>, StreamResponseChannels, test_channel_client_dropping_stream_request_before_completion(), test_channel_client_dropping_stream_request_before_response_cleans_up_channel(), Message (+5 more)
+### Community 705 - "Chunks<'a>"
+Cohesion: 0.13
+Nodes (4): Bytes, Bytes<'a>, Chunks<'a>, Lines<'a>
 
 ### Community 706 - "snippets_ui.rs"
 Cohesion: 0.06
@@ -5035,15 +4820,15 @@ Nodes (40): if, runs-on, steps, timeout-minutes, if, runs-on, steps, timeout-min
 
 ### Community 707 - "examples/test_app.rs"
 Cohesion: 0.05
-Nodes (62): after_release(), create_sentry_release(), DOCS_CHANNEL, IS_PRERELEASE_ENV, publish_snap(), publish_winget(), rebuild_releases_page(), RELEASE_BODY (+54 more)
+Nodes (68): after_release(), create_sentry_release(), DOCS_CHANNEL, IS_PRERELEASE_ENV, post_to_discord(), publish_snap(), publish_winget(), rebuild_releases_page() (+60 more)
 
 ### Community 708 - "KernelSpecification"
-Cohesion: 0.14
-Nodes (3): GlobalReplStore, ReplStore, .NAMESPACE
+Cohesion: 0.07
+Nodes (14): build_python_discovery_shell_script(), extract_environment_kind(), KernelSpecification, Jupyter, JupyterServer, PythonEnv, SshRemote, WslRemote (+6 more)
 
 ### Community 709 - "src/cloud.rs"
-Cohesion: 0.08
-Nodes (19): LanguageModelToolResultContent, WebSearchToolOutput, Error, Success, WebSearchBody, WebSearchResponse, WebSearchResult, CloudWebSearchProvider (+11 more)
+Cohesion: 0.09
+Nodes (15): WebSearchBody, WebSearchResponse, WebSearchResult, CloudWebSearchProvider, perform_web_search(), State, ZED_WEB_SEARCH_PROVIDER_ID, init() (+7 more)
 
 ### Community 710 - "streaming_parser.rs"
 Cohesion: 0.10
@@ -5053,24 +4838,24 @@ Nodes (37): EditFileToolPartialInput, Edit, PartialEdit, boundary_sensitive_text
 Cohesion: 0.05
 Nodes (39): 1. User Edit History, 2. Related excerpts, 3. Current File, Current File, Current File, Current File, Current File, Current File (+31 more)
 
-### Community 712 - "TestAction"
-Cohesion: 0.18
-Nodes (7): Editor, editor_property_test(), test_actions(), TestAction, Backspace, Move, Type
+### Community 712 - "Autoscroll"
+Cohesion: 0.05
+Nodes (32): Direction, Down, Left, Right, Up, Editor, editor_property_test(), test_actions() (+24 more)
 
-### Community 713 - "draft_prompt_store.rs"
-Cohesion: 0.24
-Nodes (11): blocks_have_user_content(), clean_mention_links(), display_label_for_draft(), draft_has_user_content(), empty_draft_placeholder_label(), MAX_LABEL_CHARS, NAMESPACE, read() (+3 more)
+### Community 713 - "ztracing/src/lib.rs"
+Cohesion: 0.08
+Nodes (4): GLOBAL, __consume_all_tokens!, MAX_CALLSTACK_DEPTH, Span
 
 ### Community 714 - "WorktreeDelegate"
-Cohesion: 0.06
-Nodes (12): FakeExtension, ExtensionCall, WasmExtension, ProjectDelegate, WorktreeDelegate, Command, ContextServerConfiguration, EnvVars (+4 more)
+Cohesion: 0.02
+Nodes (71): FakeExtension, cache_store(), ExtensionCall, IncrementalCompilationCache, wasm_engine(), WasmExtension, WasmState, authorize_access_to_unreleased_wasm_api_version() (+63 more)
 
 ### Community 715 - "document_selector_matches"
 Cohesion: 0.19
 Nodes (22): build_case(), css_source(), css_source_with_errors(), go_source(), go_source_with_errors(), json_source(), json_source_with_errors(), parsed_cases() (+14 more)
 
 ### Community 716 - "buffers.rs"
-Cohesion: 0.11
+Cohesion: 0.13
 Nodes (20): SingleSubscriberSet, SingleSubscriberSet<Callback>, SingleSubscriberSetState, Subscriber, Subscriber<Callback>, SubscriberSet, SubscriberSet<EmitterKey, Callback>, SubscriberSetState (+12 more)
 
 ### Community 717 - "Components<'a>"
@@ -5078,36 +4863,32 @@ Cohesion: 0.12
 Nodes (12): Component, Component<'a>, CurDir, Normal, ParentDir, Prefix, RootDir, Components<'a> (+4 more)
 
 ### Community 718 - "evals/terminal_tool.rs"
-Cohesion: 0.10
+Cohesion: 0.11
 Nodes (18): MappedPageContents, Memory, MemoryAddress, MemoryCell, MemoryIterator, MemoryPageBuilder, page_contents_into_iter(), PAGE_SIZE (+10 more)
 
 ### Community 719 - "action_log.rs"
-Cohesion: 0.19
-Nodes (19): cache_zed_extension_cli(), cargo_fmt_package(), check(), check_extension(), check_rust(), download_zed_extension_cli(), extension_job_defaults(), EXTENSION_RUST_TARGET (+11 more)
+Cohesion: 0.16
+Nodes (22): cache_zed_extension_cli(), cargo_fmt_package(), check(), check_extension(), check_rust(), download_zed_extension_cli(), extension_job_defaults(), EXTENSION_RUST_TARGET (+14 more)
 
 ### Community 720 - "pattern_extraction.rs"
-Cohesion: 0.06
-Nodes (18): EXCLUDE_PLACEHOLDER, INCLUDE_PLACEHOLDER, init(), REPLACE_PLACEHOLDER, SearchOption, Backwards, CaseSensitive, IncludeIgnored (+10 more)
+Cohesion: 0.07
+Nodes (17): EXCLUDE_PLACEHOLDER, INCLUDE_PLACEHOLDER, init(), REPLACE_PLACEHOLDER, SearchOption, Backwards, CaseSensitive, IncludeIgnored (+9 more)
 
 ### Community 721 - "NodeRuntimeTrait"
-Cohesion: 0.07
-Nodes (22): build_npm_command_args(), find_npm_path(), ManagedNodeRuntime, .NODE_PATH, .NPM_PATH, .VERSION, NodeRuntimeTrait, npm_command_directory() (+14 more)
+Cohesion: 0.12
+Nodes (7): ManagedNodeRuntime, .NODE_PATH, .NPM_PATH, .VERSION, NodeRuntimeTrait, SystemNodeRuntime, UnavailableNodeRuntime
 
-### Community 722 - "Templates"
-Cohesion: 0.20
-Nodes (11): contains(), test_system_prompt_does_not_render_legacy_zed_rules_section(), test_system_prompt_linux_sandbox_section_omits_tmpdir(), test_system_prompt_omits_sandbox_section_when_sandboxing_disabled(), test_system_prompt_omits_sandbox_section_when_terminal_tool_unavailable(), test_system_prompt_omits_user_agents_md_section_when_absent(), test_system_prompt_renders_sandbox_section_with_worktrees_when_enabled(), test_system_prompt_renders_user_agents_md_before_project_rules() (+3 more)
-
-### Community 723 - "EvalOutput"
-Cohesion: 0.11
-Nodes (20): eval_cant_do(), eval_empty_buffer(), eval_single_cursor_edit(), eval_unclear(), exact_buffer_match(), InlineAssistantOutput, Failure, Malformed (+12 more)
+### Community 722 - "terminal_updates.rs"
+Cohesion: 0.14
+Nodes (15): chunks_decode_independently_across_ansi_and_utf8_boundaries(), decode_fixture(), decode_terminal_notification(), DecodedTerminalUpdate, Patch, empty_chunk_preserves_empty_metadata(), empty_snapshot_preserves_empty_metadata_distinct_from_absence(), invalid_chunk_is_rejected_without_echoing_payload() (+7 more)
 
 ### Community 724 - "supervisor.rs"
 Cohesion: 0.04
-Nodes (67): thread_sandbox_merge_unsandboxed_wins_else_unions_scopes(), record_lsp_requests(), handle(), receive(), Errno, answer(), CLASS_IN, encode_name() (+59 more)
+Nodes (53): thread_sandbox_merge_unsandboxed_wins_else_unions_scopes(), answer(), CLASS_IN, encode_name(), exists_on_host(), FAKE_BASE, FAKE_SIZE, FORMAT_ERROR (+45 more)
 
 ### Community 725 - "gpui/src/subscription.rs"
-Cohesion: 0.09
-Nodes (26): PublishPlanEntry, APACHE_LICENSE, APACHE_LICENSE_FILE, ApacheLicensed, CONFLICTING_LICENSE_FILES, is_symlinked_license(), license_violation(), LicenseViolation (+18 more)
+Cohesion: 0.15
+Nodes (15): PublishPlanEntry, ApacheLicensed, Failing, labels_each_violation_with_the_rule_that_found_it(), Ramshackle, Rule, RULES, duplicate_publish_names() (+7 more)
 
 ### Community 726 - "Components<'a>"
 Cohesion: 0.09
@@ -5117,41 +4898,45 @@ Nodes (9): assert_process_exits(), Child, JobObject, process_is_alive(), spawn_p
 Cohesion: 0.14
 Nodes (30): try_expand_macro(), border_prefixes(), border_style_methods(), border_suffixes(), BorderStylePrefix, BorderStyleSuffix, box_prefixes(), box_shadow_style_methods() (+22 more)
 
-### Community 728 - "github_releases.rs"
-Cohesion: 0.08
-Nodes (23): archive_digest_mismatch_prevents_extraction_and_cleans_up_staging(), download_and_extract(), download_server_asset(), download_server_raw_binary(), download_to_writer(), DownloadedAsset, Archive, RawBinary (+15 more)
+### Community 728 - "edit_prediction_registry.rs"
+Cohesion: 0.18
+Nodes (12): assign_edit_prediction_provider(), assign_edit_prediction_providers(), clear_edit_prediction_store_edit_history(), edit_prediction_provider_config_for_settings(), EditPredictionProviderConfig, Codestral, Copilot, Zed (+4 more)
 
 ### Community 729 - "legacy_thread.rs"
 Cohesion: 0.10
 Nodes (23): ProjectSnapshot, DetailedSummaryState, Generated, Generating, NotGenerated, LegacySerializedMessage, LegacySerializedThread, MessageId (+15 more)
 
-### Community 730 - ".then"
-Cohesion: 0.09
-Nodes (9): FluentBuilder, http::request::Builder, HttpRequestExt, RedirectPolicy, FollowAll, FollowLimit, NoFollow, RequestTimeout (+1 more)
+### Community 730 - ".perform_format"
+Cohesion: 0.12
+Nodes (10): AddSelectionsState, FormatTarget, Buffers, Ranges, SelectionHistory, SelectionHistoryEntry, SelectionHistoryMode, Normal (+2 more)
+
+### Community 731 - "LanguageServerId"
+Cohesion: 0.12
+Nodes (4): Component, Extension, extension(), LanguageServerId
 
 ### Community 732 - "MergeFrom"
-Cohesion: 0.07
-Nodes (18): ModelMode, OpenAiReasoningEffort, Box<T>, collections::BTreeMap<K, V>, collections::BTreeSet<T>, collections::HashMap<K, V>, collections::HashSet<T>, collections::IndexMap<K, V> (+10 more)
+Cohesion: 0.09
+Nodes (13): ModelMode, OpenAiReasoningEffort, Box<T>, collections::BTreeMap<K, V>, collections::BTreeSet<T>, collections::HashMap<K, V>, collections::HashSet<T>, collections::IndexMap<K, V> (+5 more)
 
 ### Community 733 - "settings_sync/src/engine.rs"
-Cohesion: 0.10
+Cohesion: 0.09
 Nodes (10): process_map_stays_bounded(), ProcessIdGetter, ProcessInfo, PtyProcessInfo, PtyResources, Active, Released, TerminalType (+2 more)
 
 ### Community 734 - "language_selector.rs"
-Cohesion: 0.11
-Nodes (15): active_picker(), assert_selected_language_for_editor(), close_selector(), init(), init_test(), LanguageSelector, LanguageSelectorDelegate, open_empty_editor() (+7 more)
+Cohesion: 0.03
+Nodes (32): LanguageMatcher, active_picker(), assert_selected_language_for_editor(), close_selector(), init(), init_test(), LanguageSelectorDelegate, open_empty_editor() (+24 more)
 
-### Community 735 - "settings_sync/src/github.rs"
-Cohesion: 0.06
-Nodes (61): SignedIn, fake_github(), FakeGitHub, machine(), manifest(), parsed(), restore_version(), settings() (+53 more)
+### Community 735 - "HttpClient"
+Cohesion: 0.02
+Nodes (182): build_test_tarball(), DockerManifestsResponse, download_oci_tarball(), get_latest_oci_manifest(), get_oci_manifest(), ManifestLayer, test_download_oci_tarball(), test_get_deserialized_response() (+174 more)
 
 ### Community 736 - "theme_settings/src/schema.rs"
-Cohesion: 0.15
-Nodes (18): DARK_DIFF_HUNK_FILLED_OPACITY, DARK_DIFF_HUNK_HOLLOW_BACKGROUND_OPACITY, DARK_DIFF_HUNK_HOLLOW_BORDER_OPACITY, diff_hunk_colors_fallback_to_version_control_colors(), diff_hunk_fallbacks_are_absent_when_status_and_version_control_colors_are_missing(), diff_hunk_opacity_fallbacks_use_correct_values_for_light_and_dark_themes(), ensure_non_opaque(), ensure_opaque() (+10 more)
+Cohesion: 0.08
+Nodes (26): FontStyleContent, FontWeightContent, ThemeMetadata, try_parse_font_style(), try_parse_font_weight(), VsCodeThemeConverter, VsCodeTheme, DARK_DIFF_HUNK_FILLED_OPACITY (+18 more)
 
-### Community 737 - "RustLspAdapter"
-Cohesion: 0.06
-Nodes (15): RustLspAdapter, .ARCH_SERVER_NAME, .GITHUB_ASSET_KIND, SERVER_NAME, test_convert_rust_analyzer_schema(), test_process_rust_diagnostics(), test_rust_label_for_completion(), detect_host_libc_type() (+7 more)
+### Community 737 - "libc_type.rs"
+Cohesion: 0.42
+Nodes (8): detect_host_libc_type(), host_libc_type(), libc_type_from_ldd(), LibcType, Gnu, Musl, parse_ldd_version(), test_parse_ldd_version()
 
 ### Community 738 - "platform_linux.rs"
 Cohesion: 0.09
@@ -5161,9 +4946,9 @@ Nodes (34): BOOLEAN_PAIRS, Decrement, find_target(), Increment, increment_binary
 Cohesion: 0.05
 Nodes (38): Action Reference {#action-reference}, AI Support in Git {#ai-support}, Branch Management {#branch-management}, Commit Message Line Length, Committing {#committing}, Configuration {#configuration}, Configuring Commit Line Length, Creating and Switching Branches {#create-switch-branches} (+30 more)
 
-### Community 740 - "pattern_extraction.rs"
-Cohesion: 0.11
-Nodes (36): PermissionPattern, CommandPrefix, common_parent_dir(), escape_for_pattern(), extract_all_terminal_patterns(), extract_command_prefix(), extract_copy_move_pattern(), extract_copy_move_pattern_display() (+28 more)
+### Community 740 - "App"
+Cohesion: 0.04
+Nodes (55): PermissionPattern, CommandPrefix, common_parent_dir(), escape_for_pattern(), extract_all_terminal_patterns(), extract_command_prefix(), extract_copy_move_pattern(), extract_copy_move_pattern_display() (+47 more)
 
 ### Community 741 - "workflows: community_close_stale_issues.y"
 Cohesion: 0.05
@@ -5185,45 +4970,41 @@ Nodes (38): concurrency, cancel-in-progress, group, GITHUB_TOKEN, GUILD_MODE, PR
 Cohesion: 0.05
 Nodes (38): description, required, type, cancel-in-progress, group, description, required, type (+30 more)
 
-### Community 746 - "multi_select_tests.rs"
-Cohesion: 0.17
-Nodes (9): SEARCH_DEBOUNCE, create_new_file_row_is_not_selectable(), deselecting_survives_queries(), open_selection_as_tabs(), open_selection_in_one_split(), secondary_confirm_opens_one_split_per_file(), selection_pins_to_top_across_queries(), tabbing_a_selected_row_deselects_it() (+1 more)
-
 ### Community 747 - "replace.rs"
-Cohesion: 0.16
-Nodes (16): wrapping_left(), register(), test_clear_exchange(), test_clear_exchange_clears_operator(), test_enter_and_exit_replace_mode(), test_exchange_complete_overlap(), test_exchange_partial_overlap(), test_exchange_separate_range() (+8 more)
+Cohesion: 0.17
+Nodes (15): register(), test_clear_exchange(), test_clear_exchange_clears_operator(), test_enter_and_exit_replace_mode(), test_exchange_complete_overlap(), test_exchange_partial_overlap(), test_exchange_separate_range(), test_paste_replace() (+7 more)
 
-### Community 748 - "quote"
-Cohesion: 0.14
-Nodes (7): derive_app_context(), derive_into_element(), derive_render(), derive_merge_from(), derive_register_setting(), with_fallible_options(), derive_register_component()
-
-### Community 749 - "project_symbols.rs"
-Cohesion: 0.14
-Nodes (6): init(), init_test(), ProjectSymbolsDelegate, symbol(), test_project_symbols(), test_project_symbols_renders_utf8_match()
-
-### Community 750 - ".DrawGlyphRun"
+### Community 748 - "Formatter"
 Cohesion: 0.10
-Nodes (5): ClusterAnalyzer<'t>, slice_from_nullable(), StringIndexConverter<'a>, test_cluster_map(), TextRenderer_Impl
+Nodes (16): CurrentLanguageServerContent, LanguageServer, Formatter, Auto, CodeAction, External, LanguageServer, None (+8 more)
+
+### Community 749 - "KeybindUpdateOperation"
+Cohesion: 0.13
+Nodes (14): check_keymap_update(), check_keymap_update_with_deprecated_aliases(), KeybindUpdateOperation, KeybindUpdateOperation<'a>, Add, Remove, Replace, KeybindUpdateTarget (+6 more)
+
+### Community 750 - "UiDensity"
+Cohesion: 0.15
+Nodes (10): GlobalThemeSettingsProvider, set_theme_settings_provider(), theme_settings(), ThemeSettingsProvider, String, UiDensity, Comfortable, Compact (+2 more)
 
 ### Community 751 - "SignatureHelpState"
 Cohesion: 0.14
 Nodes (7): Editor, SignatureHelpHiddenBy, AutoClose, Escape, Selection, SignatureHelpPopover, SignatureHelpState
 
 ### Community 752 - "UiDensity"
-Cohesion: 0.10
-Nodes (7): check_debug_layer_available(), get_adapter(), get_device(), get_dxgi_factory(), get_module_handle(), register_window_class(), WINDOW_CLASS_NAME
+Cohesion: 0.11
+Nodes (6): check_debug_layer_available(), DirectXDevices, get_adapter(), get_device(), get_dxgi_factory(), try_to_recover_from_device_lost()
 
-### Community 753 - "RepositorySnapshot"
-Cohesion: 0.04
-Nodes (26): DiffStat, GitDiffStat, lookup(), parse_numstat(), test_parse_numstat_binary_files_skipped(), test_parse_numstat_empty_input(), test_parse_numstat_incomplete_lines_skipped(), test_parse_numstat_malformed_lines_skipped() (+18 more)
+### Community 753 - "spawn_posix_spawn"
+Cohesion: 0.11
+Nodes (10): Child, create_pipe(), cvt_nz(), environ, invalid_input_error(), open_dev_null(), posix_spawn_file_actions_addchdir_np(), posix_spawn_file_actions_addinherit_np() (+2 more)
 
 ### Community 754 - "search: registrar.rs"
 Cohesion: 0.12
 Nodes (17): ActionExecutor, DidHandleAction, DivRegistrar, DivRegistrar<'a, 'b, T>, DivRegistrar<'_, '_, T>, ForDeployed, ForDeployed<A>, ForDismissed (+9 more)
 
-### Community 755 - "TestDispatcher"
-Cohesion: 0.05
-Nodes (10): TestDispatcher, calculate_seeds(), collect(), seeds(), apply_seed_to_proptest_config(), Observation, observe(), run_test() (+2 more)
+### Community 755 - "gpui/src/test.rs"
+Cohesion: 0.12
+Nodes (9): calculate_seeds(), collect(), seeds(), apply_seed_to_proptest_config(), Observation, observe(), run_test(), run_test_once() (+1 more)
 
 ### Community 756 - "LanguageModelCompletionError"
 Cohesion: 0.05
@@ -5246,28 +5027,28 @@ Cohesion: 0.12
 Nodes (23): ReviewResult, IssueKind, Error, NotReviewed, make_commit(), PULL_REQUEST_BASE_URL, Report, report_summary_all_reviewed_is_no_issues() (+15 more)
 
 ### Community 761 - "ChannelBuffer"
-Cohesion: 0.07
-Nodes (10): ACKNOWLEDGE_DEBOUNCE_INTERVAL, ChannelBuffer, ChannelBufferEvent, BufferEdited, ChannelChanged, CollaboratorsChanged, Connected, Disconnected (+2 more)
+Cohesion: 0.06
+Nodes (11): ACKNOWLEDGE_DEBOUNCE_INTERVAL, ChannelBuffer, ChannelBufferEvent, BufferEdited, ChannelChanged, CollaboratorsChanged, Connected, Disconnected (+3 more)
 
-### Community 762 - ".selected_entry"
-Cohesion: 0.12
-Nodes (9): entry_git_aware_label_color(), entry_label_color(), Dir, empty_icon(), find_active_indent_guide_ix(), ExternalFile, OutlineEntry, Excerpt (+1 more)
+### Community 762 - "Context"
+Cohesion: 0.09
+Nodes (5): entry_git_aware_label_color(), entry_label_color(), directory_element_id(), empty_icon(), Fs
 
 ### Community 763 - "gpui_macos/src/system_notifications.rs"
-Cohesion: 0.14
-Nodes (5): SignInStatus, SignedIn, SignedOut, SigningIn, ZedAiOnboarding
+Cohesion: 0.11
+Nodes (8): SignInStatus, SignedIn, SignedOut, SigningIn, ZedAiOnboarding, content_column(), Picker<D>, rems_from_px()
 
-### Community 764 - ".new"
-Cohesion: 0.08
-Nodes (20): assert_layer_languages(), Cell, Code, Markdown, Raw, CellSource, Existing, None (+12 more)
+### Community 764 - "DiffOperations"
+Cohesion: 0.11
+Nodes (7): DiffOperations, DiffKind, SinceOid, Staged, Uncommitted, Unstaged, GitDiffOperations
 
 ### Community 765 - "App"
 Cohesion: 0.04
-Nodes (23): Addon, CharacterDimensions, CodeActionsForSelection, Fetching, None, Ready, CollaborationHub, Entity<Project> (+15 more)
+Nodes (20): Addon, BreadcrumbsVisibility, CollaborationHub, Entity<Project>, ErasedEditorImpl, LspDataKind, CodeLens, DocumentColors (+12 more)
 
 ### Community 766 - "App"
-Cohesion: 0.15
-Nodes (5): App, GlobalSystemAppearance, GlobalTheme, init(), SystemAppearance
+Cohesion: 0.16
+Nodes (6): GlobalSystemAppearance, init(), LoadThemes, All, JustBase, SystemAppearance
 
 ### Community 767 - "ChunkBrackets<'a>"
 Cohesion: 0.11
@@ -5277,17 +5058,21 @@ Nodes (7): ClipboardSelection, edit_for_markdown_paste(), Editor, is_standalone_
 Cohesion: 0.05
 Nodes (37): default, description, markdownDescription, type, x-intellij-html-description, properties, properties, default (+29 more)
 
-### Community 769 - "editor/src/edit_prediction_tests.rs"
-Cohesion: 0.14
-Nodes (37): accept_completion(), assert_edit_prediction_diff_popover_avoids_right_occluders(), assert_editor_active_edit_completion(), assert_editor_active_move_completion(), assign_editor_completion_menu_provider(), assign_editor_completion_provider(), assign_editor_completion_provider_non_zed(), hidden_edit_prediction_snippet_test_context() (+29 more)
+### Community 769 - "DiagnosticSeverity"
+Cohesion: 0.11
+Nodes (13): diagnostic_style(), INACTIVE_DIAGNOSTIC_SEVERITY, DiagnosticSeverity, Error, Hint, Info, Off, Warning (+5 more)
 
-### Community 771 - "GoogleLanguageModelProvider"
-Cohesion: 0.10
-Nodes (5): available_model_to_google_model(), catalog_models_drop_xhigh_effort_unless_supported(), GoogleLanguageModelProvider, language_model(), State
+### Community 771 - "F"
+Cohesion: 0.16
+Nodes (7): defer(), Deferred, F, LogErrorFuture, LogErrorWithBacktraceFuture, TryFutureExtBacktrace, UnwrapFuture
 
 ### Community 772 - "scheduler/src/tests.rs"
 Cohesion: 0.06
-Nodes (11): RendezvousReceiver<T>, capture_execution_order(), test_nondeterministic_waker_drop_detection(), test_randomize_order(), test_scheduler_drops_with_never_polled_dedicated_task(), test_scheduler_drops_with_stalled_detached_background_task(), test_scheduler_drops_with_stalled_detached_foreground_task(), test_send_local_executor_retains_scheduler() (+3 more)
+Nodes (10): capture_execution_order(), test_nondeterministic_waker_drop_detection(), test_randomize_order(), test_scheduler_drops_with_never_polled_dedicated_task(), test_scheduler_drops_with_stalled_detached_background_task(), test_scheduler_drops_with_stalled_detached_foreground_task(), test_send_local_executor_retains_scheduler(), test_send_local_executor_worker_submission_and_wakeup() (+2 more)
+
+### Community 773 - "open_path_prompt_tests.rs"
+Cohesion: 0.28
+Nodes (19): build_open_path_prompt(), collect_match_candidates(), confirm_completion(), init_test(), insert_query(), open_path_prompt(), prompt_and_select_paths(), test_create_confirmation_keeps_the_checked_destination() (+11 more)
 
 ### Community 774 - "with"
 Cohesion: 0.05
@@ -5297,65 +5082,65 @@ Nodes (37): Any Bracket Functionality, AnyQuotes and AnyBrackets (Traditional Vi
 Cohesion: 0.05
 Nodes (36): concurrency, cancel-in-progress, group, GITHUB_TOKEN, GUILD_MODE, PROJECT_NUMBER, SLACK_WEBHOOK_GUILD_INTERNAL, jobs (+28 more)
 
-### Community 777 - "DropdownMenu"
-Cohesion: 0.11
-Nodes (6): DropdownMenu, DropdownStyle, Ghost, Outlined, Solid, Subtle
+### Community 777 - "src/new_process_modal.rs"
+Cohesion: 0.03
+Nodes (33): send_telemetry(), TelemetrySpawnLocation, Custom, Gutter, ScenarioList, AttachModal, AttachModalDelegate, Candidate (+25 more)
 
 ### Community 778 - "subagent_card.rs"
-Cohesion: 0.07
-Nodes (25): FakeAgentSessionEditor, SessionMessage, SessionMessageSide, Incoming, Outgoing, Unknown, acp_subagent_card(), AcpSubagentCard (+17 more)
+Cohesion: 0.08
+Nodes (22): acp_subagent_card(), AcpSubagentCard, an_acp_parents_label_wins_over_the_subagents_title(), card(), fullscreen_opens_a_stopped_card_at_the_start_of_its_part(), has_user_canceled_output(), preview_range_shows_the_last_entries_the_card_covers(), reported_states_map_to_card_statuses() (+14 more)
 
 ### Community 779 - "window/a11y.rs"
-Cohesion: 0.08
-Nodes (28): Node, A11y, A11yActionListener, A11yNodeBuilder, A11ySubtreeBuilder<'a>, accessibility_enabled_is_independent_of_activation(), active_descendant_honored_for_deep_descendant(), active_descendant_honored_when_container_focused() (+20 more)
+Cohesion: 0.10
+Nodes (22): Node, A11y, A11yActionListener, A11yNodeBuilder, A11ySubtreeBuilder<'a>, accessibility_enabled_is_independent_of_activation(), active_descendant_honored_for_deep_descendant(), active_descendant_honored_when_container_focused() (+14 more)
 
-### Community 780 - "hang_detection.rs"
-Cohesion: 0.13
-Nodes (14): STARTUP_TIME, Form, FormExt, start(), start_hang_detection(), cleanup_old_hang_traces(), save_any(), init() (+6 more)
-
-### Community 781 - ".render"
+### Community 780 - "TaskTiming"
 Cohesion: 0.09
-Nodes (11): ActiveTextContext, App, CharacterGrid, GlobalTextContext, main(), run_example(), Specimen, SpecimenTheme (+3 more)
+Nodes (24): TasksIncluded, CompletedAndRunning, OnlyCompleted, ActiveTiming, get_all_timings(), get_current_thread_task_timings(), get_current_thread_timings(), GuardedTaskTimings (+16 more)
+
+### Community 781 - "extract_commands_from_command"
+Cohesion: 0.13
+Nodes (13): extract_commands_from_and_or_list(), extract_commands_from_command(), extract_commands_from_compound_command(), extract_commands_from_compound_list(), extract_commands_from_do_group(), extract_commands_from_function_body(), extract_commands_from_io_redirect(), extract_commands_from_pipeline() (+5 more)
 
 ### Community 782 - "mention_crease.rs"
-Cohesion: 0.20
-Nodes (8): MentionCrease, open_mention_uri(), open_migrated_rule(), open_skill_content_buffer(), open_skill_file(), open_thread(), reveal_in_project_panel(), skill_content_buffer_title()
+Cohesion: 0.09
+Nodes (28): MentionCrease, open_mention_uri(), open_migrated_rule(), open_skill_content_buffer(), open_skill_file(), open_thread(), reveal_in_project_panel(), skill_content_buffer_title() (+20 more)
 
 ### Community 783 - "GitJobDebugQueue"
 Cohesion: 0.18
 Nodes (10): CompletedJob, CompletedJobStatus, Finished, Skipped, format_duration(), GitJobDebugQueue, MAX_COMPLETED_JOBS, PendingJob (+2 more)
 
 ### Community 784 - "directx_devices.rs"
-Cohesion: 0.12
-Nodes (15): ActivateDirection, Left, Right, ApplicationMenu, has_item(), init_test(), menu_entry(), MenuEntry (+7 more)
+Cohesion: 0.14
+Nodes (16): ActivateDirection, Left, Right, ApplicationMenu, has_item(), init_test(), menu_entry(), MenuEntry (+8 more)
 
-### Community 785 - "Model"
-Cohesion: 0.05
-Nodes (19): deserialize_models_skip_errors(), Model, ModelBilling, ModelContextTier, ModelPolicy, ModelSchema, ModelSupportedEndpoint, ChatCompletions (+11 more)
+### Community 785 - "connect_and_keepalive"
+Cohesion: 0.13
+Nodes (14): abort_message_address(), connect_and_keepalive(), CrashInfo, CrashPanic, CrashServerMessage, AbortMessageLocation, GPUInfo, Init (+6 more)
 
-### Community 786 - "StyledExt"
-Cohesion: 0.15
-Nodes (4): E, elevated(), elevated_borderless(), StyledExt
+### Community 786 - "snippet.rs"
+Cohesion: 0.27
+Nodes (18): CompletionEdit, parse_choices(), parse_int(), parse_snippet(), parse_tabstop(), Snippet, TabStop, tabstop_choices() (+10 more)
 
-### Community 787 - "WindowButton"
-Cohesion: 0.10
-Nodes (13): WindowButton, Close, Maximize, Minimize, create_window_button(), LinuxWindowControls, WindowControl, WindowControlStyle (+5 more)
+### Community 787 - "OwnerLogin"
+Cohesion: 0.17
+Nodes (13): simulated_user(), SimulatedCrate, Owner, Team, User, OwnerLogin, CratesIoUser, GitHubTeam (+5 more)
 
 ### Community 788 - "HoveredWord"
-Cohesion: 0.24
+Cohesion: 0.26
 Nodes (33): SerializedBookmark, add_bookmarks(), add_labeled_bookmark(), assert_bookmark_labels(), assert_bookmark_rows(), build_serialized(), clear_bookmarks(), get_all_bookmarks() (+25 more)
 
 ### Community 789 - "git_picker.rs"
-Cohesion: 0.05
-Nodes (29): GitStash, parse_stash_index(), parse_stash_line(), parse_stash_message(), StashEntry, test_git_stash_empty_input(), test_git_stash_from_str(), test_parse_stash_index() (+21 more)
+Cohesion: 0.04
+Nodes (37): StashEntry, GIT_BLAME_AVATAR_SIZE, GIT_BLAME_GUTTER_GAP, GIT_BLAME_GUTTER_MARGIN, GitPicker, GitPickerTab, Branches, Stashes (+29 more)
 
 ### Community 790 - "multi_workspace_tests.rs"
 Cohesion: 0.15
 Nodes (12): init_test(), max_width_for_columns(), terminal_size(), TerminalOutput, test_append_text_preserves_split_ansi_sequence(), test_full_text_reads_terminal_output(), test_initial_text_uses_repl_terminal_size(), test_max_width_for_columns_matches_cell_width() (+4 more)
 
-### Community 791 - "EditorEvent"
-Cohesion: 0.17
-Nodes (17): check_git_clean(), check_workspace_root(), publish_crate(), publish_dependencies(), publish_gpui(), PublishGpuiArgs, read_gpui_version(), run_command() (+9 more)
+### Community 791 - "internal_api.rs"
+Cohesion: 0.14
+Nodes (19): ChannelMember, ChannelMemberKind, Invitee, Member, ChannelMemberRole, Admin, Banned, Guest (+11 more)
 
 ### Community 792 - "inspector_render.rs"
 Cohesion: 0.15
@@ -5369,9 +5154,9 @@ Nodes (12): register(), register(), sample_text(), test_ctrl_d_u(), test_ctrl_f_
 Cohesion: 0.12
 Nodes (33): init_test(), setup_multi_workspace(), test_adding_worktree_updates_project_group_key(), test_close_workspace_opens_unloaded_local_neighbor(), test_close_workspace_prefers_already_loaded_neighboring_workspace(), test_close_workspace_prefers_workspace_in_same_project_group(), test_close_workspace_with_remote_neighbor_does_not_create_local_workspace(), test_find_or_create_local_workspace_reuses_active_workspace_after_sidebar_open() (+25 more)
 
-### Community 795 - "GraphicalEnvironment"
-Cohesion: 0.06
-Nodes (7): open_uri_internal(), reveal_path_internal(), run_open_commands(), Uri, WaylandConnection, GraphicalEnvironment, guess_compositor()
+### Community 795 - "git_ui_core/src/notifications.rs"
+Cohesion: 0.19
+Nodes (15): format_git_error_toast_message(), git_error_toast_title(), is_non_fast_forward_error(), open_output(), rpc_error_raw_message_from_chain(), show_error_toast(), test_format_git_error_toast_message_prefers_raw_rpc_message(), test_format_git_error_toast_message_prefers_raw_rpc_message_when_wrapped() (+7 more)
 
 ### Community 796 - "MessageQueue"
 Cohesion: 0.08
@@ -5379,19 +5164,15 @@ Nodes (36): profiles, name, tools, enable_all_context_servers, name, tools, ask,
 
 ### Community 797 - "extension_api.rs"
 Cohesion: 0.06
-Nodes (5): EXTENSION, register_extension!, register_extension(), set_language_server_installation_status(), ZED_API_VERSION
-
-### Community 798 - "components/input_field.rs"
-Cohesion: 0.08
-Nodes (11): A11ySubtreeBuilder, a11y_text_position(), arbitrary_text(), build_a11y_text_runs(), building_text_runs_never_panics(), char_index_for_byte(), is_word_char(), MAX_CHARS_PER_TEXT_RUN (+3 more)
+Nodes (6): EXTENSION, register_extension!, register_extension(), set_language_server_installation_status(), ZED_API_VERSION, extension::SlashCommandOutputSection
 
 ### Community 799 - "SharedString"
 Cohesion: 0.10
 Nodes (7): MessageQueue, ProcessingState, AbsorbingCancel, AutoProcess, Paused, QueueEntry, QueueEntryId
 
 ### Community 800 - "pages.rs"
-Cohesion: 0.15
-Nodes (10): Database, model_to_proto(), notification_kind_from_proto(), ENTITY_ID, KIND, Notification, ChannelInvitation, ContactRequest (+2 more)
+Cohesion: 0.19
+Nodes (8): Database, model_to_proto(), notification_kind_from_proto(), Notification, ChannelInvitation, ContactRequest, ContactRequestAccepted, test_notification()
 
 ### Community 801 - "permissions_modal.rs"
 Cohesion: 0.06
@@ -5405,25 +5186,25 @@ Nodes (3): Arc<str>, SharedString, String
 Cohesion: 0.14
 Nodes (5): RemoteTrack, Audio, Video, LocalTrackPublication, RemoteTrackPublication
 
-### Community 804 - "MigrationBanner"
-Cohesion: 0.17
-Nodes (8): GlobalMigrationNotification, MigrationBanner, MigrationEvent, ContentChanged, MigrationNotification, MigrationType, Keymap, Settings
+### Community 804 - "Value"
+Cohesion: 0.15
+Nodes (17): BlobResourceContents, CallToolParams, CompletionCompleteResponse, CompletionResult, ListRootsResponse, PromptsGetParams, Resource, ResourceContentsType (+9 more)
 
-### Community 805 - "inspector_ui/src/inspector.rs"
-Cohesion: 0.27
-Nodes (4): init(), open_zed_source_location(), render_inspector(), render_inspector_id()
+### Community 805 - "session/src/session.rs"
+Cohesion: 0.16
+Nodes (6): AppSession, Session, SESSION_ID_KEY, SESSION_WINDOW_STACK_KEY, store_window_stack(), window_stack()
 
 ### Community 806 - "GitEntry"
-Cohesion: 0.09
-Nodes (10): criterion_benchmark(), load_linux_repo_snapshot(), cmp_worktree_entries(), par_sort_worktree_entries(), sort_worktree_entries(), VisibleEntriesForWorktree, GitEntry, GitEntryRef (+2 more)
+Cohesion: 0.11
+Nodes (9): criterion_benchmark(), load_linux_repo_snapshot(), cmp_worktree_entries(), par_sort_worktree_entries(), sort_worktree_entries(), GitEntry, GitEntryRef, collect_matching() (+1 more)
 
 ### Community 807 - "WasmState"
 Cohesion: 0.11
 Nodes (4): latest::DownloadedFileType, latest::LanguageServerInstallationStatus, latest::SettingsLocation, WasmState
 
 ### Community 808 - ".add_buffer_entries"
-Cohesion: 0.16
-Nodes (9): BufferOutlines, ExcerptOutlines, IndexedOutline, Outline, OutlineChildren, OutlineState, Invalidated, NotFetched (+1 more)
+Cohesion: 0.17
+Nodes (9): BufferOutlines, ExcerptOutlines, IndexedOutline, Outline, OutlineChildren, OutlineEntry, OutlineState, Invalidated (+1 more)
 
 ### Community 809 - "example_spec.rs"
 Cohesion: 0.16
@@ -5433,49 +5214,49 @@ Nodes (16): clippy_covers_get_then_check(), emit_lint(), find_matching_insert(),
 Cohesion: 0.07
 Nodes (18): BWRAP_LINUX_AARCH64, BWRAP_LINUX_X86_64, LINUX_AARCH64, LINUX_X86_64, MAC_AARCH64, MAC_X86_64, secret!, var! (+10 more)
 
-### Community 811 - "DataTable"
-Cohesion: 0.13
-Nodes (6): DataTable, main(), Quote, run_example(), start(), TableRow
+### Community 811 - "keys.rs"
+Cohesion: 0.16
+Nodes (16): alt_is_meta(), modifier_code(), TerminalModifiers, Alt, Ctrl, CtrlShift, None, Other (+8 more)
 
 ### Community 812 - "properties"
 Cohesion: 0.06
 Nodes (32): Activation, Activation requires authorization, agent_skills, Catalog, `disable-model-invocation` filters this list, `disable-model-invocation` (we support), Discovery, Edits to skill files (+24 more)
 
-### Community 813 - "Result"
+### Community 813 - "arc"
 Cohesion: 0.00
-Nodes (696): from_v1(), is_supported(), legacy_definitions_preserve_authentication_data(), from_v1(), legacy_definitions_preserve_input_and_metadata(), chunk_from_v1(), legacy_compaction_preserves_statuses_patches_and_metadata_scopes(), update_from_v1() (+688 more)
+Nodes (715): from_v1(), is_supported(), legacy_definitions_preserve_authentication_data(), from_v1(), legacy_definitions_preserve_input_and_metadata(), chunk_from_v1(), legacy_compaction_preserves_statuses_patches_and_metadata_scopes(), update_from_v1() (+707 more)
 
 ### Community 814 - "audio_test_window.rs"
-Cohesion: 0.06
-Nodes (19): get_current_device(), render_audio_device_dropdown(), render_input_audio_device_dropdown(), render_output_audio_device_dropdown(), render_settings_audio_device_dropdown(), AudioTestWindow, open_audio_test_window(), open_test_microphone() (+11 more)
+Cohesion: 0.20
+Nodes (4): AudioTestWindow, open_audio_test_window(), open_test_microphone(), start_test_playback()
 
 ### Community 815 - "StatusBar"
-Cohesion: 0.13
-Nodes (6): AnyView, Entity<T>, render_hideable_item(), SidebarStatus, StatusBar, StatusItemViewHandle
+Cohesion: 0.11
+Nodes (8): sidebar_side_context_menu(), add_hide_button_entry(), AnyView, Entity<T>, render_hideable_item(), SidebarStatus, StatusBar, StatusItemViewHandle
 
 ### Community 816 - "Using Language Server Features"
 Cohesion: 0.10
 Nodes (21): histogram_bucket_counts(), InputLatencySnapshot, format_input_latency_report(), format_report(), InputLatencyReportData, insert_buckets(), MIN_DRAWS_TO_REPORT, MIN_FRAMES_TO_REPORT (+13 more)
 
 ### Community 817 - "GetDocumentDiagnostics"
-Cohesion: 0.22
-Nodes (4): encode_test_image(), ImageView, test_image_view_scaled_size_respects_limits(), test_image_view_scaled_size_unbounded()
+Cohesion: 0.17
+Nodes (5): encode_test_image(), ImageView, STANDARD_INDIFFERENT, test_image_view_scaled_size_respects_limits(), test_image_view_scaled_size_unbounded()
 
 ### Community 818 - "ReviewSuccess"
 Cohesion: 0.06
-Nodes (34): description, items, oneOf, type, description, properties, type, description (+26 more)
+Nodes (37): description, items, oneOf, type, description, properties, type, description (+29 more)
 
 ### Community 819 - "vars.rs"
 Cohesion: 0.13
 Nodes (28): EMACS_MODELINE_RE, ModelineSettings, parse_emacs_key_value(), parse_emacs_local_variables(), parse_emacs_modeline(), parse_modeline(), parse_modelines(), parse_vim_modeline() (+20 more)
 
-### Community 820 - "open_listener.rs"
-Cohesion: 0.04
-Nodes (92): CliRequest, DebugState, Open, SetOpenBehavior, CliResponse, Exit, Ping, PromptOpenBehavior (+84 more)
+### Community 820 - "src/journal.rs"
+Cohesion: 0.12
+Nodes (17): heading_entry(), init(), journal_dir(), JournalSettings, new_journal_entry(), test_absolute_path_windows_style(), test_absolute_unix_path(), test_heading_entry_defaults_to_hour_12() (+9 more)
 
 ### Community 821 - "visual_test_runner.rs"
 Cohesion: 0.11
-Nodes (29): BASELINE_DIR, compare_images(), create_project_with_worktree(), create_test_files(), EMBEDDED_TEST_IMAGE, get_baseline_path(), ImageComparison, init_app_state() (+21 more)
+Nodes (30): BASELINE_DIR, cleanup_sidebar_test_window(), compare_images(), create_project_with_worktree(), create_test_files(), EMBEDDED_TEST_IMAGE, get_baseline_path(), ImageComparison (+22 more)
 
 ### Community 822 - "extensions_ui.rs"
 Cohesion: 0.06
@@ -5485,45 +5266,45 @@ Nodes (19): DevExtensionNotInstalledError, DevExtensionRebuildPickerDelegate, Di
 Cohesion: 0.06
 Nodes (34): Choosing Language Servers, Code Actions, Code Completion, Configuring Formatters, Configuring Language Servers, Configuring Supported Languages, Customizing Syntax Highlighting, Diagnostics (+26 more)
 
-### Community 825 - "open_remote_project"
-Cohesion: 0.09
-Nodes (29): init_remote_server(), init_test(), open_remote_project(), test_drive_letter_url_path_matches_saved_connection_with_other_options(), test_drive_letter_url_path_reuses_open_remote_workspace(), test_find_existing_workspace_does_not_reuse_workspace_from_another_remote(), test_local_file_reuses_local_workspace_when_remote_workspace_is_active(), test_open_remote_project_with_mock_connection() (+21 more)
+### Community 824 - "EditorEvent"
+Cohesion: 0.03
+Nodes (38): ChannelBufferCollaborationHub, ChannelView, init(), EditorEvent, Blurred, BreadcrumbsChanged, BufferEdited, BufferFoldToggled (+30 more)
 
-### Community 826 - "command_json.rs"
-Cohesion: 0.22
-Nodes (14): CommandRunner, DefaultCommandRunner, deserialize_json_output(), deserialize_yaml_output(), evaluate_json_command(), evaluate_yaml_command(), success_output(), test_deserialize_empty_object() (+6 more)
+### Community 825 - "open_startup_request"
+Cohesion: 0.17
+Nodes (10): flush_windows_serialization_on_quit(), open_startup_request(), RequestedPaths, restorable_workspace_locations(), restorable_workspaces(), restore_local_windows(), StartupRequest, Cli (+2 more)
+
+### Community 826 - "GithubLogin"
+Cohesion: 0.15
+Nodes (4): CommitAuthor, CommitMetadata, CommitSignature, GithubLogin
 
 ### Community 827 - "VisualContext"
-Cohesion: 0.14
+Cohesion: 0.15
 Nodes (17): ActivationContext, Press, raw_selection_serial(), SelectionSerial, Serial, SerialKind, DataDevice, InputMethod (+9 more)
 
-### Community 828 - "DiagnosticBlock"
-Cohesion: 0.10
-Nodes (6): append_source_and_code(), DiagnosticBlock, DiagnosticRenderer, test_adapter_markdown_keeps_source_and_code_inline(), DiagnosticsToolbarEditor, ToolbarControls
-
-### Community 829 - "action_log.rs"
-Cohesion: 0.21
-Nodes (33): HunkStatus, init_test(), test_creating_files(), test_deleting_files(), test_deletions(), test_file_read_time_not_forwarded_to_linked_action_log(), test_file_read_time_recorded_on_buffer_created(), test_file_read_time_recorded_on_buffer_edited() (+25 more)
+### Community 829 - ".insert_blocks"
+Cohesion: 0.13
+Nodes (5): ActiveDiagnostic, All, Group, None, ActiveDiagnosticGroup
 
 ### Community 830 - "ModalHeader"
-Cohesion: 0.07
-Nodes (5): Modal, ModalHeader, ModalRow, Section, SectionHeader
+Cohesion: 0.08
+Nodes (6): Modal, ModalFooter, ModalHeader, ModalRow, Section, SectionHeader
 
 ### Community 831 - "CallStatsModal"
-Cohesion: 0.05
-Nodes (28): compute_network_stats(), compute_remote_audio_stats(), ComputedNetworkStats, InboundCounters, MAX_HISTORY_SAMPLES, RemoteAudioDiagnostics, TrackContext, audio_issue_score() (+20 more)
+Cohesion: 0.11
+Nodes (13): RemoteAudioDiagnostics, audio_issue_score(), call_diagnostics(), CallStatsModal, ExportedCallDiagnostics, format_audio_duration(), init(), input_lag_rating() (+5 more)
 
 ### Community 832 - "Loader"
-Cohesion: 0.06
-Nodes (13): Bindings, CompileConfig, CompileConfig<'a>, Config, Grammar, LanguageConfiguration, Loader, PathsJSON (+5 more)
+Cohesion: 0.08
+Nodes (10): CompileConfig, CompileConfig<'a>, Config, LanguageConfiguration, Loader, PathsJSON, Empty, Multiple (+2 more)
 
-### Community 833 - "PermissionOptions"
-Cohesion: 0.13
-Nodes (8): SelectedPermissionOutcome, SelectedPermissionParams, Terminal, PermissionOptionChoice, PermissionOptions, Dropdown, DropdownWithPatterns, Flat
+### Community 833 - "S"
+Cohesion: 0.22
+Nodes (7): InspectBuffer, keeps_correct_amount_of_seconds(), ProcessBuffer, RodioExt, S, TakeSamples, ToMono
 
 ### Community 834 - "html/src/html.rs"
-Cohesion: 0.08
-Nodes (10): BINARY_NAME, PACKAGE_NAME, SERVER_PATH, BufLsp, .SERVER_NAME, ProtobufLanguageServer, .SERVER_NAME, ProtoLs (+2 more)
+Cohesion: 0.09
+Nodes (7): BufLsp, .SERVER_NAME, ProtobufLanguageServer, .SERVER_NAME, ProtoLs, .SERVER_NAME, ProtobufExtension
 
 ### Community 835 - "git_runtime_diagnostics.rs"
 Cohesion: 0.20
@@ -5531,23 +5312,23 @@ Nodes (15): assert_redacts(), collect_linux_proc_info(), collect_macos_git_child
 
 ### Community 836 - "Vim"
 Cohesion: 0.02
-Nodes (88): register(), HelixJumpUiData, register(), register(), register(), test_enter_and_exit_insert_mode(), test_insert_ctrl_r(), test_insert_ctrl_y() (+80 more)
+Nodes (94): register(), register(), IndentDirection, Auto, In, Out, register(), test_autoindent_op() (+86 more)
 
 ### Community 837 - "TokenPermissions"
-Cohesion: 0.11
-Nodes (16): Permissions, cherry_pick(), run_cherry_pick(), GenerateAppToken, GenerateAppToken<'a, Target, Unset>, GenerateAppToken<'a, Unset, Permissions>, RepositoryTarget, Step<Run> (+8 more)
+Cohesion: 0.15
+Nodes (13): Permissions, generate_token_with_job_name(), GenerateAppToken, GenerateAppToken<'a, Target, Unset>, GenerateAppToken<'a, Unset, Permissions>, RepositoryTarget, (Step<Use>, StepOutput), TokenPermissions (+5 more)
 
-### Community 838 - "sqlez/src/connection.rs"
-Cohesion: 0.09
-Nodes (22): backup_works(), bool_round_trips(), literal_named_memory_paths(), multi_step_statement_works(), named_memory_connections_do_not_create_literal_backing_files(), NamedMemoryPathGuard, NEXT_NAMED_MEMORY_DB_ID, parse_alter_table() (+14 more)
+### Community 838 - "KeyBindingContextPredicate"
+Cohesion: 0.06
+Nodes (23): is_identifier_char(), is_vim_operator_char(), KeyBindingContextPredicate, And, Descendant, Equal, Identifier, Not (+15 more)
 
 ### Community 839 - "WindowId"
-Cohesion: 0.07
-Nodes (11): HashMap, HashSet, PlatformOwnedDrag, PlatformOwnedDragState, RestoredInSourceWindow, Suspended, SystemWindowTabController, FrameStateChange (+3 more)
+Cohesion: 0.05
+Nodes (42): frame_work_starts_at_the_later_of_signal_and_invalidation(), FrameTiming, presentation(), ForegroundJournalWriter, frame_timing(), FrameSkipped, FrameSkipReason, AnimationFrameRateLimit (+34 more)
 
 ### Community 840 - "project_panel"
-Cohesion: 0.08
-Nodes (13): Apartment, cancel_dialog(), Cancellation, cancellation_requested(), CancellationTimer, cancelling_one_request_does_not_cancel_its_owner_or_other_requests(), closed_owner_waits_for_active_dialog_but_queued_requests_stay_cancelled(), closing_owner_cancels_every_outstanding_dialog() (+5 more)
+Cohesion: 0.11
+Nodes (15): Apartment, cancel_dialog(), Cancellation, cancellation_requested(), CancellationTimer, cancelling_one_request_does_not_cancel_its_owner_or_other_requests(), close_dialog(), closed_owner_waits_for_active_dialog_but_queued_requests_stay_cancelled() (+7 more)
 
 ### Community 841 - "Shell"
 Cohesion: 0.10
@@ -5558,48 +5339,48 @@ Cohesion: 0.17
 Nodes (19): ALIASES, BOOK_TOML, docs_page_url(), every_upstream_docs_slug_the_app_builds_resolves_to_a_page(), find_page(), follows_book_redirects_and_aliases(), leaves_other_urls_alone(), maps_zed_docs_pages_to_vega_docs() (+11 more)
 
 ### Community 843 - "onboarding_banner.rs"
-Cohesion: 0.23
-Nodes (6): BannerGlobal, dismissed_at_key(), get_dismissed(), OnboardingBanner, persist_dismissed(), restore_banner()
-
-### Community 844 - "UniformListScrollHandle"
 Cohesion: 0.20
-Nodes (5): ScrollStrategy, Bottom, Center, Nearest, Top
+Nodes (7): BannerDetails, BannerGlobal, dismissed_at_key(), get_dismissed(), OnboardingBanner, persist_dismissed(), restore_banner()
+
+### Community 844 - "ConnectionQuality"
+Cohesion: 0.16
+Nodes (8): ConnectionQuality, Excellent, Good, Lost, Poor, connection_quality_from_livekit(), Participant, RemoteParticipant
 
 ### Community 845 - "elements/animation.rs"
 Cohesion: 0.18
 Nodes (10): CommandPaletteDB, .MIGRATIONS, .NAME, SerializedCommandInvocation, SerializedCommandUsage, test_deletes_all_history_for_one_command(), test_gets_usage_history(), test_handles_max_invocation_entries() (+2 more)
 
-### Community 846 - "OpenAiSubscribedProvider"
-Cohesion: 0.09
-Nodes (3): ConfigurationView, OpenAiSubscribedProvider, test_authenticate_awaits_initial_load()
+### Community 846 - "validate_terminal_command"
+Cohesion: 0.11
+Nodes (18): TerminalCommandValidation, Safe, Unsafe, Unsupported, test_validate_terminal_command_rejects_arithmetic_expansion(), test_validate_terminal_command_rejects_arithmetic_for_clause_unconditionally(), test_validate_terminal_command_rejects_backticks(), test_validate_terminal_command_rejects_braced_parameter_expansion() (+10 more)
 
-### Community 847 - "IconThemeSelectorDelegate"
-Cohesion: 0.12
-Nodes (6): IconThemeSelector, IconThemeSelectorDelegate, open_icon_theme_selector(), previewed_theme_name(), selected_theme_name(), test_icon_theme_selector_preserves_selection_on_empty_filter()
+### Community 847 - "crates_io_client/src/types.rs"
+Cohesion: 0.20
+Nodes (8): CrateDetails, GitHubAccountId, GitHubConfig, GitHubConfigId, NewGitHubConfig, SiteMetadata, Version, VersionId
 
 ### Community 848 - "compute_summary"
-Cohesion: 0.10
-Nodes (9): compute_summary(), LineFileAggregate, MeanAggregate, PredictionSummaryInput, PrfAggregate, QaSummaryData, RateAggregate, SumAggregate (+1 more)
+Cohesion: 0.09
+Nodes (10): LineFileClassification, compute_summary(), LineFileAggregate, MeanAggregate, PredictionSummaryInput, PrfAggregate, QaSummaryData, RateAggregate (+2 more)
 
 ### Community 849 - "call_impl/diagnostics.rs"
+Cohesion: 0.13
+Nodes (17): CallDiagnostics, CallDiagnosticsReport, CallDiagnosticsSnapshot, CallStats, compute_network_stats(), compute_remote_audio_stats(), ComputedNetworkStats, ConnectionQualityDTO (+9 more)
+
+### Community 850 - "BedrockAdaptiveThinkingEffort"
+Cohesion: 0.12
+Nodes (11): BedrockAdaptiveThinkingEffort, High, Low, Max, Medium, XHigh, BedrockModelMode, AdaptiveThinking (+3 more)
+
+### Community 851 - "setup_modal_test"
 Cohesion: 0.18
-Nodes (7): CallDiagnostics, CallDiagnosticsReport, CallDiagnosticsSnapshot, CallStats, ConnectionQualityDTO, DurationDTO, PollResult
-
-### Community 850 - "nested_symbol"
-Cohesion: 0.27
-Nodes (12): lsp_range(), nested_symbol(), outline_symbol_names(), test_breadcrumbs_use_lsp_symbols(), test_lsp_document_symbols_caches_results(), test_lsp_document_symbols_disabled_by_default(), test_lsp_document_symbols_fall_back_to_reparsed_text_highlights(), test_lsp_document_symbols_fetches_when_enabled() (+4 more)
-
-### Community 851 - "crates_io_client/src/tests.rs"
-Cohesion: 0.20
-Nodes (12): MIN_REQUEST_INTERVAL, crate_json(), github_config_json(), RecordedRequest, recording_fake_http_client(), test_error_responses_distinguish_permission_and_upstream_failures(), test_github_config_requests_match_crates_io_api(), test_list_crates_requests_next_page_only_after_full_page() (+4 more)
+Nodes (14): emit_work_end(), highlighted_display_rows(), identity_matches(), make_lsp_call_hierarchy_item(), rust_lang(), setup_modal_test(), test_call_hierarchy_modal_basic(), test_call_hierarchy_modal_direction_toggle() (+6 more)
 
 ### Community 852 - "How to Set Up Python in Zed"
 Cohesion: 0.08
 Nodes (6): ExtensionKeyValueStore, ExtensionProject, latest::DownloadedFileType, latest::LanguageServerInstallationStatus, latest::SettingsLocation, WasmState
 
 ### Community 853 - "match_benchmark.rs"
-Cohesion: 0.23
-Nodes (12): bench_path_matching(), bench_string_matching(), capitalize_each_word(), DIRS, FILENAMES, generate_candidates(), generate_fuzzy_path_candidates(), generate_nucleo_path_candidates() (+4 more)
+Cohesion: 0.24
+Nodes (11): bench_path_matching(), bench_string_matching(), capitalize_each_word(), DIRS, FILENAMES, generate_candidates(), generate_fuzzy_path_candidates(), generate_nucleo_path_candidates() (+3 more)
 
 ### Community 854 - "with"
 Cohesion: 0.10
@@ -5609,49 +5390,49 @@ Nodes (8): DirectManipulationEventHandler, DirectManipulationEventHandler_Impl, 
 Cohesion: 0.16
 Nodes (15): clone_copies_seen_version_but_fresh_receiver_sees_current_version(), coalesces_publications_to_the_latest_snapshot(), concurrent_send_poll_register_and_drop_completes_within_deadline(), constant_receiver_never_changes(), counting_waker(), dropping_changed_unregisters_its_waker_and_repoll_replaces_it(), equal_values_are_distinct_publications(), final_publication_precedes_channel_closure() (+7 more)
 
-### Community 856 - "context_menu/preview.rs"
-Cohesion: 0.09
-Nodes (22): Example, .ALL, Content, Nested, ParentRefresh, Persistent, Placement, Removal (+14 more)
+### Community 856 - "WorktreeEntry"
+Cohesion: 0.13
+Nodes (13): WorktreeEntry, CreateFromCurrentBranch, CreateFromDefaultBranch, CreateNamed, SectionHeader, Separator, Worktree, RemoteBranchName (+5 more)
 
-### Community 857 - "RequestMessage"
-Cohesion: 0.09
-Nodes (18): BatchingOpenAiClient, content_to_string(), message_content_to_string(), message_role_to_string(), Batch, Plain, ImageUrl, MessageContent (+10 more)
+### Community 857 - "Url"
+Cohesion: 0.20
+Nodes (10): build_npm_command_args(), npm_command_directory(), npm_command_env(), NpmCommand, path_with_node_binary_prepended(), proxy_argument(), test_build_npm_command_args_inserts_prefix_before_subcommand(), test_build_npm_command_args_keeps_entrypoint_before_prefix() (+2 more)
 
 ### Community 858 - "platform_scheduler.rs"
-Cohesion: 0.10
-Nodes (16): MockGithubApi, Reporter, ReviewFailure, NoPullRequestFound, Other, UnexpectedZippyAction, Unreviewed, ReviewSuccess (+8 more)
+Cohesion: 0.13
+Nodes (12): Reporter, ReviewFailure, NoPullRequestFound, Other, UnexpectedZippyAction, Unreviewed, ReviewSuccess, ApprovingComment (+4 more)
 
 ### Community 859 - "WindowButtonLayoutContent"
-Cohesion: 0.16
-Nodes (10): bogus_candidates(), BracketDelimiter, BracketDelimiterPair, BracketMatch, BracketMatchCandidate, BracketPatternKey, BufferSnapshot, ChunkBrackets (+2 more)
+Cohesion: 0.15
+Nodes (11): bogus_candidates(), BracketDelimiter, BracketDelimiterPair, BracketMatch, BracketMatchCandidate, BracketPatternKey, BufferSnapshot, ChunkBrackets (+3 more)
 
 ### Community 861 - "util/src/markdown.rs"
 Cohesion: 0.16
 Nodes (10): count_max_consecutive_chars(), generate_heading_slug(), has_uri_scheme(), MarkdownCodeBlock, source_position_from_fragment(), split_local_url_fragment(), test_count_max_consecutive_chars(), test_generate_heading_slug() (+2 more)
 
 ### Community 862 - "DebugSession"
-Cohesion: 0.08
-Nodes (13): FeatureOptions, Bool, Options, String, FeatureOptionValue, Bool, String, resolve_feature_order() (+5 more)
+Cohesion: 0.07
+Nodes (14): FeatureOptions, Bool, Options, String, FeatureOptionValue, Bool, String, resolve_feature_order() (+6 more)
 
 ### Community 863 - "diagnostics_tests.rs"
-Cohesion: 0.11
-Nodes (24): active_diagnostics_dismiss_after_invalidation(), cycle_through_same_place_diagnostics(), go_to_diagnostic_with_severity(), init_test(), random_lsp_diagnostic(), randomly_update_diagnostics_for_path(), test_buffer_diagnostics(), test_buffer_diagnostics_multiple_servers() (+16 more)
+Cohesion: 0.07
+Nodes (22): active_diagnostics_dismiss_after_invalidation(), cycle_through_same_place_diagnostics(), go_to_diagnostic_with_severity(), init_test(), random_lsp_diagnostic(), randomly_update_diagnostics_for_path(), test_buffer_diagnostics(), test_buffer_diagnostics_multiple_servers() (+14 more)
 
 ### Community 864 - "darwin.rs"
 Cohesion: 0.06
 Nodes (36): concurrency, cancel-in-progress, group, env, CARGO_INCREMENTAL, CARGO_PROFILE_DEV_DEBUG, CARGO_TERM_COLOR, RUST_BACKTRACE (+28 more)
 
 ### Community 865 - "fuzzy_nucleo/src/paths.rs"
-Cohesion: 0.11
-Nodes (21): Cancelled, case_penalty(), count_case_mismatches(), is_cancelled(), positions_from_sorted(), Query, SMART_CASE_PENALTY_PER_MISMATCH, candidates() (+13 more)
+Cohesion: 0.06
+Nodes (30): Cancelled, Case, Ignore, case_penalty(), Smart, count_case_mismatches(), is_cancelled(), MaxResults (+22 more)
 
 ### Community 866 - "Session"
-Cohesion: 0.17
-Nodes (4): CloseBlockFn, EditorBlock, Session, Shutdown
+Cohesion: 0.08
+Nodes (16): ExecutionStatus, ConnectingToKernel, Executing, Finished, KernelErrored, Queued, Restarting, Shutdown (+8 more)
 
-### Community 867 - "InitializedContextServerProtocol"
-Cohesion: 0.11
-Nodes (13): InitializedContextServerProtocol, ModelContextProtocol, ServerCapability, Experimental, Logging, Prompts, Resources, Tools (+5 more)
+### Community 867 - "InitializeResponse"
+Cohesion: 0.36
+Nodes (7): create_initialize_response(), ClientCapabilities, Implementation, InitializeParams, InitializeResponse, ProtocolVersion, RootsCapabilities
 
 ### Community 868 - "HighlightedLabel"
 Cohesion: 0.06
@@ -5670,60 +5451,52 @@ Cohesion: 0.17
 Nodes (11): ClosureView, Counter, CounterOnce, Editor, notify_outside_render(), NotifyClosureView, NotifyView, ReaderView (+3 more)
 
 ### Community 872 - "Point"
-Cohesion: 0.10
+Cohesion: 0.11
 Nodes (7): generate_random_rope(), generate_random_rope_points(), generate_random_rope_ranges(), generate_random_text(), rope_benchmarks(), Point, .MAX
 
-### Community 873 - "google_ai.rs"
-Cohesion: 0.01
-Nodes (104): DOTNET_PROJECT_FILES_REGEX, COALESCE_TIMEOUT, EventCoalescer, PeriodData, SIMULATED_DURATION_FOR_SINGLE_EVENT, test_different_environment_under_timeout(), test_same_context_exceeding_timeout(), test_switching_environment_while_exceeding_timeout() (+96 more)
+### Community 873 - "collab/src/db.rs"
+Cohesion: 0.02
+Nodes (72): content_value_to_v1(), elicitation_request_adapter_preserves_schema_scopes_and_extensions(), elicitation_response_and_error_adapter_preserves_payloads(), enum_option_from_v1(), items_from_v1(), property_from_v1(), request_id_from_v1(), response_to_v1() (+64 more)
 
 ### Community 874 - "Troubleshooting"
-Cohesion: 0.03
-Nodes (63): Building from source, Building Zed for FreeBSD, Cargo errors claiming that a dependency is using unstable features, Dependencies, Repository, Troubleshooting, WebRTC Notice, Download Zed (+55 more)
+Cohesion: 0.04
+Nodes (43): Check your current scale factor, Clicking links isn't working, Community, Could not start inotify, Downloading manually, Font rendering parameters, Forcing X11 scale factor, Forcing Zed to use a specific GPU (+35 more)
 
 ### Community 875 - "WasmState"
-Cohesion: 0.12
-Nodes (28): choose(), generate_markdown(), init_context(), markdown_language_registry(), markdown_render(), MarkdownBenchView, push_block_quote(), push_code_block() (+20 more)
+Cohesion: 0.17
+Nodes (21): build_markdown(), choose(), generate_markdown(), init_context(), markdown_language_registry(), markdown_render(), MarkdownBenchView, push_block_quote() (+13 more)
 
 ### Community 876 - "git_runtime_diagnostics.rs"
-Cohesion: 0.14
-Nodes (12): excludes(), is_absolute_local(), longest_local_mapping_wins(), names(), normalize_local(), PathMapper, relative_inside(), Resolved (+4 more)
-
-### Community 878 - "XAiSubscribedProvider"
-Cohesion: 0.08
-Nodes (3): ConfigurationView, test_authenticate_awaits_initial_load(), XAiSubscribedProvider
+Cohesion: 0.12
+Nodes (20): ensure_remote_dir(), fetch_for_compare(), Uploader, excludes(), is_absolute_local(), join_remote(), longest_local_mapping_wins(), names() (+12 more)
 
 ### Community 880 - "gpui_apple/src/dispatcher.rs"
 Cohesion: 0.08
 Nodes (3): AppleActivity, set_audio_thread_priority(), trampoline()
 
 ### Community 881 - "feature_flags_macros.rs"
-Cohesion: 0.13
-Nodes (10): derive_enum_feature_flag(), expand(), has_default_attr(), kebab_case(), space_separated(), to_kebab_case(), to_space_separated(), derive_action() (+2 more)
+Cohesion: 0.09
+Nodes (13): derive_enum_feature_flag(), expand(), has_default_attr(), kebab_case(), space_separated(), to_kebab_case(), to_space_separated(), derive_action() (+5 more)
 
 ### Community 882 - "ErrorCode"
 Cohesion: 0.09
 Nodes (8): anyhow::Error, code_for_untyped_error(), ErrorCode, ErrorCodeExt, ErrorExt, RpcError, test_other_untyped_errors_stay_internal(), test_rpc_error_code_takes_precedence()
 
-### Community 883 - "OllamaModelPickerDelegate"
-Cohesion: 0.26
-Nodes (3): OllamaModelPicker, OllamaModelPickerDelegate, render_ollama_model_picker()
-
-### Community 884 - "PointUtf16"
-Cohesion: 0.11
-Nodes (3): PointUtf16, .MAX, PointUtf16
+### Community 883 - "Crate"
+Cohesion: 0.21
+Nodes (6): CratesIoClient, Result, listed(), Crate, CrateListQuery, CrateUpdate
 
 ### Community 885 - "mock_client.rs"
-Cohesion: 0.06
-Nodes (26): extract_metrics(), Event, LocalScreenShareStarted, LocalScreenShareStopped, ParticipantLocationChanged, RemoteAudioTracksChanged, RemoteProjectInvitationDiscarded, RemoteProjectJoined (+18 more)
+Cohesion: 0.10
+Nodes (12): AudioStream, LocalAudioTrack, LocalParticipant, LocalTrackPublication, LocalVideoTrack, play_remote_video_track(), RemoteAudioTrack, RemoteParticipant (+4 more)
 
 ### Community 886 - "src/filter.rs"
-Cohesion: 0.16
-Nodes (22): default_filter_crate(), DEFAULT_FILTERS, LEVEL_ENABLED_MAX_CONFIG, LEVEL_ENABLED_MAX_DEFAULT, LEVEL_ENABLED_MAX_STATIC, level_filter_from_str(), precedence(), refresh_from_settings() (+14 more)
+Cohesion: 0.14
+Nodes (23): default_filter_crate(), DEFAULT_FILTERS, ENV_FILTER, LEVEL_ENABLED_MAX_CONFIG, LEVEL_ENABLED_MAX_DEFAULT, LEVEL_ENABLED_MAX_STATIC, level_filter_from_str(), precedence() (+15 more)
 
-### Community 887 - "GitSummary"
-Cohesion: 0.09
-Nodes (11): GitSummary, .CONFLICT, .UNCHANGED, .UNTRACKED, TrackedSummary, .ADDED, .DELETED, .MODIFIED (+3 more)
+### Community 887 - "editor_render.rs"
+Cohesion: 0.21
+Nodes (10): editor_multi_cursor_input(), editor_render(), editor_render_highlighted(), editor_render_highlighted_minimap(), editor_render_with_editorconfig(), indented_code_text(), init_context(), jetbrains_editorconfig() (+2 more)
 
 ### Community 888 - "deploy_docs.rs"
 Cohesion: 0.07
@@ -5734,27 +5507,31 @@ Cohesion: 0.07
 Nodes (30): with, app-id, assignees, author, base, body, branch, cache (+22 more)
 
 ### Community 890 - "hang_detection/logging.rs"
-Cohesion: 0.07
-Nodes (16): Approvable, AuthorAssociation, Collaborator, Contributor, FirstTimeContributor, FirstTimer, Mannequin, Member (+8 more)
+Cohesion: 0.08
+Nodes (17): Approvable, AuthorAssociation, Collaborator, Contributor, FirstTimeContributor, FirstTimer, Mannequin, Member (+9 more)
 
 ### Community 891 - "outline_panel"
 Cohesion: 0.07
 Nodes (29): horizontal, vertical, show, outline_panel, auto_fold_dirs, auto_reveal_entries, button, default_width (+21 more)
 
 ### Community 892 - "profiler/journal.rs"
-Cohesion: 0.03
-Nodes (151): excludes_input_that_arrives_during_a_draw(), interruptions_drop_latency_samples_but_hiding_keeps_draw_work(), a_pending_frame_prevents_idle_until_presentation(), a_poll_spanning_an_unnotified_suspend_is_dropped(), a_present_without_a_draw_clears_the_window_pending_state(), a_presentation_after_the_deadline_seals_the_whole_interval(), advance_test_suspended_time(), an_expired_frame_no_longer_blocks_idle_boundaries() (+143 more)
+Cohesion: 0.04
+Nodes (68): a_presentation_after_the_deadline_seals_the_whole_interval(), collect_unseen_returns_each_entry_once_in_order(), completion_order_entries(), concurrent_collection_preserves_the_complete_logical_sequence(), DrainedEntries, draw_waits_for_its_presentation_boundary(), EMPTY_SEQUENCE, foreground_runnable_counter() (+60 more)
 
-### Community 893 - "project_with_rust_server"
-Cohesion: 0.40
-Nodes (8): buffer_paths(), project_with_rust_server(), test_open_buffer_via_lsp_case_variant_in_unscanned_dir(), test_open_buffer_via_lsp_maps_external_symlink_target(), test_open_buffer_via_lsp_maps_external_symlink_target_with_scan_symlinks_always(), test_open_buffer_via_lsp_preserves_external_symlink_path(), worktree_entries(), worktree_roots()
+### Community 893 - "integration/lsp_store.rs"
+Cohesion: 0.10
+Nodes (19): buffer_paths(), project_with_rust_server(), test_completion_label_snippet_normalization(), test_completion_label_unicode_normalization(), test_completion_label_whitespace_normalization(), test_diagnostic_batches_skip_paths_without_worktrees(), test_glob_literal_prefix(), test_initialization_options_contributions_without_own_options() (+11 more)
 
 ### Community 894 - "Event"
 Cohesion: 0.14
 Nodes (14): Event, Activate, ActiveItemChanged, ContactRequestedJoin, ItemAdded, ItemRemoved, ModalOpened, OpenBundledFile (+6 more)
 
+### Community 896 - "CallHierarchyView"
+Cohesion: 0.24
+Nodes (7): CallHierarchyMode, Incoming, Outgoing, CallHierarchyView, fetch_calls(), item_location(), toggle_call_hierarchy()
+
 ### Community 897 - "ChunkSlice<'a>"
-Cohesion: 0.14
+Cohesion: 0.15
 Nodes (4): ChunkSlice<'a>, saturating_shl_mask(), saturating_shr_mask(), OffsetUtf16
 
 ### Community 898 - "surround.rs"
@@ -5766,7 +5543,7 @@ Cohesion: 0.06
 Nodes (31): 1. VS Code: how the Markdown preview is designed (in depth), 2. What VS Code (and Cursor) users complain about; what IntelliJ switchers miss, 3. Obsidian and Typora: in-place rendering and how the modes map to IntelliJ's three, 4. JetBrains Fleet: Markdown preview and product status, 5. Native (non-webview) and terminal Markdown rendering: Zed, Neovim, Sublime Text, Nova, others, 6. Comparison matrix, Cited Findings, Cited Findings (+23 more)
 
 ### Community 900 - "EncodingSelectorDelegate"
-Cohesion: 0.16
+Cohesion: 0.17
 Nodes (4): available_encodings(), EncodingSelector, EncodingSelectorDelegate, init()
 
 ### Community 901 - "InlineInputState"
@@ -5777,25 +5554,21 @@ Nodes (13): Editor, INLINE_INPUT_PREVIEW_MIN_LINES, InlineInputHistoryDirection,
 Cohesion: 0.08
 Nodes (3): latest::DownloadedFileType, latest::LanguageServerInstallationStatus, WasmState
 
-### Community 903 - "ManageProfilesModal"
-Cohesion: 0.20
-Nodes (10): ManageProfilesModal, Mode, ChooseProfile, ConfigureDefaultModel, ConfigureMcps, ConfigureTools, NewProfile, ViewProfile (+2 more)
-
 ### Community 904 - "Connection"
 Cohesion: 0.13
 Nodes (10): bench(), error_to_stream(), is_std_rng(), Args, error_to_stream(), error_with_message(), generate_test_function(), parse_u64_array() (+2 more)
 
-### Community 905 - "git_timestamp.rs"
-Cohesion: 0.19
-Nodes (15): absolute_formats_use_local_time(), blame_gutter_width_fits_longest_date(), format_git_date(), format_git_timestamp(), format_timestamp(), init(), locale_and_invalid_formats_preserve_surface_defaults(), longest_git_dates() (+7 more)
+### Community 905 - "CrashServer"
+Cohesion: 0.16
+Nodes (4): CrashServer, SetTags, setting_tags_updates_and_removes_values(), test_crash_server()
 
 ### Community 906 - "deferred"
 Cohesion: 0.07
 Nodes (29): description, markdownDescription, type, x-intellij-html-description, properties, default, description, markdownDescription (+21 more)
 
-### Community 907 - "UpdateButton"
-Cohesion: 0.14
-Nodes (3): PreviewLikeButtons, TestTooltip, UpdateButton
+### Community 907 - "TestClock"
+Cohesion: 0.22
+Nodes (3): Clock, TestClock, TestClockState
 
 ### Community 908 - "ProxyError"
 Cohesion: 0.10
@@ -5810,80 +5583,80 @@ Cohesion: 0.07
 Nodes (29): with, app-id, assignees, author, base, body, branch, cache (+21 more)
 
 ### Community 911 - "tabular_data_preview/src/parser.rs"
-Cohesion: 0.14
+Cohesion: 0.13
 Nodes (17): build_docs_book(), BUILD_OUTPUT_DIR, check_docs(), deploy_docs(), deploy_docs_job(), deploy_docs_workflow_call(), deploy_nightly_docs(), docs_build_steps() (+9 more)
 
 ### Community 912 - "WasmState"
 Cohesion: 0.08
 Nodes (5): AlacHyperlink, Cell, Hyperlink, terminal_hyperlink_from_alacritty(), terminal_hyperlink_from_alacritty_keeps_alacritty_storage()
 
-### Community 913 - "Context"
-Cohesion: 0.15
-Nodes (4): ConfigurationView, LoadingProgress, registry_refreshes_models_while_credentials_are_pending(), State
+### Community 913 - "map_completion_events"
+Cohesion: 0.28
+Nodes (16): accumulates_tool_calls_without_indices_by_id(), adopts_a_late_id_for_the_call_at_the_same_index(), adopts_a_late_id_for_the_only_anonymous_call_without_an_index(), chat_refusals_preserve_reason_without_explanation(), completed_tool_calls(), continues_the_latest_call_at_a_reused_index(), continues_the_only_call_for_chunks_without_id_or_index(), finish_tool_calls_event() (+8 more)
 
-### Community 914 - "init_test"
-Cohesion: 0.25
-Nodes (31): add_outline_panel(), display_entries(), init_test(), mark_deleted(), outline_panel(), populate_with_test_ra_project(), selected_row_text(), snapshot() (+23 more)
+### Community 914 - "outline_panel.rs"
+Cohesion: 0.11
+Nodes (69): active_outline_panel(), add_diff_editor(), add_multi_buffer_editor(), add_outline_panel(), assert_tree(), display_entries(), find_active_indent_guide_ix(), flush_outline_tasks() (+61 more)
+
+### Community 915 - "ResponseContent"
+Cohesion: 0.13
+Nodes (11): lenient_index(), null_as_default(), ResponseContent, Parts, Text, ResponseContentPart, Text, Thinking (+3 more)
 
 ### Community 916 - "ThreadStore"
-Cohesion: 0.15
-Nodes (9): thread_entries(), GlobalThreadStore, make_thread(), session_id(), test_delete_thread_removes_only_target(), test_delete_threads_clears_entries(), test_entries_are_sorted_by_updated_at(), test_save_thread_refreshes_ordering() (+1 more)
+Cohesion: 0.17
+Nodes (8): GlobalThreadStore, make_thread(), session_id(), test_delete_thread_removes_only_target(), test_delete_threads_clears_entries(), test_entries_are_sorted_by_updated_at(), test_save_thread_refreshes_ordering(), ThreadStore
 
-### Community 917 - "ClientApiError"
-Cohesion: 0.07
-Nodes (15): Authentication, Credentials, Session, build_credentials_authenticated_request_with_authorization_header(), build_request(), build_session_authenticated_request_without_authorization_header(), ClientApiError, ConnectionFailed (+7 more)
+### Community 917 - "canonical_path.rs"
+Cohesion: 0.23
+Nodes (6): CanonicalPathBuf, constructors_enforce_windows_grant_shape(), constructors_reject_relative_paths(), linux_fd_identity(), require_absolute(), require_windows_grant_shape()
 
 ### Community 918 - "Appearance"
 Cohesion: 0.12
 Nodes (16): override_global_theme(), retain_original_opposing_theme(), update_mode_if_new_appearance_is_different_from_system(), appearance_to_mode(), IconThemeSelection, Dynamic, Static, set_icon_theme() (+8 more)
 
-### Community 919 - "bracket_colorization.rs"
+### Community 919 - "extension_cli/src/main.rs"
 Cohesion: 0.01
-Nodes (119): create_highlight_endpoints_benchmark(), highlighted_chunks_benchmark(), to_fold_point_benchmark(), to_tab_point_benchmark(), BenchmarkHarness, block_on_executor(), chunk_ends(), edit_file_tool_streaming() (+111 more)
+Nodes (134): Args, ExtensionFeatureError, IconThemesMixedWithOtherFeatures, NoFeatures, SlashCommandsDeprecated, ThemesMixedWithOtherFeatures, ExtensionManifestValidationError, DescriptionNotLongerThanName (+126 more)
 
 ### Community 920 - "phpactor.rs"
-Cohesion: 0.08
-Nodes (43): apply_edits(), composer_php_level(), config_path(), config_round_trips_with_defaults(), config_text(), has_key(), INTELEPHENSE, LANGUAGE_LEVELS (+35 more)
+Cohesion: 0.07
+Nodes (46): apply_edits(), composer_php_level(), config_path(), config_round_trips_with_defaults(), config_text(), has_key(), INTELEPHENSE, LANGUAGE_LEVELS (+38 more)
 
 ### Community 921 - "with"
 Cohesion: 0.13
 Nodes (31): assert_marked_selection(), assert_snapped(), boundary_block_events(), collect_inline_spans(), inline_code_full_range(), inline_spans(), InlineSpan, is_inline_span_tag() (+23 more)
 
 ### Community 922 - "os"
+Cohesion: 0.16
+Nodes (12): resolve_run_location(), _entry_from_request(), index_path(), _load_entries(), lookup(), most_recent(), _normalize_entry(), recent() (+4 more)
+
+### Community 923 - "WorktreeSettings"
+Cohesion: 0.21
+Nodes (4): file_scan_inclusion_matchers(), inclusion_parent_patterns(), valid_path_matchers(), WorktreeSettings
+
+### Community 924 - "from_pixels_constructor/before.rs"
 Cohesion: 0.18
-Nodes (11): _entry_from_request(), index_path(), _load_entries(), lookup(), most_recent(), _normalize_entry(), recent(), record_run() (+3 more)
+Nodes (6): Blit, BlitA8ToRgb24, BlitMemcpy, BlitRgb24ToA8, BlitRgb24ToRgba32, BlitRgba32ToRgb24
 
-### Community 923 - "PredictionProvider"
-Cohesion: 0.08
-Nodes (20): parse_teacher_args(), PredictionProvider, Baseten, Mercury, Repair, Teacher, TeacherJumps, TeacherJumpsNonBatching (+12 more)
-
-### Community 924 - "RepositorySelectorDelegate"
-Cohesion: 0.11
-Nodes (7): display_name_of(), open(), RepositorySelector, RepositorySelectorDelegate, PickerEditorPosition, End, Start
-
-### Community 925 - "ToolPickerDelegate"
-Cohesion: 0.12
-Nodes (8): PickerItem, ContextServer, Tool, ToolPicker, ToolPickerDelegate, ToolPickerMode, BuiltinTools, McpTools
+### Community 925 - "translate_doc_comments/before.rs"
+Cohesion: 0.18
+Nodes (6): Blit, BlitA8ToRgb24, BlitMemcpy, BlitRgb24ToA8, BlitRgb24ToRgba32, BlitRgba32ToRgb24
 
 ### Community 926 - "type"
 Cohesion: 0.08
 Nodes (28): fundingWay, type, additionalProperties, description, properties, required, type, properties (+20 more)
 
-### Community 927 - "MarkdownElement"
-Cohesion: 0.05
-Nodes (24): AutoscrollBehavior, Controlled, Propagate, CapturingMarkdownElement, CheckboxToggleCallback, ImageLayoutView, MarkdownElement, MarkdownInputHandler (+16 more)
+### Community 927 - "AgentRegistryCard"
+Cohesion: 0.20
+Nodes (5): AgentRegistryCard, RegistryInstallStatus, InstalledCustom, InstalledRegistry, NotInstalled
 
-### Community 928 - "HistoryDelegate"
+### Community 929 - "Event"
 Cohesion: 0.14
-Nodes (5): GistVersion, HistoryDelegate, toggle(), version_label(), version_labels_are_readable()
+Nodes (13): Event, LocalScreenShareStarted, LocalScreenShareStopped, ParticipantLocationChanged, RemoteAudioTracksChanged, RemoteProjectInvitationDiscarded, RemoteProjectJoined, RemoteProjectShared (+5 more)
 
 ### Community 930 - "SettingsStore"
-Cohesion: 0.01
-Nodes (196): AudioSettings, CallHierarchySettings, CallSettings, LAST_PLAN, LOADED_PLAN_JSON, max_operations(), max_peers(), path_env_var() (+188 more)
-
-### Community 931 - "unicode_confusables.rs"
-Cohesion: 0.09
-Nodes (6): AgentSessionModes, cycling_modes_preserves_choice_order_and_wraps(), ModeSelector, setting_mode_saves_selected_mode_as_default(), TestAgentServer, TestSessionModes
+Cohesion: 0.04
+Nodes (44): default_settings(), test_settings(), AnySettingValue, AutoUpdateSetting, check_settings_update(), check_vscode_import(), DefaultLanguageSettings, DefaultSemanticTokenRules (+36 more)
 
 ### Community 932 - "RandomizedElementTreeMutationKind"
 Cohesion: 0.07
@@ -5894,28 +5667,32 @@ Cohesion: 0.07
 Nodes (27): if, outputs, runs-on, steps, if, needs, secrets, uses (+19 more)
 
 ### Community 934 - "migrate_settings"
-Cohesion: 0.14
-Nodes (21): env, env, env, env, if, runs-on, steps, timeout-minutes (+13 more)
+Cohesion: 0.10
+Nodes (28): env, needs, runs-on, timeout-minutes, env, needs, runs-on, timeout-minutes (+20 more)
 
 ### Community 935 - "Bitbucket"
 Cohesion: 0.10
 Nodes (28): steps, if, needs, runs-on, steps, needs, runs-on, steps (+20 more)
 
 ### Community 936 - "PythonDebugAdapter"
-Cohesion: 0.10
-Nodes (11): DebugpyLaunchMode, AttachWithConnect, Normal, PythonDebugAdapter, .ADAPTER_NAME, .DEBUG_ADAPTER_NAME, .LANGUAGE_NAME, test_attach_with_connect_mode_generates_correct_arguments() (+3 more)
+Cohesion: 0.14
+Nodes (6): PythonDebugAdapter, .ADAPTER_NAME, .DEBUG_ADAPTER_NAME, .LANGUAGE_NAME, test_tcp_connection_conflict_with_connect_args(), debug_adapters_dir()
 
-### Community 937 - "init_bookmarks_tab_test"
-Cohesion: 0.18
-Nodes (31): bookmark_path(), bookmarked_paths(), close_bookmarks_editor(), cursor_line_text(), display_row_for(), excerpt_count(), failed_paths(), find_bookmarks_editor() (+23 more)
+### Community 937 - "LineEnding"
+Cohesion: 0.19
+Nodes (3): LineEnding, Unix, Windows
 
-### Community 939 - "LabelLike"
+### Community 938 - "stash.rs"
+Cohesion: 0.24
+Nodes (9): GitStash, parse_stash_index(), parse_stash_line(), parse_stash_message(), test_git_stash_empty_input(), test_git_stash_from_str(), test_parse_stash_index(), test_parse_stash_line() (+1 more)
+
+### Community 939 - "FontWeight"
+Cohesion: 0.01
+Nodes (56): FontWeight, .ALL, .BLACK, .BOLD, .EXTRA_BOLD, .EXTRA_LIGHT, .LIGHT, .MEDIUM (+48 more)
+
+### Community 940 - "AgentProfileId"
 Cohesion: 0.03
-Nodes (10): LabelLike, LineHeightStyle, TextLabel, UiLabel, LoadingLabel, SpinnerLabel, SpinnerVariant, Dots (+2 more)
-
-### Community 940 - "ProfilePickerDelegate"
-Cohesion: 0.11
-Nodes (9): AvailableProfiles, entries_include_custom_profiles(), ProfileCandidate, ProfileMatchEntry, ProfilePickerDelegate, ProfilePickerEntry, Header, Profile (+1 more)
+Nodes (48): AgentProfile, AgentProfileSettings, ASK, AvailableProfiles, ContextServerPreset, explicit_false_disables_tool_when_enable_all_is_true(), explicit_true_enables_tool_when_enable_all_is_false(), is_builtin() (+40 more)
 
 ### Community 941 - "SharedString"
 Cohesion: 0.12
@@ -5929,17 +5706,17 @@ Nodes (14): forbidden_ip_covers_v4_ranges(), forbidden_ip_covers_v6_ranges(), is
 Cohesion: 0.13
 Nodes (16): display_hides_credentials(), first_nonempty_env(), ignores_trailing_path(), no_proxy_bypasses_listed_host(), no_proxy_bypasses_loopback_implicitly(), no_proxy_with_cidr(), parse(), parses_bare_host_port() (+8 more)
 
-### Community 944 - "aws_http_client.rs"
-Cohesion: 0.11
-Nodes (3): AwsHttpConnector, convert_to_async_body(), convert_to_sdk_body()
+### Community 944 - "RemoteVideoTrackView"
+Cohesion: 0.30
+Nodes (3): RemoteVideoTrackView, RemoteVideoTrackViewEvent, Close
 
 ### Community 945 - "reconcile.rs"
-Cohesion: 0.14
-Nodes (18): CONTEXT_REPLACE, KEYMAP_PATTERNS, rename_context_key(), replace_action_argument_object_with_single_value(), replace_array_with_single_string(), replace_string_action(), STRING_REPLACE, TRANSFORM_ARRAY (+10 more)
+Cohesion: 0.15
+Nodes (16): CONTEXT_REPLACE, KEYMAP_PATTERNS, rename_context_key(), replace_action_argument_object_with_single_value(), replace_array_with_single_string(), replace_string_action(), STRING_REPLACE, TRANSFORM_ARRAY (+8 more)
 
-### Community 946 - "gpui_windows/src/util.rs"
-Cohesion: 0.08
-Nodes (9): configure_dwm_dark_mode(), get_window_long(), HiLoWord, is_color_light(), load_cursor(), set_window_long(), system_appearance(), with_dll_library() (+1 more)
+### Community 946 - "AutoHideState"
+Cohesion: 0.21
+Nodes (5): AutoHideFade, FadingIn, FadingOut, AutoHideState, duration_progress()
 
 ### Community 947 - "outputs/json.rs"
 Cohesion: 0.04
@@ -5966,63 +5743,63 @@ Cohesion: 0.07
 Nodes (27): with, app-id, assignees, author, base, body, branch, cache (+19 more)
 
 ### Community 953 - "jobs"
-Cohesion: 0.12
-Nodes (15): needs, runs-on, steps, timeout-minutes, env, CARGO_TERM_COLOR, RUST_BACKTRACE, jobs (+7 more)
+Cohesion: 0.07
+Nodes (26): needs, runs-on, timeout-minutes, if, runs-on, timeout-minutes, if, runs-on (+18 more)
 
 ### Community 954 - "ui/entity_update_in_render.rs"
 Cohesion: 0.19
 Nodes (27): steps, steps, steps, steps, steps, steps, steps, steps (+19 more)
 
 ### Community 955 - "JsDebugAdapter"
-Cohesion: 0.10
-Nodes (7): JsDebugAdapter, .ADAPTER_NAME, .ADAPTER_NPM_NAME, .ADAPTER_PATH, .DWARF_DEBUGGING_PACKAGE_NAME, .DWARF_DEBUGGING_PACKAGE_VERSION, normalize_task_type()
+Cohesion: 0.12
+Nodes (6): JsDebugAdapter, .ADAPTER_NAME, .ADAPTER_NPM_NAME, .ADAPTER_PATH, .DWARF_DEBUGGING_PACKAGE_NAME, .DWARF_DEBUGGING_PACKAGE_VERSION
 
 ### Community 956 - "CrateName"
-Cohesion: 0.05
-Nodes (43): ApiToken, CratesIoClient, Result, parse_owner_additions(), RealCratesIoClient, RequestThrottle, bad_request(), CratesIoState (+35 more)
+Cohesion: 0.20
+Nodes (4): CratesIoState, SimulatedCratesIoClient, CrateName, UserId
 
 ### Community 957 - "gpui_util/src/lib.rs"
 Cohesion: 0.13
 Nodes (14): (), App, AppContext, Context, Context<'_, T>, Entity, Entity<T>, IntoElement (+6 more)
 
 ### Community 958 - "Keystroke"
-Cohesion: 0.03
-Nodes (69): DummyKeyboardMapper, PlatformKeyboardMapper, AsKeystroke, display_key(), display_modifiers(), InvalidKeystrokeError, is_printable_key(), KeybindingKeystroke (+61 more)
+Cohesion: 0.04
+Nodes (22): DummyKeyboardMapper, PlatformKeyboardMapper, AsKeystroke, display_key(), display_modifiers(), InvalidKeystrokeError, is_printable_key(), KeybindingKeystroke (+14 more)
 
 ### Community 959 - "JsDebugAdapter"
-Cohesion: 0.12
-Nodes (7): add_dock_menu(), add_recent_folders(), create_destination_list(), create_shell_link(), JumpList, PKEY_TITLE, update_jump_list()
+Cohesion: 0.11
+Nodes (8): add_dock_menu(), add_recent_folders(), create_destination_list(), create_shell_link(), DockMenuItem, JumpList, PKEY_TITLE, update_jump_list()
 
 ### Community 961 - "deployment_ui.rs"
-Cohesion: 0.12
-Nodes (15): CONFIG_TEMPLATE, DeploymentToast, init(), open_config(), Operation, Compare, Download, Upload (+7 more)
+Cohesion: 0.03
+Nodes (35): HostKeyAnswer, Once, Reject, Remember, HostKeyQuestion, CertAnswer, Once, Pin (+27 more)
 
 ### Community 962 - "CodeActionProvider"
-Cohesion: 0.14
-Nodes (5): CodeActionProvider, Editor, Entity<Project>, CodeAction, DebugScenario
+Cohesion: 0.10
+Nodes (11): CodeActionSource, Indicator, QuickActionBar, RunMenu, ToggleCodeActions, CodeActionProvider, Editor, Entity<Project> (+3 more)
 
 ### Community 963 - "SettingsProfileSelectorDelegate"
-Cohesion: 0.16
-Nodes (5): display_name(), init(), SettingsProfileSelector, SettingsProfileSelectorDelegate, toggle_settings_profile_selector()
+Cohesion: 0.12
+Nodes (11): active_settings_profile_picker(), display_name(), init(), init_test(), SettingsProfileSelectorDelegate, test_settings_profile_selector_is_in_user_configuration_order(), test_settings_profile_selector_state(), test_settings_profile_with_default_base() (+3 more)
 
-### Community 964 - "sh.md"
-Cohesion: 0.17
-Nodes (4): AttachModalDelegate, Candidate, get_processes_for_project(), set_candidates()
+### Community 964 - "editor_block_comment_tests.rs"
+Cohesion: 0.28
+Nodes (12): ToggleBlockComments, setup_rust_context(), test_toggle_block_comments(), test_toggle_block_comments_cursor_inside(), test_toggle_block_comments_cursor_inside_unicode_comment(), test_toggle_block_comments_empty_selection_roundtrip(), test_toggle_block_comments_multiline(), test_toggle_block_comments_multiple_cursors() (+4 more)
 
 ### Community 965 - "GithubLogin"
 Cohesion: 0.08
 Nodes (25): USERS, build, ports, interval, retries, test, name, services (+17 more)
 
 ### Community 966 - "TerminalToolHeader"
-Cohesion: 0.11
+Cohesion: 0.12
 Nodes (3): ClickHandler, TerminalSandboxWarning, TerminalToolHeader
 
 ### Community 967 - "format_distance.rs"
-Cohesion: 0.14
-Nodes (21): derive_visual_context(), bench(), border_style_methods(), box_shadow_style_methods(), cursor_style_methods(), derive_action(), derive_app_context(), derive_inspector_reflection() (+13 more)
+Cohesion: 0.13
+Nodes (22): derive_app_context(), derive_visual_context(), bench(), border_style_methods(), box_shadow_style_methods(), cursor_style_methods(), derive_action(), derive_app_context() (+14 more)
 
 ### Community 968 - "AccentStackEntry"
-Cohesion: 0.20
+Cohesion: 0.18
 Nodes (3): AccentStackEntry, current_stack_accent(), MindmapAccents
 
 ### Community 970 - "init_bookmarks_tab_test"
@@ -6030,16 +5807,16 @@ Cohesion: 0.17
 Nodes (4): JsonView, test_json_view_from_value_root_expanded(), test_json_view_is_expanded_unknown_path(), test_json_view_toggle_path()
 
 ### Community 971 - "LineIndent"
-Cohesion: 0.14
-Nodes (18): compute_indent_delta(), compute_rest_indent_delta(), IndentDelta, Spaces, Tabs, line_indent(), Reindenter, test_clamp_negative_indent() (+10 more)
+Cohesion: 0.22
+Nodes (17): compute_indent_delta(), compute_rest_indent_delta(), IndentDelta, Spaces, Tabs, line_indent(), Reindenter, test_clamp_negative_indent() (+9 more)
 
 ### Community 972 - "fuzzy_nucleo/src/strings.rs"
-Cohesion: 0.21
-Nodes (29): candidates(), empty_query_results(), match_strings_async(), options(), test_basic_match(), test_cancellation(), test_char_bag_prefilter(), test_empty_candidates() (+21 more)
+Cohesion: 0.13
+Nodes (34): LengthPenalty, Off, On, candidates(), empty_query_results(), length_penalty_for(), match_strings_async(), options() (+26 more)
 
-### Community 973 - "Configuration"
-Cohesion: 0.50
-Nodes (4): Bash, Configuration, Install `shellcheck`:, See also:
+### Community 973 - "lsp_command/signature_help.rs"
+Cohesion: 0.32
+Nodes (8): documentation_to_markdown(), lsp_to_proto_documentation(), lsp_to_proto_signature(), ParameterInfo, proto_to_lsp_documentation(), proto_to_lsp_signature(), SignatureHelp, SignatureHelpData
 
 ### Community 974 - "refresh_linked_ranges"
 Cohesion: 0.08
@@ -6062,68 +5839,68 @@ Cohesion: 0.19
 Nodes (9): ClosureView, Counter, FakeEntity, FakeView, MutatingView, OnceMutatingView, ReadingView, update_outside_render() (+1 more)
 
 ### Community 980 - ".new"
-Cohesion: 0.10
-Nodes (11): AssetLogger<T>, cached_load_caches_success_and_error(), CachedLoad<T>, CachedLoadState, Loaded, Loading, completed_load_without_subscribers_is_cached_and_deduplicated(), eviction_after_worker_completion_does_not_publish_into_replacement() (+3 more)
+Cohesion: 0.09
+Nodes (12): AssetLogger<T>, cached_load_caches_success_and_error(), CachedLoad<T>, CachedLoadState, Loaded, Loading, completed_load_without_subscribers_is_cached_and_deduplicated(), eviction_after_worker_completion_does_not_publish_into_replacement() (+4 more)
 
-### Community 981 - "rodio_ext.rs"
-Cohesion: 0.04
-Nodes (30): callback_gets_all_samples(), callback_modifies_yielded(), ConstantSampleRate, ConstantSampleRate<S>, continues_after_history(), InspectBuffer, InspectBuffer<N, S, F>, keeps_correct_amount_of_seconds() (+22 more)
+### Community 981 - "Source"
+Cohesion: 0.08
+Nodes (6): ConstantSampleRate<S>, InspectBuffer<N, S, F>, ProcessBuffer<N, S, F>, Replayable<S>, ToMono<S>, update_mean()
 
 ### Community 982 - "How to Migrate from IntelliJ IDEA to Zed"
 Cohesion: 0.19
 Nodes (11): Args, is_background_executor(), is_path_with_last_segment(), is_std_rng(), is_test_cx(), parse_args(), ParsedArgs, remove_background_executor() (+3 more)
 
-### Community 983 - "e2e_tests.rs"
-Cohesion: 0.24
-Nodes (13): init_test(), new_test_thread(), run_until_first_tool_call(), send_and_wait_for_turn(), stub_thread(), test_basic(), test_cancel(), test_e2e_helper_preserves_stop_before_receipt() (+5 more)
+### Community 983 - "EditPredictionPromptFormatContent"
+Cohesion: 0.15
+Nodes (13): EditPredictionPromptFormatContent, CodeGemma, CodeLlama, Codestral, DeepseekCoder, Glm, Infer, Qwen (+5 more)
 
 ### Community 984 - "steps"
 Cohesion: 0.24
 Nodes (3): ComputeCell, InputCell, ReactTest
 
-### Community 985 - "WslRemoteConnection"
-Cohesion: 0.12
-Nodes (4): parse_home_dir(), test_home_dir_probe_without_path_lookup(), test_parse_home_dir(), WslRemoteConnection
+### Community 985 - "remote/src/transport.rs"
+Cohesion: 0.04
+Nodes (61): check_pid_file(), CheckPidError, execute_proxy(), ExecuteProxyError, CheckPidFile, KillRunningServer, ServerNotRunning, ServerPath (+53 more)
 
 ### Community 986 - "MermaidTheme"
 Cohesion: 0.17
 Nodes (18): MermaidTheme, accent_css(), ACCENT_FILL_OPACITY, adjust_lightness(), blend_over_background(), build_injected_css(), chart_color_css(), git_branch_css() (+10 more)
 
-### Community 987 - "LocalClient"
-Cohesion: 0.21
-Nodes (3): copy_with_progress(), LocalClient, map_err()
+### Community 987 - "ApiErrorCode"
+Cohesion: 0.17
+Nodes (12): ApiErrorCode, ApiError, AuthenticationError, BillingError, ConflictError, InvalidRequestError, NotFoundError, OverloadedError (+4 more)
 
 ### Community 988 - "ToolCall"
 Cohesion: 0.03
-Nodes (84): AgentLocation, command_category_from_meta(), command_category_meta_round_trips(), CommandCategory, Mcp, Native, MaxOutputTokensError, meta_with_command_category() (+76 more)
+Nodes (72): AgentLocation, command_category_from_meta(), command_category_meta_round_trips(), CommandCategory, Mcp, Native, legacy_tool_field(), markdown_for_raw_output() (+64 more)
 
-### Community 989 - "sys.rs"
-Cohesion: 0.06
-Nodes (46): ATTACH_FD, bring_up_loopback(), drop_capabilities(), exit_code(), HELPER_FLAG, install_terminate_handler(), on_terminate(), run() (+38 more)
+### Community 989 - "helper.rs"
+Cohesion: 0.11
+Nodes (16): main(), ATTACH_FD, drop_capabilities(), exit_code(), HELPER_FLAG, on_terminate(), run(), SETUP_FAILED (+8 more)
 
 ### Community 990 - "PhpSettingsWindow"
-Cohesion: 0.16
-Nodes (9): Child, Component, HotReload, init(), message(), patch_for_process(), receive_patches(), receives_only_matching_patches_over_the_websocket() (+1 more)
+Cohesion: 0.15
+Nodes (10): Child, Component, HotReload, init(), message(), patch_for_process(), receive_patches(), receives_only_matching_patches_over_the_websocket() (+2 more)
 
 ### Community 991 - "Priority"
-Cohesion: 0.06
-Nodes (11): create_test_app(), sanity_test_tasks_run(), Scope, Scope<'a>, send_foreground_executor_submits_from_worker(), Task<Result<T, E>>, Priority, High (+3 more)
+Cohesion: 0.10
+Nodes (4): Scope, Scope<'a>, Task<Result<T, E>>, TaskExt
 
-### Community 992 - "rate_limiter.rs"
-Cohesion: 0.14
-Nodes (7): LanguageModelId, Output, DEFAULT_MODEL_CONCURRENCY, ModelRateLimiters, RateLimiter, RateLimitGuard, RateLimitGuard<T>
+### Community 992 - "stream_completion"
+Cohesion: 0.23
+Nodes (8): BedrockError, AccessDenied, InternalServer, Other, RateLimited, ServiceUnavailable, Validation, stream_completion()
 
 ### Community 993 - "windows_prefix.rs"
-Cohesion: 0.19
-Nodes (8): is_verbatim_sep(), parse_drive(), parse_drive_exact(), parse_prefix(), PrefixParser, PrefixParser<'a, LEN>, PrefixParserSlice, PrefixParserSlice<'a, '_>
+Cohesion: 0.18
+Nodes (9): is_verbatim_sep(), parse_drive(), parse_drive_exact(), parse_next_component(), parse_prefix(), PrefixParser, PrefixParser<'a, LEN>, PrefixParserSlice (+1 more)
 
 ### Community 994 - "type"
 Cohesion: 0.17
 Nodes (13): DateTimeType, Local, Naive, distance_in_seconds(), distance_string(), format_distance(), format_distance_from_now(), FormatDistance (+5 more)
 
 ### Community 995 - "terminal_element.rs"
-Cohesion: 0.04
-Nodes (32): is_default_background_color(), BackgroundRegion, BatchedTextRun, BLOCK_SUBCELL_COLUMNS, BLOCK_SUBCELL_LINES, BlockElementLayoutRect, convert_color(), DisplayCursor (+24 more)
+Cohesion: 0.03
+Nodes (51): is_default_background_color(), BackgroundRegion, BatchedTextRun, BLOCK_SUBCELL_COLUMNS, BLOCK_SUBCELL_LINES, BlockElementLayoutRect, convert_color(), DisplayCursor (+43 more)
 
 ### Community 996 - "AgentThreadEntry"
 Cohesion: 0.08
@@ -6137,20 +5914,20 @@ Nodes (25): Configuration, Configuring a language server, Debug a Ruby script, D
 Cohesion: 0.18
 Nodes (8): EntityUpdateInRender, NotifyInRender, is_directly_in_render_method(), is_gpui_context(), is_gpui_entity_or_weak(), is_gpui_render_trait(), is_render_trait_impl(), is_unit_or_result_unit()
 
-### Community 999 - "AiSettingItem"
-Cohesion: 0.09
-Nodes (13): AiSettingItem, AiSettingItemSource, Custom, Extension, Registry, AiSettingItemStatus, Authenticating, AuthRequired (+5 more)
+### Community 999 - "HarmCategory"
+Cohesion: 0.17
+Nodes (12): HarmCategory, Dangerous, DangerousContent, Derogatory, Harassment, HateSpeech, Medical, Sexual (+4 more)
 
 ### Community 1000 - "AppState"
-Cohesion: 0.06
-Nodes (99): post_to_discord(), run_autofix(), deploy(), deploy_collab(), publish(), style(), tests(), dispatched_from_main_guard() (+91 more)
+Cohesion: 0.08
+Nodes (85): run_autofix(), danger_job(), deploy(), deploy_collab(), publish(), style(), tests(), auto_release_preview() (+77 more)
 
 ### Community 1001 - "autofix_pr.rs"
 Cohesion: 0.08
 Nodes (23): Before-and-after method, `bench_batched_task`: per-iteration setup outside timing, `bench_iter`: synchronous functions and compute work, `bench_renderer`: frame production, `bench_task`: asynchronous work to completion, Benchmark-only APIs, Benchmarks outside GPUI, Choose the right GPUI measurement API (+15 more)
 
 ### Community 1002 - "protection.rs"
-Cohesion: 0.19
+Cohesion: 0.17
 Nodes (15): EditAllowances, editor_path(), finds_the_package_of_library_files(), include_paths(), library_root(), LibraryKind, Composer, IncludePath (+7 more)
 
 ### Community 1003 - "Provider Notes {#provider-notes}"
@@ -6158,12 +5935,12 @@ Cohesion: 0.11
 Nodes (3): BuildRemoteServer(), BuildZedAndItsFriends(), ParseZedWorkspace()
 
 ### Community 1004 - "Editor"
-Cohesion: 0.16
+Cohesion: 0.15
 Nodes (20): classify(), deduplicates_repeated_characters(), detects_bidi_override(), detects_cyrillic_homoglyph(), detects_zero_width_space(), is_bidi_control(), is_invisible(), is_non_ascii_space() (+12 more)
 
-### Community 1005 - "WasmState"
-Cohesion: 0.08
-Nodes (8): convert_request(), convert_response(), ExtensionHttpResponseStream, ExtensionKeyValueStore, ::http_client::Method, latest::DownloadedFileType, latest::LanguageServerInstallationStatus, WasmState
+### Community 1005 - "Handler"
+Cohesion: 0.23
+Nodes (9): AccentColors, Handler, ClassDiagram, Flowchart, Mindmap, Passthrough, Pending, Sequence (+1 more)
 
 ### Community 1006 - "examples/test_app.rs"
 Cohesion: 0.08
@@ -6173,25 +5950,25 @@ Nodes (24): ACCENT_BLUE, ACCENT_GREEN, ACCENT_MAUVE, ACCENT_YELLOW, BG_BASE, BG_
 Cohesion: 0.15
 Nodes (9): decode_userinfo(), MAX_HTTP_RESPONSE_LENGTH, no_proxy_matches(), no_proxy_matching(), parse(), parse_percent_decodes_credentials(), parse_rejects_unknown_scheme(), parse_supports_username_only_credentials() (+1 more)
 
-### Community 1008 - "ToggleButtonGroup<T, COLS, ROWS>"
-Cohesion: 0.08
-Nodes (14): ToggleButtonGroup<T, COLS, ROWS>, ToggleButtonGroupSize, Custom, Default, Large, Medium, ToggleButtonGroupStyle, Filled (+6 more)
+### Community 1008 - "KeepAlive"
+Cohesion: 0.21
+Nodes (5): get_max_tokens(), Model, KeepAlive, Duration, Seconds
 
-### Community 1009 - "IconThemePickerDelegate"
-Cohesion: 0.32
-Nodes (3): icon_theme_picker(), IconThemePicker, IconThemePickerDelegate
+### Community 1009 - "BaseKeymapContent"
+Cohesion: 0.17
+Nodes (11): BaseKeymapContent, Atom, Cursor, Emacs, JetBrains, None, SublimeText, TextMate (+3 more)
 
-### Community 1010 - "HttpClient"
-Cohesion: 0.00
-Nodes (687): FAILURE_MESSAGE_TOOL_NAME, FailureMessageInput, REWRITE_SECTION_TOOL_NAME, RewriteSectionInput, BatchIndividualResponse, BatchRequest, create_batch(), CreateBatchRequest (+679 more)
+### Community 1010 - "LanguageModel"
+Cohesion: 0.01
+Nodes (229): CompletionBody, ListModelsResponse, HttpClientWithProxy, HttpClientWithUrl, read_proxy_from_env(), set_credentials_read_gate(), ApiKeyConfiguration, BACKGROUND_STREAM_BUFFER_SIZE (+221 more)
 
-### Community 1011 - "ReasoningEffort"
-Cohesion: 0.03
-Nodes (53): ReasoningEffort, High, Low, Max, Medium, Minimal, None, .OPENAI_COMPATIBLE_SELECTABLE (+45 more)
+### Community 1011 - "Model"
+Cohesion: 0.05
+Nodes (25): Model, Custom, Five, FiveMini, FiveNano, FivePointFive, FivePointFivePro, FivePointFour (+17 more)
 
 ### Community 1012 - "init_ctrl_hover_hyperlink_test_with_window"
-Cohesion: 0.23
-Nodes (11): assert_wakeups_and_notifies(), Expected, HyperlinkVisualTestContext<'a, 'b>, init_ctrl_hover_hyperlink_test_with_window(), Notifies, test_ctrl_hover_with_changing_bounds(), test_ctrl_hover_with_changing_content(), test_ctrl_hover_with_modifier_change_only() (+3 more)
+Cohesion: 0.20
+Nodes (12): assert_wakeups_and_notifies(), Expected, HyperlinkVisualTestContext<'a, 'b>, init_ctrl_hover_hyperlink_test_with_window(), Notifies, test_ctrl_hover_with_changing_bounds(), test_ctrl_hover_with_changing_content(), test_ctrl_hover_with_modifier_change_only() (+4 more)
 
 ### Community 1013 - "SoloDiffView"
 Cohesion: 0.18
@@ -6225,81 +6002,81 @@ Nodes (24): env, env, env, env, env, env, ACCOUNT_NAME, AZURE_CLIENT_ID (+16 mor
 Cohesion: 0.08
 Nodes (24): with, advanced-security, app-id, authToken, cache, cachixArgs, check-latest, clean (+16 more)
 
-### Community 1021 - "head.rs"
-Cohesion: 0.44
-Nodes (3): Head, Editor, Empty
+### Community 1021 - ".create_row_identifier_cell"
+Cohesion: 0.21
+Nodes (5): LineNumber, RowIdentDisplayMode, Horizontal, Vertical, TableView
 
 ### Community 1022 - "AcpThreadEvent"
-Cohesion: 0.07
-Nodes (26): AcpThreadEvent, ActivityConfirmedIdle, AvailableCommandsUpdated, ConfigOptionsUpdated, ConnectionLost, ElicitationResponded, Error, LoadError (+18 more)
+Cohesion: 0.05
+Nodes (33): AcpThreadEvent, ActivityConfirmedIdle, AvailableCommandsUpdated, ConfigOptionsUpdated, ConnectionLost, ElicitationResponded, EntriesRemoved, Error (+25 more)
 
-### Community 1023 - "ScaledPixels"
-Cohesion: 0.02
-Nodes (131): SurfaceBounds, build_scene(), Case, cases(), insert_primitives(), Kind, Path, Quad (+123 more)
+### Community 1023 - "IgnoreStackEntry"
+Cohesion: 0.17
+Nodes (9): IgnoreKind, Gitignore, RepoExclude, IgnoreStackEntry, All, Global, None, RepoExclude (+1 more)
 
 ### Community 1024 - "env"
 Cohesion: 0.14
 Nodes (13): 1. Overview, 2. Software and Services, 3. Open-Source Software, 4.1. Customer Data and AI Transmissions, 4.2. Training and Improvement, 4.3. Output Rating, 4.4. Telemetry, 4. Customer Data and AI Functionality (+5 more)
-
-### Community 1025 - "steps"
-Cohesion: 0.11
-Nodes (7): FunctionReflection, FunctionReflection<T>, InspectedElement, Inspector, InspectorElementRegistry, InspectorElementRenderer, STYLE_METHODS
 
 ### Community 1026 - "dangerfile.ts"
 Cohesion: 0.14
 Nodes (14): Build fails: Path too long, Building from source, Building Zed for Windows, Cargo errors claiming that a dependency is using unstable features, Dependencies, Graphics issues, Installing from msys2, Invalid RC path selected (+6 more)
 
 ### Community 1027 - "compliance.rs"
-Cohesion: 0.17
-Nodes (8): check_compliance_impl(), ComplianceArgs, ComplianceMode, Single, Version, IGNORE_LIST, MAX_CONCURRENT_REQUESTS, VersionArgs
+Cohesion: 0.18
+Nodes (9): check_compliance(), check_compliance_impl(), ComplianceArgs, ComplianceMode, Single, Version, IGNORE_LIST, MAX_CONCURRENT_REQUESTS (+1 more)
 
 ### Community 1028 - "editor/src/edit_prediction.rs"
 Cohesion: 0.09
 Nodes (21): Building, eval-cli, Exit codes, Linux x86_64, for Harbor/Pier sandboxes, Native, for local testing on the same OS, Running benchmarks, Standalone usage, Baselines (+13 more)
+
+### Community 1029 - ".map_event"
+Cohesion: 0.31
+Nodes (9): ChatCompletionEventMapper, chunk_without_choices_or_usage_maps_to_no_events(), does_not_emit_tool_calls_after_an_attribution_error(), maps_mistral_mixed_content_stream(), rejects_id_only_chunks_for_calls_sharing_an_id(), rejects_unattributable_tool_call_chunks(), stream_maps_reasoning(), usage_update_precedes_text_and_stop_events_from_the_same_chunk() (+1 more)
 
 ### Community 1030 - "Bring IntelliJ's three Markdown modes to VEGA"
 Cohesion: 0.25
 Nodes (7): Bring IntelliJ's three Markdown modes to VEGA, Build the switcher first, then the default layout, then scroll sync, Conclusion, IntelliJ puts editor and preview inside one tab with a three-button switcher, IntelliJ's source editor adds lists, tables, links and images on top of plain text, The preview is a locked-down Chromium page, and scroll sync goes one way only, VEGA already beats IntelliJ on click-to-source but has no modes, no split default, no scroll sync
 
 ### Community 1031 - "SearchHistory"
-Cohesion: 0.09
-Nodes (23): tsType, type, x-intellij-language-injection, dependency, devDependency, optionalDependency, peerDependency, additionalProperties (+15 more)
+Cohesion: 0.06
+Nodes (38): additionalProperties, description, patternProperties, properties, tsType, type, x-intellij-language-injection, dependency (+30 more)
 
 ### Community 1032 - "ConversationView"
 Cohesion: 0.02
-Nodes (50): LoadError, Exited, FailedToInstall, Unsupported, AgentConnection, AuthRequired, resolve_agent_image(), AcpServerViewEvent (+42 more)
+Nodes (42): AgentConnection, AgentServerDelegate, AcpServerViewEvent, ActiveThreadChanged, AgentCodeSpanResolverInner, AuthGatedAgentConnection, .AUTH_METHOD_ID, .OTHER_AUTH_METHOD_ID (+34 more)
 
-### Community 1033 - "StreamEvent"
-Cohesion: 0.07
-Nodes (29): StreamEvent, Completed, ContentPartAdded, ContentPartDone, Created, CustomToolCallInputDelta, CustomToolCallInputDone, Error (+21 more)
+### Community 1033 - "merged_highlight_runs"
+Cohesion: 0.42
+Nodes (10): keyword_and_function_lang(), keyword_and_function_theme(), merge_highlighted_chunk(), merged_highlight_runs(), test_chunk_highlights_across_row_chunk_seeks(), test_chunk_highlights_follow_edits_and_theme_changes(), test_language_change_invalidates_cached_chunk_highlights(), test_oversized_chunks_bypass_the_highlight_cache() (+2 more)
 
 ### Community 1034 - "render_local_action_button"
-Cohesion: 0.13
-Nodes (10): extract_svg_id(), ReaderIter, ReaderIter<'a>, collect_native_text_contents(), FALLBACK_TEXT_CLASS, is_fallback_group(), is_fallback_text(), process() (+2 more)
+Cohesion: 0.21
+Nodes (7): collect_native_text_contents(), FALLBACK_TEXT_CLASS, is_fallback_group(), is_fallback_text(), process(), StripForeignObject, StripForeignObject<'a, I>
 
 ### Community 1035 - "editor/src/rewrap.rs"
-Cohesion: 0.12
-Nodes (15): char_len_with_expanded_tabs(), Editor, is_grapheme_ideographic(), is_grapheme_whitespace(), is_non_breaking_whitespace(), should_stay_with_preceding_ideograph(), test_string_size_with_expanded_tabs(), test_wrap_with_prefix() (+7 more)
+Cohesion: 0.08
+Nodes (21): RewrapOptions, char_len_with_expanded_tabs(), Editor, is_grapheme_ideographic(), is_grapheme_whitespace(), is_non_breaking_whitespace(), should_stay_with_preceding_ideograph(), test_string_size_with_expanded_tabs() (+13 more)
 
-### Community 1036 - "translate_doc_comments/before.rs"
-Cohesion: 0.09
-Nodes (15): Blit, BlitA8ToRgb24, BlitMemcpy, BlitRgb24ToA8, BlitRgb24ToRgba32, BlitRgba32ToRgb24, Canvas, Format (+7 more)
+### Community 1036 - "Format"
+Cohesion: 0.22
+Nodes (5): Canvas, Format, A8, Rgb24, Rgba32
 
 ### Community 1037 - "protection.rs"
 Cohesion: 0.12
 Nodes (9): QueryInsertionBehavior, AlwaysInsert, ReplacePreviousIfContains, SearchHistory, SearchHistoryCursor, SearchInputKind, Exclude, Include (+1 more)
 
-### Community 1038 - "end_trial_upsell.rs"
-Cohesion: 0.10
-Nodes (3): EndTrialUpsell, AgentPanelOnboardingCard, PlanDefinitions
+### Community 1038 - "Thinking"
+Cohesion: 0.20
+Nodes (7): Metadata, Request, Thinking, Adaptive, Disabled, Enabled, Reasoning
 
-### Community 1039 - "HandleTag"
-Cohesion: 0.14
-Nodes (8): HeadingHandler, ListHandler, ParagraphHandler, WebpageChromeRemover, HandleTag, StartTagOutcome, Continue, Skip
+### Community 1039 - "MarkdownWriter"
+Cohesion: 0.05
+Nodes (27): fetch_url_content(), HtmlElement, inline_elements(), convert_html_to_markdown(), CodeHandler, HeadingHandler, ListHandler, ParagraphHandler (+19 more)
 
 ### Community 1041 - "release_channel/src/lib.rs"
 Cohesion: 0.08
-Nodes (3): Child, Command, CREATE_NO_WINDOW
+Nodes (5): Child, Command, CREATE_NO_WINDOW, Stdio, Inherit
 
 ### Community 1042 - "vega_docs.rs"
 Cohesion: 0.09
@@ -6314,8 +6091,8 @@ Cohesion: 0.09
 Nodes (23): Agent Panel, Collaboration Panels, Edit Predictions {#editor-ai}, Editor, Editor Completions, Snippets, Actions, Diagnostics {#editor-lsp}, Editor Inlay Hints, Editor Scrollbar and Minimap {#editor-scrollbar}, Editor Tabs (+15 more)
 
 ### Community 1045 - "Edit Tools {#edit-tools}"
-Cohesion: 0.05
-Nodes (44): DependencyKind, Build, Development, Normal, DependencyRequirement, Optional, Required, DependencyTarget (+36 more)
+Cohesion: 0.04
+Nodes (61): check_git_clean(), check_workspace_root(), DependencyKind, Build, Development, Normal, DependencyRequirement, Optional (+53 more)
 
 ### Community 1046 - "Tool Permissions"
 Cohesion: 0.09
@@ -6326,28 +6103,28 @@ Cohesion: 0.14
 Nodes (12): assert_count(), click(), do_action_by_name(), find_app(), find_by_role(), find_by_role_and_label(), get_counter(), get_numeric_value() (+4 more)
 
 ### Community 1048 - "Modes"
-Cohesion: 0.07
-Nodes (20): Modes, .ALT_SCREEN, .ALTERNATE_SCROLL, .APP_CURSOR, .APP_KEYPAD, .BRACKETED_PASTE, .FOCUS_IN_OUT, .INSERT (+12 more)
+Cohesion: 0.04
+Nodes (51): update_selection(), alt_scroll(), mouse_button_report(), mouse_moved_report(), mouse_report(), MouseButtonCode, LeftButton, LeftMove (+43 more)
 
 ### Community 1049 - "Project Panel"
 Cohesion: 0.09
 Nodes (21): Actions, After any agentic session, Build guidelines, Concurrency, Context, Crash Investigation, Elements, Entities (+13 more)
-
-### Community 1052 - "Client"
-Cohesion: 0.12
-Nodes (4): Client, ContextServerId, RequestHandler, ResponseHandler
 
 ### Community 1053 - "internal_api.rs"
 Cohesion: 0.10
 Nodes (21): test_data_retention_error_maps_from_provider_error(), test_payment_required_from_zed_uses_upgrade_prompt(), test_payment_required_preserves_non_zed_provider_message(), test_provider_rejection_preserves_provider_message(), test_thread_error_protocol_codes_preserve_context_and_data(), ThreadError, ApiError, AuthenticationFailed (+13 more)
 
 ### Community 1054 - "allowlist.rs"
-Cohesion: 0.11
-Nodes (20): covers_exact_only_matches_identical(), covers_subdomain_wildcard_subsumes_descendants(), display_round_trips_through_parse(), Exact, Subdomain, HostPatternError, Empty, Invalid (+12 more)
+Cohesion: 0.07
+Nodes (23): Allowlist, allowlist_allows_member(), covers_exact_only_matches_identical(), covers_subdomain_wildcard_subsumes_descendants(), display_round_trips_through_parse(), empty_allowlist_denies_everything(), Exact, Subdomain (+15 more)
 
 ### Community 1055 - "tool_schema.rs"
 Cohesion: 0.24
 Nodes (13): inline_refs(), inline_refs_fallibly(), inline_refs_recursive(), inlines_legacy_definitions_and_keeps_sibling_keywords(), inlines_the_references_context_servers_generate(), leaves_a_schema_untouched_when_a_reference_cannot_be_resolved(), normalization_is_idempotent(), normalization_leaves_non_object_schemas_unchanged_except_for_metadata() (+5 more)
+
+### Community 1057 - "render_agent_markdown"
+Cohesion: 0.23
+Nodes (4): resolve_agent_image(), AgentCodeSpanResolver, render_agent_markdown(), test_agent_code_span_resolver_resolves_worktree_paths()
 
 ### Community 1058 - "ViMotion"
 Cohesion: 0.16
@@ -6357,17 +6134,17 @@ Nodes (6): ACTION_STATISTICS, ActionStatistics, ActionTiming, save_action_timing
 Cohesion: 0.22
 Nodes (3): Range<DisplayRow>, Range<MultiBufferRow>, RowRangeExt
 
-### Community 1060 - "Symbol"
-Cohesion: 0.16
-Nodes (5): Symbol, highlight_id_for_completion(), label_for_pyright_completion(), label_for_python_symbol(), process_pyright_completions()
+### Community 1060 - ".render"
+Cohesion: 0.22
+Nodes (3): CallDisplay, CallSignatureTooltip, shaped_width()
 
-### Community 1061 - "HighlightStyle"
-Cohesion: 0.04
-Nodes (38): bold(), colored(), split_completion_label(), test_split_completion_label_keeps_prefix_before_filter_range(), test_split_completion_label_splits_boundary_spanning_highlight(), test_split_completion_label_unfades_uncolored_suffix(), highlights_from_buffer(), test_document_symbol_highlights_across_excerpts() (+30 more)
+### Community 1061 - "SyntaxTheme"
+Cohesion: 0.18
+Nodes (3): load_theme(), SyntaxTheme, test_syntax_theme_merge()
 
-### Community 1062 - "WebWindow"
-Cohesion: 0.01
-Nodes (50): COLUMNAR_SELECTION_MODIFIERS, Capslock, Modifiers, WindowControlArea, Close, Drag, Max, Min (+42 more)
+### Community 1062 - "Modifiers"
+Cohesion: 0.00
+Nodes (102): COLUMNAR_SELECTION_MODIFIERS, BACK_COMMIT_VELOCITY, back_event(), modifiers(), scroll_event(), touch_force(), touch_id(), touch_location_in_view() (+94 more)
 
 ### Community 1063 - "Configuration"
 Cohesion: 0.29
@@ -6398,44 +6175,36 @@ Cohesion: 0.13
 Nodes (11): entries, FIXTURES_PATHS, gpuiCrates, includesIssueUrl, MIGRATION_SCHEMA_FILES, modifiedFixtures, modifiedSchemaFiles, { prHygiene } (+3 more)
 
 ### Community 1070 - "CellControlType"
-Cohesion: 0.18
+Cohesion: 0.17
 Nodes (8): CellControlType, CellOptions, ClearCell, CollapseCell, ExpandCell, RerunCell, RunCell, StopCell
 
-### Community 1071 - "SymbolKind"
-Cohesion: 0.07
-Nodes (28): SymbolKind, Array, Boolean, Class, Constant, Constructor, Enum, EnumMember (+20 more)
+### Community 1071 - "channel_store_tests.rs"
+Cohesion: 0.60
+Nodes (6): assert_channels(), init_test(), test_dangling_channel_paths(), test_update_channels(), test_update_channels_order_independent(), update_channels()
 
 ### Community 1072 - "darwin.rs"
-Cohesion: 0.07
-Nodes (43): Child, Command, create_pipe(), cvt_nz(), environ, invalid_input_error(), open_dev_null(), posix_spawn_file_actions_addchdir_np() (+35 more)
-
-### Community 1073 - "catalog.rs"
 Cohesion: 0.10
-Nodes (16): CatalogModel, CatalogProvider, MODEL_CATALOG_URL, ModelCost, ModelLimits, ModelModalities, ModelTransport, normalize_reasoning_effort() (+8 more)
+Nodes (31): Command, Null, Piped, test_absolute_path_passes_through_unchanged(), test_bare_program_preserves_argv0_when_resolved_via_custom_path(), test_bare_program_resolved_via_custom_path(), test_bare_program_with_custom_env_no_path_key(), test_bare_program_with_custom_path_falls_back_when_not_found() (+23 more)
 
-### Community 1074 - "search_bar.rs"
-Cohesion: 0.12
-Nodes (9): ActionButtonState, Disabled, Toggled, HistoryNavigationDirection, Next, Previous, render_local_action_button(), render_text_input() (+1 more)
+### Community 1073 - "Client"
+Cohesion: 0.31
+Nodes (7): send_crash_server_message(), set_gpu_info(), set_tag(), set_tags(), set_user_info(), shutdown_crash_handler(), UserInfo
 
-### Community 1075 - "XimHandler"
-Cohesion: 0.14
-Nodes (5): XimCallbackEvent, XimCommitEvent, XimPreeditEvent, XimXEvent, XimHandler
-
-### Community 1077 - "vscode_import.rs"
-Cohesion: 0.14
-Nodes (17): imported_reduce_motion(), imported_soft_wrap_indent(), test_import_command_palette_history(), test_import_disabled_globs_extends_inherited_patterns(), test_import_disabled_globs_omits_empty_results(), test_import_file_exclusions(), test_import_file_exclusions_without_usable_patterns(), test_import_read_only_files() (+9 more)
+### Community 1075 - ".push"
+Cohesion: 0.24
+Nodes (8): ChoiceDelta, FunctionChunk, merge_reasoning_detail(), push_thinking_event(), reasoning_details_accumulator_ignores_null_and_empty_array_chunks(), ReasoningDetailsAccumulator, ResponseMessageDelta, ToolCallChunk
 
 ### Community 1078 - "direct_write.rs"
-Cohesion: 0.07
-Nodes (16): apply_alpha_correction(), ClusterAnalyzer, color_brightness(), ColorGlyphBitmap, ColorLayer, DEFAULT_LOCALE_NAME, enhance_contrast(), font_weight_from_dwrite() (+8 more)
+Cohesion: 0.03
+Nodes (40): apply_alpha_correction(), apply_font_features(), check_unicode_separator_cursor(), ClusterAnalyzer, ClusterAnalyzer<'t>, color_brightness(), ColorGlyphBitmap, ColorLayer (+32 more)
 
 ### Community 1079 - "update_version.rs"
 Cohesion: 0.13
 Nodes (10): browser, log, output, browser, log, output, browser, log (+2 more)
 
 ### Community 1080 - "TabularDataPreviewPane"
-Cohesion: 0.17
-Nodes (6): EditorState, init(), init_test(), TabularDataPreviewPane, test_csv_preview_mapping_stays_valid_after_deleting_multiline_rows(), test_detects_tabular_files_outside_the_project()
+Cohesion: 0.18
+Nodes (7): EditorState, init(), init_test(), TabularDataPreviewPane, test_csv_preview_mapping_stays_valid_after_deleting_multiline_rows(), test_detects_tabular_files_outside_the_project(), test_json_lines_preview_recovers_after_edits()
 
 ### Community 1081 - "RingOperation"
 Cohesion: 0.33
@@ -6445,13 +6214,21 @@ Nodes (6): RingOperation, Collect, NewCollector, Pin, Publish, Unpin
 Cohesion: 0.20
 Nodes (12): ElementFixup, ElementFixup<I>, font_family_declaration_value(), font_style(), is_bad_rect(), is_hardcoded_text_fill(), process(), push_font_style() (+4 more)
 
+### Community 1083 - "RemoteMatch"
+Cohesion: 0.20
+Nodes (9): RemoteMatch, AddDevContainer, AddServer, AddWsl, OpenFolder, Project, Separator, ServerHeader (+1 more)
+
+### Community 1084 - "channel_chat_participant.rs"
+Cohesion: 0.33
+Nodes (3): Model, Relation, Channel
+
 ### Community 1085 - "BaseKeymap"
 Cohesion: 0.10
 Nodes (11): BaseKeymap, Atom, Cursor, Emacs, JetBrains, None, .OPTIONS, SublimeText (+3 more)
 
-### Community 1086 - "src/modal.rs"
+### Community 1086 - "languages/src/go.rs"
 Cohesion: 0.01
-Nodes (187): item_location(), send_telemetry(), TelemetrySpawnLocation, Custom, Gutter, ScenarioList, init(), spawn_task_or_modal() (+179 more)
+Nodes (172): ContextLocation, LanguageToolchainStore, BINARY, extract_subtest_name(), GO_ESCAPE_SUBTEST_NAME_REGEX, go_language(), GO_MODULE_ROOT_TASK_VARIABLE, GO_PACKAGE_TASK_VARIABLE (+164 more)
 
 ### Community 1087 - "Model"
 Cohesion: 0.10
@@ -6489,65 +6266,65 @@ Nodes (21): env, if, needs, runs-on, timeout-minutes, env, if, needs (+13 more)
 Cohesion: 0.10
 Nodes (20): git_panel, button, collapse_untracked_diff, commit_editor, commit_title_max_length, date_style, default_width, diff_stats (+12 more)
 
-### Community 1096 - "PromptLevel"
-Cohesion: 0.07
-Nodes (15): Entity<V>, fallback_prompt_renderer(), FallbackPromptRenderer, PromptBuilder, Custom, Default, PromptHandle, PromptResponse (+7 more)
+### Community 1096 - "ui_prompt.rs"
+Cohesion: 0.14
+Nodes (6): PromptResponse, init(), markdown_style(), process_settings(), zed_prompt_renderer(), ZedPromptRenderer
 
 ### Community 1097 - "TextRenderer_Impl"
-Cohesion: 0.15
-Nodes (7): apply_related_actions(), cancel_flycheck_action(), clear_flycheck_action(), go_to_parent_module(), is_rust_language(), open_docs(), run_flycheck_action()
+Cohesion: 0.14
+Nodes (9): test_client_can_query_lsp_ext(), apply_related_actions(), cancel_flycheck_action(), clear_flycheck_action(), expand_macro_recursively(), go_to_parent_module(), is_rust_language(), open_docs() (+1 more)
 
 ### Community 1098 - "PreviewBackend"
-Cohesion: 0.10
-Nodes (10): Right, Preview, PreviewBackend, PreviewSource, Buffer, Message, Path, Symbol (+2 more)
+Cohesion: 0.16
+Nodes (4): Right, Preview, PreviewBackend, Picker<D>
 
 ### Community 1099 - "visual_tests.rs"
-Cohesion: 0.19
-Nodes (20): assert_or_update_baseline(), assert_screenshot_matches(), capture_and_save_screenshot(), compare_screenshots(), create_test_image(), init_visual_test(), load_image(), open_test_workspace() (+12 more)
+Cohesion: 0.17
+Nodes (21): assert_or_update_baseline(), assert_screenshot_matches(), capture_and_save_screenshot(), compare_screenshots(), create_test_image(), default_window_size(), init_visual_test(), load_image() (+13 more)
 
-### Community 1100 - "Fs"
-Cohesion: 0.01
-Nodes (213): init(), probe_read_error(), spawn_watcher(), UserAgentsMd, UserAgentsMdState, Empty, Error, Loaded (+205 more)
+### Community 1100 - "rules_to_skills_migration.rs"
+Cohesion: 0.04
+Nodes (66): BuiltInPrompt, CommitMessage, GlobalPromptStore, init(), MetadataCache, PromptId, BuiltIn, User (+58 more)
 
 ### Community 1101 - "UiDensity"
-Cohesion: 0.10
-Nodes (17): ThemeFamilyContent, deserialize_user_theme(), load_bundled_themes(), load_user_theme(), refine_theme_family(), bundled_theme(), contrast(), vega_dark() (+9 more)
+Cohesion: 0.20
+Nodes (10): ThemeFamilyContent, deserialize_user_theme(), load_user_theme(), refine_theme_family(), bundled_theme(), contrast(), vega_dark(), vega_dark_is_the_default_dark_theme() (+2 more)
 
 ### Community 1102 - "Task"
-Cohesion: 0.11
-Nodes (36): search, button, case_sensitive, center_on_match, include_ignored, regex, search_on_type, whole_word (+28 more)
+Cohesion: 0.15
+Nodes (28): apply_to_local(), different_keys_changed_on_each_side_merge(), find_secret(), first_upload_is_scrubbed(), fresh_machine_takes_everything_from_github(), ignored_settings_are_not_uploaded_and_not_removed_from_github(), ignored_settings_stay_as_they_are_on_both_sides(), is_private_key() (+20 more)
 
 ### Community 1103 - "Status"
-Cohesion: 0.14
-Nodes (17): extract_pull_request_link(), extract_url(), format_output(), RemoteAction, Fetch, Pull, Push, SuccessMessage (+9 more)
+Cohesion: 0.18
+Nodes (18): extract_pull_request_link(), extract_url(), format_output(), PULL_REQUEST_HINTS, RemoteAction, Fetch, Pull, Push (+10 more)
 
 ### Community 1104 - "Transform"
-Cohesion: 0.18
+Cohesion: 0.19
 Nodes (7): derive_inspector_reflection(), extract_cfg_attributes(), extract_doc_comment(), generate_reflected_trait(), is_called_from_gpui_crate(), MacroExpander, parse_expanded_items()
 
+### Community 1105 - "ItemSummary"
+Cohesion: 0.28
+Nodes (3): Anchor, ItemSummary, Range<Anchor>
+
 ### Community 1106 - "SessionActivity"
-Cohesion: 0.10
-Nodes (7): ForegroundActivity, Idle, RequiresAction, Running, Unconfirmed, Unknown, SessionActivity
+Cohesion: 0.07
+Nodes (21): ForegroundActivity, Idle, RequiresAction, Running, Unconfirmed, Unknown, SessionActivity, init_test() (+13 more)
 
 ### Community 1107 - ".new"
 Cohesion: 0.20
 Nodes (12): HighlightArguments, HighlightStyleData, ItemsDisplayMode, Outline, Search, SearchData, SearchEntry, SearchKind (+4 more)
 
-### Community 1108 - "ScrollHandle"
-Cohesion: 0.11
-Nodes (5): ScrollAnchor, ScrollHandle, render_feature_flags_page(), render_flag_row(), render_flag_variants()
+### Community 1108 - "pages/feature_flags.rs"
+Cohesion: 0.36
+Nodes (3): render_feature_flags_page(), render_flag_row(), render_flag_variants()
 
 ### Community 1109 - "KeyTest"
-Cohesion: 0.29
-Nodes (6): KeyTest, LoadTask, test_cached_miss_and_explicit_retry(), test_deferred_mutations_follow_url_identity(), test_disabled_gate_and_superseded_loads(), test_store_cancels_stale_read()
+Cohesion: 0.31
+Nodes (5): KeyTest, LoadTask, test_cached_miss_and_explicit_retry(), test_deferred_mutations_follow_url_identity(), test_store_cancels_stale_read()
 
-### Community 1110 - "PromptEditor"
-Cohesion: 0.14
-Nodes (7): GutterButtonIntent, SetBookmark, SetBreakpoint, GutterButtonTooltip, PromptEditor, .MAX_LINES, PromptEditorCallback
-
-### Community 1111 - "fuzzy/src/matcher.rs"
-Cohesion: 0.12
-Nodes (13): ADDITIONAL_DISTANCE_PENALTY, BASE_DISTANCE_PENALTY, match_single_path_query(), match_unicode_path_entries(), Matcher<'a>, MIN_DISTANCE_PENALTY, test_get_last_positions(), test_lowercase_longer_than_uppercase() (+5 more)
+### Community 1110 - "handle_from"
+Cohesion: 0.25
+Nodes (4): construct_initial_buffer_versions_map(), handle_from(), InitialBufferVersionsMap, refresh_enabled_in_any_buffer()
 
 ### Community 1112 - "integration/trusted_worktrees.rs"
 Cohesion: 0.33
@@ -6566,40 +6343,40 @@ Cohesion: 0.10
 Nodes (19): Avoid, Bad, Core Messages, Core Voice, Examples, Fixed, Good, Invocation (+11 more)
 
 ### Community 1116 - "name"
-Cohesion: 0.11
-Nodes (25): needs, runs-on, steps, timeout-minutes, needs, runs-on, steps, if (+17 more)
+Cohesion: 0.26
+Nodes (20): steps, steps, steps, steps, steps, steps, steps, steps (+12 more)
 
 ### Community 1117 - "SpringTarget"
 Cohesion: 0.14
 Nodes (4): bool, Pixels, Rems, SpringTarget
 
 ### Community 1118 - "vsync.rs"
-Cohesion: 0.05
-Nodes (25): current_platform(), linux_platform(), wait_for_clipboard_handovers(), bit_is_set(), bit_is_set_in_vec(), button_or_scroll_from_event_detail(), ButtonOrScroll, Button (+17 more)
-
-### Community 1119 - "SvgRenderer"
-Cohesion: 0.25
-Nodes (16): AccentColor, cyclic_subgraphs_do_not_crash(), er_multibyte_attribute_does_not_crash(), mermaid_diagram_with_mixed_weight_combining_marks_does_not_panic(), render_to_svg(), svg_renderer(), accent_colors_auto_applied_to_nodes(), check_svg_issues() (+8 more)
+Cohesion: 0.15
+Nodes (6): DEFAULT_VSYNC_INTERVAL, get_dwm_interval(), QPC_TICKS_PER_SECOND, retrieve_duration(), VSYNC_INTERVAL_THRESHOLD, VSyncProvider
 
 ### Community 1120 - "sqlez/src/migrations.rs"
 Cohesion: 0.16
 Nodes (7): arrows_move_the_cursor(), bind_keys(), external_writes_clamp_the_cursor(), Harness, setup(), sibling_inputs_are_isolated(), typing_updates_the_shared_string()
 
-### Community 1122 - "State"
-Cohesion: 0.13
-Nodes (10): SignInState, Authorizing, Idle, PersistingCredentials, State, test_cancel_sign_in_drops_pending_task(), test_initial_load_restores_persisted_credentials(), test_sign_in_task_remains_alive_while_persisting_credentials() (+2 more)
+### Community 1121 - "LspButton"
+Cohesion: 0.10
+Nodes (15): ActiveEditor, health_status(), LanguageServerState, LspButton, PROCESS_MEMORY_CACHE_DURATION, ProcessMemoryCache, remove_server_does_not_touch_binary_statuses(), remove_server_drops_health_entry_for_id() (+7 more)
+
+### Community 1122 - "assert_has_syntax_errors"
+Cohesion: 0.36
+Nodes (9): assert_has_syntax_errors(), c_lang(), stack_paired_brackets(), test_bracket_ranges_deduplicate_overlapping_patterns(), test_bracket_ranges_do_not_repair_unbalanced_error_nodes(), test_bracket_ranges_keep_chunk_spanning_pairs_amid_errors(), test_bracket_ranges_keep_pairs_straddling_a_chunk_boundary_amid_errors(), test_c_bracket_ranges_in_error_nodes() (+1 more)
+
+### Community 1123 - "Version"
+Cohesion: 0.36
+Nodes (3): read_package_installed_version(), SystemNode, .MIN_VERSION
 
 ### Community 1124 - "zlog.rs"
 Cohesion: 0.10
 Nodes (23): init_env_filter(), init_output_stdout(), get_env_config(), init(), init_test(), crate_name!, debug!, default_logger! (+15 more)
 
-### Community 1125 - ".details_for_entry"
-Cohesion: 0.11
-Nodes (11): entry_diagnostic_aware_icon_decoration_and_color(), entry_diagnostic_aware_icon_name_and_color(), DiagnosticCount, DiagnosticMark, OnChevron, OnIcon, Standalone, DraggedProjectEntryView (+3 more)
-
-### Community 1126 - ".map"
-Cohesion: 0.24
-Nodes (6): assert_set_eq!, set_eq!, SetEqError, LeftMissing, RightMissing, SetEqError<T>
+### Community 1125 - "project_panel.rs"
+Cohesion: 0.02
+Nodes (59): GoToDiagnostic, GoToPreviousDiagnostic, Color, entry_diagnostic_aware_icon_decoration_and_color(), entry_diagnostic_aware_icon_name_and_color(), ContextMenuPlacement, AtEntry, AtMouse (+51 more)
 
 ### Community 1127 - "blob_store"
 Cohesion: 0.11
@@ -6613,21 +6390,17 @@ Nodes (19): description, properties, type, person, description, format, type, de
 Cohesion: 0.25
 Nodes (7): ContextCompactionStatus, Canceled, Completed, Failed, InProgress, Other, ContextCompactionUpdate
 
-### Community 1130 - "SubagentCardId"
-Cohesion: 0.29
-Nodes (3): SubagentCardId, SessionMessage, ToolCall
+### Community 1130 - "search"
+Cohesion: 0.25
+Nodes (8): search, button, case_sensitive, center_on_match, include_ignored, regex, search_on_type, whole_word
 
 ### Community 1131 - "zed_actions/src/lib.rs"
-Cohesion: 0.04
-Nodes (49): AcpRegistry, AGENT_SANDBOX_SETTINGS_PATH, AGENT_SKILLS_SETTINGS_PATH, ChangeKeybinding, ConfiguredRoots, ConflictContent, DecreaseBufferFontSize, DecreaseUiFontSize (+41 more)
+Cohesion: 0.05
+Nodes (42): AcpRegistry, AGENT_SANDBOX_SETTINGS_PATH, AGENT_SKILLS_SETTINGS_PATH, ChangeKeybinding, ConfiguredRoots, DecreaseBufferFontSize, DecreaseUiFontSize, ExtensionCategoryFilter (+34 more)
 
-### Community 1132 - "StreamEvent"
-Cohesion: 0.09
-Nodes (25): IncompleteDetails, IncompleteReason, ContentFilter, MaxOutputTokens, Response, ResponseError, ResponseOutputContent, OutputText (+17 more)
-
-### Community 1133 - "RelPathBuf"
-Cohesion: 0.13
-Nodes (3): Arc<RelPath>, RelPathBuf, test_pop()
+### Community 1133 - "RelPath"
+Cohesion: 0.06
+Nodes (10): &'a RelPath, Arc<RelPath>, Cow<'a, RelPath>, RelPath, RelPathAncestors, RelPathAncestors<'a>, RelPathBuf, RelPathComponents<'a> (+2 more)
 
 ### Community 1134 - "Connection"
 Cohesion: 0.11
@@ -6665,9 +6438,13 @@ Nodes (13): AutomatedChangeFailure, AuthorMismatch, InvalidSignature, MissingCom
 Cohesion: 0.12
 Nodes (17): date_style, git, blame, date_format, disable_git, enable_diff, enable_status, git_gutter (+9 more)
 
+### Community 1143 - "CompletionReference"
+Cohesion: 0.29
+Nodes (8): CompletionReference, Prompt, Resource, PromptReference, PromptReferenceType, Prompt, Resource, ResourceReference
+
 ### Community 1144 - "simulated_crates_io_client.rs"
-Cohesion: 0.24
-Nodes (6): PerfIssue, Action, Background, Foreground, Reporter, ReportMade
+Cohesion: 0.19
+Nodes (7): DisplayTasks, PerfIssue, Action, Background, Foreground, Reporter, ReportMade
 
 ### Community 1145 - "HTML"
 Cohesion: 0.40
@@ -6681,21 +6458,21 @@ Nodes (9): clean_markdown_tables(), html_to_markdown(), normalize_table_row(), t
 Cohesion: 0.21
 Nodes (12): AGENT_KEY, ALWAYS_ALLOW_TOOL_ACTIONS, DEFAULT_KEY, DEFAULT_MODE_KEY, migrate_agent_tool_permissions(), migrate_agent_with_profiles(), migrate_default_mode_to_default(), migrate_one() (+4 more)
 
-### Community 1148 - "from_pixels_constructor/before.rs"
-Cohesion: 0.09
-Nodes (15): Blit, BlitA8ToRgb24, BlitMemcpy, BlitRgb24ToA8, BlitRgb24ToRgba32, BlitRgba32ToRgb24, Canvas, Format (+7 more)
+### Community 1148 - "Format"
+Cohesion: 0.22
+Nodes (5): Canvas, Format, A8, Rgb24, Rgba32
 
 ### Community 1149 - "content.rs"
-Cohesion: 0.17
-Nodes (20): accepts_empty_icons_without_discarding_resource_data(), annotations(), annotations_from_v1(), annotations_to_v1(), can_convert_to_v1(), from_v1(), legacy_prompt_conversion_preserves_envelope_and_rejects_unsupported_content(), meta() (+12 more)
-
-### Community 1150 - "git_ui_core.rs"
-Cohesion: 0.22
-Nodes (9): BranchPickerBuilder, BranchPickerBuilderGlobal, build_branch_picker(), FileHistoryOpener, FileHistoryOpenerGlobal, GitPickerPopover, open_file_history(), set_branch_picker_builder() (+1 more)
+Cohesion: 0.08
+Nodes (28): SelectedPermissionOutcome, SelectedPermissionParams, Terminal, PermissionOptionChoice, PermissionOptions, Dropdown, DropdownWithPatterns, accepts_empty_icons_without_discarding_resource_data() (+20 more)
 
 ### Community 1152 - "Procedure"
 Cohesion: 0.23
 Nodes (16): assert_definitions(), assert_related_files(), assert_related_files_impl(), assert_related_files_with_orders(), format_excerpts(), init_test(), setup_fake_lsp(), test_assemble_excerpts() (+8 more)
+
+### Community 1153 - "ToolCallAccumulator"
+Cohesion: 0.54
+Nodes (3): AmbiguousToolCallChunk, RawToolCall, ToolCallAccumulator
 
 ### Community 1154 - "Swift"
 Cohesion: 0.40
@@ -6706,7 +6483,7 @@ Cohesion: 0.40
 Nodes (5): Initialization Options, Settings Options, Specifying location of TypeScript SDK, Using the Tailwind CSS Language Server with Vue, Vue
 
 ### Community 1156 - "subagents.rs"
-Cohesion: 0.19
+Cohesion: 0.25
 Nodes (8): absolute_path_from_v1(), association_fields_follow_patch_semantics(), directories_follow_patch_semantics_and_inherit_independently(), state_from_v1(), update_from_v1(), v1_directories_must_be_absolute(), v1_updates_convert_fields_and_state_snapshots(), v2_update()
 
 ### Community 1157 - "DiagnosticsToolbarEditor"
@@ -6714,36 +6491,40 @@ Cohesion: 0.17
 Nodes (12): { Buffer }, fs, handleBuffer(), handleMessage(), makeError(), { once }, path, Prettier (+4 more)
 
 ### Community 1158 - "editor/src/persistence.rs"
-Cohesion: 0.18
-Nodes (5): EditorDb, .MIGRATIONS, .NAME, MAX_QUERY_PLACEHOLDERS, SerializedEditor
+Cohesion: 0.14
+Nodes (7): EditorDb, .MIGRATIONS, .NAME, MAX_QUERY_PLACEHOLDERS, SerializedEditor, test_save_and_get_file_folds(), test_save_and_get_serialized_editor()
 
 ### Community 1159 - "MultiBufferPoint"
 Cohesion: 0.11
 Nodes (17): Architecture, Blocking IPC-socket escapes (seccomp), Code design, `HostFilesystemLocation`, Implementation, Linux, MacOS, Overview (+9 more)
 
-### Community 1160 - "ChatGptModel"
-Cohesion: 0.12
-Nodes (12): ChatGptModel, Discovered, Gpt54, Gpt54Mini, Gpt55, Gpt56Luna, Gpt56Sol, Gpt56Terra (+4 more)
+### Community 1160 - "src/openai_subscribed.rs"
+Cohesion: 0.03
+Nodes (81): CatalogModel, ChatGptModel, Discovered, Gpt54, Gpt54Mini, Gpt55, Gpt56Luna, Gpt56Sol (+73 more)
 
-### Community 1161 - "tests/command.rs"
-Cohesion: 0.18
-Nodes (20): install_helper(), launcher(), shell_launcher(), test_remote_command_inherits_default_shell_startup_environment(), test_remote_command_inherits_shell_environment(), test_remote_command_launcher_expands_home_in_nushell(), test_remote_command_launcher_expands_home_in_shell(), test_remote_command_launcher_quoting_in_tcsh() (+12 more)
+### Community 1161 - "resolve.rs"
+Cohesion: 0.12
+Nodes (17): components(), is_procfs(), MAX_SYMLINKS, Mode, Entry, Object, open_path(), prepend() (+9 more)
 
 ### Community 1162 - "Feature"
 Cohesion: 0.10
 Nodes (20): Feature, AgentClaude, AgentCodex, AgentGemini, ExtensionBasedpyright, ExtensionRuff, ExtensionTailwind, ExtensionTy (+12 more)
 
-### Community 1164 - "Vector"
-Cohesion: 0.10
-Nodes (10): Vector, VectorName, BusinessStamp, Grid, ProTrialStamp, ProUserStamp, StudentStamp, VipStamp (+2 more)
+### Community 1163 - "postprocess.rs"
+Cohesion: 0.32
+Nodes (3): extract_svg_id(), ReaderIter, ReaderIter<'a>
+
+### Community 1164 - "m_2026_08_26/settings.rs"
+Cohesion: 0.32
+Nodes (5): migrate_one(), NEW_KEY, OLD_KEY, PANEL_KEYS, rename_folder_icons_to_folder_indicator()
+
+### Community 1165 - "EditPredictionContextView"
+Cohesion: 0.17
+Nodes (3): init(), LineEndingSelector, LineEndingSelectorDelegate
 
 ### Community 1166 - "Forgejo"
 Cohesion: 0.21
 Nodes (7): derive_spacing(), DynamicSpacingInput, DynamicSpacingValue, Single, Tuple, derive_dynamic_spacing(), derive_register_component()
-
-### Community 1167 - "StyledTypography"
-Cohesion: 0.13
-Nodes (9): E, StyledTypography, TextSize, Default, Editor, Large, Small, Ui (+1 more)
 
 ### Community 1168 - "SecurityModal"
 Cohesion: 0.11
@@ -6766,16 +6547,16 @@ Cohesion: 0.12
 Nodes (18): defaults, if, outputs, runs-on, timeout-minutes, defaults, run, jobs (+10 more)
 
 ### Community 1173 - "telemetry_snapshot.rs"
-Cohesion: 0.42
-Nodes (3): GitState, TelemetrySnapshot, TelemetryWorktreeSnapshot
+Cohesion: 0.36
+Nodes (4): LocalRepositoryState, GitState, TelemetrySnapshot, TelemetryWorktreeSnapshot
 
-### Community 1174 - "e2e_tests.rs"
-Cohesion: 0.05
-Nodes (65): accumulates_tool_calls_without_indices_by_id(), adopts_a_late_id_for_the_call_at_the_same_index(), adopts_a_late_id_for_the_only_anonymous_call_without_an_index(), AmbiguousToolCallChunk, chat_refusals_preserve_reason_without_explanation(), ChatCompletionEventMapper, ChoiceDelta, chunk_without_choices_or_usage_maps_to_no_events() (+57 more)
+### Community 1174 - "chat_completion.rs"
+Cohesion: 0.14
+Nodes (15): error_takes_precedence_over_event_payload(), expect_event(), null_error_field_is_not_an_error(), parse(), parses_chunk_without_choices(), parses_empty_usage_object(), parses_error_envelope(), parses_explicit_nulls_for_non_optional_fields() (+7 more)
 
 ### Community 1175 - "Project"
-Cohesion: 0.26
-Nodes (3): create_remote_shell(), Project, insert_zed_terminal_env()
+Cohesion: 0.25
+Nodes (5): create_remote_shell(), init_remote_client(), Project, remote_exec_in_shell_uses_non_interactive_command(), remote_terminal_launch_uses_interactive_command()
 
 ### Community 1176 - "Taboo Phrases"
 Cohesion: 0.12
@@ -6790,16 +6571,16 @@ Cohesion: 0.12
 Nodes (16): Async usage, AWS Bedrock, Contributing, Default Headers, Documentation, Google Vertex, Handling errors, License (+8 more)
 
 ### Community 1179 - "Refinement"
-Cohesion: 0.23
-Nodes (4): Cascade, Cascade<S>, CascadeSlot, Refineable
+Cohesion: 0.18
+Nodes (5): Cascade, Cascade<S>, CascadeSlot, IsEmpty, Refineable
 
 ### Community 1180 - "SETTINGS_NESTED_KEY_VALUE_PATTERN"
-Cohesion: 0.16
-Nodes (12): comment_duplicated_agent(), SETTINGS_PATTERNS, is_project_panel_open_file_on_paste(), rename_open_file_on_paste_setting(), replace_open_file_on_paste_setting_value(), SETTINGS_PATTERNS, is_enable_preview_from_code_navigation(), rename_enable_preview_from_code_navigation_setting() (+4 more)
+Cohesion: 0.12
+Nodes (16): replace_tab_close_button_setting_key(), replace_tab_close_button_setting_value(), SETTINGS_PATTERNS, rename_assistant(), rename_edit_prediction_assistant(), SETTINGS_PATTERNS, is_enable_preview_from_code_navigation(), rename_enable_preview_from_code_navigation_setting() (+8 more)
 
-### Community 1182 - "cpp.rs"
-Cohesion: 0.15
-Nodes (10): semantic_token_rules(), test_cpp_autoindent_access_specifier(), test_cpp_autoindent_access_specifier_next_line(), test_cpp_autoindent_access_specifier_with_method_bodies(), test_cpp_autoindent_basic(), test_cpp_autoindent_consecutive_access_specifiers(), test_cpp_autoindent_if_else(), test_cpp_autoindent_indented_access_specifiers() (+2 more)
+### Community 1182 - ".toggle_commit_editor"
+Cohesion: 0.38
+Nodes (3): register(), test_fill_commit_editor_toggle(), test_toggle_commit_editor_collapsed()
 
 ### Community 1183 - "Target"
 Cohesion: 0.18
@@ -6813,29 +6594,33 @@ Nodes (8): AgentModelId, ProtocolErrorInfo<'a>, LanguageModels, model_id_to_sele
 Cohesion: 0.21
 Nodes (9): http_connect_request(), rejects_domains_containing_control_bytes(), socks4_connect_request(), socks4_rejects_ipv6_targets(), socks4_rejects_user_id_containing_nul(), socks5_auth_request(), spec(), Credentials (+1 more)
 
-### Community 1186 - "copy_button.rs"
-Cohesion: 0.16
-Nodes (3): COPIED_STATE_DURATION, CopyButton, CopyButtonState
+### Community 1186 - ".map_stream"
+Cohesion: 0.29
+Nodes (3): ResponseStreamResult, Err, Ok
 
-### Community 1187 - "InlineValueLocation"
-Cohesion: 0.32
-Nodes (7): InlineValueLocation, VariableLookupKind, Expression, Variable, VariableScope, Global, Local
+### Community 1187 - "project/src/project.rs"
+Cohesion: 0.02
+Nodes (75): InlineValueLocation, VariableLookupKind, Expression, Variable, VariableScope, Global, Local, CompletionBuilder (+67 more)
 
 ### Community 1188 - "zed_urls.rs"
 Cohesion: 0.21
 Nodes (9): NoSenderError, Changed, channel(), Receiver, Receiver<T>, Sender, Snapshot, State (+1 more)
 
-### Community 1189 - ".new"
-Cohesion: 0.32
-Nodes (4): init_test(), test_watcher_initially_opensource_and_then_deleted(), test_watcher_single_file(), test_watcher_updates_on_changes()
+### Community 1189 - "m_2025_01_02/settings.rs"
+Cohesion: 0.43
+Nodes (3): replace_deprecated_settings_values(), SETTINGS_PATTERNS, UPDATED_SETTINGS
 
 ### Community 1190 - ".refresh_folding_ranges"
 Cohesion: 0.12
 Nodes (17): description, items, type, packageExportsFallback, packageImportsFallback, $ref, description, items (+9 more)
 
-### Community 1194 - "ModelSelectorListItem"
-Cohesion: 0.14
-Nodes (4): ModelIcon, Name, Path, ModelSelectorListItem
+### Community 1191 - "dismissevent"
+Cohesion: 0.07
+Nodes (10): StatusToast, ActiveToast, DEFAULT_TOAST_DURATION, DismissTimer, Entity<V>, MINIMUM_RESUME_DURATION, ToastAction, ToastLayer (+2 more)
+
+### Community 1194 - "m_2025_11_12/settings.rs"
+Cohesion: 0.67
+Nodes (4): is_project_panel_open_file_on_paste(), rename_open_file_on_paste_setting(), replace_open_file_on_paste_setting_value(), SETTINGS_PATTERNS
 
 ### Community 1195 - "ListEntry"
 Cohesion: 0.09
@@ -6846,16 +6631,16 @@ Cohesion: 0.15
 Nodes (13): title_bar, button_layout, open_menus_on_hover, show, show_branch_name, show_branch_status_icon, show_menus, show_onboarding_banner (+5 more)
 
 ### Community 1198 - "Crate"
-Cohesion: 0.20
+Cohesion: 0.19
 Nodes (3): cell_content(), TABLE_Y_PADDING_MULTIPLE, TableView
 
-### Community 1199 - "Editor"
-Cohesion: 0.18
-Nodes (6): assert_code_lens_block_count(), build_code_lens_renderer(), Editor, schedule_task(), try_handle_client_command(), try_show_references()
+### Community 1199 - "src/code_lens.rs"
+Cohesion: 0.05
+Nodes (51): assert_code_lens_block_count(), build_code_lens_renderer(), code_lens_assertion_text(), CODE_LENS_SEPARATOR, CodeLensBlock, CodeLensItem, CodeLensLine, CodeLensState (+43 more)
 
-### Community 1200 - "shell.rs"
-Cohesion: 0.14
-Nodes (17): shell_from_proto(), shell_to_proto(), does_not_quote_sole_command_only(), non_interactive_omits_interactive_flag(), redirect_stdin_to_dev_null_fish(), redirect_stdin_to_dev_null_precedence(), redirect_stdin_to_dev_null_preserves_heredoc(), test_literal_args_skip_variable_substitution() (+9 more)
+### Community 1200 - "Using a debugger"
+Cohesion: 0.29
+Nodes (7): Background, Debugging Panics and Crashes, Release build profile considerations, Running Zed with a shell debugger GDB/LLDB, Usage with Zed, Using a debugger, Using Zed's built-in debugger
 
 ### Community 1201 - "Gitea"
 Cohesion: 0.12
@@ -6865,9 +6650,9 @@ Nodes (17): Approval Prompts {#approval-prompts}, Choosing What to Approve {#cho
 Cohesion: 0.12
 Nodes (17): Actions, Contexts, Disabling a binding, Forward keys to terminal, Key bindings, Keybinding Syntax, Keymap Editor, Linux (+9 more)
 
-### Community 1203 - "EscapeAction"
-Cohesion: 0.22
-Nodes (8): EscapeAction, DoubleNewline, Nbsp, PassThrough, PrefixBackslash, MarkdownEscaper, .TAB_SIZE, test_escape_output_len_matches_precomputed()
+### Community 1203 - "OwnerAddition"
+Cohesion: 0.33
+Nodes (6): parse_owner_additions(), OwnerAddition, Other, TeamAdded, UserAlreadyInvited, UserInvited
 
 ### Community 1204 - "tangled.rs"
 Cohesion: 0.12
@@ -6894,24 +6679,32 @@ Cohesion: 0.12
 Nodes (15): 1. Gather context, 2. Reproduce the script's setup locally, 3. Check for missing prerequisite cherry-picks, 4. Resolve the conflicts manually, 5. Validate, 6. Finish the cherry-pick, 7. Push and open the PR, Final report to the user (+7 more)
 
 ### Community 1210 - "PanelEntry"
-Cohesion: 0.09
-Nodes (13): CachedEntry, file_name(), FsChildren, FsEntry, Directory, File, FsEntryExternalFile, GenerationState (+5 more)
+Cohesion: 0.07
+Nodes (12): BufferExcerpts, file_name(), FoldedDirsEntry, FsEntry, Directory, File, FsEntryDirectory, FsEntryExternalFile (+4 more)
 
 ### Community 1211 - "devcontainer_api.rs"
-Cohesion: 0.06
-Nodes (51): apply_devcontainer_template(), check_for_docker(), DevContainerApply, DevContainerUpFailed, expand_template_options(), find_configs_in_snapshot(), get_backup_project_name(), init_test() (+43 more)
+Cohesion: 0.11
+Nodes (28): check_for_docker(), DevContainerApply, DevContainerConfig, DevContainerUpFailed, find_configs_in_snapshot(), find_devcontainer_configs(), get_backup_project_name(), init_test() (+20 more)
 
 ### Community 1212 - "archive.rs"
 Cohesion: 0.19
 Nodes (13): archive_path_is_normal(), assert_file_content(), build_zip_with_entries(), compress_zip(), extract_seekable_zip(), extract_zip(), make_test_data(), read_archive() (+5 more)
+
+### Community 1213 - "mcp_message_content_to_acp_content_block"
+Cohesion: 0.33
+Nodes (3): mcp_annotations_to_acp(), mcp_message_content_to_acp_content_block(), test_mcp_prompt_content_preserves_annotations()
 
 ### Community 1214 - "ProtoType"
 Cohesion: 0.17
 Nodes (5): dap_types::EvaluateArgumentsContext, dap_types::OutputEventGroup, dap_types::ScopePresentationHint, dap_types::Source, Vec<T>
 
 ### Community 1215 - "linked_editing_ranges.rs"
-Cohesion: 0.13
+Cohesion: 0.15
 Nodes (8): LinkedEditingRanges, LinkedEdits, refresh_linked_ranges(), test_linked_edits_backspace(), test_linked_edits_delete(), test_linked_edits_push_and_apply(), test_linked_edits_selection(), UPDATE_DEBOUNCE
+
+### Community 1216 - "InsertTextFormat"
+Cohesion: 0.47
+Nodes (3): lsp::InsertTextFormat, lsp::InsertTextFormat, InsertTextFormat
 
 ### Community 1217 - "scroll/actions.rs"
 Cohesion: 0.19
@@ -6921,21 +6714,21 @@ Nodes (6): NextScrollCursorCenterTopBottom, Bottom, Center, Top, SCROLL_CENTER_T
 Cohesion: 0.13
 Nodes (11): AppState, main(), quit(), run_example(), set_app_menus(), SetMenus, start(), toggle_check() (+3 more)
 
+### Community 1219 - "Tab"
+Cohesion: 0.06
+Nodes (11): TabBar, END_TAB_SLOT_SIZE, START_TAB_SLOT_SIZE, Tab, TabCloseSide, End, Start, TabPosition (+3 more)
+
 ### Community 1220 - "AgentSessionList"
-Cohesion: 0.10
-Nodes (9): AgentSessionInfo, AgentSessionInfoUpdate, V1, V2, AgentSessionList, AgentSessionListRequest, AgentSessionListResponse, session_info_id_preserves_backing_arc_and_legacy_serialization() (+1 more)
+Cohesion: 0.08
+Nodes (13): AgentSessionInfo, AgentSessionInfoUpdate, V1, V2, AgentSessionList, AgentSessionListRequest, AgentSessionListResponse, SessionListUpdate (+5 more)
 
-### Community 1223 - ".is_empty"
-Cohesion: 0.13
-Nodes (4): RelPathAncestors<'a>, RelPathComponents, RelPathComponents<'a>, test_rel_path_components()
+### Community 1223 - "capture_ref"
+Cohesion: 0.53
+Nodes (5): capture_ref(), flattened(), test_flatten_capture_regions_clips_to_the_requested_range(), test_flatten_capture_regions_with_nested_captures(), test_flatten_capture_regions_with_overlapping_captures()
 
-### Community 1224 - ".clone"
-Cohesion: 0.13
-Nodes (18): act_on_range(), assert_active_item(), select_range(), start_matching_lines(), test_command_gf(), test_command_matching_lines_after_edit(), test_command_matching_lines_after_excerpt_removal(), test_command_matching_lines_after_fold_change() (+10 more)
-
-### Community 1225 - "Message"
-Cohesion: 0.16
-Nodes (4): Message, Batch, BatchingLlmClient, message_content_to_string()
+### Community 1225 - "ExtensionCapabilityContent"
+Cohesion: 0.33
+Nodes (5): ExtensionCapabilityContent, DownloadFile, NpmInstallPackage, ProcessExec, ExtensionSettingsContent
 
 ### Community 1226 - "BaseKeymapSelectorDelegate"
 Cohesion: 0.25
@@ -6945,17 +6738,13 @@ Nodes (7): History and restore, How changes merge, Settings Sync, Turn it off or
 Cohesion: 0.25
 Nodes (8): Advanced Configuration/JDTLS initialization Options, Debugging, Extension Install, Install OpenJDK, Java, Launch Scripts (aka Tasks) in Windows, Quick start and configuration, See also
 
-### Community 1230 - "run_grep_tool"
-Cohesion: 0.25
-Nodes (20): default_context_lines(), default_max_ancestor_lines(), extract_paths_from_results(), init_test(), run_grep_tool(), setup_syntax_test(), test_grep_context_options(), test_grep_function_args_and_body() (+12 more)
-
 ### Community 1232 - ".run"
-Cohesion: 0.28
-Nodes (13): create_test_skill(), init_test(), stub_body_resolver(), test_skill_tool_auth_context_uses_skill_file_path(), test_skill_tool_denial_returns_error(), test_skill_tool_neutralizes_envelope_tags_in_malicious_skill(), test_skill_tool_output_wraps_in_skill_content(), test_skill_tool_passes_through_legitimate_html() (+5 more)
+Cohesion: 0.13
+Nodes (27): create_test_skill(), init_test(), LanguageModelToolResultContent, neutralize_envelope_tags(), render_skill_envelope(), SkillBodyResolver, SkillsResolver, SkillTool (+19 more)
 
-### Community 1233 - "RequestId"
-Cohesion: 0.16
-Nodes (8): RequestId, Int, Str, McpServer, RawRequest, RegisteredTool, RequestHandler, ToolHandler
+### Community 1233 - "Customizing Token Colors"
+Cohesion: 0.33
+Nodes (6): Customizing Token Colors, Example: Disabling a Token Type, Example: Highlighting Unresolved References, Example: Highlighting Unsafe Code, Example: Using Theme Styles, Rule Structure
 
 ### Community 1234 - "m_2026_04_10/settings.rs"
 Cohesion: 0.24
@@ -6993,21 +6782,17 @@ Nodes (15): concurrency, cancel-in-progress, group, defaults, run, env, CARGO_TE
 Cohesion: 0.24
 Nodes (7): BLOCKING_FN_PATHS, BLOCKING_METHODS, BlockingIoOnForeground, is_blocking_call(), is_gpui_foreground_type(), is_in_foreground_fn(), owner_has_foreground_param()
 
-### Community 1244 - "ResponseInputItem"
-Cohesion: 0.10
-Nodes (21): append_reasoning_details_to_response_items(), ItemStatus, Completed, Incomplete, InProgress, ResponseFunctionOutput, Content, Text (+13 more)
-
 ### Community 1245 - "provide_inline_values"
 Cohesion: 0.12
 Nodes (15): P01 — First build, P02 — GitHub repo, P03 — Rebrand, P04 — Cut ties to zed.dev services, P05 — Remove Zed account UI, P06 — VEGA Dark theme, P07 — AI onboarding, P08 — AI defaults (+7 more)
 
 ### Community 1247 - "ActionRegistry"
-Cohesion: 0.15
-Nodes (4): ActionBuilder, ActionData, ActionRegistry, MacroActionData
+Cohesion: 0.08
+Nodes (11): ActionBuilder, ActionBuildError, BuildError, NotFound, ActionData, ActionRegistry, dyn Action, generate_list_of_all_registered_actions() (+3 more)
 
-### Community 1248 - "keybinding.rs"
-Cohesion: 0.07
-Nodes (31): icon_for_key(), Key, KeyBindingStyle, Default, Label, KeyBindingVisibility, KeyIcon, keystroke_text() (+23 more)
+### Community 1248 - "Color"
+Cohesion: 0.02
+Nodes (81): clone_and_open(), AnyIcon, AnimatedIcon, Icon, git_hosting_provider_icon(), Icon, IconSize, Custom (+73 more)
 
 ### Community 1256 - "google_ai.rs"
 Cohesion: 0.29
@@ -7021,13 +6806,17 @@ Nodes (12): ChannelVisibility, Members, Public, i32, proto::ChannelVisibility, M
 Cohesion: 0.43
 Nodes (3): KEYMAP_PATTERNS, replace_string_action(), STRING_REPLACE
 
-### Community 1264 - "m_2025_03_29/settings.rs"
-Cohesion: 0.13
-Nodes (10): replace_setting_name(), replace_setting_value(), SETTINGS_PATTERNS, migrate_drag_and_drop_selection(), SETTINGS_PATTERNS, rename_agent_font_size(), SETTINGS_PATTERNS, replace_setting_value() (+2 more)
+### Community 1261 - "path_trie.rs"
+Cohesion: 0.23
+Nodes (6): LabelPresence, KnownAbsent, Present, RootPathTrie, RootPathTrie<Label>, TriePath
 
-### Community 1266 - "AgentNotification"
-Cohesion: 0.20
-Nodes (4): AgentNotification, AgentNotificationEvent, Accepted, Dismissed
+### Community 1264 - "ThreadTitleRegenerationResult"
+Cohesion: 0.40
+Nodes (5): ThreadTitleRegenerationResult, AlreadyGenerating, NoModel, NotOpen, Started
+
+### Community 1266 - "linear_color_stop"
+Cohesion: 0.08
+Nodes (10): plan_label_markdown_style(), AgentNotification, AgentNotificationEvent, Accepted, Dismissed, linear_color_stop(), linear_gradient(), test_background_linear_gradient() (+2 more)
 
 ### Community 1267 - "channel"
 Cohesion: 0.22
@@ -7038,8 +6827,8 @@ Cohesion: 0.23
 Nodes (12): does_not_fuzzy_match_host_aliases(), falls_back_to_host_when_hostname_is_absent(), FILTERED_GIT_PROVIDER_HOSTNAMES, filters_git_provider_domains_from_hostname(), HostBlock, is_git_provider_domain(), parse_host_blocks(), parse_hosts() (+4 more)
 
 ### Community 1270 - "extension_bump.yml"
-Cohesion: 0.05
-Nodes (29): assert_logged(), CREATE_NO_WINDOW, DebugAsDisplay, defer(), Deferred, F, get_powershell(), get_windows_system_shell() (+21 more)
+Cohesion: 0.06
+Nodes (22): assert_logged(), CREATE_NO_WINDOW, DebugAsDisplay, get_powershell(), get_windows_system_shell(), log_err(), log_error_with_caller(), LogErrorFuture<F> (+14 more)
 
 ### Community 1271 - "env"
 Cohesion: 0.13
@@ -7050,8 +6839,8 @@ Cohesion: 0.13
 Nodes (15): Auto Fold Dirs, Auto Open, Auto Reveal Entries, Bold Folder Labels, Default Width, Dock, Entry Spacing, Git Status (+7 more)
 
 ### Community 1273 - "inline"
-Cohesion: 0.13
-Nodes (15): Colors not updating after changing settings, Customizing Token Colors, Default Rules, Enabling Semantic Tokens, Example: Disabling a Token Type, Example: Highlighting Unresolved References, Example: Highlighting Unsafe Code, Example: Using Theme Styles (+7 more)
+Cohesion: 0.22
+Nodes (9): Colors not updating after changing settings, Default Rules, Enabling Semantic Tokens, Inspecting Semantic Tokens, Semantic highlighting not appearing, Semantic Tokens, Standard Token Types, Theme styles not being applied (+1 more)
 
 ### Community 1274 - "CellControlType"
 Cohesion: 0.21
@@ -7086,48 +6875,52 @@ Cohesion: 0.14
 Nodes (14): inlay_hints, edit_debounce_ms, enabled, scroll_debounce_ms, show_background, show_other_hints, show_parameter_hints, show_type_hints (+6 more)
 
 ### Community 1282 - "NodeDiscoveryError"
-Cohesion: 0.11
-Nodes (15): check_node_version(), DetectError, NotInPath, Other, find_node_path(), node_output(), NodeDiscoveryError, CurrentDirectory (+7 more)
+Cohesion: 0.12
+Nodes (16): check_node_version(), find_node_path(), find_npm_path(), node_output(), NodeDiscoveryError, CurrentDirectory, InvalidVersion, NotFound (+8 more)
 
 ### Community 1284 - "rpc/src/auth.rs"
 Cohesion: 0.11
 Nodes (15): assert_printable(), EncryptionFormat, V0, V1, keypair(), oaep_sha256_padding(), PrivateKey, PublicKey (+7 more)
 
-### Community 1285 - "make_state"
-Cohesion: 0.17
-Nodes (13): fake_token_response(), FakeCredentialsProvider, get_fresh_credentials(), make_expired_credentials(), make_state(), make_state_with_credentials_provider(), test_concurrent_refresh_deduplicates(), test_fatal_refresh_clears_auth_state() (+5 more)
+### Community 1285 - "StatusMessage"
+Cohesion: 0.40
+Nodes (5): StatusMessage, Cancelled, Error, Started, Stopped
 
 ### Community 1286 - "path_range.rs"
 Cohesion: 0.50
 Nodes (4): Configuration, Dart, Formatting, Pre-requisites
 
 ### Community 1287 - "m_2026_04_10/settings.rs"
-Cohesion: 0.21
+Cohesion: 0.23
 Nodes (4): line_endings(), perf(), PerfArgs, uri()
 
 ### Community 1289 - "runners.rs"
-Cohesion: 0.11
-Nodes (21): compliance_check(), scheduled_compliance_check(), add_compliance_steps(), ComplianceContext, Release, ReleaseNonBlocking, Scheduled, DANGERBOT (+13 more)
+Cohesion: 0.22
+Nodes (14): DANGERBOT, LINUX_ARM_BUNDLER, LINUX_DEFAULT, LINUX_LARGE, LINUX_LARGE_RAM, LINUX_MEDIUM, LINUX_SMALL, LINUX_X86_BUNDLER (+6 more)
 
 ### Community 1293 - "telemetry/src/telemetry.rs"
 Cohesion: 0.14
 Nodes (13): Cleaner lifecycle for inspector state viewers / editors, Code cleanups, Consider removing special side pane rendering, Current features, Edit original code in Rust style editor, Future features, Inspector, JSON style editor undo history doesn't get reset (+5 more)
 
-### Community 1294 - "Grammar"
-Cohesion: 0.03
-Nodes (69): CodeLabelBuilder, proto_mapping!, BracketsConfig, BracketsPatternConfig, Capture, Optional, Required, DebuggerTextObject (+61 more)
+### Community 1294 - "Language"
+Cohesion: 0.01
+Nodes (145): load_config(), load_config_for_feature(), CodeLabel, CodeLabelBuilder, proto_mapping!, SymbolKind, Array, Boolean (+137 more)
 
 ### Community 1297 - "CompletionTotal"
 Cohesion: 0.40
 Nodes (5): Completion, CompletionTotal, Exact, HasMore, Unknown
 
+### Community 1298 - "DiffTarget"
+Cohesion: 0.40
+Nodes (4): DiffTarget, Staged, Uncommitted, Unstaged
+
 ### Community 1299 - "Configuring Zed"
 Cohesion: 0.30
 Nodes (7): close_delimiter(), create_error(), flatten_stream(), make_sql(), open_delimiter(), sql(), SQLITE
 
-### Community 1301 - "perf/src/main.rs"
-Cohesion: 0.16
-Nodes (15): compare_profiles(), DEFAULT_ITER_COUNT, get_tests(), hyp_binary(), hyp_profile(), ITER_COUNT_MUL, fail!, main() (+7 more)
+### Community 1301 - "SurfaceInputIndex"
+Cohesion: 0.40
+Nodes (5): SurfaceInputIndex, CbCrTexture, Surfaces, TextureSize, YTexture
 
 ### Community 1302 - "Go"
 Cohesion: 0.14
@@ -7142,7 +6935,7 @@ Cohesion: 0.14
 Nodes (14): Amazon Bedrock {#amazon-bedrock}, Bedrock Authentication {#bedrock-authentication}, Bedrock Cross-Region Inference {#bedrock-cross-region-inference}, Bedrock Custom Endpoints {#bedrock-custom-endpoints}, Bedrock Guardrails {#bedrock-guardrails}, Bedrock Mantle Models {#bedrock-mantle-models}, Custom Bedrock Mantle Models {#bedrock-mantle-custom-models}, Custom Bedrock Models {#bedrock-custom-models} (+6 more)
 
 ### Community 1305 - "run_gpui_eval"
-Cohesion: 0.20
+Cohesion: 0.18
 Nodes (7): run_gpui_eval(), if, outputs, runs-on, timeout-minutes, compliance_check, outcome
 
 ### Community 1306 - "steps"
@@ -7173,17 +6966,17 @@ Nodes (12): from_long(), from_short(), from_variable(), into_long(), into_short(
 Cohesion: 0.11
 Nodes (15): ExtensionProvides, AgentServers, ContextServers, DebugAdapters, Grammars, IconThemes, IndexedDocsProviders, Languages (+7 more)
 
-### Community 1315 - "HtmlElement"
-Cohesion: 0.18
-Nodes (3): HtmlElement, inline_elements(), StyledTextHandler
+### Community 1315 - "StatusBarContentStyle"
+Cohesion: 0.40
+Nodes (3): StatusBarContentStyle, Dark, Light
 
 ### Community 1318 - "git_clone_progress.rs"
 Cohesion: 0.31
 Nodes (6): extracts_the_last_failure_line(), failure_message(), forwards_unrecognized_git_output(), GitCloneProgress, parses_fragmented_progress_and_suppresses_duplicates(), read()
 
-### Community 1320 - "tables/user.rs"
-Cohesion: 0.22
-Nodes (5): Picker<D>, PickerAction, Entry, Header, Separator
+### Community 1320 - "DetectError"
+Cohesion: 0.40
+Nodes (3): DetectError, NotInPath, Other
 
 ### Community 1321 - "BedrockAuthMethod"
 Cohesion: 0.15
@@ -7193,13 +6986,9 @@ Nodes (13): devEngineDependency, description, properties, required, type, descri
 Cohesion: 0.10
 Nodes (20): DRY_RUN, GITHUB_TOKEN, PROJECT_NUMBER, env, id, name, run, uses (+12 more)
 
-### Community 1326 - ".new"
-Cohesion: 0.20
-Nodes (15): init_test(), test_deploy_at_respects_active_repository_selection(), test_diff_action_follows_diff_base_setting(), test_excerpts_are_ordered_by_path(), test_excerpts_splitting_after_restoring_the_middle_excerpt(), test_go_to_prev_hunk_multibuffer(), test_hunks_after_restore_then_modify(), test_merge_base_loading_is_incremental() (+7 more)
-
-### Community 1327 - "language_model_selector.rs"
-Cohesion: 0.22
-Nodes (5): add_new_subschema(), AllowTrailingCommas, DefaultDenyUnknownFields, DEFS_PATH, replace_subschema()
+### Community 1327 - "RasterizationOptions"
+Cohesion: 0.50
+Nodes (4): RasterizationOptions, Bilevel, GrayscaleAa, SubpixelAa
 
 ### Community 1329 - "LanguageServerId"
 Cohesion: 0.33
@@ -7214,8 +7003,8 @@ Cohesion: 0.15
 Nodes (13): Call Hierarchy, Command Palette, File Finder, Finding & Navigating, Go to Definition, Go to Symbol, Outline Panel, Project Bookmarks {#project-bookmarks} (+5 more)
 
 ### Community 1332 - "Architecture"
-Cohesion: 0.15
-Nodes (13): Attaching to an existing instance of Delve, Build and debug separately, Code Lens, Debug Go Packages, Debug Go Tests, Debugging, Go, Go Mod (+5 more)
+Cohesion: 0.17
+Nodes (12): Attaching to an existing instance of Delve, Build and debug separately, Debug Go Packages, Debug Go Tests, Debugging, Go, Go Mod, Go Sum (+4 more)
 
 ### Community 1333 - "Documentation Automation Agent Guidelines"
 Cohesion: 0.15
@@ -7242,36 +7031,32 @@ Cohesion: 0.15
 Nodes (12): concurrency, cancel-in-progress, group, defaults, env, CARGO_INCREMENTAL, CARGO_TERM_COLOR, RUST_BACKTRACE (+4 more)
 
 ### Community 1339 - "PHP"
-Cohesion: 0.11
-Nodes (18): if, runs-on, steps, timeout-minutes, ACTIONLINT_BIN, ARTIFACT_URL, COMPLIANCE_OUTCOME, COMPLIANCE_TAG (+10 more)
+Cohesion: 0.15
+Nodes (13): ACTIONLINT_BIN, ARTIFACT_URL, COMPLIANCE_OUTCOME, COMPLIANCE_TAG, GITHUB_APP_ID, GITHUB_APP_KEY, GITHUB_TOKEN, R2_ACCESS_KEY_ID (+5 more)
+
+### Community 1340 - "RasterizationOptions"
+Cohesion: 0.50
+Nodes (4): RasterizationOptions, Bilevel, GrayscaleAa, SubpixelAa
 
 ### Community 1342 - "IgnoreStackEntry"
 Cohesion: 0.17
 Nodes (12): diagnostics, button, include_warnings, inline, lsp_pull_diagnostics, enabled, max_severity, min_column (+4 more)
 
-### Community 1343 - "MarkdownWriter"
-Cohesion: 0.17
-Nodes (5): CodeHandler, HandlerOutcome, Handled, NoOp, MarkdownWriter
+### Community 1345 - "RegistryFilter"
+Cohesion: 0.50
+Nodes (4): RegistryFilter, All, Installed, NotInstalled
 
-### Community 1345 - "go_language"
-Cohesion: 0.10
-Nodes (21): go_language(), test_go_example_test_detection(), test_go_label_for_completion(), test_go_method_type_parameters_highlighted_as_type(), test_go_outline_includes_methods_with_receiver_forms(), test_go_package_test_detection(), test_go_runnable_detection(), test_go_table_test_map_detection() (+13 more)
-
-### Community 1346 - ".render"
-Cohesion: 0.15
-Nodes (8): AudioStatus, Deafened, Muted, AvatarAudioStatusIndicator, AvatarAvailabilityIndicator, CollaboratorAvailability, Busy, Free
-
-### Community 1347 - "lsp_log_view_tests.rs"
-Cohesion: 0.21
-Nodes (13): assert_rpc_registration(), init_test(), rpc_registration_fixture(), test_local_views_and_downstream_peers_own_rpc_streams_independently(), test_log_store_does_not_retain_language_servers(), test_log_store_removes_unavailable_copilot_server(), test_lsp_log_view(), test_lsp_log_view_filters_servers_from_other_projects() (+5 more)
+### Community 1346 - "AgentInitialContent"
+Cohesion: 0.67
+Nodes (3): AgentInitialContent, FromExternalSource, ThreadSummary
 
 ### Community 1351 - "gpui_web/src/dispatcher.rs"
-Cohesion: 0.12
-Nodes (16): router(), browser_window(), execute_on_main_thread(), idle_callback_supported(), MainThreadItem, Delayed, Idle, RealtimeFunction (+8 more)
+Cohesion: 0.08
+Nodes (23): router(), AppleDispatcher, RunnableVariant, browser_window(), execute_on_main_thread(), idle_callback_supported(), MainThreadItem, Delayed (+15 more)
 
 ### Community 1352 - "duplicate.rs"
-Cohesion: 0.18
-Nodes (12): Direction, Above, Below, display_point_range_to_offset_range(), find_next_valid_duplicate_space(), test_selection_duplication(), test_selection_duplication_backwards(), test_selection_duplication_count() (+4 more)
+Cohesion: 0.20
+Nodes (10): Direction, Above, Below, test_selection_duplication(), test_selection_duplication_backwards(), test_selection_duplication_count(), test_selection_duplication_multibyte(), test_selection_duplication_multiline_multibyte() (+2 more)
 
 ### Community 1353 - "create_scratch"
 Cohesion: 0.17
@@ -7285,13 +7070,9 @@ Nodes (12): anyOf, description, markdownDescription, type, x-intellij-html-descr
 Cohesion: 0.26
 Nodes (7): LineCol, PathWithRange, test_linecol_parsing(), test_pathrange_from_str(), test_pathrange_leading_text_trimming(), test_pathrange_parsing(), test_pathrange_with_line_and_column()
 
-### Community 1358 - "control_characters.rs"
-Cohesion: 0.18
-Nodes (20): CONTROL_PICTURES_START, DELETE_SYMBOL, LINE_FEED_SYMBOL, printable_substitute(), replace_control_characters(), replace_control_characters_remapping_offsets(), test_character_count_is_preserved(), test_clamps_offsets_past_the_end() (+12 more)
-
-### Community 1359 - "CompletionKind"
-Cohesion: 0.47
-Nodes (3): lsp::CompletionKind, lsp::CompletionKind, CompletionKind
+### Community 1358 - "FetchState"
+Cohesion: 0.50
+Nodes (4): FetchState, Loaded, Loading, NoSymbol
 
 ### Community 1360 - "channel_member.rs"
 Cohesion: 0.15
@@ -7370,43 +7151,39 @@ Cohesion: 0.18
 Nodes (11): Accessing raw response data (e.g. headers), Advanced, Configuring the HTTP client, How to tell whether `None` means `null` or missing, Logging, Making custom/undocumented requests, Managing HTTP resources, Undocumented endpoints (+3 more)
 
 ### Community 1381 - "json_language_server_ext.rs"
-Cohesion: 0.14
-Nodes (13): denormalize_action_name(), handle_schema_request(), resolve_dynamic_schema(), resolve_static_schema(), root_schema_from_action_schema(), LOGGER, notify_schemas_changed(), register_requests() (+5 more)
+Cohesion: 0.18
+Nodes (11): handle_schema_request(), LOGGER, notify_schemas_changed(), register_requests(), register_schema_handler(), SchemaContentRequest, .METHOD, SchemaContentsChanged (+3 more)
 
-### Community 1385 - "is_scope_enabled"
-Cohesion: 0.15
-Nodes (8): is_possibly_enabled_level(), is_scope_enabled(), Record, SourceFmt, submit(), extract_crate_name_from_module_path(), scope_ref_new(), ScopeRef
+### Community 1385 - "Record"
+Cohesion: 0.25
+Nodes (4): Record, SourceFmt, scope_ref_new(), ScopeRef
 
-### Community 1386 - "CommandPaletteFilter"
-Cohesion: 0.16
-Nodes (4): CommandInterceptResult, CommandPaletteFilter, GlobalCommandPaletteInterceptor, init()
-
-### Community 1388 - "Edit Predictions"
-Cohesion: 0.21
-Nodes (3): CaptureInput, start_capture(), write_out()
+### Community 1388 - "Env"
+Cohesion: 0.05
+Nodes (33): build_git_log_index(), GitLogIndex, main(), normalize_query_path(), parse_git_log(), print_usage(), run(), test_git_log_index() (+25 more)
 
 ### Community 1389 - "Role Types {#roles}"
 Cohesion: 0.18
 Nodes (10): Canvas font fallback, Dynamic font loading, GPUI Examples, Images, drawing, and animation, Interaction, Layout and styling, Running in a browser, Specialized examples (+2 more)
 
-### Community 1390 - "Troubleshooting"
-Cohesion: 0.18
-Nodes (11): Graphics issues, Installing Zed, Package managers, Remote Development (SSH), SSH remoting problems, Terminal issues, Troubleshooting, Uninstall (+3 more)
+### Community 1390 - "System Requirements"
+Cohesion: 0.06
+Nodes (31): Building from source, Building Zed for FreeBSD, Cargo errors claiming that a dependency is using unstable features, Dependencies, Repository, Troubleshooting, WebRTC Notice, Download Zed (+23 more)
 
-### Community 1396 - "db/src/db.rs"
-Cohesion: 0.07
-Nodes (21): ALL_FILE_DB_FAILED, AppDatabase, AppMigrator, CONNECTION_INITIALIZE_QUERY, DB_FILE_NAME, DB_INITIALIZE_QUERY, db_path(), DbScope (+13 more)
+### Community 1396 - "kvp.rs"
+Cohesion: 0.12
+Nodes (8): write_and_log(), GLOBAL_KEY_VALUE_STORE, GlobalKeyValueStore, .MIGRATIONS, .NAME, ScopedKeyValueStore, test_kvp(), test_scoped_kvp()
 
-### Community 1399 - "m_2025_01_30/settings.rs"
-Cohesion: 0.60
-Nodes (3): replace_tab_close_button_setting_key(), replace_tab_close_button_setting_value(), SETTINGS_PATTERNS
+### Community 1398 - "FactoryResponse"
+Cohesion: 0.50
+Nodes (4): FactoryResponse, Created, Failed, Fetched
 
 ### Community 1400 - "feedback.rs"
 Cohesion: 0.20
 Nodes (7): email_body(), file_bug_report_url(), format_installed_extensions_for_clipboard(), init(), REQUEST_FEATURE_URL, ZED_REPO_URL, SystemSpecs
 
 ### Community 1401 - ".build_removal_prompt"
-Cohesion: 0.40
+Cohesion: 0.33
 Nodes (4): RemovalKind, Delete, Trash, RemovalPrompt
 
 ### Community 1402 - "VEGA"
@@ -7466,8 +7243,8 @@ Cohesion: 0.18
 Nodes (11): default, description, type, default, description, type, change-description, filter-repos (+3 more)
 
 ### Community 1417 - "Getting Started"
-Cohesion: 0.17
-Nodes (12): POSTGRES_HOST_AUTH_METHOD, run_tests_linux, env, image, options, ports, if, runs-on (+4 more)
+Cohesion: 0.18
+Nodes (11): POSTGRES_HOST_AUTH_METHOD, run_tests_linux, env, image, options, ports, if, runs-on (+3 more)
 
 ### Community 1418 - "control_characters.rs"
 Cohesion: 0.33
@@ -7485,21 +7262,21 @@ Nodes (9): 10. Ownership; Feedback, 12. Indemnity, 14. Publicity, 1. Definitions
 Cohesion: 0.24
 Nodes (4): escape_markdown_link_text(), escape_markdown_table_text(), ReportEntry<R>, ReportEntry<ReviewSuccess>
 
-### Community 1423 - "feature_flags/src/store.rs"
-Cohesion: 0.23
-Nodes (13): enabled_for_all_wins_over_override(), enum_override_selects_specific_variant(), init_settings_store(), IntensityFlag, .NAME, off_override_beats_server_flag(), on_flags_ready_waits_for_server_flags(), on_override_enables_without_server_or_staff() (+5 more)
-
-### Community 1424 - "Cursor"
-Cohesion: 0.17
-Nodes (5): DEFAULT_CURSOR_ICON_NAME, log_cursor_icon_warning(), Cursor, LoadedTheme, create_invisible_cursor()
+### Community 1424 - "bundle_mac_aarch64"
+Cohesion: 0.50
+Nodes (4): needs, runs-on, steps, bundle_mac_aarch64
 
 ### Community 1425 - "ShowScrollbar"
-Cohesion: 0.04
-Nodes (32): CommitViewSettings, CursorAnimationSettings, DragAndDropSelection, EditorSettings, FileDiffSettings, Gutter, Jupyter, Minimap (+24 more)
+Cohesion: 0.06
+Nodes (19): ui_scrollbar_settings_from_raw(), GitPanelScrollbarAccessor, GitPanelSettings, ScrollbarSettings, IndentGuidesSettings, OutlinePanelSettings, OutlinePanelSettingsScrollbarProxy, ScrollbarSettings (+11 more)
 
 ### Community 1426 - "Model"
 Cohesion: 0.10
 Nodes (10): Model, CodestralLatest, Custom, Ministral14bLatest, Ministral3bLatest, Ministral8bLatest, MistralLargeLatest, MistralMediumLatest (+2 more)
+
+### Community 1427 - "check_scripts"
+Cohesion: 0.50
+Nodes (4): if, runs-on, timeout-minutes, check_scripts
 
 ### Community 1428 - "m_2026_02_25/settings.rs"
 Cohesion: 0.36
@@ -7509,21 +7286,17 @@ Nodes (7): AGENT_SERVERS_KEY, BUILTIN_MAPPINGS, BuiltinMapping, migrate_builtin_
 Cohesion: 0.28
 Nodes (7): LocalSettingsKind, Debug, Editorconfig, Settings, Tasks, Model, Relation
 
+### Community 1430 - "create_draft_release"
+Cohesion: 0.50
+Nodes (4): if, runs-on, timeout-minutes, create_draft_release
+
 ### Community 1431 - "ThemePreview"
-Cohesion: 0.16
-Nodes (5): init(), ThemePreview, ThemePreviewPage, Overview, Typography
+Cohesion: 0.12
+Nodes (6): AVATAR_URL, init(), ThemePreview, ThemePreviewPage, Overview, Typography
 
 ### Community 1432 - "code_completion_tests.rs"
 Cohesion: 0.25
 Nodes (13): filter_and_sort_matches(), filter_matches(), test_case_sensitive_match_tie_breaker(), test_for_each_prefix(), test_fuzzy_over_sort_positions(), test_fuzzy_score(), test_semver_label_sort_by_latest_version(), test_sort_exact() (+5 more)
-
-### Community 1436 - "DisconnectedOverlay"
-Cohesion: 0.17
-Nodes (4): DisconnectedOverlay, Host, CollabGuestProject, RemoteServerProject
-
-### Community 1437 - "KeybindingEditorDb"
-Cohesion: 0.40
-Nodes (3): KeybindingEditorDb, .MIGRATIONS, .NAME
 
 ### Community 1438 - "body"
 Cohesion: 0.20
@@ -7533,17 +7306,25 @@ Nodes (3): Poll, Observation<T>, WithTimeout<T>
 Cohesion: 0.20
 Nodes (10): description, type, type, (node|npm|pnpm|yarn), extends, volta, description, patternProperties (+2 more)
 
-### Community 1440 - "AgentInitialContent"
-Cohesion: 0.07
-Nodes (18): AgentPanelSiblingHost, CreateThreadOptions, SourcePanelInitialization, AgentInitialContent, FromExternalSource, ThreadSummary, NewNativeAgentThreadFromSummary, collapses_newline_padding() (+10 more)
+### Community 1440 - "external_source_prompt.rs"
+Cohesion: 0.19
+Nodes (11): collapses_newline_padding(), ExternalSourcePrompt, is_bidi_control_character(), is_disallowed_control_character(), keeps_multilingual_text(), keeps_normal_prompt_text(), keeps_tabs(), normalizes_carriage_returns() (+3 more)
 
 ### Community 1446 - "m_2026_04_17/settings.rs"
 Cohesion: 0.31
 Nodes (7): migrate_one(), migrate_title_bar_value(), NEW_KEY, OLD_KEY, promote_show_branch_icon_true_to_show_branch_status_icon(), SETTINGS_KEY, TITLE_BAR_KEY
 
+### Community 1447 - "RetainExcerpts"
+Cohesion: 0.67
+Nodes (3): RetainExcerpts, All, Dirty
+
 ### Community 1452 - "NoReceiverError"
 Cohesion: 0.24
 Nodes (3): NoReceiverError, Sender<T>, State<T>
+
+### Community 1454 - "ArchiveType"
+Cohesion: 0.67
+Nodes (3): ArchiveType, TarGz, Zip
 
 ### Community 1455 - "StatusKind"
 Cohesion: 0.28
@@ -7552,10 +7333,6 @@ Nodes (7): Model, Relation, StatusKind, Ignored, Tracked, Unmerged, Untracked
 ### Community 1456 - "tables/room.rs"
 Cohesion: 0.28
 Nodes (6): Model, Relation, Channel, Follower, Project, RoomParticipant
-
-### Community 1458 - "Entity"
-Cohesion: 0.50
-Nodes (4): Launching Zed, OCaml, Setup Instructions, Using Opam
 
 ### Community 1459 - "TcpArgumentsTemplate"
 Cohesion: 0.31
@@ -7641,33 +7418,25 @@ Nodes (5): AsyncWork, main(), returns_42(), sync_fn(), Worker
 Cohesion: 0.18
 Nodes (12): address(), check_got_handshake(), CONNECT_TIMEOUT, ensure_only_instance(), instance_handshake(), IsOnlyInstance, No, Yes (+4 more)
 
-### Community 1480 - "XdebugAdapter"
-Cohesion: 0.15
-Nodes (4): the_schema_requires_a_launch_request(), XdebugAdapter, .ADAPTER_NAME, .ADAPTER_PATH
+### Community 1480 - "dap_adapters.rs"
+Cohesion: 0.04
+Nodes (13): CodeLldbDebugAdapter, .ADAPTER_NAME, init(), ensure_dap_interface(), GdbDebugAdapter, .ADAPTER_NAME, GoDebugAdapter, .ADAPTER_NAME (+5 more)
 
 ### Community 1481 - "Search"
 Cohesion: 0.22
 Nodes (8): Commands, Git layout, graphify, Licensing — must respect, Prerequisites (macOS), Rules for this fork, VEGA, Where branding lives
 
-### Community 1482 - "AskPassSession"
-Cohesion: 0.11
-Nodes (5): AskPassResult, CancelledByUser, Timedout, AskPassSession, dropping_password_request_cancels_prompt()
+### Community 1482 - "RemoteClient"
+Cohesion: 0.05
+Nodes (24): AskPassResult, CancelledByUser, Timedout, AskPassSession, dropping_password_request_cancels_prompt(), PasswordProxy, EncryptedPassword, IKnowWhatIAmDoingAndIHaveReadTheDocs (+16 more)
 
 ### Community 1483 - "LspStoreEvent"
-Cohesion: 0.03
-Nodes (62): Editor, link_contains(), LspDocumentLinks, CodeLensActionId, CodeLensActions, CodeLensData, CodeLensResolveTask, CodeLensTask (+54 more)
+Cohesion: 0.02
+Nodes (58): Editor, link_contains(), LspDocumentLinks, CodeLensActionId, CodeLensActions, CodeLensData, CodeLensResolveTask, CodeLensTask (+50 more)
 
-### Community 1484 - "FeatureFlagStore"
-Cohesion: 0.13
-Nodes (3): FeatureFlagDescriptor, FeatureFlagStore, FeatureFlagVariant
-
-### Community 1485 - "StringMatchOptions"
-Cohesion: 0.11
-Nodes (11): Case, Ignore, Smart, LengthPenalty, Off, On, MaxResults, All (+3 more)
-
-### Community 1488 - "build_llama_cpp_request"
-Cohesion: 0.13
-Nodes (6): add_message_content_part(), append_reasoning_content(), build_llama_cpp_request(), request_preserves_assistant_thinking_when_supported(), request_preserves_thinking_for_assistant_tool_calls_when_supported(), request_skips_assistant_thinking_when_unsupported()
+### Community 1484 - "feature_flags/src/store.rs"
+Cohesion: 0.10
+Nodes (17): enabled_for_all_wins_over_override(), enum_override_selects_specific_variant(), FeatureFlagDescriptor, FeatureFlagStore, FeatureFlagVariant, init_settings_store(), Intensity, High (+9 more)
 
 ### Community 1489 - "tables/buffer.rs"
 Cohesion: 0.32
@@ -7677,12 +7446,16 @@ Nodes (5): Model, Relation, Channel, Operations, Snapshots
 Cohesion: 0.39
 Nodes (3): Model, Relation, Recipient
 
-### Community 1491 - "MessagePart"
-Cohesion: 0.11
-Nodes (17): MessageContent, Multipart, Plain, MessageContentDelta, Parts, Text, MessagePart, ImageUrl (+9 more)
+### Community 1491 - "asyncreadext"
+Cohesion: 0.01
+Nodes (114): Choice, DEEPSEEK_API_URL, FunctionChunk, FunctionContent, FunctionDefinition, ImageUrl, MessageContent, Multipart (+106 more)
+
+### Community 1492 - "AiProviderSetup"
+Cohesion: 0.13
+Nodes (9): fast_mode_warning_dismissed(), fast_mode_warning_id(), set_fast_mode_warning_dismissed(), AiProviderSetup, FEATURED_PROVIDERS, first_configured(), model_selection(), model_selection_names_provider_and_model() (+1 more)
 
 ### Community 1493 - "WindowsCaptionButton"
-Cohesion: 0.15
+Cohesion: 0.16
 Nodes (6): WindowsCaptionButton, Close, Maximize, Minimize, Restore, WindowsWindowControls
 
 ### Community 1494 - "tabs"
@@ -7704,22 +7477,6 @@ Nodes (4): Step, Done, NeedMoreInput, Send
 ### Community 1499 - "ProxyScheme"
 Cohesion: 0.50
 Nodes (4): ProxyScheme, Http, Socks4, Socks5
-
-### Community 1500 - "sqlez/src/migrations.rs"
-Cohesion: 0.15
-Nodes (8): Domain, .MIGRATIONS, .NAME, changed_migration_fails(), Connection, migrations_dont_rerun(), test_create_alter_drop(), test_migrations_are_added_to_table()
-
-### Community 1501 - "Event"
-Cohesion: 0.50
-Nodes (3): Event, Dismissed, UpdateLocation
-
-### Community 1502 - ".run_and_advance"
-Cohesion: 0.15
-Nodes (3): SelectionMode, SelectAndMove, SelectOnly
-
-### Community 1503 - "MistralLanguageModelProvider"
-Cohesion: 0.03
-Nodes (28): add_user_message_content_part(), deepseek_thinking(), DeepSeekEventMapper, DeepSeekLanguageModelProvider, into_deepseek(), into_deepseek_reasoning_effort(), language_model(), PROVIDER_ID (+20 more)
 
 ### Community 1505 - "The Zed Rust Extension API"
 Cohesion: 0.22
@@ -7750,8 +7507,8 @@ Cohesion: 0.22
 Nodes (9): Built-in terminal, Environment Variables, Language servers, Launched from the CLI, Launched via window manager, Dock, or launcher, Look-up of language servers, Tasks, Where and how are environment variables used? (+1 more)
 
 ### Community 1512 - "gerrit.rs"
-Cohesion: 0.22
-Nodes (9): Capabilities, `download_file`, Examples, Examples, Examples, Extension Capabilities, `npm:install`, `process:exec` (+1 more)
+Cohesion: 0.29
+Nodes (7): Capabilities, `download_file`, Examples, Examples, Examples, `npm:install`, `process:exec`
 
 ### Community 1513 - "moduleSuffixes"
 Cohesion: 0.22
@@ -7764,10 +7521,6 @@ Nodes (9): Agent Error Messages, Language Server Issues, macOS, "Max tokens reac
 ### Community 1515 - "target"
 Cohesion: 0.22
 Nodes (9): Adding Folders to a Project, From Open Recent, From the CLI, How Projects Open, Opening in a New Window, See Also, Via Settings, Windows & Projects (+1 more)
-
-### Community 1516 - "shell_env.rs"
-Cohesion: 0.24
-Nodes (10): capture(), capture_output_redirection(), capture_powershell_environment_without_startup_output(), capture_unix(), capture_windows(), exit_status(), parse_env_map_from_noisy_output(), parse_env_output() (+2 more)
 
 ### Community 1517 - "HtmlExtension"
 Cohesion: 0.22
@@ -7800,10 +7553,6 @@ Nodes (9): COMMIT_SHA, FILTER_REPOS, GH_TOKEN, MATRIX_REPO, PR_NUMBER, PREV_COMM
 ### Community 1524 - "ToastLayer"
 Cohesion: 0.22
 Nodes (9): if, outputs, runs-on, timeout-minutes, fetch_extension_repos, prev_commit, removed_ci, removed_shared (+1 more)
-
-### Community 1525 - ".from_input"
-Cohesion: 0.12
-Nodes (15): check_commands(), check_hardcoded_security_rules(), check_invalid_patterns(), expand_rm_to_single_path_commands(), hardcoded_security_denial_overrides_unconditional_allow_all(), hardcoded_security_denial_overrides_unconditional_allow_all_for_invalid_command(), invalid_substitution_bearing_command_denies_by_default(), invalid_substitution_bearing_command_denies_in_confirm_mode() (+7 more)
 
 ### Community 1526 - "C"
 Cohesion: 0.22
@@ -7846,8 +7595,8 @@ Cohesion: 0.50
 Nodes (4): Adding toolchains manually, Selecting toolchains, Toolchains, Why do we need toolchains?
 
 ### Community 1539 - "build_static_bwrap_linux_x86_64"
-Cohesion: 0.40
-Nodes (5): needs, runs-on, steps, timeout-minutes, build_static_bwrap_linux_x86_64
+Cohesion: 0.50
+Nodes (4): needs, runs-on, timeout-minutes, build_static_bwrap_linux_x86_64
 
 ### Community 1544 - "with"
 Cohesion: 0.36
@@ -7858,19 +7607,23 @@ Cohesion: 0.36
 Nodes (4): dap::LaunchRequest, latest::dap::LaunchRequest, LaunchRequest, task::LaunchRequest
 
 ### Community 1550 - "vscode_format.rs"
-Cohesion: 0.39
+Cohesion: 0.33
 Nodes (4): action_argument_snake_case(), ACTION_ARGUMENT_SNAKE_CASE_REPLACE, KEYMAP_PATTERNS, to_snake_case()
 
 ### Community 1551 - "Resume here"
 Cohesion: 0.39
 Nodes (4): KEYMAP_PATTERNS, replace_string_action(), STRING_REPLACE, STRING_TO_ARRAY_REPLACE
 
-### Community 1563 - "Symbol"
-Cohesion: 0.01
-Nodes (127): Watcher, TrashId, PathMatchCandidateSetIter, PathMatchCandidateSetNucleoIter, PathInclusionMatcher, PathMatcher, IgnoreKind, Gitignore (+119 more)
+### Community 1553 - "AgentId"
+Cohesion: 0.04
+Nodes (48): LastUsedAgent, SourcePanelInitialization, Agent, Custom, NativeAgent, Stub, deserialize_external_agent_id(), AcpThreadImportOnboarding (+40 more)
+
+### Community 1563 - "Worktree"
+Cohesion: 0.03
+Nodes (28): char_bag_for_path(), CreatedEntry, Excluded, Entity<Worktree>, Entry, Event, Deleted, DeletedEntry (+20 more)
 
 ### Community 1566 - "tests/engine.rs"
-Cohesion: 0.23
+Cohesion: 0.21
 Nodes (12): auto_upload_modes_and_conflicts(), bump_mtime(), Fixture, fixture(), isolate(), remote_host_operations_and_editing(), Scripted, slash() (+4 more)
 
 ### Community 1567 - "Building Zed for FreeBSD"
@@ -7892,10 +7645,6 @@ Nodes (8): if, needs, runs-on, jobs, bump_main, resolve_versions, if, runs-on
 ### Community 1571 - "ProxyScheme"
 Cohesion: 0.57
 Nodes (8): steps, steps, steps, steps, id, name, run, uses
-
-### Community 1572 - "DisplayRow"
-Cohesion: 0.14
-Nodes (4): DisplayRow, Range<DisplayRow>, Range<MultiBufferRow>, RowRangeExt
 
 ### Community 1574 - "IconDecorationKind"
 Cohesion: 0.29
@@ -7929,10 +7678,6 @@ Nodes (7): minimap, current_line_highlight, display_in, max_width_columns, show,
 Cohesion: 0.29
 Nodes (7): tabs, activate_on_close, close_position, file_icons, git_status, show_close_button, show_diagnostics
 
-### Community 1583 - "ImageInfo"
-Cohesion: 0.15
-Nodes (5): format_image_size(), ImageInfo, format_file_size(), test_format_file_size_binary(), test_format_file_size_decimal()
-
 ### Community 1584 - "jsxFragmentFactory"
 Cohesion: 0.29
 Nodes (5): SandboxPermission, AllowAlways, AllowOnce, AllowThread, Deny
@@ -7940,10 +7685,6 @@ Nodes (5): SandboxPermission, AllowAlways, AllowOnce, AllowThread, Deny
 ### Community 1585 - "jsxImportSource"
 Cohesion: 0.29
 Nodes (7): Context, Core Concepts, Images, Prompts, Resources, Server, Tools
-
-### Community 1588 - "language_models.rs"
-Cohesion: 0.28
-Nodes (13): ai_disabled(), CompatibleProviderKind, Anthropic, OpenAi, CompatibleProviders, init(), init_test(), provider_icons() (+5 more)
 
 ### Community 1591 - "noResolve"
 Cohesion: 0.29
@@ -8002,7 +7743,7 @@ Cohesion: 0.33
 Nodes (6): Configuration, Formatting, Install protobuf-language-server, Install ProtoLS, Proto, Setup
 
 ### Community 1618 - "print256color.sh"
-Cohesion: 0.29
+Cohesion: 0.25
 Nodes (7): Configuration, Emacs, Modelines, Notes, Supported Emacs Variables, Supported Vim Options, Vim
 
 ### Community 1619 - "Formatting Conventions"
@@ -8073,9 +7814,9 @@ Nodes (6): 3.1. Price, 3.2. Taxes, 3.3. Authorization, 3.4. Subscription Service
 Cohesion: 0.52
 Nodes (6): check_remaining_installations(), linux(), macos(), main(), prompt_remove_preferences(), uninstall.sh script
 
-### Community 1639 - "CratesIoError"
-Cohesion: 0.33
-Nodes (5): CratesIoError, NotFound, PermissionDenied, Request, Upstream
+### Community 1639 - "simulated_crates_io_client.rs"
+Cohesion: 0.18
+Nodes (8): CratesIoError, NotFound, PermissionDenied, Request, Upstream, bad_request(), MAX_GITHUB_CONFIGS_PER_CRATE, test_timestamp()
 
 ### Community 1642 - "check-licenses"
 Cohesion: 0.33
@@ -8104,10 +7845,6 @@ Nodes (4): back, example, gallery, status
 ### Community 1669 - "BuildTaskDefinition"
 Cohesion: 0.33
 Nodes (6): default, description, markdownDescription, type, x-intellij-html-description, composite
-
-### Community 1670 - "open_selector"
-Cohesion: 0.18
-Nodes (14): init_selector_test(), init_selector_test_with_capabilities(), open_selector(), selector_is_open(), SelectorTest, test_action_is_not_registered_for_unrelated_buffers(), test_action_is_not_registered_without_commands(), test_command_error_is_shown_in_the_picker_footer() (+6 more)
 
 ### Community 1671 - "StartDebuggingRequestArgumentsRequest"
 Cohesion: 0.33
@@ -8270,7 +8007,7 @@ Cohesion: 0.33
 Nodes (6): Diagnostics, Editing in a multibuffer, Find References, Multibuffers, Navigating to the Source File, Project search
 
 ### Community 1725 - "Scroll Sensitivity"
-Cohesion: 0.33
+Cohesion: 0.29
 Nodes (6): Find All References, Navigation {#navigation}, Outline Panel, Project Diagnostics, Project Search Results, Usage with multibuffers
 
 ### Community 1726 - "Terminal: Toolbar"
@@ -8298,8 +8035,8 @@ Cohesion: 0.33
 Nodes (6): defaults, if, needs, runs-on, timeout-minutes, bump_extension_version
 
 ### Community 1732 - "clippy_mac_x86_64"
-Cohesion: 0.25
-Nodes (8): RUST_LIB_BACKTRACE, run_tests_mac, env, if, runs-on, steps, timeout-minutes, if
+Cohesion: 0.33
+Nodes (6): RUST_LIB_BACKTRACE, run_tests_mac, env, if, runs-on, timeout-minutes
 
 ### Community 1733 - "clippy_windows"
 Cohesion: 0.33
@@ -8345,25 +8082,13 @@ Nodes (5): Advanced Usage, Low-Level Server, MCP Primitives, Server Capabilities
 Cohesion: 0.40
 Nodes (5): Claude Desktop Integration, Development Mode, Direct Execution, Mounting to an Existing ASGI Server, Running Your Server
 
-### Community 1752 - "GitSettings"
-Cohesion: 0.13
-Nodes (10): AutoFetchSettings, BlameSettings, BranchPickerSettings, GitEnabledSettings, GitSettings, InlineBlameLocation, Inline, StatusBar (+2 more)
-
-### Community 1756 - "CommandTemplate"
-Cohesion: 0.16
-Nodes (11): CommandTemplate, Interactive, No, Yes, build_command_posix(), posix_working_dir_prefix(), ssh_command_template(), test_build_command() (+3 more)
+### Community 1752 - "project_settings.rs"
+Cohesion: 0.02
+Nodes (105): compile_shader_for_module(), compile_shader_impl(), compile_shaders(), find_fxc_compiler(), find_latest_windows_sdk_binary(), generate_rust_binding(), main(), AutoFetchSettings (+97 more)
 
 ### Community 1760 - "Entity"
 Cohesion: 0.40
 Nodes (4): Current File, Edit History (chronological), Evaluate, Predicted Next Edit
-
-### Community 1771 - "OffsetDateTime"
-Cohesion: 0.25
-Nodes (16): format_absolute_date(), format_absolute_date_medium(), format_absolute_time(), format_absolute_timestamp(), format_absolute_timestamp_medium(), format_date(), format_date_medium(), format_local_timestamp() (+8 more)
-
-### Community 1775 - ".start"
-Cohesion: 0.17
-Nodes (9): NativeAgentSessionSetTitle, StreamingTurn, test_cancelling_stream_saves_partial_message(), test_completed_message_saved_while_next_message_streams(), test_settings_changes_save_while_message_streams(), test_streaming_chunks_do_not_save_thread(), test_token_usage_does_not_save_while_message_streams(), test_token_usage_saved_when_cancelled_before_content() (+1 more)
 
 ### Community 1776 - "flask--add-and-rename-test-function.md"
 Cohesion: 0.40
@@ -8537,10 +8262,6 @@ Nodes (3): 4.1. Zed Industries' Use of Customer Data, 4.2. Customer's Ownership 
 Cohesion: 0.40
 Nodes (5): 9.1. Term, 9.2. Termination, 9.3. Effect of Termination, 9.4. Modification of the Products, 9. Term, Termination, and Modification of the Products
 
-### Community 1828 - "SelectionHistoryEntry"
-Cohesion: 0.17
-Nodes (9): SelectionHistory, SelectionHistoryEntry, SelectionHistoryMode, Normal, Redoing, Skipping, Undoing, SelectNextState (+1 more)
-
 ### Community 1829 - "bundle_linux_x86_64"
 Cohesion: 0.40
 Nodes (5): zed_extension_api, zed_glsl, zed_html, zed_proto, zed_test_extension
@@ -8561,9 +8282,9 @@ Nodes (4): telemetry, anthropic_retention, diagnostics, metrics
 Cohesion: 0.50
 Nodes (4): theme, dark, light, mode
 
-### Community 1837 - "src/deepseek.rs"
-Cohesion: 0.25
-Nodes (11): Choice, DEEPSEEK_API_URL, FunctionChunk, FunctionDefinition, Response, stream_completion(), StreamChoice, StreamDelta (+3 more)
+### Community 1840 - "src/semantic_tokens.rs"
+Cohesion: 0.08
+Nodes (22): Editor, extract_painted_semantic_styles(), extract_semantic_highlight_styles(), extract_semantic_highlights(), lsp_semantic_tokens_delta(), lsp_semantic_tokens_dynamic_registration_requeries_open_document(), lsp_semantic_tokens_full_capability(), lsp_semantic_tokens_full_none_result_id() (+14 more)
 
 ### Community 1841 - ".to_alacritty"
 Cohesion: 0.50
@@ -8657,10 +8378,6 @@ Nodes (3): lsp::SymbolKind, lsp::SymbolKind, SymbolKind
 Cohesion: 0.50
 Nodes (3): Pending Changes, Slash Commands, vNext
 
-### Community 1895 - "TcpArguments"
-Cohesion: 0.27
-Nodes (4): dap::TcpArguments, dap::TcpArgumentsTemplate, latest::dap::TcpArguments, latest::dap::TcpArgumentsTemplate
-
 ### Community 1901 - "extension::SlashCommandOutput"
 Cohesion: 0.50
 Nodes (3): entity_messages!, messages!, request_messages!
@@ -8705,21 +8422,13 @@ Nodes (4): if, needs, runs-on, commit_changes
 Cohesion: 0.50
 Nodes (4): if, needs, runs-on, create_preview_branch
 
-### Community 1922 - "RefreshLlmTokenListener"
-Cohesion: 0.27
-Nodes (7): global_llm_token(), GlobalRefreshLlmTokenListener, LlmTokenRefreshedEvent, RefreshLlmTokenListener, TokenRefreshMode, ClearAndRefresh, Refresh
+### Community 1922 - "client/src/llm_token.rs"
+Cohesion: 0.12
+Nodes (14): global_llm_token(), GlobalRefreshLlmTokenListener, http_client::Response<http_client::AsyncBody>, LlmTokenRefreshedEvent, NeedsLlmTokenRefresh, RefreshLlmTokenListener, TokenRefreshMode, ClearAndRefresh (+6 more)
 
 ### Community 1924 - "Vue"
 Cohesion: 0.50
 Nodes (4): name, needs, runs-on, deploy
-
-### Community 1926 - "report_anthropic_event"
-Cohesion: 0.14
-Nodes (12): AnthropicCompletionType, Editor, Panel, Terminal, AnthropicEventData, AnthropicEventType, Accept, Invoked (+4 more)
-
-### Community 1927 - "EsLintLspAdapter"
-Cohesion: 0.13
-Nodes (10): eslint_server_binary_arguments(), EsLintLspAdapter, .CURRENT_VERSION, .CURRENT_VERSION_TAG_NAME, .FLAT_CONFIG_FILE_NAMES_V10, .FLAT_CONFIG_FILE_NAMES_V8_21, .FLAT_CONFIG_FILE_NAMES_V8_57, .LEGACY_CONFIG_FILE_NAMES (+2 more)
 
 ### Community 1929 - "SyntaxTheme"
 Cohesion: 0.50
@@ -8813,81 +8522,17 @@ Nodes (3): DIGITALOCEAN_SPACES_ACCESS_KEY, DIGITALOCEAN_SPACES_SECRET_KEY, env
 Cohesion: 0.40
 Nodes (3): check(), KNOWN_SHADOWED_KEYS, no_key_collisions_between_named_fields_and_flattened_sections()
 
-### Community 2276 - "wikipedia.rs"
-Cohesion: 0.25
-Nodes (4): test_citation_references_get_removed(), wikipedia_handlers(), WikipediaChromeRemover, WikipediaInfoboxHandler
-
 ### Community 2369 - "dap_types::StackFrame"
 Cohesion: 0.01
-Nodes (182): MousePressureExample, button(), HelloWorld, line(), main(), popover(), run_example(), start() (+174 more)
-
-### Community 2443 - "buffer_operation.rs"
-Cohesion: 0.50
-Nodes (3): Model, Relation, Buffer
-
-### Community 2445 - "buffer_snapshot.rs"
-Cohesion: 0.50
-Nodes (3): Model, Relation, Buffer
-
-### Community 2446 - "tables/extension.rs"
-Cohesion: 0.50
-Nodes (3): Model, Relation, LatestVersion
-
-### Community 2447 - "language_server.rs"
-Cohesion: 0.50
-Nodes (3): Model, Relation, Project
-
-### Community 2448 - "project_repository.rs"
-Cohesion: 0.50
-Nodes (3): Model, Relation, Project
-
-### Community 2449 - "tables/worktree.rs"
-Cohesion: 0.50
-Nodes (3): Model, Relation, Project
-
-### Community 2453 - "MessageContent"
-Cohesion: 0.16
-Nodes (12): CacheControl, CacheControlType, Ephemeral, CacheTtl, FiveMinutes, OneHour, MessageContent, Multipart (+4 more)
+Nodes (193): DEBUGGER_HOVER_MIN_WIDTH, DebuggerHoverVariableColors, ClickState, linux_button_to_gpui(), Callbacks, ActionListener, ActiveTooltip, Visible (+185 more)
 
 ### Community 2465 - "linux/dispatcher.rs"
 Cohesion: 0.05
 Nodes (12): calloop_works(), ChannelError, LinuxDispatcher, MIN_THREADS, PriorityQueueCalloopReceiver, PriorityQueueCalloopReceiver<T>, PriorityQueueCalloopSender, PriorityQueueCalloopSender<T> (+4 more)
 
-### Community 2466 - "html_to_markdown.rs"
-Cohesion: 0.23
-Nodes (4): fetch_url_content(), convert_html_to_markdown(), parse_html(), parse_html()
-
-### Community 2468 - "ActivateScript"
-Cohesion: 0.13
-Nodes (16): ActivateScript, Csh, Default, Fish, Nushell, PowerShell, Pyenv, CondaManager (+8 more)
-
-### Community 2470 - "ViMotion"
-Cohesion: 0.12
-Nodes (17): ViMotion, Bracket, Down, First, FirstOccupied, High, Last, Left (+9 more)
-
-### Community 2471 - "Event"
-Cohesion: 0.12
-Nodes (15): Event, ActivateItem, AddItem, ChangeItemTitle, Focus, ItemPinned, ItemUnpinned, JoinAll (+7 more)
-
-### Community 2472 - "word_diff.rs"
-Cohesion: 0.20
-Nodes (13): test_tokenize(), char_class(), compute_word_diff(), diff_tokens(), DiffOp, Delete, Equal, Insert (+5 more)
-
-### Community 2473 - "FetchHttpClient"
-Cohesion: 0.16
-Nodes (6): SendForegroundExecutor, FetchCredentials, Include, Omit, SameOrigin, FetchHttpClient
-
-### Community 2474 - "font_face_to_font"
-Cohesion: 0.17
-Nodes (7): font_face_to_font(), font_style_from_dwrite(), font_style_to_dwrite(), get_font_names_from_collection(), get_name(), TextRenderer, TextRendererWrapper
-
-### Community 2475 - "open_test_image"
-Cohesion: 0.28
-Nodes (12): displayed_source_id(), DisplayedImage, draw_window(), image_is_cached(), init_test(), open_test_image(), replace_image(), replace_image_and_draw() (+4 more)
-
-### Community 2476 - "ThemePickerDelegate"
-Cohesion: 0.32
-Nodes (3): theme_picker(), ThemePicker, ThemePickerDelegate
+### Community 2468 - "settings_content/src/terminal.rs"
+Cohesion: 0.04
+Nodes (53): ActivateScript, Csh, Default, Fish, Nushell, PowerShell, Pyenv, AlternateScroll (+45 more)
 
 ### Community 2477 - "Building Zed for Linux"
 Cohesion: 0.12
@@ -8905,57 +8550,21 @@ Nodes (15): concurrency, cancel-in-progress, group, default, description, type, 
 Cohesion: 0.16
 Nodes (15): danger, danger-plugin-pr-hygiene, @types/node, typescript, devDependencies, danger@13.0.8, danger-plugin-pr-hygiene@0.7.1, @types/node@24.13.4 (+7 more)
 
-### Community 2481 - "zed_urls.rs"
-Cohesion: 0.47
-Nodes (9): account_url(), acp_registry_blog(), docs_url(), edit_prediction_docs(), llm_provider_docs(), sandboxing_docs(), server_url(), start_trial_url() (+1 more)
-
 ### Community 2482 - "MessageContent"
 Cohesion: 0.16
 Nodes (15): CreateMessageRequest, CreateMessageResult, MessageAnnotations, MessageContent, Audio, Image, Resource, Text (+7 more)
 
-### Community 2485 - "PendingRequests"
-Cohesion: 0.19
-Nodes (4): PendingRequests, RequestHandling, Exit, Respond
-
-### Community 2486 - "extension_events.rs"
-Cohesion: 0.24
-Nodes (8): Event, ConfigureExtensionRequested, ExtensionInstalled, ExtensionsInstalledChanged, ExtensionUninstalled, ExtensionEvents, GlobalExtensionEvents, init()
-
-### Community 2487 - "PresenceFlag"
-Cohesion: 0.14
-Nodes (4): FeatureFlagValue, PresenceFlag, Off, On
-
-### Community 2488 - "FileIcons"
-Cohesion: 0.30
-Nodes (5): FileIcons, test_folder_indicator_default_is_icon(), test_folder_indicators_per_setting(), test_folder_indicators_reflect_expanded_state(), test_suffix_matches_take_precedence_over_prefixes()
-
-### Community 2489 - ".from"
-Cohesion: 0.14
-Nodes (4): FakeHandle, FileHandle, PathBuf, std::fs::File
-
-### Community 2491 - "StringMatch"
-Cohesion: 0.21
-Nodes (5): StringMatch, expand_tree(), OutlineSearchEntry, Ancestor, Match
+### Community 2487 - "src/feature_flags.rs"
+Cohesion: 0.08
+Nodes (10): Context<'_, V>, FeatureFlagValue, FeatureFlagViewExt, OnFlagsReady, PresenceFlag, Off, On, ZED_DISABLE_STAFF (+2 more)
 
 ### Community 2492 - "Tab Switcher"
 Cohesion: 0.50
 Nodes (4): Action Reference, Opening the Tab Switcher, Quick Switching, Tab Switcher
 
-### Community 2493 - "DirectWriteState"
-Cohesion: 0.25
-Nodes (4): apply_font_features(), DirectWriteState, FontInfo, is_color_glyph()
-
 ### Community 2494 - "inputs"
 Cohesion: 0.29
 Nodes (7): description, required, type, channel, on, workflow_dispatch, inputs
-
-### Community 2495 - "additionalProperties"
-Cohesion: 0.14
-Nodes (15): additionalProperties, description, patternProperties, properties, peerDependencyMeta, description, type, additionalProperties (+7 more)
-
-### Community 2496 - "ChatMessage"
-Cohesion: 0.20
-Nodes (12): ChatMessage, Assistant, System, Tool, User, ImageUrl, MessageContent, Multipart (+4 more)
 
 ### Community 2497 - "ViewPhase"
 Cohesion: 0.29
@@ -8965,49 +8574,25 @@ Nodes (6): record_view(), ViewPhase, Paint, Prepaint, RequestLayout, ViewTiming
 Cohesion: 0.31
 Nodes (3): Model, Relation, Project
 
-### Community 2500 - "ChoiceCard"
-Cohesion: 0.19
-Nodes (4): ChoiceCard, ChoiceCardKind, Checkbox, Radio
-
 ### Community 2501 - "excerpt_ranges.rs"
-Cohesion: 0.36
-Nodes (14): compute_editable_and_context_ranges(), compute_editable_range_from_text(), compute_legacy_excerpt_ranges(), compute_line_starts(), containing_syntax_boundaries_from_ranges(), estimate_tokens_for_row_range(), expand_context_from_text(), expand_linewise() (+6 more)
-
-### Community 2504 - "MTime"
-Cohesion: 0.16
-Nodes (3): Metadata, MTime, proto::Timestamp
+Cohesion: 0.29
+Nodes (17): compute_editable_and_context_ranges(), compute_editable_range_from_text(), compute_legacy_excerpt_ranges(), compute_line_starts(), containing_syntax_boundaries_from_ranges(), estimate_tokens_for_row_range(), expand_context_from_text(), expand_linewise() (+9 more)
 
 ### Community 2505 - "deployment_menu.rs"
-Cohesion: 0.23
+Cohesion: 0.21
 Nodes (6): ContextMenu, DeploymentMenuExt, folders_cannot_be_compared(), is_configured_matches_whole_root_paths(), labels(), menu_items_follow_phpstorm_order()
-
-### Community 2507 - "NotificationSubscription"
-Cohesion: 0.20
-Nodes (4): AnyNotification, NotificationHandler, NotificationSubscription, NotificationSubscriptionSet
-
-### Community 2508 - "ChatMessage"
-Cohesion: 0.19
-Nodes (12): ChatMessage, Assistant, System, Tool, User, ChatMessageContent, Multipart, Plain (+4 more)
 
 ### Community 2513 - "AnimationPhase"
 Cohesion: 0.22
 Nodes (3): animation_phases_interpolate_over_arbitrary_ranges(), AnimationPhase, SpringAnimation
 
-### Community 2515 - "ChatMessage"
-Cohesion: 0.21
-Nodes (12): ChatMessage, Assistant, System, Tool, User, ImageUrl, MessageContent, Multipart (+4 more)
-
-### Community 2516 - ".select_entry"
-Cohesion: 0.16
-Nodes (4): SelectedEntry, Invalidated, None, Valid
-
 ### Community 2518 - "derive_refineable.rs"
-Cohesion: 0.26
-Nodes (4): derive_refineable(), get_wrapper_type(), is_optional_field(), is_refineable_field()
+Cohesion: 0.14
+Nodes (7): derive_refineable(), get_wrapper_type(), is_optional_field(), is_refineable_field(), derive_merge_from(), derive_register_setting(), with_fallible_options()
 
 ### Community 2520 - "Logger"
-Cohesion: 0.19
-Nodes (6): flush(), Logger, scoped_logger(), Timer, Zlog, ZLOG
+Cohesion: 0.14
+Nodes (7): flush(), extract_crate_name_from_module_path(), Logger, scoped_logger(), Timer, Zlog, ZLOG
 
 ### Community 2522 - "cargo-timing-info.js"
 Cohesion: 0.21
@@ -9017,41 +8602,17 @@ Nodes (11): analyzeTimings(), args, extractUnitData(), formatTime(), formatUnit(
 Cohesion: 0.43
 Nodes (3): KEYMAP_PATTERNS, replace_string_action(), STRING_REPLACE
 
-### Community 2524 - "edit_prediction_cli/src/paths.rs"
-Cohesion: 0.28
-Nodes (10): CACHE_DIR, DATA_DIR, FAILED_EXAMPLES_DIR, LATEST_EXAMPLE_RUN_DIR, LATEST_FAILED_EXAMPLES_DIR, LLM_CACHE_DB, REPOS_DIR, RUN_DIR (+2 more)
-
-### Community 2525 - "Erlang"
-Cohesion: 0.67
-Nodes (3): Choosing a language server, Erlang, See also:
-
 ### Community 2526 - "IndentGuide"
-Cohesion: 0.22
-Nodes (6): ActiveIndentedRange, Editor, indent_guides_in_range(), resolve_indented_range(), should_recalculate_indented_range(), IndentGuide
+Cohesion: 0.27
+Nodes (7): ActiveIndentedRange, ActiveIndentGuidesState, Editor, indent_guides_in_range(), resolve_indented_range(), should_recalculate_indented_range(), IndentGuide
 
-### Community 2527 - "redact.rs"
-Cohesion: 0.21
-Nodes (8): docker_command_error(), redact_arguments(), redact_environment(), redacts_assignments_in_command_arguments(), redact_command(), REDACT_REGEX, should_redact(), test_redact_string_with_multiple_env_vars()
-
-### Community 2528 - "examples/system_notifications.rs"
-Cohesion: 0.22
-Nodes (6): button(), main(), NOTIFICATION_TAG, run_example(), start(), SystemNotificationExample
+### Community 2527 - "connection"
+Cohesion: 0.13
+Nodes (18): connection(), docker_command_error(), preserves_argument_boundaries_and_escapes_control_characters(), push_environment(), redact_arguments(), redact_environment(), redacted_docker_exec(), redacts_assignments_in_command_arguments() (+10 more)
 
 ### Community 2529 - "declaration"
-Cohesion: 0.33
-Nodes (6): default, description, markdownDescription, type, x-intellij-html-description, declaration
-
-### Community 2530 - "parse_discovered_models"
-Cohesion: 0.18
-Nodes (12): load_cached_catalog(), parse_discovered_models(), test_catalog(), test_discovery_excludes_only_explicitly_free_zen_models(), test_discovery_filters_deprecated_status_per_subscription(), test_discovery_inherits_transport_unless_model_overrides_it(), test_disk_cache_and_hourly_refresh(), test_fresh_disk_catalog_is_usable() (+4 more)
-
-### Community 2531 - "WorkingDirectory"
-Cohesion: 0.15
-Nodes (13): LegacyDirectoryItem, ModeEnum, Auto, Location, ModeItem, PatternItem, WorkingDirectories, WorkingDirectory (+5 more)
-
-### Community 2533 - "dev_container_suggest.rs"
-Cohesion: 0.31
-Nodes (7): DEV_CONTAINER_SUGGEST_KEY, devcontainer_dir_path(), devcontainer_json_path(), dismiss_path_for_worktree(), open_dev_container_from_cli(), project_devcontainer_key(), suggest_on_worktree_updated()
+Cohesion: 0.20
+Nodes (9): default, description, markdownDescription, type, x-intellij-html-description, declaration, attribute(), viewport_labels() (+1 more)
 
 ### Community 2534 - "focus_cleanup.rs"
 Cohesion: 0.33
@@ -9065,57 +8626,37 @@ Nodes (10): AssistantEventData, AssistantKind, Inline, InlineTerminal, Panel, As
 Cohesion: 0.38
 Nodes (6): LANGUAGE_SETTINGS_REPLACE, replace_edit_prediction_provider_setting(), replace_setting_in_languages(), replace_setting_name(), SETTINGS_PATTERNS, SETTINGS_STRING_REPLACE
 
-### Community 2540 - "tab.rs"
-Cohesion: 0.15
-Nodes (9): END_TAB_SLOT_SIZE, START_TAB_SLOT_SIZE, TabCloseSide, End, Start, TabPosition, First, Last (+1 more)
-
 ### Community 2541 - "split_repository_update"
 Cohesion: 0.33
 Nodes (3): split_repository_update(), split_worktree_update(), test_split_repository_update_keeps_branch_list_on_final_chunk()
 
 ### Community 2543 - "parse"
-Cohesion: 0.27
-Nodes (10): directive_level(), EnvFilter, err_when_invalid_level(), err_when_multiple_max_levels(), global_level(), global_level_and_bare_module(), global_level_and_directive_level(), parse() (+2 more)
+Cohesion: 0.35
+Nodes (9): directive_level(), EnvFilter, err_when_invalid_level(), err_when_multiple_max_levels(), global_level(), global_level_and_bare_module(), global_level_and_directive_level(), parse() (+1 more)
+
+### Community 2546 - "Item"
+Cohesion: 0.16
+Nodes (5): GetVersionTags, GitCommand, GitCommand<G>, InfoForCommit, Subcommand
 
 ### Community 2548 - "client/src/proxy.rs"
 Cohesion: 0.23
 Nodes (4): AsyncReadWrite, connect_proxy_stream(), connect_tls_to_proxy(), excluded_from_proxy()
 
-### Community 2555 - "ProjectSearchView"
-Cohesion: 0.05
-Nodes (9): active_search_view(), init(), ProjectSearchBar, ProjectSearchView, register_workspace_action(), register_workspace_action_for_present_search(), render_landing_action_button(), SearchBarTest (+1 more)
+### Community 2555 - "search/src/project_search.rs"
+Cohesion: 0.03
+Nodes (114): multibuffer_context_lines(), active_search_view(), ActiveSettings, apply_reused_chunk(), assert_all_highlights_match_query(), buffer_search_query(), consume_search_stream(), contains_uppercase() (+106 more)
 
 ### Community 2557 - ".to_proto"
 Cohesion: 0.17
 Nodes (4): dap_types::Module, dap_types::OutputEvent, dap_types::Scope, dap_types::Thread
 
-### Community 2565 - "paste_plan"
-Cohesion: 0.21
-Nodes (12): copies_get_free_names(), copy_name(), cross_server_plan(), folders_cannot_be_pasted_into_themselves(), item(), moves_keep_names_and_refuse_clashes(), paste_plan(), pastes_from_another_server_keep_names_and_never_overwrite() (+4 more)
-
-### Community 2567 - "pump_response_body"
-Cohesion: 0.23
-Nodes (3): cancel_reader(), pump_response_body(), ReadableStreamBody
-
-### Community 2570 - "ImageMetadata"
-Cohesion: 0.21
-Nodes (5): ImageColorInfo, ImageFormat, Raster, Svg, ImageMetadata
-
-### Community 2571 - "label/label.rs"
-Cohesion: 0.27
-Nodes (8): parse_backtick_spans(), test_parse_backtick_spans_empty_span(), test_parse_backtick_spans_multiple_spans(), test_parse_backtick_spans_no_backticks(), test_parse_backtick_spans_single_span(), test_parse_backtick_spans_unmatched_backtick(), test_single_line_leaves_printable_text_alone(), test_single_line_replaces_control_characters()
+### Community 2565 - "remote_host_panel.rs"
+Cohesion: 0.06
+Nodes (35): RemoteItem, Clipboard, copies_get_free_names(), copy_name(), cross_server_plan(), details_are_formatted_like_phpstorm(), dock_position_from_str(), DOCK_POSITION_KEY (+27 more)
 
 ### Community 2572 - "src/clangd_ext.rs"
-Cohesion: 0.31
+Cohesion: 0.27
 Nodes (3): apply_related_actions(), is_c_language(), switch_source_header()
-
-### Community 2573 - ".reject_edits_in_ranges"
-Cohesion: 0.44
-Nodes (4): ActionLogMetrics, ActionLogTelemetry, telemetry_report_accepted_edits(), telemetry_report_rejected_edits()
-
-### Community 2574 - "FindPathToolOutput"
-Cohesion: 0.50
-Nodes (4): FindPathToolOutput, Error, Success, LanguageModelToolResultContent
 
 ### Community 2575 - "LoggingLevel"
 Cohesion: 0.18
@@ -9125,17 +8666,9 @@ Nodes (11): LoggingLevel, Alert, Critical, Debug, Emergency, Error, Info, Notice
 Cohesion: 0.25
 Nodes (8): RandomizedChildMutation, Border, Bounds, Clipping, Color, Opacity, Text, Visibility
 
-### Community 2577 - "Status"
-Cohesion: 0.18
-Nodes (8): Status, Authorized, Disabled, Error, SignedOut, SigningIn, Starting, Unauthorized
-
 ### Community 2578 - "Model"
 Cohesion: 0.18
 Nodes (4): Model, Custom, V4_1Flash, V4Pro
-
-### Community 2579 - "InputPanel"
-Cohesion: 0.40
-Nodes (5): InputPanel, Exclude, Include, Query, Replacement
 
 ### Community 2580 - "env"
 Cohesion: 0.22
@@ -9145,10 +8678,6 @@ Nodes (9): BRANCH, CHANNEL, COMMIT, GIT_AUTHOR_EMAIL, GIT_AUTHOR_NAME, GIT_COMMI
 Cohesion: 0.27
 Nodes (7): cache_dir(), config_dir(), global_servers_file(), HOME, home_override(), state_dir(), trusted_hosts_file()
 
-### Community 2583 - "rel_path_buf"
-Cohesion: 0.18
-Nodes (5): test_build_adapter_schema_path_with_schema_path(), test_build_adapter_schema_path_without_schema_path(), test_deserialize_manifest_with_windows_separators(), rel_path_buf(), test_set_extension()
-
 ### Community 2584 - "extension_suggest.rs"
 Cohesion: 0.27
 Nodes (8): additional_suggestion_for_language(), LanguageAdditionSuggestion, suggest_extension(), suggested_extensions(), SuggestedExtension, SUGGESTIONS_BY_EXTENSION_ID, SUGGESTIONS_BY_LANGUAGE, test_suggested_extension()
@@ -9157,17 +8686,9 @@ Nodes (8): additional_suggestion_for_language(), LanguageAdditionSuggestion, sug
 Cohesion: 0.33
 Nodes (7): get_matcher(), get_matchers(), LENGTH_PENALTY, MATCHERS, pool_cap(), return_matcher(), return_matchers()
 
-### Community 2586 - "markdown_writer.rs"
-Cohesion: 0.28
-Nodes (3): empty_line_regex(), more_than_three_newlines_regex(), TagHandler
-
 ### Community 2599 - "worktree_names.rs"
 Cohesion: 0.31
 Nodes (6): ADJECTIVES, generate_worktree_name(), NOUNS, test_generate_worktree_name_avoids_existing(), test_generate_worktree_name_format(), test_generate_worktree_name_returns_none_when_stuck()
-
-### Community 2600 - "Domain"
-Cohesion: 0.22
-Nodes (9): GitGraphsDb, .MIGRATIONS, .NAME, MarkdownPreviewDb, .MIGRATIONS, .NAME, OnboardingPagesDb, .MIGRATIONS (+1 more)
 
 ### Community 2601 - "SpringConfig"
 Cohesion: 0.42
@@ -9176,10 +8697,6 @@ Nodes (5): SpringElementState, sampled_easing(), settle_time_is_conservative_for
 ### Community 2602 - "Interpolate"
 Cohesion: 0.22
 Nodes (5): f32, Hsla, hsla_interpolation_takes_the_shortest_hue_path(), Interpolate, Rgba
-
-### Community 2603 - ".cmp"
-Cohesion: 0.35
-Nodes (4): ChangeStartPosition, SyntaxLayerPosition, SyntaxLayerPositionBeforeChange, SyntaxLayerSummary
 
 ### Community 2604 - "cherry_pick.yml"
 Cohesion: 0.25
@@ -9192,18 +8709,6 @@ Nodes (4): ViewEvent, Activate, Dismiss, UpdateTab
 ### Community 2608 - "steps"
 Cohesion: 0.25
 Nodes (8): jobs, run_cherry_pick, runs-on, steps, id, name, run, uses
-
-### Community 2609 - "CodexCredentials"
-Cohesion: 0.25
-Nodes (8): codex_extra_headers(), CodexCredentials, list_models(), now_ms(), refresh_token(), RefreshError, Fatal, Transient
-
-### Community 2610 - "compact"
-Cohesion: 0.27
-Nodes (5): compact(), compaction_response_stream(), stream_completion(), test_explicit_compaction_streams_with_codex_compaction_trigger(), test_server_side_compaction_streams_from_codex_responses()
-
-### Community 2613 - "steps"
-Cohesion: 0.18
-Nodes (11): if, runs-on, steps, timeout-minutes, clippy_windows, run_tests_windows, if, runs-on (+3 more)
 
 ### Community 2615 - "tables/user.rs"
 Cohesion: 0.33
@@ -9221,30 +8726,6 @@ Nodes (3): KEYMAP_PATTERNS, replace_array_with_single_string(), TRANSFORM_ARRAY
 Cohesion: 0.22
 Nodes (3): dap_types::ModuleId, dap_types::OutputEventCategory, ProtoConversion
 
-### Community 2624 - "Request"
-Cohesion: 0.20
-Nodes (10): Request, ResponseFormat, JsonObject, Text, ToolChoice, Auto, None, Required (+2 more)
-
-### Community 2625 - ".buffer_outline_items"
-Cohesion: 0.33
-Nodes (3): breadcrumb_texts(), Editor, lsp_symbols_enabled()
-
-### Community 2626 - "get_settings"
-Cohesion: 0.22
-Nodes (4): ContextServerSettings, get_settings(), LanguageSettings, LspSettings
-
-### Community 2630 - "ExecutionStatus"
-Cohesion: 0.20
-Nodes (10): ExecutionStatus, ConnectingToKernel, Executing, Finished, KernelErrored, Queued, Restarting, Shutdown (+2 more)
-
-### Community 2631 - "Position"
-Cohesion: 0.31
-Nodes (5): Position, CurrentLine, LastLine, Line, Mark
-
-### Community 2632 - "VimOption"
-Cohesion: 0.42
-Nodes (7): VimOption, GDefault, IgnoreCase, Number, RelativeNumber, Wrap, VimSet
-
 ### Community 2633 - ".render"
 Cohesion: 0.33
 Nodes (3): ErrorWrappingTestView, ThreadItemBranchNameTestView, ThreadItemIconDecorationsTestView
@@ -9252,14 +8733,6 @@ Nodes (3): ErrorWrappingTestView, ThreadItemBranchNameTestView, ThreadItemIconDe
 ### Community 2634 - "Extension Publishing Prerequisites {#extension-publishing-prerequisites}"
 Cohesion: 0.20
 Nodes (10): Agent Server and Slash Command Extensions, Debugger Extensions, Extension Publishing Prerequisites {#extension-publishing-prerequisites}, General Requirements, Icon Theme Extensions, Language Extensions, Language Server Extensions, MCP Server Extensions (+2 more)
-
-### Community 2635 - "RequestMessage"
-Cohesion: 0.22
-Nodes (9): FunctionContent, RequestMessage, Assistant, System, Tool, User, ToolCall, ToolCallContent (+1 more)
-
-### Community 2636 - "MessageContent"
-Cohesion: 0.36
-Nodes (7): ImageUrl, MessageContent, Multipart, Plain, MessagePart, Image, Text
 
 ### Community 2637 - "SpringPlayback"
 Cohesion: 0.22
@@ -9277,13 +8750,9 @@ Nodes (4): Decisions needed, Open items, Order, VEGA: next plan (everything exce
 Cohesion: 0.50
 Nodes (4): TerminalProviderCommand, Close, Resize, WriteInput
 
-### Community 2642 - "check_unicode_separator_cursor"
-Cohesion: 0.25
-Nodes (6): check_unicode_separator_cursor(), get_system_subpixel_rendering(), get_system_ui_font_name(), tabs_preserve_native_advances_and_cursor(), unicode_line_separators_preserve_shaped_line_cursor(), unicode_paragraph_separators_preserve_shaped_line_cursor()
-
-### Community 2645 - "ConnectionResult"
-Cohesion: 0.28
-Nodes (5): ConnectionResult, ConnectionReset, ConnectionResult<O>, Result, Timeout
+### Community 2643 - "system_settings.rs"
+Cohesion: 0.16
+Nodes (3): MouseWheelSettings, WindowsSystemSettings, AT_RECURSIVE
 
 ### Community 2647 - "Formatting: floating toolbar, shortcuts, Insert popup, header level"
 Cohesion: 0.40
@@ -9325,81 +8794,21 @@ Nodes (5): Cited Findings, Gaps, Inferences, Tables, Takeaway
 Cohesion: 0.40
 Nodes (5): Cited Findings, Gaps, Inferences, Lists, Takeaway
 
-### Community 2657 - "Role"
-Cohesion: 0.25
-Nodes (7): Role, Assistant, Developer, System, Tool, User, String
-
 ### Community 2658 - "AuthErrorSource"
 Cohesion: 0.50
 Nodes (4): AuthErrorSource, Marker, Sdk, V2
-
-### Community 2659 - "json_log.rs"
-Cohesion: 0.36
-Nodes (3): deserialize_level(), LogRecord<'a>, serialize_level()
-
-### Community 2662 - "TestProfileProvider"
-Cohesion: 0.32
-Nodes (3): active_profile_selection_logic_works(), fuzzy_filter_returns_no_results_and_keeps_configure(), TestProfileProvider
-
-### Community 2663 - "OpenBehavior"
-Cohesion: 0.25
-Nodes (8): OpenBehavior, Add, AlwaysNew, Classic, Default, ExistingWindow, PreferNewWindow, Reuse
-
-### Community 2665 - "Role"
-Cohesion: 0.29
-Nodes (6): Role, Assistant, System, Tool, User, String
-
-### Community 2666 - "EventHandlerError"
-Cohesion: 0.39
-Nodes (3): EventHandlerError, XCBConnectionError, XIMClientError
-
-### Community 2668 - "ProjectSearch"
-Cohesion: 0.07
-Nodes (23): apply_reused_chunk(), consume_search_stream(), is_buffer_stale(), ProjectSearch, ReusedResults, SearchActivity, Searching, WaitingForScan (+15 more)
-
-### Community 2669 - "Role"
-Cohesion: 0.29
-Nodes (6): Role, Assistant, System, Tool, User, String
 
 ### Community 2671 - "Role"
 Cohesion: 0.29
 Nodes (6): Role, Assistant, System, Tool, User, String
 
-### Community 2672 - "CatalogModel"
-Cohesion: 0.25
-Nodes (8): CatalogModel, ModelServiceTier, ModelsResponse, ModelVisibility, Hide, List, None, ReasoningEffortPreset
-
-### Community 2673 - "CollapsedEntry"
-Cohesion: 0.40
-Nodes (5): CollapsedEntry, Excerpt, ExternalFile, File, Outline
-
-### Community 2675 - "SshConnectionHost"
-Cohesion: 0.36
-Nodes (3): SshConnectionHost, Hostname, IpAddr
-
-### Community 2676 - "active_settings_profile_picker"
-Cohesion: 0.39
-Nodes (6): active_settings_profile_picker(), init_test(), test_settings_profile_selector_is_in_user_configuration_order(), test_settings_profile_selector_state(), test_settings_profile_with_default_base(), test_settings_profile_with_user_base()
-
 ### Community 2682 - "Publishing Guide {#publishing-your-extension}"
 Cohesion: 0.21
 Nodes (8): Forking and cloning the repo, Publishing Guide {#publishing-your-extension}, Pull request rules {#pull-request-rules}, Review process {#review-process}, Submitting your extension {#submitting-your-extension}, Designing Your Theme, Theme JSON Structure, Themes
 
-### Community 2683 - "GenerationMode"
-Cohesion: 0.29
-Nodes (3): GenerationMode, Generate, Transform
-
-### Community 2717 - ".process_response"
-Cohesion: 0.29
-Nodes (4): interpolate_message(), test_interpolate_message(), test_process_response_interpolates_error_variables(), test_process_response_preserves_error_without_variables()
-
-### Community 2720 - "ViewOptions"
-Cohesion: 0.38
-Nodes (3): view_options_round_trip(), ViewOptions, .FLAGS
-
-### Community 2721 - "create_test_workspace"
-Cohesion: 0.52
-Nodes (6): create_test_workspace(), init_test(), setup_git_repo(), test_create_tag_at_head(), test_create_tag_from_commit_context_menu(), test_show_ref_picker_with_repository()
+### Community 2684 - "agent_ui/src/test_support.rs"
+Cohesion: 0.09
+Nodes (7): open_draft_with_connection(), register_test_sidebar(), send_message(), StubAgentServer, StubAgentServer<C>, StubAgentServer<StubAgentConnection>, TestWorkspaceSidebar
 
 ### Community 2723 - "DiagramType"
 Cohesion: 0.29
@@ -9413,37 +8822,17 @@ Nodes (4): description, required, type, branch
 Cohesion: 0.50
 Nodes (4): pr_number, description, required, type
 
-### Community 2727 - "CustomToolFormat"
-Cohesion: 0.29
-Nodes (7): custom_tool_format_into_open_ai(), CustomToolFormat, Grammar, Text, CustomToolGrammarSyntax, Lark, Regex
-
-### Community 2728 - "make_fresh_credentials"
-Cohesion: 0.48
-Nodes (5): make_fresh_credentials(), test_model_catalog_failure_preserves_fallback_models(), test_model_catalog_request_times_out(), test_model_catalog_uses_account_visible_models(), test_obsolete_model_catalog_cannot_replace_newer_models()
-
-### Community 2729 - "GitDateFormat"
-Cohesion: 0.29
-Nodes (4): GitDateFormat, Custom, Iso, Locale
-
 ### Community 2730 - "ThemeAppearanceJson"
 Cohesion: 0.38
 Nodes (5): Appearance, AppearanceContent, ThemeAppearanceJson, Dark, Light
 
-### Community 2734 - "PerBufferUndo"
-Cohesion: 0.33
-Nodes (5): LastRejectUndo, PerBufferUndo, UndoBufferStatus, Created, Modified
+### Community 2731 - "Settings"
+Cohesion: 0.03
+Nodes (22): AudioSettings, CallSettings, CollaborationPanelSettings, CommandPaletteSettings, DevContainerSettings, LineIndicatorFormat, Long, Short (+14 more)
 
 ### Community 2737 - "contributor.rs"
 Cohesion: 0.40
 Nodes (3): Model, Relation, User
-
-### Community 2741 - "extension/src/types.rs"
-Cohesion: 0.40
-Nodes (4): CodeLabelSpan, CodeRange, Literal, CodeLabelSpanLiteral
-
-### Community 2742 - "LineIndicatorFormat"
-Cohesion: 0.33
-Nodes (3): LineIndicatorFormat, Long, Short
 
 ### Community 2743 - "ownership_post.rs"
 Cohesion: 0.53
@@ -9453,10 +8842,6 @@ Nodes (5): Change, Counter, main(), run_example(), start()
 Cohesion: 0.33
 Nodes (3): PathExt, T, try_from_bytes()
 
-### Community 2810 - "SaturatingBool"
-Cohesion: 0.40
-Nodes (3): bool, SaturatingBool, test_disable_ai_crash()
-
 ### Community 2813 - "Developing Extensions {#developing-extensions}"
 Cohesion: 0.33
 Nodes (6): Debugging your Rust extension, Developing an Extension Locally, Developing Extensions {#developing-extensions}, Directory Structure of a Zed Extension, Extension Features {#extension-features}, Rust and WebAssembly
@@ -9465,113 +8850,41 @@ Nodes (6): Debugging your Rust extension, Developing an Extension Locally, Devel
 Cohesion: 0.33
 Nodes (6): Configuration completion, DAP support, Deno, Deno Configuration, Runnable support, See also:
 
-### Community 2816 - "AskUserToolOutput"
-Cohesion: 0.50
-Nodes (4): AskUserToolOutput, Answered, Error, LanguageModelToolResultContent
+### Community 2815 - "github-track-duplicate-bot-effectiveness.py"
+Cohesion: 0.06
+Nodes (23): add_or_update_project_item(), add_project_item(), bot_version_for_time(), classify_as_assist(), classify_as_missed_opportunity(), classify_as_success(), classify_closed(), classify_non_author_closed() (+15 more)
 
-### Community 2817 - "CreateThreadToolOutput"
-Cohesion: 0.50
-Nodes (4): CreateThreadToolOutput, Error, Success, LanguageModelToolResultContent
+### Community 2816 - "ask_user_tool.rs"
+Cohesion: 0.09
+Nodes (17): accept_with(), AskUserTool, .NAME, AskUserToolInput, AskUserToolOutput, Answered, Error, build_schema() (+9 more)
 
-### Community 2818 - "SkillToolOutput"
-Cohesion: 0.50
-Nodes (4): LanguageModelToolResultContent, SkillToolOutput, Error, Found
+### Community 2817 - "schema_as_acp"
+Cohesion: 0.03
+Nodes (43): AvailableAgents, ThreadEnvironment, CreateThreadTool, .NAME, CreateThreadToolInput, CreateThreadToolOutput, Error, Success (+35 more)
 
 ### Community 2819 - "DapStatus"
 Cohesion: 0.40
 Nodes (5): DapStatus, CheckingForUpdate, Downloading, Failed, None
 
-### Community 2822 - "ContextMenuPlacement"
-Cohesion: 0.40
-Nodes (4): ContextMenuOptions, ContextMenuPlacement, Above, Below
-
-### Community 2823 - "Task"
-Cohesion: 0.40
-Nodes (5): Task, BatchEmbedContents, EmbedContent, GenerateContent, StreamGenerateContent
-
-### Community 2826 - "ModelMode"
-Cohesion: 0.50
-Nodes (4): AnthropicModelMode, ModelMode, Default, Thinking
-
-### Community 2827 - "EnvironmentOrigin"
-Cohesion: 0.50
-Nodes (4): EnvironmentOrigin, Cli, WorktreeShell, String
-
-### Community 2828 - "ImageItemEvent"
-Cohesion: 0.40
-Nodes (5): ImageItemEvent, FileHandleChanged, MetadataUpdated, Reloaded, ReloadNeeded
-
 ### Community 2829 - "Debugger Extensions"
 Cohesion: 0.40
 Nodes (5): Available Extensions, Debugger Extensions, Defining Debug Locators, Defining Debugger Extensions, Testing
-
-### Community 2830 - "bundle_linux_aarch64"
-Cohesion: 0.40
-Nodes (5): needs, runs-on, steps, timeout-minutes, bundle_linux_aarch64
-
-### Community 2832 - "TrackedBufferStatus"
-Cohesion: 0.50
-Nodes (4): TrackedBufferStatus, Created, Deleted, Modified
-
-### Community 2833 - "ContentType"
-Cohesion: 0.50
-Nodes (4): ContentType, Html, Json, Plaintext
-
-### Community 2836 - "ReasoningEffort"
-Cohesion: 0.50
-Nodes (4): ReasoningEffort, High, Low, Max
-
-### Community 2837 - "ThinkingType"
-Cohesion: 0.50
-Nodes (4): Thinking, ThinkingType, Disabled, Enabled
-
-### Community 2838 - "BreakpointPromptEditAction"
-Cohesion: 0.50
-Nodes (4): BreakpointPromptEditAction, Condition, HitCondition, Log
-
-### Community 2839 - "SelectSyntaxNodeScrollBehavior"
-Cohesion: 0.50
-Nodes (4): SelectSyntaxNodeScrollBehavior, CursorBottom, CursorTop, FitSelection
-
-### Community 2847 - "Event"
-Cohesion: 0.50
-Nodes (4): Event, Focus, OpenedEntry, SplitEntry
 
 ### Community 2848 - "GitPathStyle"
 Cohesion: 0.50
 Nodes (3): GitPathStyle, FileNameFirst, FilePathFirst
 
-### Community 2850 - "SubPageType"
-Cohesion: 0.50
-Nodes (4): SubPageType, Language, Other, SkillCreator
+### Community 2850 - "settings_ui.rs"
+Cohesion: 0.03
+Nodes (84): render_ollama_model_picker(), get_current_device(), render_audio_device_dropdown(), render_input_audio_device_dropdown(), render_output_audio_device_dropdown(), render_settings_audio_device_dropdown(), SYSTEM_DEFAULT, SkillCreatorOpenMode (+76 more)
 
-### Community 2851 - "setup_test"
-Cohesion: 0.67
-Nodes (3): init_test(), register_test_icon_themes(), setup_test()
-
-### Community 2852 - "setup_test"
-Cohesion: 0.67
-Nodes (3): init_test(), register_test_themes(), setup_test()
-
-### Community 2853 - "zed/build.rs"
-Cohesion: 0.83
-Nodes (3): icon_path(), main(), prepare_app_icon_x11()
-
-### Community 2854 - "EnabledStatus"
-Cohesion: 0.50
-Nodes (4): EnabledStatus, Disabled, Enabled, NotConfigured
-
-### Community 2855 - "Editing Code"
-Cohesion: 0.50
-Nodes (4): Editing Code, How These Features Work Together, Related Features, What's in This Section
+### Community 2854 - "is_scope_enabled"
+Cohesion: 0.27
+Nodes (6): EnabledStatus, Disabled, Enabled, NotConfigured, is_possibly_enabled_level(), is_scope_enabled()
 
 ### Community 2856 - "MCP Server Extensions"
 Cohesion: 0.50
 Nodes (4): Available Extensions, Defining MCP Extensions, MCP Server Extensions, Testing
-
-### Community 2857 - "GDScript"
-Cohesion: 0.50
-Nodes (4): GDScript, Pre-requisites, Setup, Usage
 
 ### Community 2858 - "Shell Scripts"
 Cohesion: 0.50
@@ -9586,12 +8899,8 @@ Cohesion: 0.50
 Nodes (4): Configuration, Prettier Plugin, Tailwind CSS, Using Tailwind CSS Mode in CSS Files
 
 ### Community 2861 - "Snippets"
-Cohesion: 0.50
+Cohesion: 0.40
 Nodes (4): Example configuration, Known Limitations, Scopes, Snippets
-
-### Community 2862 - "Zed and trusted worktrees"
-Cohesion: 0.50
-Nodes (4): Configuring broad worktree trust, Trust hierarchy, What is restricted, Zed and trusted worktrees
 
 ### Community 2863 - "blob-store.ps1"
 Cohesion: 0.83
@@ -9601,53 +8910,9 @@ Nodes (3): UploadToBlobStore(), UploadToBlobStorePublic(), UploadToBlobStoreWith
 Cohesion: 0.67
 Nodes (3): UuidVersion, V4, V7
 
-### Community 2871 - "ColumnarSelectionState"
-Cohesion: 0.67
-Nodes (3): ColumnarSelectionState, FromMouse, FromSelection
-
-### Community 2875 - "Intensity"
-Cohesion: 0.67
-Nodes (3): Intensity, High, Low
-
-### Community 2876 - "GitPanelTab"
-Cohesion: 0.67
-Nodes (3): GitPanelTab, Changes, History
-
-### Community 2877 - "runtime"
-Cohesion: 0.67
-Nodes (3): runtime, description, oneOf
-
-### Community 2881 - "DragTarget"
-Cohesion: 0.67
-Nodes (3): DragTarget, Background, Entry
-
-### Community 2882 - "EntryTransferOperation"
-Cohesion: 0.67
-Nodes (3): EntryTransferOperation, Copy, Move
-
 ### Community 2883 - "GitAccess"
 Cohesion: 0.67
 Nodes (3): GitAccess, No, Yes
-
-### Community 2884 - "ArchiveWorktreeOutcome"
-Cohesion: 0.67
-Nodes (3): ArchiveWorktreeOutcome, Cancelled, Success
-
-### Community 2885 - "NewEntryTarget"
-Cohesion: 0.67
-Nodes (3): NewEntryTarget, LastCreatedKind, Terminal
-
-### Community 2887 - "DeleteMarks"
-Cohesion: 0.67
-Nodes (3): DeleteMarks, AllLocal, Marks
-
-### Community 2890 - "Contacts and Private Calls {#contacts}"
-Cohesion: 0.67
-Nodes (3): Adding a Contact, Contacts and Private Calls {#contacts}, Private Calls
-
-### Community 2891 - "Completions"
-Cohesion: 0.67
-Nodes (3): Completions, Edit Predictions {#edit-predictions}, Language Server Code Completions {#code-completions}
 
 ### Community 2892 - "Icon Themes"
 Cohesion: 0.67
@@ -9661,10 +8926,6 @@ Nodes (3): Auto-installing, Installation Location, Installing Extensions {#insta
 Cohesion: 0.67
 Nodes (3): Additional Community Language Extensions, Language Support in Zed, Languages with Documentation
 
-### Community 2895 - "Biome"
-Cohesion: 0.67
-Nodes (3): Biome, Biome Language Support, Configuration
-
 ### Community 2896 - "CSS"
 Cohesion: 0.67
 Nodes (3): CSS, Recommended Reading, Tailwind CSS
@@ -9677,57 +8938,41 @@ Nodes (3): Docker, Docker Compose, Dockerfile
 Cohesion: 0.67
 Nodes (3): Configuring `elm-language-server`, Elm, Setup
 
-### Community 2899 - "Env"
-Cohesion: 0.67
-Nodes (3): Configuration, Env, See also:
-
 ### Community 2900 - "Haskell"
 Cohesion: 0.67
 Nodes (3): Configuring HLS, Haskell, Installing HLS
-
-### Community 2901 - "Luau"
-Cohesion: 0.67
-Nodes (3): Configuration, Formatting, Luau
 
 ### Community 2903 - "Rego"
 Cohesion: 0.67
 Nodes (3): Configuration, Installation, Rego
 
-### Community 2904 - "Scala"
-Cohesion: 0.67
-Nodes (3): Configuration, Scala, Setup
-
 ### Community 2905 - "Standard ML"
 Cohesion: 0.67
 Nodes (3): Project setup, Setup, Standard ML
 
-### Community 2906 - "SQL"
-Cohesion: 0.67
-Nodes (3): Advanced Formatting, Formatting, SQL
-
-### Community 2907 - "Running & Testing"
-Cohesion: 0.67
-Nodes (3): Quick start, Running & Testing, What's here
+### Community 2913 - "util"
+Cohesion: 0.19
+Nodes (33): collections, dap, dap_adapters, debug_adapter_extension, docs_preprocessor, etw_tracing, extension, extension_cli (+25 more)
 
 ## Knowledge Gaps
-- **6927 isolated node(s):** `IndexChanged`, `Reconnected`, `Upgrade`, `Install`, `Remove` (+6922 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 28301 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **1082 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **6937 isolated node(s):** `EditorOnly`, `EditorAndPreview`, `PreviewOnly`, `Disabled`, `Enabled` (+6932 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 28329 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **997 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `TestAppContext` connect `TestAppContext` to `wayland/client.rs`, `thread.rs`, `App`, `NativeAgentConnection`, `ThemeSelectorDelegate`, `BookmarkTestContext`, `ElementId`, `ConversationView`, `PlatformWindow`, `FontId`, `Editor`, `px`, `MultiBufferSnapshot`, `FocusHandle`, `LspStoreEvent`, `LspStore`, `Size`, `Buffer`, `Telemetry`, `markdown/src/markdown.rs`, `commit_modal.rs`, `AgentConnection`, `Symbol`, `ExecuteProxyError`, `px`, `PathKey`, `MultiBufferOffset`, `render_agent_markdown`, `FontId`, `agent/src/agent.rs`, `ConversationView`, `HighlightStyle`, `terminal/src/terminal.rs`, `acp_thread.rs`, `T`, `AgentId`, `NativeAgent`, `motion.rs`, `BackgroundExecutor`, `CreaseId`, `src/mistral.rs`, `git_graph.rs`, `compact`, `auto_update.rs`, `IconName`, `SharedString`, `Motion`, `Styled`, `TabularDataPreviewPane`, `build_root_plan`, `src/modal.rs`, `ClipboardItem`, `Terminal`, `.stdio`, `.run`, `BlameEntry`, `workflows/extension_tests.rs`, `linux/platform.rs`, `Example`, `HttpTransport`, `acp_thread.rs`, `agent_panel.rs`, `Fs`, `anthropic/src/completion.rs`, `workspace/src/workspace.rs`, `LanguageRegistry`, `AcpThread`, `App`, `LanguageModel`, `KeyTest`, `integration/trusted_worktrees.rs`, `devcontainer_manifest.rs`, `Size`, `.navigate_to_hover_links`, `PathStyle`, `project_bookmarks.rs`, `Anchor`, `outline/src/outline.rs`, `user_service.rs`, `src/copilot_chat.rs`, `sqlez/src/migrations.rs`, `State`, `terminal_element.rs`, `scratches/src/rows.rs`, `TestProfileProvider`, `Entity`, `Action`, `Worktree`, `CharClassifier`, `terminal_view.rs`, `StatusKind`, `scrollbar.rs`, `ContextServerRegistry`, `active_settings_profile_picker`, `agent/src/agent.rs`, `Mode`, `edit_prediction/src/edit_prediction.rs`, `archive.rs`, `src/git_store.rs`, `Procedure`, `MultiWorkspace`, `BufferStore`, `oauth.rs`, `open_selector`, `servers_modal.rs`, `v1.rs`, `SettingsWindow`, `search/src/project_search.rs`, `Window`, `EditorEvent`, `Oid`, `LanguageModel`, `buffer_search.rs`, `RemoteServerProjects`, `FakeFs`, `fallible_options.rs`, `BackgroundExecutor`, `cpp.rs`, `language_model/src/request.rs`, `create_test_workspace`, `search/src/project_search.rs`, `debug_log.rs`, `.new`, `Pane`, `make_fresh_credentials`, `Diff`, `node_runtime.rs`, `Picker`, `tab_map.rs`, `eslint.rs`, `add_multi_buffer_editor`, `fs_watcher/diagnostics.rs`, `tools/tool_permissions.rs`, `LlamaCppLanguageModelProvider`, `FileDiffView`, `with`, `devcontainer_api.rs`, `mermaid.rs`, `linked_editing_ranges.rs`, `GitPanel`, `ElicitationEntryId`, `Envelope`, `MessageNotification`, `State`, `remote_host_panel.rs`, `node_runtime.rs`, `zed.rs`, `.clone`, `document_selector_matches`, `settings_content.rs`, `worktree_picker.rs`, `run_grep_tool`, `.run`, `HeadlessProject`, `agent_settings.rs`, `PathList`, `synthesize.rs`, `BufferId`, `arc`, `t`, `OpenPathDelegate`, `language_selector.rs`, `settings_sync/src/github.rs`, `threads_archive_view.rs`, `livekit_client/src/test.rs`, `Copilot`, `agent_settings.rs`, `multi_select_tests.rs`, `project_symbols.rs`, `.start`, `key_dispatch.rs`, `TableView`, `TestDispatcher`, `channel`, `src/lsp_store.rs`, `TextFinder`, `SaturatingBool`, `.new`, `GoogleLanguageModelProvider`, `make_state`, `examples/end_to_end.rs`, `project_diff.rs`, `directx_devices.rs`, `HoveredWord`, `git_picker.rs`, `provider/cloud.rs`, `multi_workspace_tests.rs`, `line.rs`, `run_gpui_eval`, `windows_wsl.rs`, `gpui_windows/src/clipboard.rs`, `content.rs`, `path_link.rs`, `setup_test`, `setup_test`, `delegate.rs`, `test_server.rs`, `recent_projects.rs`, `Result`, `.new`, `LPARAM`, `open_listener.rs`, `EditorTestContext`, `repl_editor.rs`, `markdown_editing.rs`, `extension_store_test.rs`, `open_remote_project`, `action_log.rs`, `util/src/paths.rs`, `HighlightsTreeView`, `dap_types::StackFrame`, `go_language`, `lsp_log_view_tests.rs`, `gpui_macos/src/display_link.rs`, `.update`, `OpenAiSubscribedProvider`, `IconThemeSelectorDelegate`, `TextSummary`, `nested_symbol`, `ImageView`, `context_menu/preview.rs`, `EditorLspTestContext`, `diagnostics_tests.rs`, `deferred`, `google_ai.rs`, `split_dataset.rs`, `inlays/inlay_hints.rs`, `Transformation`, `ConnectionId`, `Agent`, `integration/dynamic_registration.rs`, `profiler/journal.rs`, `project_with_rust_server`, `worktree_service.rs`, `startup_windows`, `chunk.rs`, `pending_bindings.rs`, `Context`, `init_test`, `mermaid.rs`, `ThreadStore`, `bracket_colorization.rs`, `code_completion_tests.rs`, `edit_prediction/src/udiff.rs`, `hashed_regions.rs`, `MarkdownElement`, `integration/git_store.rs`, `KeystrokeInput`, `unicode_confusables.rs`, `SettingsStore`, `BufferSnapshot`, `init_bookmarks_tab_test`, `solo_diff_view.rs`, `open_test_image`, `ProfilePickerDelegate`, `.new`, `devcontainer_api.rs`, `ui/blocking_io_on_foreground.rs`, `Keystroke`, `collab/src/db.rs`, `TestApp`, `DivInspector`, `AskPassSession`, `LspStoreEvent`, `table_view.rs`, `edit_prediction_registry.rs`, `markdown_layout.rs`, `number_field.rs`, `NeovimBackedTestContext`, `SubmissionId`, `.new`, `e2e_tests.rs`, `github-check-new-issue-for-duplicates.py`, `ToolCall`, `go_to_line.rs`, `PhpSettingsWindow`, `ConverseModel`, `terminal_element.rs`, `ContextMenu`, `PlatformInputHandler`, `kernels/mod.rs`, `MemoryView`, `StagedDiff`, `HttpClient`, `Console`, `init_ctrl_hover_hyperlink_test_with_window`, `Markdown`, `CopilotChat`?**
-  _High betweenness centrality (0.061) - this node is a cross-community bridge._
+- **Why does `SharedString` connect `SharedString` to `tools/tool_permissions.rs`, `AgentTool`, `App`, `buf.rs`, `NativeAgentConnection`, `ElementId`, `increment.rs`, `ConversationView`, `wayland/client.rs`, `FontId`, `Editor`, `px`, `tools/terminal_tool.rs`, `FocusHandle`, `ActivityIndicator`, `LspStore`, `AgentId`, `Bounds`, `sandbox_linux.rs`, `AnyWindowHandle`, `Buffer`, `markdown/src/markdown.rs`, `AgentConnection`, `Hsla`, `AsyncApp`, `ExtensionHostProxy`, `internal_api.rs`, `PathKey`, `Editor`, `prelude`, `render_agent_markdown`, `FontId`, `agent/src/agent.rs`, `ConversationView`, `ToOffset`, `InlayHint`, `acp_thread.rs`, `Fs`, `NativeAgent`, `AnyProtoClient`, `src/x_ai_subscribed.rs`, `WorktreeDelegate`, `IconName`, `App`, `toolchain_selector.rs`, `search/src/project_search.rs`, `ThreadItem`, `TabularDataPreviewPane`, `components/data_table.rs`, `syntax_map.rs`, `languages/src/go.rs`, `Styled`, `vega_branch_popup.rs`, `ToolCallEventStream`, `BlameEntry`, `settings`, `blame_ui.rs`, `Example`, `AgentRegistryPage`, `rules_to_skills_migration.rs`, `Anchor`, `LanguageServerName`, `Status`, `AcpThread`, `format_prompt.rs`, `disable_cursor_blinking/before.rs`, `devcontainer_manifest.rs`, `project_bookmarks.rs`, `ExtensionCard`, `Anchor`, `outline/src/outline.rs`, `agent_ui.rs`, `Picker`, `SessionId`, `running.rs`, `v1.rs`, `CharClassifier`, `zed_actions/src/lib.rs`, `scrollbar.rs`, `TaskSourceKind`, `Skill`, `ParsedGitRemote`, `edit_prediction/src/edit_prediction.rs`, `MarkdownTag`, `archive.rs`, `src/git_store.rs`, `DiffMultibuffer`, `BufferStore`, `subagents.rs`, `servers_modal.rs`, `src/openai_subscribed.rs`, `SettingsWindow`, `text_diff_view.rs`, `Oid`, `CompletionsMenu`, `integration/channel_tests.rs`, `fallible_options.rs`, `Onboarding`, `AgentModelId`, `Point`, `project/src/project.rs`, `MessageNotification`, `Diff`, `Picker`, `src/code_lens.rs`, `provider/bedrock.rs`, `WindowsWindow`, `tab_switcher.rs`, `Theme`, `FileDiffView`, `copilot_chat/src/responses.rs`, `ElicitationEntryId`, `set_menus.rs`, `NotificationId`, `AgentSessionList`, `remote_host_panel.rs`, `KernelSpecification`, `src/cloud.rs`, `zed.rs`, `settings_content.rs`, `worktree_picker.rs`, `.run`, `agent_settings.rs`, `PathList`, `BufferId`, `legacy_thread.rs`, `arc`, `code_context_menus.rs`, `HttpClient`, `Color`, `migrator.rs`, `App`, `copilot/src/request.rs`, `tabular_data_preview/src/parser.rs`, `TableView`, `lsp_store/semantic_tokens.rs`, `editor/src/editor.rs`, `src/keymap.rs`, `App`, `PromptLevel`, `ask_user_tool.rs`, `schema_as_acp`, `FocusHandle`, `src/new_process_modal.rs`, `subagent_card.rs`, `window/a11y.rs`, `TaskTiming`, `Language`, `GitJobDebugQueue`, `provider/open_router.rs`, `git_picker.rs`, `inspector_render.rs`, `git_ui_core/src/notifications.rs`, `settings_content/src/theme.rs`, `mention.rs`, `settings_ui.rs`, `VariableList`, `test_server.rs`, `arc`, `InputField`, `repl_editor.rs`, `entry_view_state.rs`, `Subscription`, `ModalHeader`, `dap_types::StackFrame`, `AgentInitialContent`, `Vim`, `KeyBindingContextPredicate`, `provider/opencode.rs`, `codestral.rs`, `onboarding_banner.rs`, `MultiDiffView`, `Community 342`, `Deserialize`, `WorktreeEntry`, `FileStatus`, `split_dataset.rs`, `WasmState`, `FetchTool`, `rc`, `img.rs`, `AgentServer`, `edit_file.rs`, `DebuggerHoverView`, `worktree_service.rs`, `syntax_tree_view.rs`, `pending_bindings.rs`, `App`, `key_dispatch.rs`, `example_editor.rs`, `component.rs`, `repeat.rs`, `ScrollManager`, `KeymapFile`, `conflict_view.rs`, `SettingsStore`, `BufferSnapshot`, `ThreadItem`, `FontWeight`, `AgentProfileId`, `eslint.rs`, `Example`, `pending_bindings.rs`, `UnstagedDiff`, `Keystroke`, `JsDebugAdapter`, `styles/colors.rs`, `deployment_ui.rs`, `collab/src/db.rs`, `StepOutput`, `RemoteClient`, `LspStoreEvent`, `fuzzy_nucleo/src/strings.rs`, `BufferSnapshot`, `lsp_command/signature_help.rs`, `AnyColumn`, `Global`, `SubmissionId`, `gpui_macos/src/system_notifications.rs`, `ToolCall`, `go_to_line.rs`, `ConverseModel`, `ContextMenu`, `PlatformInputHandler`, `kernels/mod.rs`, `examples/test_app.rs`, `StagedDiff`, `edit_prediction_provider_setup.rs`, `LanguageModel`, `action_log.rs`, `CopilotChat`, `Crease`, `AcpThreadEvent`, `BufferDiagnosticsEditor`?**
+  _High betweenness centrality (0.075) - this node is a cross-community bridge._
 - **Are the 2 inferred relationships involving `TestAppContext` (e.g. with `frame_cost()` and `wake_rechecks_native_visibility()`) actually correct?**
   _`TestAppContext` has 2 INFERRED edges - model-reasoned connections that need verification._
-- **What connects `IndexChanged`, `Reconnected`, `Upgrade` to the rest of the system?**
-  _6927 weakly-connected nodes found - possible documentation gaps or missing edges._
-- **Should `wayland/client.rs` be split into smaller, more focused modules?**
-  _Cohesion score 0.017197020988490182 - nodes in this community are weakly interconnected._
-- **Why does `SharedString` connect `SharedString` to `wayland/client.rs`, `thread.rs`, `buf.rs`, `NativeAgentConnection`, `TestAppContext`, `ElementId`, `increment.rs`, `ConversationView`, `PlatformWindow`, `FontId`, `Editor`, `px`, `.reject_edits_in_ranges`, `FocusHandle`, `LspStore`, `label/label.rs`, `FakeAgentConnection`, `Size`, `sandbox_linux.rs`, `ios/window.rs`, `Buffer`, `AgentConnection`, `Hsla`, `ScaledPixels`, `AsyncApp`, `internal_api.rs`, `PathKey`, `Editor`, `render_agent_markdown`, `FontId`, `agent/src/agent.rs`, `ConversationView`, `language/src/proto.rs`, `HighlightStyle`, `acp_thread.rs`, `BreakpointStore`, `AgentId`, `NativeAgent`, `AnyProtoClient`, `BackgroundExecutor`, `WorktreeDelegate`, `IconName`, `ThreadItem`, `ProjectSearchView`, `TabularDataPreviewPane`, `components/data_table.rs`, `LanguageScope`, `syntax_map.rs`, `src/modal.rs`, `Styled`, `BlameEntry`, `settings`, `Example`, `acp_thread.rs`, `AgentRegistryPage`, `Fs`, `anthropic/src/completion.rs`, `Anchor`, `LanguageRegistry`, `Status`, `AssetSource`, `AcpThread`, `disable_cursor_blinking/before.rs`, `format_prompt.rs`, `PlatformKeyboardLayout`, `Disclosure`, `devcontainer_manifest.rs`, `Size`, `PathStyle`, `project_bookmarks.rs`, `Anchor`, `user_service.rs`, `State`, `editable_setting_control.rs`, `SessionId`, `running.rs`, `v1.rs`, `CharClassifier`, `zed_actions/src/lib.rs`, `scrollbar.rs`, `ComponentScope`, `raw_to_buffer_semantic_tokens`, `agent/src/agent.rs`, `Breakpoint`, `edit_prediction/src/edit_prediction.rs`, `archive.rs`, `src/git_store.rs`, `DiffMultibuffer`, `BufferStore`, `servers_modal.rs`, `AvailableCommand`, `kernel_options.rs`, `SettingsWindow`, `theme_settings.rs`, `EditorEvent`, `Oid`, `CompletionsMenu`, `fallible_options.rs`, `search/src/project_search.rs`, `Onboarding`, `AgentModelId`, `Point`, `copy_button.rs`, `AnyElement`, `Picker`, `Assets`, `provider/bedrock.rs`, `WindowsWindow`, `FileDiffView`, `copilot_chat/src/responses.rs`, `set_menus.rs`, `MessageNotification`, `AgentSessionList`, `remote_host_panel.rs`, `node_runtime.rs`, `KernelSpecification`, `src/cloud.rs`, `draft_prompt_store.rs`, `zed.rs`, `policy.rs`, `settings_content.rs`, `worktree_picker.rs`, `.run`, `Templates`, `agent_settings.rs`, `PathList`, `BufferId`, `legacy_thread.rs`, `arc`, `provider/anthropic.rs`, `DisassociationTrackingConnection`, `settings_sync/src/github.rs`, `keybinding.rs`, `migrator.rs`, `Chip`, `.start`, `copilot/src/request.rs`, `RepositorySnapshot`, `TableView`, `src/lsp_store.rs`, `.new_internal`, `KeyBinding`, `App`, `gpui_windows/src/system_notifications.rs`, `Window`, `GoogleLanguageModelProvider`, `provider/x_ai.rs`, `DropdownMenu`, `subagent_card.rs`, `window/a11y.rs`, `vercel_ai_gateway.rs`, `.render`, `GitJobDebugQueue`, `AlertModal`, `OpenRouterLanguageModelProvider`, `git_picker.rs`, `inspector_render.rs`, `line.rs`, `settings_content/src/theme.rs`, `mention.rs`, `VariableList`, `test_server.rs`, `DataTable`, `Result`, `audio_test_window.rs`, `open_listener.rs`, `repl_editor.rs`, `entry_view_state.rs`, `State`, `action_log.rs`, `acp_tools.rs`, `ModalHeader`, `PermissionOptions`, `dap_types::StackFrame`, `Vim`, `WindowId`, `OpenCodeLanguageModelProvider`, `onboarding_banner.rs`, `OpenAiSubscribedProvider`, `Editor`, `delete_run_git_blame/before.rs`, `provider/open_ai.rs`, `FileStatus`, `split_dataset.rs`, `WasmState`, `HttpClientWithUrl`, `XAiSubscribedProvider`, `Transformation`, `OllamaModelPickerDelegate`, `RenderImage`, `Agent`, `pane_group.rs`, `worktree_service.rs`, `syntax_tree_view.rs`, `DeploymentStore`, `pending_bindings.rs`, `UpdateButton`, `copilot_edit_prediction_delegate.rs`, `KeyContext`, `example_editor.rs`, `edit_prediction_context_view.rs`, `repeat.rs`, `settings_sync/src/settings_sync.rs`, `integration/git_store.rs`, `AgentInitialContent`, `RealFs`, `SettingsStore`, `BufferSnapshot`, `ThreadItem`, `LabelLike`, `ProfilePickerDelegate`, `ThemePickerDelegate`, `ListHeader`, `eslint.rs`, `Checkbox`, `FileIcons`, `src/component_preview.rs`, `StringMatch`, `UnstagedDiff`, `Keystroke`, `JsDebugAdapter`, `collab/src/db.rs`, `ChoiceCard`, `StepOutput`, `LspStoreEvent`, `fuzzy_nucleo/src/strings.rs`, `BufferSnapshot`, `table_view.rs`, `PickerPromptDelegate`, `SubmissionId`, `SharedScreen`, `ToolCall`, `go_to_line.rs`, `ErrorAction`, `MistralLanguageModelProvider`, `examples/system_notifications.rs`, `ConverseModel`, `number_field.rs`, `ProjectDiagnosticsEditor`, `AiSettingItem`, `PlatformInputHandler`, `ContextMenu`, `kernels/mod.rs`, `examples/test_app.rs`, `StagedDiff`, `IconThemePickerDelegate`, `HttpClient`, `CopilotChat`, `Crease`, `AcpThreadEvent`, `BufferDiagnosticsEditor`?**
-  _High betweenness centrality (0.046) - this node is a cross-community bridge._
+- **What connects `EditorOnly`, `EditorAndPreview`, `PreviewOnly` to the rest of the system?**
+  _6937 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **Should `tools/tool_permissions.rs` be split into smaller, more focused modules?**
+  _Cohesion score 0.02882363538101243 - nodes in this community are weakly interconnected._
+- **Why does `TestAppContext` connect `TestAppContext` to `tools/tool_permissions.rs`, `AgentTool`, `App`, `NativeAgentConnection`, `ThemeSelectorDelegate`, `call_hierarchy.rs`, `ElementId`, `ConversationView`, `merged_highlight_runs`, `FontId`, `Editor`, `px`, `LspStore`, `FocusHandle`, `LspStoreEvent`, `AgentId`, `Bounds`, `Buffer`, `AnyWindowHandle`, `client/src/telemetry.rs`, `markdown/src/markdown.rs`, `commit_modal.rs`, `LspStore`, `src/worktree.rs`, `Worktree`, `ExtensionHostProxy`, `px`, `PathKey`, `ExecuteProxyError`, `prelude`, `render_agent_markdown`, `FontId`, `agent/src/agent.rs`, `ConversationView`, `Repository`, `Entity`, `acp_thread.rs`, `Modifiers`, `Fs`, `NativeAgent`, `terminal/src/terminal.rs`, `T`, `git_tests.rs`, `CreaseId`, `title_bar/src/title_bar.rs`, `src/mistral.rs`, `src/x_ai_subscribed.rs`, `auto_update.rs`, `IconName`, `Motion`, `search/src/project_search.rs`, `Styled`, `TabularDataPreviewPane`, `thread_worktree_archive.rs`, `toolchain_selector.rs`, `App`, `languages/src/go.rs`, `Styled`, `Terminal`, `ToolCallEventStream`, `BlameEntry`, `workflows/extension_tests.rs`, `Example`, `TextRenderer_Impl`, `acp_thread.rs`, `agent_panel.rs`, `rules_to_skills_migration.rs`, `anthropic/src/completion.rs`, `SharedString`, `AcpThread`, `SessionActivity`, `App`, `ShellKind`, `KeyTest`, `format_prompt.rs`, `integration/trusted_worktrees.rs`, `devcontainer_manifest.rs`, `.navigate_to_hover_links`, `project_bookmarks.rs`, `Anchor`, `Envelope`, `outline/src/outline.rs`, `agent_ui.rs`, `src/copilot_chat.rs`, `sqlez/src/migrations.rs`, `assert_has_syntax_errors`, `Picker`, `scratches/src/rows.rs`, `Action`, `Entity`, `Worktree`, `StatusKind`, `CharClassifier`, `DebugAdapterClient`, `terminal_view.rs`, `scrollbar.rs`, `ContextServerRegistry`, `Mode`, `edit_prediction/src/edit_prediction.rs`, `agent_ui/src/test_support.rs`, `archive.rs`, `src/git_store.rs`, `oauth.rs`, `Procedure`, `BufferStore`, `MultiWorkspace`, `SettingsWindow`, `servers_modal.rs`, `src/openai_subscribed.rs`, `v1.rs`, `SettingsWindow`, `search/src/project_search.rs`, `Window`, `text_diff_view.rs`, `tab_switcher_tests.rs`, `LanguageModel`, `Diagnostic`, `buffer_search.rs`, `TerminalBounds`, `Project`, `RemoteServerProjects`, `integration/channel_tests.rs`, `FakeFs`, `fallible_options.rs`, `BackgroundExecutor`, `.toggle_commit_editor`, `language_model/src/request.rs`, `src/buffer_tests.rs`, `debug_log.rs`, `remote_servers.rs`, `Pane`, `Diff`, `Picker`, `src/code_lens.rs`, `eslint.rs`, `PanelEntry`, `provider/llama_cpp.rs`, `FileDiffView`, `with`, `devcontainer_api.rs`, `mermaid.rs`, `linked_editing_ranges.rs`, `GitPanel`, `ElicitationEntryId`, `NotificationId`, `State`, `remote_host_panel.rs`, `zed.rs`, `document_selector_matches`, `settings_content.rs`, `worktree_picker.rs`, `.run`, `vim/src/command.rs`, `agent_settings.rs`, `PathList`, `synthesize.rs`, `BufferId`, `edit_prediction_registry.rs`, `arc`, `t`, `code_context_menus.rs`, `language_selector.rs`, `DisassociationTrackingConnection`, `HttpClient`, `src/modal.rs`, `threads_archive_view.rs`, `App`, `livekit_client/src/test.rs`, `Copilot`, `agent_settings.rs`, `TableView`, `gpui/src/test.rs`, `channel`, `TextFinder`, `ask_user_tool.rs`, `tasks_ui.rs`, `FocusHandle`, `rust_lang`, `open_path_prompt_tests.rs`, `NotebookEditor`, `examples/end_to_end.rs`, `project_diff.rs`, `Language`, `directx_devices.rs`, `HoveredWord`, `git_picker.rs`, `provider/cloud.rs`, `multi_workspace_tests.rs`, `run_gpui_eval`, `windows_wsl.rs`, `gpui_windows/src/clipboard.rs`, `content.rs`, `settings_ui.rs`, `path_link.rs`, `delegate.rs`, `test_server.rs`, `recent_projects.rs`, `arc`, `src/semantic_tokens.rs`, `LPARAM`, `EditorTestContext`, `repl_editor.rs`, `markdown_editing.rs`, `extension_store_test.rs`, `util/src/paths.rs`, `Subscription`, `dap_types::StackFrame`, `gpui_macos/src/display_link.rs`, `protocol/sftp.rs`, `.update`, `TextSummary`, `setup_modal_test`, `image_viewer.rs`, `json_schema_store.rs`, `diagnostics_tests.rs`, `split_dataset.rs`, `inlays/inlay_hints.rs`, `rc`, `img.rs`, `ConnectionId`, `AgentServer`, `edit_file.rs`, `profiler/journal.rs`, `integration/lsp_store.rs`, `worktree_service.rs`, `App`, `chunk.rs`, `pending_bindings.rs`, `key_dispatch.rs`, `outline_panel.rs`, `mermaid.rs`, `ThreadStore`, `extension_cli/src/main.rs`, `code_completion_tests.rs`, `hashed_regions.rs`, `KeystrokeInput`, `BufferSnapshot`, `solo_diff_view.rs`, `AgentProfileId`, `notebook_ui.rs`, `devcontainer_api.rs`, `pending_bindings.rs`, `ui/blocking_io_on_foreground.rs`, `collab/src/db.rs`, `editor_block_comment_tests.rs`, `Example`, `TestApp`, `SettingsProfileSelectorDelegate`, `DivInspector`, `RemoteClient`, `LspStoreEvent`, `markdown_layout.rs`, `Global`, `NeovimBackedTestContext`, `.new`, `remote/src/transport.rs`, `github-check-new-issue-for-duplicates.py`, `ToolCall`, `copilot_edit_prediction_delegate.rs`, `go_to_line.rs`, `PhpSettingsWindow`, `terminal_element.rs`, `ContextMenu`, `PlatformInputHandler`, `kernels/mod.rs`, `MemoryView`, `ResolvedTask`, `StagedDiff`, `LanguageModel`, `action_log.rs`, `Console`, `init_ctrl_hover_hyperlink_test_with_window`, `workspace/src/tasks.rs`, `CopilotChat`?**
+  _High betweenness centrality (0.070) - this node is a cross-community bridge._
 - **Are the 3 inferred relationships involving `Task` (e.g. with `.background_spawn()` and `.spawn_dedicated()`) actually correct?**
   _`Task` has 3 INFERRED edges - model-reasoned connections that need verification._
-- **Should `thread.rs` be split into smaller, more focused modules?**
-  _Cohesion score 0.0046745303626037574 - nodes in this community are weakly interconnected._
+- **Should `AgentTool` be split into smaller, more focused modules?**
+  _Cohesion score 0.014254147085369269 - nodes in this community are weakly interconnected._
