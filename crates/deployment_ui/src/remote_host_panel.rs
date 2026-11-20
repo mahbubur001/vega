@@ -1019,10 +1019,17 @@ impl RemoteHostPanel {
         self.mark_for_paste(false, cx);
     }
 
+    /// The server the clipboard's items are on, if it is still configured
+    /// (it may be another server than the one shown).
+    fn clipboard_server(&self) -> Option<&ServerChoice> {
+        let clipboard = self.clipboard.as_ref()?;
+        self.servers
+            .iter()
+            .find(|choice| choice.key() == clipboard.server)
+    }
+
     fn can_paste(&self) -> bool {
-        self.clipboard.as_ref().is_some_and(|clipboard| {
-            self.server().map(ServerChoice::key).as_ref() == Some(&clipboard.server)
-        })
+        self.server().is_some() && self.clipboard_server().is_some()
     }
 
     fn paste(&mut self, _: &Paste, _: &mut Window, cx: &mut Context<Self>) {
@@ -1032,6 +1039,9 @@ impl RemoteHostPanel {
         let Some(dir) = self.target_dir() else {
             return;
         };
+        let Some(source) = self.clipboard_server().cloned() else {
+            return;
+        };
         let Some(clipboard) = self.clipboard.take() else {
             return;
         };
@@ -1039,7 +1049,46 @@ impl RemoteHostPanel {
         if !cut {
             self.clipboard = Some(clipboard);
         }
-        self.paste_into(paths, dir, cut, cx);
+        if self.server().map(ServerChoice::key) == Some(source.key()) {
+            self.paste_into(paths, dir, cut, cx);
+        } else {
+            self.paste_from_server(source, paths, dir, cut, cx);
+        }
+    }
+
+    /// Copies (or, for `cut`, moves) items from another server into the
+    /// folder `dir` of the shown server.
+    fn paste_from_server(
+        &mut self,
+        source: ServerChoice,
+        sources: Vec<String>,
+        dir: String,
+        cut: bool,
+        cx: &mut Context<Self>,
+    ) {
+        self.run(
+            vec![dir.clone()],
+            move |engine, id| {
+                async move {
+                    let existing: Vec<String> = engine
+                        .remote_list(&id, &dir)
+                        .await?
+                        .into_iter()
+                        .map(|item| item.name)
+                        .collect();
+                    let plan = cross_server_plan(&sources, &dir, &existing)
+                        .map_err(|message| RemoteError::new(ErrorCode::Exists, message))?;
+                    summary_result(
+                        source
+                            .engine
+                            .remote_copy_to_server(&source.id, &plan, &engine, &id, cut)
+                            .await?,
+                    )
+                }
+                .boxed()
+            },
+            cx,
+        );
     }
 
     fn change_permissions(
@@ -2179,6 +2228,29 @@ pub(crate) fn paste_plan(
     Ok(plan)
 }
 
+/// Where each item pasted from another server goes: `(source, destination)`
+/// pairs for pasting `sources` into `dir`, which already holds `existing`
+/// names. Items keep their name; a name that is taken fails the whole paste
+/// (nothing on the other server is overwritten).
+pub(crate) fn cross_server_plan(
+    sources: &[String],
+    dir: &str,
+    existing: &[String],
+) -> Result<Vec<(String, String)>, String> {
+    let mut taken: HashSet<String> = existing.iter().cloned().collect();
+    sources
+        .iter()
+        .map(|source| {
+            let name = remote_name(source);
+            if taken.insert(name.to_string()) {
+                Ok((source.clone(), remote_join(dir, name)))
+            } else {
+                Err(format!("{} already exists.", remote_join(dir, name)))
+            }
+        })
+        .collect()
+}
+
 /// `name` when it's free, else "stem copy.ext", "stem copy 2.ext", …
 fn copy_name(name: &str, taken: &HashSet<String>) -> String {
     if !taken.contains(name) {
@@ -2535,6 +2607,23 @@ mod tests {
         assert!(paste_plan(&strings(&["/a"]), "/a", &[], false).is_err());
         assert!(paste_plan(&strings(&["/a"]), "/a/b", &[], true).is_err());
         assert!(paste_plan(&strings(&["/a"]), "/ab", &[], true).is_ok());
+    }
+
+    #[test]
+    fn pastes_from_another_server_keep_names_and_never_overwrite() {
+        let plan = cross_server_plan(&strings(&["/a/x.txt", "/a/lib"]), "/", &[]).unwrap();
+        assert_eq!(
+            plan,
+            vec![
+                ("/a/x.txt".to_string(), "/x.txt".to_string()),
+                ("/a/lib".to_string(), "/lib".to_string())
+            ]
+        );
+        // The same folder on the other server is a normal paste target.
+        let plan = cross_server_plan(&strings(&["/a"]), "/a", &[]).unwrap();
+        assert_eq!(plan, vec![("/a".to_string(), "/a/a".to_string())]);
+        assert!(cross_server_plan(&strings(&["/a/x.txt"]), "/b", &strings(&["x.txt"])).is_err());
+        assert!(cross_server_plan(&strings(&["/a/x.txt", "/c/x.txt"]), "/b", &[]).is_err());
     }
 
     #[test]

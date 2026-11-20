@@ -2,7 +2,7 @@
 
 The restart point for the next working session, possibly on another computer. Read this first, then `ROADMAP.md`. Update it at the end of every session.
 
-_Last updated: 2026-11-20, evening (phpactor stubs fix, re-check after indexing, agent rating off). Branch `vega`, everything committed and pushed._
+_Last updated: 2026-11-20, evening (phpactor stubs fix, re-check after indexing, agent rating off, copy between servers). Branch `vega`, everything committed and pushed._
 
 ## How the owner wants to work
 
@@ -75,8 +75,8 @@ Deployment: PhpStorm parity P1–P6 built 2026-11-19 (DEPLOYMENT.md); owner is c
 
 
 1. Fix whatever the owner's app check turns up (D1, D2, D3, P06, P07).
-2. D3 leftovers (small): multi-select, recursive chmod, copy between servers.
-3. D4 leftovers: Transfers list with retry; maybe an inline multi-file diff in the Sync view.
+2. D3 leftovers: done. Multi-select and recursive chmod came with P1–P6; copy between servers built 2026-11-20 (Copy or Cut in Remote Host, switch server in the dropdown, Paste: names are kept, a taken name stops the paste, Cut + Paste deletes the originals only when every file copied; `Engine::remote_copy_to_server`). Not checked in the app (needs two servers; the Docker SFTP test server can be added twice with different root paths).
+3. D4 leftovers: Transfers list with Retry came with P1–P6 (`transfers_panel.rs`). Maybe an inline multi-file diff in the Sync view.
 4. Branding leftovers: hidden Zed-cloud/collab/plan UI still says Zed (unreachable without sign-in). Done 2026-11-20: agent thread rating (thumbs up/down and `/helpful`, `/not-helpful`) is off, because it uploads the whole conversation to Zed's cloud (`submit_agent_feedback`; `is_thread_feedback_enabled` in `crates/agent_ui/src/conversation_view/thread_view.rs` returns false). The inline assistant's rating stays (it only writes a local telemetry event). The "Introducing Delta" announcement after an update is off (`SHOW_ZED_ANNOUNCEMENTS` in `crates/auto_update_ui`).
 5. Periodic upstream sync (P14 checklist in `ROADMAP.md`).
 

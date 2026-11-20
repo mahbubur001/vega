@@ -1261,6 +1261,59 @@ impl Engine {
         Ok(summary)
     }
 
+    /// Copies remote items from this engine's server `from_id` to the server
+    /// `to_id` of `to` (which may be this engine): `copies` are `(source on
+    /// from_id, destination on to_id)` pairs. Files pass through memory; empty
+    /// folders are created too. With `move_items`, the sources are deleted
+    /// afterwards, but only when every copy succeeded.
+    pub async fn remote_copy_to_server(
+        self: &Arc<Self>,
+        from_id: &str,
+        copies: &[(String, String)],
+        to: &Arc<Engine>,
+        to_id: &str,
+        move_items: bool,
+    ) -> Result<Summary> {
+        let from = self.target_by_id(from_id)?;
+        let dest = to.target_by_id(to_id)?;
+        let from_pool = self.manager.pool(&from.server);
+        let dest_pool = to.manager.pool(&dest.server);
+        let mut summary = Summary::default();
+        for (src, dest_root) in copies {
+            let (files, dirs) = with_client!(from_pool, |c| collect_remote(c, &from, src))?;
+            for dir in dirs {
+                let Some(target) = rebase_remote(src, dest_root, &dir) else {
+                    continue;
+                };
+                with_client!(dest_pool, |c| deploy::ensure_remote_dir(c, &dest, &target))?;
+            }
+            for (file, _) in files {
+                let Some(target) = rebase_remote(src, dest_root, &file) else {
+                    continue;
+                };
+                let copied = match with_client!(from_pool, |c| c.read_file(&file)) {
+                    Ok(data) => with_client!(dest_pool, |c| async {
+                        deploy::ensure_remote_dir(c, &dest, &remote_parent(&target)).await?;
+                        c.write_file(&target, &data).await
+                    }),
+                    Err(error) => Err(error),
+                };
+                summary.absorb(&file, copied.map(|_| TaskOutcome::Done));
+            }
+        }
+        if move_items && summary.failed.is_empty() {
+            let receivers = copies
+                .iter()
+                .map(|(src, _)| (src.clone(), self.queue_delete(&from, src.clone(), true)))
+                .collect();
+            let deleted = Self::collect(receivers).await;
+            summary.failed.extend(deleted.failed);
+        }
+        let verb = if move_items { "Moved" } else { "Copied" };
+        to.report(&summary, verb, &dest.server.name);
+        Ok(summary)
+    }
+
     pub async fn remote_chmod(
         self: &Arc<Self>,
         server_id: &str,
