@@ -95,6 +95,29 @@ fn phpactor_binary(php: PathBuf, phar: &Path) -> LanguageServerBinary {
     }
 }
 
+impl PhpactorLspAdapter {
+    /// The newest `phpactor_<version>` folder in `container_dir` that holds a
+    /// downloaded `phpactor.phar`.
+    async fn newest_download(container_dir: &Path) -> Option<PathBuf> {
+        let mut newest: Option<PathBuf> = None;
+        let mut entries = smol::fs::read_dir(container_dir).await.ok()?;
+        while let Some(entry) = entries.next().await {
+            let Ok(entry) = entry else {
+                continue;
+            };
+            let path = entry.path();
+            let is_version_dir = path
+                .file_name()
+                .and_then(|name| name.to_str())
+                .is_some_and(|name| name.starts_with(Self::VERSION_DIR_PREFIX));
+            if is_version_dir && path.join(Self::PHAR).is_file() {
+                newest = newest.max(Some(path));
+            }
+        }
+        newest
+    }
+}
+
 impl LspInstaller for PhpactorLspAdapter {
     type BinaryVersion = GitHubLspBinaryVersion;
 
@@ -118,13 +141,46 @@ impl LspInstaller for PhpactorLspAdapter {
         pre_release: bool,
         _: &mut AsyncApp,
     ) -> Result<GitHubLspBinaryVersion> {
-        let release = latest_github_release(
+        let release = match latest_github_release(
             "phpactor/phpactor",
             true,
             pre_release,
             delegate.http_client(),
         )
-        .await?;
+        .await
+        {
+            Ok(release) => release,
+            Err(error) => {
+                // GitHub's API allows 60 anonymous requests an hour per IP
+                // address, shared by everything on the network. Without it,
+                // keep the phpactor already downloaded, or fetch the latest
+                // release's file directly (that link isn't rate limited).
+                log::warn!("couldn't check for a new phpactor: {error:#}");
+                let downloaded = match delegate
+                    .language_server_download_dir(&Self::SERVER_NAME)
+                    .await
+                {
+                    Some(dir) => Self::newest_download(&dir).await,
+                    None => None,
+                };
+                let name = downloaded
+                    .and_then(|dir| {
+                        dir.file_name()?
+                            .to_str()?
+                            .strip_prefix(Self::VERSION_DIR_PREFIX)
+                            .map(str::to_owned)
+                    })
+                    .unwrap_or_else(|| "latest".to_owned());
+                return Ok(GitHubLspBinaryVersion {
+                    name,
+                    url: format!(
+                        "https://github.com/phpactor/phpactor/releases/latest/download/{}",
+                        Self::PHAR
+                    ),
+                    digest: None,
+                });
+            }
+        };
         let asset = release
             .assets
             .iter()
@@ -190,19 +246,10 @@ impl LspInstaller for PhpactorLspAdapter {
         delegate: &dyn LspAdapterDelegate,
     ) -> Option<LanguageServerBinary> {
         maybe!(async {
-            let mut newest: Option<PathBuf> = None;
-            let mut entries = smol::fs::read_dir(&container_dir).await?;
-            while let Some(entry) = entries.next().await {
-                let path = entry?.path();
-                let is_version_dir = path
-                    .file_name()
-                    .and_then(|name| name.to_str())
-                    .is_some_and(|name| name.starts_with(Self::VERSION_DIR_PREFIX));
-                if is_version_dir && path.join(Self::PHAR).is_file() {
-                    newest = newest.max(Some(path));
-                }
-            }
-            let phar = newest.context("no downloaded phpactor")?.join(Self::PHAR);
+            let phar = Self::newest_download(&container_dir)
+                .await
+                .context("no downloaded phpactor")?
+                .join(Self::PHAR);
             anyhow::Ok(phpactor_binary(php_binary(delegate).await?, &phar))
         })
         .await
