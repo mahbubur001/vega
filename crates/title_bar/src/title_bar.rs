@@ -938,8 +938,15 @@ impl TitleBar {
     ) -> Option<AnyElement> {
         let workspace = self.workspace.upgrade()?;
 
-        let (branch_name, icon_info, is_detached_head) = {
+        let (branch_name, icon_info, is_detached_head, has_worktrees, tracking) = {
             let repo = repository.read(cx);
+            // VEGA: the worktree button only when there is more than one.
+            let has_worktrees = repo.is_linked_worktree() || !repo.linked_worktrees().is_empty();
+            let tracking = repo
+                .branch
+                .as_ref()
+                .and_then(|branch| branch.tracking_status())
+                .map(|status| (status.behind, status.ahead));
 
             let is_detached_head = repo.branch.is_none();
 
@@ -972,7 +979,13 @@ impl TitleBar {
                 (IconName::GitBranch, Color::Muted)
             };
 
-            (branch_name, icon_info, is_detached_head)
+            (
+                branch_name,
+                icon_info,
+                is_detached_head,
+                has_worktrees,
+                tracking,
+            )
         };
 
         let settings = TitleBarSettings::get_global(cx);
@@ -1000,41 +1013,47 @@ impl TitleBar {
             worktree_label.clone()
         };
 
-        let worktree_button = settings.show_worktree_name.then(|| {
-            let project = self.project.clone();
-            let workspace_handle = workspace.downgrade();
-            PopoverMenu::new("worktree-picker-menu")
-                .menu(move |window, cx| {
-                    // When opened from the title bar, focus is on the trigger
-                    // button (not a dock), so `focused_dock` is `None`. That's
-                    // fine — there's no prior dock focus to restore.
-                    Some(cx.new(|cx| {
-                        WorktreePicker::new(project.clone(), workspace_handle.clone(), window, cx)
-                    }))
-                })
-                .trigger_with_tooltip(
-                    Button::new("worktree_picker_trigger", display_label)
-                        .selected_style(ButtonStyle::Tinted(TintColor::Accent))
-                        .label_size(LabelSize::Small)
-                        .color(Color::Muted)
-                        .tab_index(0isize)
-                        .loading(is_creating)
-                        .start_icon(
-                            Icon::new(IconName::GitWorktree)
-                                .size(IconSize::XSmall)
-                                .color(Color::Muted),
-                        ),
-                    move |_window, cx| {
-                        Tooltip::with_meta(
-                            "Worktree",
-                            Some(&zed_actions::git::Worktree),
-                            format!("Currently In Use: {}", worktree_label),
-                            cx,
-                        )
-                    },
-                )
-                .anchor(gpui::Anchor::TopLeft)
-        });
+        let worktree_button =
+            (settings.show_worktree_name && (has_worktrees || is_creating)).then(|| {
+                let project = self.project.clone();
+                let workspace_handle = workspace.downgrade();
+                PopoverMenu::new("worktree-picker-menu")
+                    .menu(move |window, cx| {
+                        // When opened from the title bar, focus is on the trigger
+                        // button (not a dock), so `focused_dock` is `None`. That's
+                        // fine — there's no prior dock focus to restore.
+                        Some(cx.new(|cx| {
+                            WorktreePicker::new(
+                                project.clone(),
+                                workspace_handle.clone(),
+                                window,
+                                cx,
+                            )
+                        }))
+                    })
+                    .trigger_with_tooltip(
+                        Button::new("worktree_picker_trigger", display_label)
+                            .selected_style(ButtonStyle::Tinted(TintColor::Accent))
+                            .label_size(LabelSize::Small)
+                            .color(Color::Muted)
+                            .tab_index(0isize)
+                            .loading(is_creating)
+                            .start_icon(
+                                Icon::new(IconName::GitWorktree)
+                                    .size(IconSize::XSmall)
+                                    .color(Color::Muted),
+                            ),
+                        move |_window, cx| {
+                            Tooltip::with_meta(
+                                "Worktree",
+                                Some(&zed_actions::git::Worktree),
+                                format!("Currently In Use: {}", worktree_label),
+                                cx,
+                            )
+                        },
+                    )
+                    .anchor(gpui::Anchor::TopLeft)
+            });
 
         let branch_picker = branch_name.and_then(|branch_name| {
             settings.show_branch_name.then(|| {
@@ -1056,7 +1075,13 @@ impl TitleBar {
                                 .color(Color::Muted),
                         )
                 } else {
-                    Button::new("project_branch_trigger", branch_name)
+                    // VEGA: incoming (↓) and outgoing (↑) commits and a ▾,
+                    // like PhpStorm.
+                    let label: SharedString = match tracking_label(tracking) {
+                        Some(counts) => format!("{branch_name}  {counts}").into(),
+                        None => branch_name.into(),
+                    };
+                    Button::new("project_branch_trigger", label)
                         .selected_style(ButtonStyle::Tinted(TintColor::Accent))
                         .label_size(LabelSize::Small)
                         .color(Color::Muted)
@@ -1065,6 +1090,11 @@ impl TitleBar {
                             Icon::new(branch_icon)
                                 .size(IconSize::XSmall)
                                 .color(branch_icon_color),
+                        )
+                        .end_icon(
+                            Icon::new(IconName::ChevronDown)
+                                .size(IconSize::XSmall)
+                                .color(Color::Muted),
                         )
                 };
 
@@ -1508,5 +1538,41 @@ mod tests {
         cx.run_until_parked();
         cx.debug_bounds("system-window-tabs")
             .is_some_and(|bounds| bounds.size.height > px(0.))
+    }
+}
+
+/// "↓3 ↑1": commits to pull and to push for the checked-out branch, from
+/// `(behind, ahead)` (`None` when it is in step with its upstream or has none).
+/// Counts over 99 read "99+".
+fn tracking_label(tracking: Option<(u32, u32)>) -> Option<String> {
+    let (behind, ahead) = tracking?;
+    let count = |n: u32| {
+        if n > 99 {
+            "99+".to_string()
+        } else {
+            n.to_string()
+        }
+    };
+    let mut parts = Vec::new();
+    if behind > 0 {
+        parts.push(format!("↓{}", count(behind)));
+    }
+    if ahead > 0 {
+        parts.push(format!("↑{}", count(ahead)));
+    }
+    (!parts.is_empty()).then(|| parts.join(" "))
+}
+
+#[cfg(test)]
+mod tracking_label_tests {
+    use super::tracking_label;
+
+    #[test]
+    fn shows_commits_to_pull_and_push() {
+        assert_eq!(tracking_label(None), None);
+        assert_eq!(tracking_label(Some((0, 0))), None);
+        assert_eq!(tracking_label(Some((3, 0))).as_deref(), Some("↓3"));
+        assert_eq!(tracking_label(Some((0, 2))).as_deref(), Some("↑2"));
+        assert_eq!(tracking_label(Some((120, 1))).as_deref(), Some("↓99+ ↑1"));
     }
 }
