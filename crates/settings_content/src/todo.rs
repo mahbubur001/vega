@@ -19,4 +19,9 @@ pub struct TodoSettingsContent {
     ///
     /// Default: true
     pub highlight: Option<bool>,
+    /// Whether committing from the git panel first looks for TODO items in the
+    /// changed lines and asks before committing them (IntelliJ's Check TODO).
+    ///
+    /// Default: true
+    pub check_before_commit: Option<bool>,
 }

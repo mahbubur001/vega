@@ -714,12 +714,12 @@ pub struct GitSettings {
 pub struct AutoFetchSettingsContent {
     /// Whether to automatically fetch in the background.
     ///
-    /// Default: false
+    /// Default: true
     pub enabled: Option<bool>,
     /// How long to wait between automatic fetches, in seconds.
     /// Only used when `enabled` is true. (min: 15)
     ///
-    /// Default: 60
+    /// Default: 300
     pub interval_secs: Option<u64>,
 }
 

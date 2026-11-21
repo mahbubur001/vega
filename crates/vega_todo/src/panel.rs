@@ -1,5 +1,6 @@
 //! The TODO tool window: TODO items grouped by file, for the whole project or
-//! the current file (IntelliJ's "Project" and "Current File" tabs).
+//! the current file (IntelliJ's "Project" and "Current File" tabs), and the
+//! items a commit would add ("Changed Lines", shown after Check TODO).
 
 use std::time::Duration;
 
@@ -34,14 +35,15 @@ const RESCAN_DELAY: Duration = Duration::from_millis(800);
 enum Scope {
     Project,
     CurrentFile,
+    ChangedLines,
 }
 
-struct FileTodos {
+pub(crate) struct FileTodos {
     path: ProjectPath,
     /// Shown as the file's row: the file name, then its folder.
-    name: SharedString,
+    pub(crate) name: SharedString,
     folder: SharedString,
-    items: Vec<Found>,
+    pub(crate) items: Vec<Found>,
 }
 
 #[derive(Clone, Copy)]
@@ -60,6 +62,8 @@ pub struct TodoPanel {
     project_files: Vec<FileTodos>,
     /// The current file's results.
     current_file: Vec<FileTodos>,
+    /// The items found by the last Check TODO before a commit.
+    changed_lines: Vec<FileTodos>,
     collapsed: HashSet<ProjectPath>,
     rows: Vec<Row>,
     selected: Option<usize>,
@@ -125,6 +129,7 @@ impl TodoPanel {
             scope: Scope::Project,
             project_files: Vec::new(),
             current_file: Vec::new(),
+            changed_lines: Vec::new(),
             collapsed: HashSet::default(),
             rows: Vec::new(),
             selected: None,
@@ -143,7 +148,18 @@ impl TodoPanel {
         match self.scope {
             Scope::Project => &self.project_files,
             Scope::CurrentFile => &self.current_file,
+            Scope::ChangedLines => &self.changed_lines,
         }
+    }
+
+    /// Shows the items a commit was stopped for, in the "Changed Lines" tab.
+    pub(crate) fn show_changed_lines(&mut self, files: Vec<FileTodos>, cx: &mut Context<Self>) {
+        self.changed_lines = files;
+        self.scope = Scope::ChangedLines;
+        self.collapsed.clear();
+        self.selected = None;
+        self.rebuild_rows();
+        cx.notify();
     }
 
     fn rebuild_rows(&mut self) {
@@ -400,6 +416,10 @@ impl TodoPanel {
             .border_color(cx.theme().colors().border_variant)
             .child(tab("Project", Scope::Project, cx))
             .child(tab("Current File", Scope::CurrentFile, cx))
+            .when(
+                !self.changed_lines.is_empty() || self.scope == Scope::ChangedLines,
+                |toolbar| toolbar.child(tab("Changed Lines", Scope::ChangedLines, cx)),
+            )
             .child(
                 div().flex_1().min_w_0().pl_2().child(
                     Label::new(self.summary())
@@ -434,7 +454,51 @@ impl TodoPanel {
         match self.scope {
             Scope::Project => self.refresh_project(cx),
             Scope::CurrentFile => self.refresh_current_file(window, cx),
+            Scope::ChangedLines => self.refresh_changed_lines(cx),
         }
+    }
+
+    /// Rescans the files of the "Changed Lines" tab and keeps the items on the
+    /// rows they had (fixed items drop out).
+    fn refresh_changed_lines(&mut self, cx: &mut Context<Self>) {
+        let Some(project) = self
+            .workspace
+            .upgrade()
+            .map(|workspace| workspace.read(cx).project().clone())
+        else {
+            return;
+        };
+        let previous: Vec<(ProjectPath, Vec<u32>)> = self
+            .changed_lines
+            .iter()
+            .map(|file| {
+                (
+                    file.path.clone(),
+                    file.items.iter().map(|item| item.row).collect(),
+                )
+            })
+            .collect();
+        self.current_task = cx.spawn(async move |this, cx| {
+            let mut files = Vec::new();
+            for (path, rows) in previous {
+                let open = project.update(cx, |project, cx| project.open_buffer(path, cx));
+                let Ok(buffer) = open.await else {
+                    continue;
+                };
+                if let Some(mut file) = scan_file(buffer, cx).await {
+                    file.items.retain(|item| rows.contains(&item.row));
+                    if !file.items.is_empty() {
+                        files.push(file);
+                    }
+                }
+            }
+            this.update(cx, |this, cx| {
+                this.changed_lines = files;
+                this.rebuild_rows();
+                cx.notify();
+            })
+            .ok();
+        });
     }
 
     fn select_next(&mut self, _: &menu::SelectNext, _: &mut Window, cx: &mut Context<Self>) {
@@ -538,7 +602,10 @@ async fn search_project(
 
 /// The TODO items of one buffer, once its syntax is parsed (comments are told
 /// apart by the syntax tree). `None` when it has none or no file.
-async fn scan_file(buffer: Entity<Buffer>, cx: &mut gpui::AsyncApp) -> Option<FileTodos> {
+pub(crate) async fn scan_file(
+    buffer: Entity<Buffer>,
+    cx: &mut gpui::AsyncApp,
+) -> Option<FileTodos> {
     let mut parse_status = buffer.read_with(cx, |buffer, _| buffer.parse_status());
     while *parse_status.borrow() != ParseStatus::Idle {
         parse_status.changed().await.ok()?;
@@ -592,6 +659,7 @@ impl Render for TodoPanel {
                 (Scope::Project, true) => "Searching for TODO items…",
                 (Scope::Project, false) => "No TODO items found in the project.",
                 (Scope::CurrentFile, _) => "No TODO items in the current file.",
+                (Scope::ChangedLines, _) => "No TODO items left in the changed lines.",
             };
             v_flex()
                 .flex_1()

@@ -1327,6 +1327,8 @@ pub struct GitPanel {
     diff_stat_total: DiffStat,
     new_staged_count: usize,
     pending_commit: Option<Task<()>>,
+    /// VEGA: the before-commit checks passed for the commit being started.
+    vega_commit_checked: bool,
     pending_remote_operation: Option<RemoteOperationKind>,
     amend_pending: bool,
     original_commit_message: Option<String>,
@@ -1735,6 +1737,7 @@ impl GitPanel {
                 changes_count: 0,
                 diff_stat_total: DiffStat::default(),
                 pending_commit: None,
+                vega_commit_checked: false,
                 pending_remote_operation: None,
                 amend_pending,
                 original_commit_message,
@@ -4357,6 +4360,33 @@ impl GitPanel {
                 cx,
             );
             return;
+        }
+
+        // VEGA: before-commit checks (Check TODO); the commit starts again once they pass.
+        if !std::mem::take(&mut self.vega_commit_checked) && self.has_commit_message(cx) {
+            let work_directory = active_repository
+                .read(cx)
+                .work_directory_abs_path
+                .to_path_buf();
+            let request = crate::vega_commit_check::CommitCheckRequest {
+                workspace: self.workspace.clone(),
+                project: self.project.clone(),
+                work_directory,
+                staged_only: self.has_staged_changes(),
+            };
+            if let Some(checks) = crate::vega_commit_check::run_commit_checks(request, window, cx) {
+                cx.spawn_in(window, async move |this, cx| {
+                    if checks.await {
+                        this.update_in(cx, |this, window, cx| {
+                            this.vega_commit_checked = true;
+                            this.commit_changes(options, window, cx);
+                        })
+                        .ok();
+                    }
+                })
+                .detach();
+                return;
+            }
         }
 
         let askpass = self.askpass_delegate("git commit", window, cx);

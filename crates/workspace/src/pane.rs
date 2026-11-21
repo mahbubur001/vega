@@ -19,11 +19,11 @@ use collections::{BTreeSet, HashMap, HashSet, VecDeque};
 use futures::{StreamExt, stream::FuturesUnordered};
 use git::{CopyFilePermalink, OpenFilePermalink};
 use gpui::{
-    Action, Anchor, AnyElement, AnyView, App, AsyncWindowContext, ClickEvent, ClipboardItem, Context,
-    DragMoveEvent, Entity, EntityId, EventEmitter, ExternalPaths, FocusHandle, FocusOutEvent,
-    Focusable, KeyContext, MouseButton, NavigationDirection, Pixels, Point, PromptLevel, Render,
-    ScrollHandle, Subscription, Task, TaskExt, WeakEntity, WeakFocusHandle, Window, actions,
-    prelude::*,
+    Action, Anchor, AnyElement, AnyView, App, AsyncWindowContext, ClickEvent, ClipboardItem,
+    Context, DragMoveEvent, Entity, EntityId, EventEmitter, ExternalPaths, FocusHandle,
+    FocusOutEvent, Focusable, KeyContext, MouseButton, NavigationDirection, Pixels, Point,
+    PromptLevel, Render, ScrollHandle, Subscription, Task, TaskExt, WeakEntity, WeakFocusHandle,
+    Window, actions, prelude::*,
 };
 use itertools::Itertools;
 use language::{Capability, DiagnosticSeverity};

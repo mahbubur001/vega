@@ -2,6 +2,7 @@
 //! project or the current file, grouped by file, and those comments
 //! highlighted in the editor. The words are set with `todo.patterns`.
 
+mod commit_check;
 mod panel;
 pub mod scan;
 
@@ -33,6 +34,7 @@ pub struct TodoSettings {
     pub patterns: Vec<String>,
     pub case_sensitive: bool,
     pub highlight: bool,
+    pub check_before_commit: bool,
 }
 
 impl Settings for TodoSettings {
@@ -47,6 +49,7 @@ impl Settings for TodoSettings {
             }),
             case_sensitive: todo.case_sensitive.unwrap_or(false),
             highlight: todo.highlight.unwrap_or(true),
+            check_before_commit: todo.check_before_commit.unwrap_or(true),
         }
     }
 }
@@ -70,6 +73,8 @@ pub fn init(cx: &mut App) {
         });
     })
     .detach();
+
+    commit_check::init(cx);
 
     cx.observe_new(|editor: &mut Editor, window, cx| {
         if window.is_none() || !editor.mode().is_full() {

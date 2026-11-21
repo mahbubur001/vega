@@ -1970,11 +1970,12 @@
     "worktree_directory": "../worktrees",
     // Settings for automatically fetching the default branch's remote and the current branch's upstream remote.
     "auto_fetch": {
-      // Whether to automatically fetch in the background.
-      "enabled": false,
+      // Whether to automatically fetch in the background, so the ↓/↑ counts
+      // of the branch popup stay current. VEGA turns this on by default.
+      "enabled": true,
       // How long to wait between automatic fetches, in seconds.
       // Only applies when auto fetch is enabled. (min: 15)
-      "interval_secs": 60,
+      "interval_secs": 300,
     },
   },
   // The list of custom Git hosting providers.
@@ -2099,6 +2100,9 @@
     "case_sensitive": false,
     // Whether TODO items are highlighted in the editor.
     "highlight": true,
+    // Whether committing first looks for TODO items in the changed lines and
+    // asks before committing them (IntelliJ's "Check TODO").
+    "check_before_commit": true,
   },
   // Status bar-related settings.
   "status_bar": {
