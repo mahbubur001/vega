@@ -16380,9 +16380,9 @@
     "semantic_hash": "7a79580828c81febcf9852e8fa23e55d"
   },
   "crates/zed_actions/src/lib.rs": {
-    "mtime": 1795111964.3948674,
-    "seen": 1795114344.3468502,
-    "ast_hash": "0301310e8860defa58de718762c20075",
+    "mtime": 1795243182.473751,
+    "seen": 1795243499.805936,
+    "ast_hash": "281ac44c5028234c3423fd68962a19a1",
     "semantic_hash": ""
   },
   "crates/zed_credentials_provider/Cargo.toml": {
@@ -19776,9 +19776,9 @@
     "semantic_hash": "c28d81d3006f29e314d94e46abcae829"
   },
   "vega/ROADMAP.md": {
-    "mtime": 1795138913.4208136,
-    "seen": 1795193282.1375191,
-    "ast_hash": "1bd2c14181abe30f81cb4846bc8d264e",
+    "mtime": 1795243408.4928417,
+    "seen": 1795243499.816192,
+    "ast_hash": "abdbbe89e81f3023947280a4068de9ce",
     "semantic_hash": ""
   },
   "vega/SETTINGS_SYNC.md": {
@@ -22680,9 +22680,9 @@
     "semantic_hash": ""
   },
   "crates/project_panel/src/extra_rows.rs": {
-    "mtime": 1795111964.3793728,
-    "seen": 1795114344.3463502,
-    "ast_hash": "c5c98a6a232c905df6db64059012fb89",
+    "mtime": 1795243182.473993,
+    "seen": 1795243499.787492,
+    "ast_hash": "713207ef312648de1b50430b225f14dc",
     "semantic_hash": ""
   },
   "crates/scratches/Cargo.toml": {
@@ -22704,15 +22704,15 @@
     "semantic_hash": ""
   },
   "crates/scratches/src/rows.rs": {
-    "mtime": 1795111964.3838432,
-    "seen": 1795114344.346421,
-    "ast_hash": "98b96cc6972328d6cbaaa63c60e06fde",
+    "mtime": 1795243200.1432433,
+    "seen": 1795243499.790126,
+    "ast_hash": "790f03ec9951dada8fdcaec06e429e17",
     "semantic_hash": ""
   },
   "crates/scratches/src/scratches.rs": {
-    "mtime": 1795241524.1834428,
-    "seen": 1795241952.4611368,
-    "ast_hash": "158a9594c37b756124c04d8b9120b7a6",
+    "mtime": 1795243188.941269,
+    "seen": 1795243499.790127,
+    "ast_hash": "7854d58fc157b5ad739afcfc8f5015f4",
     "semantic_hash": ""
   },
   "crates/vega_dialog/Cargo.toml": {
@@ -22884,9 +22884,9 @@
     "semantic_hash": ""
   },
   "crates/vega_todo/src/panel.rs": {
-    "mtime": 1795241567.214076,
-    "seen": 1795241952.468545,
-    "ast_hash": "84e2a1964e688a89f74932d4fd319ef7",
+    "mtime": 1795242136.3206394,
+    "seen": 1795243499.797709,
+    "ast_hash": "48a79d986ccc16550015be7144c84700",
     "semantic_hash": ""
   },
   "crates/vega_todo/src/scan.rs": {
