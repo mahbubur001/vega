@@ -679,7 +679,11 @@ impl Panel for TodoPanel {
             if self.stale {
                 self.refresh_project(cx);
             }
-            self.refresh_current_file(window, cx);
+            // The workspace is mid-update when a panel is activated, so read
+            // its active item once that update is done.
+            cx.defer_in(window, |this, window, cx| {
+                this.refresh_current_file(window, cx)
+            });
         }
     }
 
