@@ -88,14 +88,14 @@ impl ServerPicker {
             selected_index: 0,
             on_pick: Some(Box::new(on_pick)),
         };
-        let picker = cx.new(|cx| Picker::uniform_list(delegate, window, cx));
+        let picker = cx.new(|cx| Picker::uniform_list(delegate, window, cx).initial_width(rems(30.)));
         Self { picker }
     }
 }
 
 impl Render for ServerPicker {
     fn render(&mut self, _: &mut Window, _: &mut Context<Self>) -> impl IntoElement {
-        v_flex().w(rems(30.)).child(self.picker.clone())
+        v_flex().child(self.picker.clone())
     }
 }
 

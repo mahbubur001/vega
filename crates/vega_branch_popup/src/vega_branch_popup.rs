@@ -77,6 +77,7 @@ impl BranchPopup {
         };
         let picker = cx.new(|cx| {
             let mut picker = Picker::list(delegate, window, cx)
+                .initial_width(rems(30.))
                 .max_height(rems(32.))
                 .show_scrollbar(true);
             picker.delegate.load(window, cx);
@@ -105,7 +106,6 @@ impl Render for BranchPopup {
     fn render(&mut self, _: &mut Window, _: &mut Context<Self>) -> impl IntoElement {
         v_flex()
             .key_context("VegaBranchPopup")
-            .w(rems(30.))
             .child(self.picker.clone())
     }
 }

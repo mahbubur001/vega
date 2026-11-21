@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+# VEGA: catch popups whose rows spill out of their box.
+#
+# A `Picker` sizes itself: it opens at `picker::DEFAULT_MODAL_WIDTH` (34 rem)
+# unless it's built with `.initial_width(...)`. A view that wraps the picker
+# in `v_flex().w(rems(N))` only narrows the wrapper. The picker's rows stay
+# 34 rem wide and draw past the wrapper's right edge, so hover backgrounds,
+# separators and right-aligned labels stick out of the popup.
+#
+# Rule: a file that builds a Picker sets its width with `.initial_width(...)`
+# on the picker, not with `.w(...)` on a wrapper. A wrapper of exactly 34 rem
+# (the default) is allowed, which upstream does everywhere.
+#
+# Usage: script/vega-check-ui-widths [crates-dir]   (exit 1 when something is found)
+
+set -euo pipefail
+cd "$(dirname "$0")/.."
+root="${1:-crates}"
+found=0
+
+while IFS= read -r file; do
+    grep -q "initial_width" "$file" && continue
+    # Single-line wrapper widths other than the picker default.
+    if hits=$(grep -nE '\.w\((rems|px)\([0-9.]+\)\)' "$file" | grep -vE '\.w\(rems\(34\.?0?\)\)'); then
+        echo "$file: builds a Picker but sets a wrapper width instead of .initial_width(...):"
+        echo "$hits" | sed 's/^/    /'
+        found=1
+    fi
+done < <(grep -rlE 'Picker::(list|uniform_list|nonsearchable_list|nonsearchable_uniform_list)\(' "$root" --include='*.rs')
+
+if [ "$found" = 1 ]; then
+    echo
+    echo "Fix: build the picker with .initial_width(rems(N)) and drop .w(...) from the wrapper."
+    echo "See .claude/skills/vega-ui-overflow/SKILL.md."
+    exit 1
+fi
+echo "UI widths OK: every narrowed Picker uses .initial_width(...)."

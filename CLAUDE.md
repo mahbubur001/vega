@@ -28,6 +28,7 @@ cargo run --release             # release build
 cargo check -p <crate>          # fast type-check of one crate
 cargo test -p <crate>           # test one crate; avoid `--workspace` unless needed
 ./script/clippy                 # lint the way CI does
+script/vega-check-ui-widths         # pickers narrowed the wrong way (rows spill out); skill: vega-ui-overflow
 cargo fmt --all                 # format
 ```
 

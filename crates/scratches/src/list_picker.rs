@@ -54,14 +54,14 @@ impl ListPicker {
             selected_index: selected,
             on_pick: Some(Box::new(on_pick)),
         };
-        let picker = cx.new(|cx| Picker::uniform_list(delegate, window, cx));
+        let picker = cx.new(|cx| Picker::uniform_list(delegate, window, cx).initial_width(rems(28.)));
         Self { picker }
     }
 }
 
 impl Render for ListPicker {
     fn render(&mut self, _: &mut Window, _: &mut Context<Self>) -> impl IntoElement {
-        v_flex().w(rems(28.)).child(self.picker.clone())
+        v_flex().child(self.picker.clone())
     }
 }
 
