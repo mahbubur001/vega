@@ -1,6 +1,6 @@
 //! Scratch files, like PhpStorm's "Scratches and Consoles": files kept
-//! outside projects in VEGA's config folder, shown under a "Scratches and
-//! Consoles" node at the bottom of every project panel. New Scratch File
+//! outside projects in VEGA's config folder, shown under a "Scratches" node at
+//! the bottom of every project panel. New Scratch File
 //! asks for a language; scratch buffers are plain text and reused after five.
 
 mod list_picker;

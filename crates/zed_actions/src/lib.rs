@@ -1016,7 +1016,7 @@ pub mod php {
     );
 }
 
-/// VEGA: scratch files, kept outside projects (PhpStorm's Scratches and Consoles).
+/// VEGA: scratch files, kept outside projects (PhpStorm's Scratches and Consoles; just "Scratches" in VEGA).
 pub mod scratches {
     use gpui::actions;
 

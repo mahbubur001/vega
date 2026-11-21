@@ -1,4 +1,6 @@
-//! The "Scratches and Consoles" node at the bottom of the project panel.
+//! The "Scratches" node at the bottom of the project panel (PhpStorm calls
+//! it "Scratches and Consoles"; VEGA has no database consoles, so just
+//! "Scratches").
 //!
 //! The scratches folder is loaded as a hidden worktree of the project, so
 //! scratch files get the project's language servers and renames carry their
@@ -37,15 +39,13 @@ const EXPANDED_KEY: &str = "vega_scratches_node_expanded";
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 enum RowId {
-    /// "Scratches and Consoles".
-    Consoles,
     /// A path in the scratches folder; the empty path is the "Scratches" node.
     Path(Arc<RelPath>),
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 enum RowKind {
-    Consoles,
+    /// The "Scratches" node: the scratches folder itself.
     Scratches,
     Dir,
     File,
@@ -63,7 +63,6 @@ impl Row {
     fn rel_path(&self) -> Option<&Arc<RelPath>> {
         match &self.id {
             RowId::Path(path) => Some(path),
-            RowId::Consoles => None,
         }
     }
 }
@@ -74,7 +73,7 @@ pub(crate) struct ScratchRows {
     panel: WeakEntity<ProjectPanel>,
     /// The scratches folder as a hidden worktree (held so it stays loaded).
     worktree: Option<Entity<Worktree>>,
-    consoles_expanded: bool,
+    root_expanded: bool,
     expanded: HashSet<Arc<RelPath>>,
     rows: Vec<Row>,
     selected: Option<RowId>,
@@ -92,7 +91,7 @@ impl ScratchRows {
         panel: WeakEntity<ProjectPanel>,
         cx: &mut Context<Self>,
     ) -> Self {
-        let consoles_expanded = KeyValueStore::global(cx)
+        let root_expanded = KeyValueStore::global(cx)
             .read_kvp(EXPANDED_KEY)
             .log_err()
             .flatten()
@@ -133,7 +132,7 @@ impl ScratchRows {
             project,
             panel,
             worktree: None,
-            consoles_expanded,
+            root_expanded,
             expanded: HashSet::from_iter([RelPath::empty_arc()]),
             rows: Vec::new(),
             selected: None,
@@ -147,25 +146,17 @@ impl ScratchRows {
     }
 
     fn rebuild(&mut self, cx: &mut Context<Self>) {
+        let root = RelPath::empty_arc();
         let mut rows = vec![Row {
-            id: RowId::Consoles,
-            kind: RowKind::Consoles,
-            name: "Scratches and Consoles".into(),
+            id: RowId::Path(root.clone()),
+            kind: RowKind::Scratches,
+            name: "Scratches".into(),
             depth: 0,
         }];
-        if self.consoles_expanded {
-            let root = RelPath::empty_arc();
-            rows.push(Row {
-                id: RowId::Path(root.clone()),
-                kind: RowKind::Scratches,
-                name: "Scratches".into(),
-                depth: 1,
-            });
-            if self.expanded.contains(&root)
-                && let Some(worktree) = &self.worktree
-            {
-                push_children(worktree.read(cx), &root, 2, &self.expanded, &mut rows);
-            }
+        if self.root_expanded
+            && let Some(worktree) = &self.worktree
+        {
+            push_children(worktree.read(cx), &root, 1, &self.expanded, &mut rows);
         }
         self.rows = rows;
         cx.notify();
@@ -215,10 +206,10 @@ impl ScratchRows {
     ) {
         self.select(row.id.clone(), window, cx);
         match row.kind {
-            RowKind::Consoles => {
-                self.consoles_expanded = !self.consoles_expanded;
+            RowKind::Scratches => {
+                self.root_expanded = !self.root_expanded;
                 let kvp = KeyValueStore::global(cx);
-                let value = if self.consoles_expanded { "1" } else { "0" };
+                let value = if self.root_expanded { "1" } else { "0" };
                 cx.background_spawn(async move {
                     kvp.write_kvp(EXPANDED_KEY.into(), value.into())
                         .await
@@ -227,7 +218,7 @@ impl ScratchRows {
                 .detach();
                 self.rebuild(cx);
             }
-            RowKind::Scratches | RowKind::Dir => {
+            RowKind::Dir => {
                 if let Some(path) = row.rel_path()
                     && !self.expanded.remove(path)
                 {
@@ -271,11 +262,10 @@ impl ScratchRows {
                 }
             };
             let menu = match row.kind {
-                RowKind::Consoles => menu
-                    .action("New Scratch File…", Box::new(NewScratchFile))
-                    .action("New Scratch Buffer", Box::new(NewScratchBuffer)),
                 RowKind::Scratches => menu
                     .action("New Scratch File…", Box::new(NewScratchFile))
+                    .action("New Scratch Buffer", Box::new(NewScratchBuffer))
+                    .separator()
                     .entry("New File…", None, act(Self::new_file))
                     .entry("New Directory…", None, act(Self::new_directory)),
                 RowKind::Dir => menu
@@ -789,7 +779,7 @@ impl ScratchRows {
         else {
             return;
         };
-        self.consoles_expanded = true;
+        self.root_expanded = true;
         let mut ancestor = relative.parent();
         while let Some(folder) = ancestor {
             self.expanded.insert(folder.into_arc());
@@ -862,8 +852,8 @@ impl ProjectPanelExtraRows for ScratchRows {
         };
         let selected = !state.panel_has_selection && self.selected.as_ref() == Some(&row.id);
         let expanded = match (&row.kind, row.rel_path()) {
-            (RowKind::Consoles, _) => self.consoles_expanded,
-            (RowKind::Scratches | RowKind::Dir, Some(path)) => self.expanded.contains(path),
+            (RowKind::Scratches, _) => self.root_expanded,
+            (RowKind::Dir, Some(path)) => self.expanded.contains(path),
             _ => false,
         };
         let chevron = (row.kind != RowKind::File).then(|| {
@@ -879,13 +869,11 @@ impl ProjectPanelExtraRows for ScratchRows {
                 })
         });
         let icon = match row.kind {
-            RowKind::Consoles => Icon::new(IconName::Notepad).color(Color::Muted),
-            RowKind::Scratches | RowKind::Dir => {
-                FileIcons::get_folder_icon(expanded, Path::new(row.name.as_ref()), cx)
-                    .map(Icon::from_path)
-                    .unwrap_or_else(|| Icon::new(IconName::Folder))
-                    .color(Color::Muted)
-            }
+            RowKind::Scratches => Icon::new(IconName::Notepad).color(Color::Muted),
+            RowKind::Dir => FileIcons::get_folder_icon(expanded, Path::new(row.name.as_ref()), cx)
+                .map(Icon::from_path)
+                .unwrap_or_else(|| Icon::new(IconName::Folder))
+                .color(Color::Muted),
             RowKind::File => FileIcons::get_icon(Path::new(row.name.as_ref()), cx)
                 .map(Icon::from_path)
                 .unwrap_or_else(|| Icon::new(IconName::File))

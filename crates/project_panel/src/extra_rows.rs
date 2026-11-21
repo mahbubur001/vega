@@ -1,5 +1,5 @@
 //! VEGA: rows that add-ons show below the project tree, in the same scrolling
-//! list (External Libraries, Scratches and Consoles), styled like the
+//! list (External Libraries, Scratches), styled like the
 //! panel's own rows. Kept in its own file so the upstream panel changes stay
 //! a few lines.
 
