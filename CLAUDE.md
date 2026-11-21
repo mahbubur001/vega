@@ -29,6 +29,7 @@ cargo check -p <crate>          # fast type-check of one crate
 cargo test -p <crate>           # test one crate; avoid `--workspace` unless needed
 ./script/clippy                 # lint the way CI does
 script/vega-check-ui-widths         # pickers narrowed the wrong way (rows spill out); skill: vega-ui-overflow
+script/vega-clean-deps              # free disk: drop old copies in target/debug/deps
 cargo fmt --all                 # format
 ```
 

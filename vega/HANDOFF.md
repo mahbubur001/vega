@@ -2,7 +2,7 @@
 
 The restart point for the next working session, possibly on another computer. Read this first, then `ROADMAP.md`. Update it at the end of every session.
 
-_Last updated: 2026-11-21 (built-in PHP, auto-install fixed). Branch `vega`, everything committed and pushed._
+_Last updated: 2026-11-21, end of day (upstream merged, background fetch, Check TODO before commit). Branch `vega`, everything committed and pushed; the next session starts on a new computer._
 
 ## How the owner wants to work
 
@@ -16,7 +16,9 @@ _Last updated: 2026-11-21 (built-in PHP, auto-install fixed). Branch `vega`, eve
 2. Rust via rustup (the toolchain comes from `rust-toolchain.toml`), `brew install cmake`.
 3. With full Xcode, plain `cargo run` works. Without Xcode, add `--features gpui_platform/runtime_shaders` to every build, check, test and clippy command that compiles the app (for crate tests: `cargo test -p <crate> -p gpui_platform --features gpui_platform/runtime_shaders`).
 4. Run the app as "VEGA Dev.app" so the Dock shows the VEGA icon: `script/vega-dev-app --build ~/some/test/project` (it picks runtime shaders itself when Xcode is missing). Don't open this repo itself in VEGA.
-5. Disk: the debug build cache grows by tens of GB per session. When space runs low, `rm -r target/debug/incremental` (safe; it rebuilds). Each new dependency also leaves the old app and test binaries behind in `target/debug/deps` (`vega-<hash>`, about 1.2 GB each, and `<crate>-<hash>` test binaries); all but the newest of each name can be deleted.
+5. Disk: the debug build cache grows by tens of GB per session. When space runs low, run `script/vega-clean-deps` (removes `target/debug/incremental` and every old copy in `target/debug/deps`, keeping the newest of each name; it freed 15 GB and 11 GB on 2026-11-21). Safe: cargo rebuilds what it needs.
+6. Optional: `export GITHUB_TOKEN=<a read-only token>` before launching VEGA. Language-server downloads use GitHub's API, which allows 60 requests an hour without a token; without one VEGA falls back to reading github.com's release pages, which works but is slower.
+7. CI: `.github/workflows/vega_ci.yml` (Linux only; the repo is public, so minutes are free). It fails on formatting, so run `cargo fmt --all` before every push.
 
 ## Where things stand
 
@@ -85,7 +87,19 @@ Docker SFTP test server: `crates/deployment/tests/servers` (see `DEPLOYMENT.md` 
 
 ## Next tasks, in order
 
-**Start here next session:**
+**Start here next session (new computer):**
+1. Set up with the steps at the top, then `script/vega-dev-app --build ~/some/php/project`.
+2. Owner checks of everything built on 2026-11-21 (all compile and pass tests; none seen in the app yet):
+   - Check TODO before commit: add `// TODO: test` to a file, commit from the Git panel; expect "1 TODO item found in the changed lines" with Commit / Review / Cancel. Review opens the TODO panel on "Changed Lines".
+   - Background fetch: after about 5 minutes the branch button's ↓N updates without a manual fetch.
+   - Branch popup: clicking the current branch when it shows ↓N pulls; "Update" in the › menu of another branch fast-forwards it.
+   - TODO panel (bottom dock, ListTodo icon): Project / Current File tabs, click jumps to the line, TODO/FIXME coloured in the editor.
+   - Scratch files save as you type and close without a "save?" prompt; the project panel shows one "Scratches" node.
+   - External Libraries: in classified-listing, PHP › the wordpress include path and Project @types/*; Tools › Show/Hide External Libraries; hidden in non-PHP projects.
+   - TOML files: the taplo language server downloads with no GitHub error.
+3. Then the next ideas, owner's order not yet chosen: Compare with Current and favourite (★) branches in the branch popup; project badge in the title bar; Markdown ⋮ menu; phpdoc highlighting; extension catalogue without zed.dev (auto-installing the extensions in the owner's settings, e.g. `archipelago-icons`, fails with "Invalid gzip header" because there is no registry); a `cargo fmt` pre-commit hook (the owner has to enable it: an agent may not install git hooks).
+
+**Older notes:**
 - Markdown (built 2026-11-20, steps 1 to 5; nothing has been looked at in the running app by the agent, only by tests): the owner checks the five "Markdown …" rows in the table above. Likely follow-ups, in the order the checks will show them: icons of the three layout buttons next to the upstream eye button; whether a split made of two tabs is acceptable (if not, the alternative is one composite tab, see the report, "Build the switcher first…"); jitter in the two-way scroll sync; key choices for the editing commands.
 - Markdown, not built: a preview below the editor (the split always opens to the right), per-file memory of the layout, one shared preview tab for all files in the split, IntelliJ's selection toolbar, table column commands (insert, move, align, remove), table of contents, default keys for strikethrough, code and insert link. Math is left to upstream (two community PRs open).
 - `research_notes/IntelliJ Markdown view modes/` holds the four research notes behind the report (IntelliJ view modes, IntelliJ editing features, VS Code and others, Zed's preview and seams).

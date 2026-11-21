@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# Frees disk space taken by old debug build files: removes target/debug/incremental
+# and, in target/debug/deps, every artifact except the newest of each name
+# (old app binaries are ~1.2 GB each). Safe: cargo rebuilds what it needs.
+set -euo pipefail
+cd "$(dirname "$0")/.."
+deps=target/debug/deps
+[ -d "$deps" ] || { echo "no $deps"; exit 0; }
+rm -rf target/debug/incremental
+python3 - "$deps" <<'PY'
+import collections, os, re, sys
+os.chdir(sys.argv[1])
+groups = collections.defaultdict(list)
+for name in os.listdir('.'):
+    m = re.match(r'^(.+)-([0-9a-f]{16})(\..+)?$', name)
+    if m and os.path.isfile(name):
+        groups[(m.group(1), m.group(3) or '')].append(name)
+freed = count = 0
+for names in groups.values():
+    names.sort(key=lambda n: os.stat(n).st_mtime, reverse=True)
+    for name in names[1:]:
+        freed += os.path.getsize(name); os.remove(name); count += 1
+print(f"removed {count} old files, {freed / 2**30:.1f} GB")
+PY
+df -h . | tail -1
