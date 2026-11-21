@@ -54,7 +54,8 @@ impl ListPicker {
             selected_index: selected,
             on_pick: Some(Box::new(on_pick)),
         };
-        let picker = cx.new(|cx| Picker::uniform_list(delegate, window, cx).initial_width(rems(28.)));
+        let picker =
+            cx.new(|cx| Picker::uniform_list(delegate, window, cx).initial_width(rems(28.)));
         Self { picker }
     }
 }

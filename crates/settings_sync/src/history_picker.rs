@@ -37,7 +37,8 @@ impl HistoryModal {
             selected_index: 0,
             message: "Loading the sync history…".into(),
         };
-        let picker = cx.new(|cx| Picker::uniform_list(delegate, window, cx).initial_width(rems(28.)));
+        let picker =
+            cx.new(|cx| Picker::uniform_list(delegate, window, cx).initial_width(rems(28.)));
         let history = sync.read(cx).history(cx);
         let load = cx.spawn_in(window, {
             let picker = picker.clone();

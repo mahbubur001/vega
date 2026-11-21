@@ -88,7 +88,8 @@ impl ServerPicker {
             selected_index: 0,
             on_pick: Some(Box::new(on_pick)),
         };
-        let picker = cx.new(|cx| Picker::uniform_list(delegate, window, cx).initial_width(rems(30.)));
+        let picker =
+            cx.new(|cx| Picker::uniform_list(delegate, window, cx).initial_width(rems(30.)));
         Self { picker }
     }
 }

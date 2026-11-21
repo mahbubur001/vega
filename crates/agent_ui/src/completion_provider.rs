@@ -218,12 +218,8 @@ impl PromptLocalCommand {
 
     pub fn description(&self) -> &'static str {
         match self {
-            Self::ThumbsUp => {
-                "Rate this response as helpful. Rates the response."
-            }
-            Self::ThumbsDown => {
-                "Rate this response as not helpful. Rates the response."
-            }
+            Self::ThumbsUp => "Rate this response as helpful. Rates the response.",
+            Self::ThumbsDown => "Rate this response as not helpful. Rates the response.",
         }
     }
 
