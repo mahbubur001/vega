@@ -731,27 +731,9 @@ impl PhpSettingsWindow {
             .into_any_element()
     }
 
-    fn render_composer(&self, cx: &mut Context<Self>) -> AnyElement {
+    fn render_composer(&self) -> AnyElement {
         v_flex()
             .gap_2()
-            .child(
-                Checkbox::new(
-                    "php-composer-libraries",
-                    ToggleState::from(self.draft.composer_libraries),
-                )
-                .label("Add packages as libraries")
-                .on_click(cx.listener(|this, state: &ToggleState, _, cx| {
-                    this.draft.composer_libraries = state.selected();
-                    cx.notify();
-                })),
-            )
-            .child(
-                Label::new(
-                    "Lists composer.lock's packages under External Libraries; their files in vendor/ open read-only.",
-                )
-                .size(LabelSize::Small)
-                .color(Color::Muted),
-            )
             .child(
                 Label::new(match &self.composer_level {
                     Some(level) => format!(
@@ -822,7 +804,7 @@ impl Render for PhpSettingsWindow {
         let body = match self.tab {
             Tab::IncludePath => self.render_include_paths(cx),
             Tab::Runtime => self.render_runtime(cx),
-            Tab::Composer => self.render_composer(cx),
+            Tab::Composer => self.render_composer(),
         };
         let content = v_flex()
             .size_full()

@@ -21,6 +21,8 @@ _Last updated: 2026-11-21 (built-in PHP, auto-install fixed). Branch `vega`, eve
 
 ## Where things stand
 
+**External Libraries like PhpStorm (2026-11-21):** "PHP" (include paths outside the project) and "Project @types/*" (node_modules/@types); PHP Runtime, Composer and Node.js nodes removed. Shown automatically for PHP projects (composer.json, `.vega/php.json`, include paths) or projects with @types; Tools › Show/Hide External Libraries (action `php::ToggleExternalLibraries`) saves a per-project choice in VEGA's database. The scratches node is now just "Scratches".
+
 **TODO tool window and scratch autosave (2026-11-21):** new crate `vega_todo`: a dock panel (Project / Current File, grouped by file, click to jump), TODO and FIXME highlighting in editors, and a `todo` settings section (patterns, case_sensitive, highlight). The comment test uses the syntax tree (`override_name() == "comment"`) and falls back to comment markers. Scratch files save as you type and never ask on close: `workspace::item::AlwaysAutosaveFolders`, a small seam in item.rs and pane.rs. The repo is now public, so CI minutes are free.
 
 **UI overflow guard (2026-11-21):** rows spilling past a popup's edge come from narrowing a `Picker` with a wrapper `.w(...)`. Use `.initial_width(...)` instead. Run `script/vega-check-ui-widths`; the skill `.claude/skills/vega-ui-overflow` covers the other causes.

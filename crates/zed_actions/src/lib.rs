@@ -1012,6 +1012,8 @@ pub mod php {
             OpenPhpSettings,
             /// Asks phpactor to rebuild its index (after adding include paths, or when symbols are missing).
             Reindex,
+            /// Shows or hides External Libraries in the project panel, for this project.
+            ToggleExternalLibraries,
         ]
     );
 }

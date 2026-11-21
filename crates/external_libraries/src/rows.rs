@@ -18,24 +18,26 @@ use util::ResultExt as _;
 use workspace::notifications::NotificationId;
 use workspace::{OpenOptions, OpenVisible, Toast, Workspace};
 
-use php_settings::interpreters::short_version;
 use php_settings::stubs::download_stubs;
 use php_settings::{PhpSettingsStore, config_for_project};
 use zed_actions::php::OpenPhpSettings;
 
-use crate::{GroupKind, Libraries, list_dir, load_libraries, stubs_dir};
+use crate::{Libraries, list_dir, load_libraries, stubs_dir};
 
 const EXPANDED_KEY: &str = "vega_external_libraries_expanded";
+/// Per project: "1" shown, "0" hidden; missing means automatic.
+const VISIBLE_KEY_PREFIX: &str = "vega_external_libraries_visible:";
 const ROOT: &str = "root";
 const PHP: &str = "php";
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 enum RowKind {
     Root,
+    /// "PHP": the include paths outside the project.
     Php,
-    PhpExtension,
     IncludePath,
-    Group(GroupKind),
+    /// "Project @types/*".
+    Types,
     Package,
     Dir,
     File,
@@ -57,10 +59,8 @@ struct Row {
 impl Row {
     fn expandable(&self) -> bool {
         match self.kind {
-            RowKind::Root | RowKind::Php | RowKind::Group(_) | RowKind::Dir => true,
-            RowKind::PhpExtension | RowKind::IncludePath | RowKind::Package => {
-                self.path.is_some() && !self.dimmed
-            }
+            RowKind::Root | RowKind::Php | RowKind::Types | RowKind::Dir => true,
+            RowKind::IncludePath | RowKind::Package => self.path.is_some() && !self.dimmed,
             RowKind::File | RowKind::Note => false,
         }
     }
@@ -83,6 +83,9 @@ pub(crate) struct LibraryRows {
         Subscription,
     )>,
     downloading: bool,
+    /// The user's choice for this project; `None` shows External Libraries
+    /// when the project has something to show.
+    visible_override: Option<bool>,
     /// Include paths and the stubs as hidden worktrees, searched by Find in
     /// Files with ignored files included ("Project and Libraries").
     library_worktrees: HashMap<PathBuf, Entity<Worktree>>,
@@ -109,6 +112,7 @@ impl LibraryRows {
         }
         let mut subscriptions = vec![cx.subscribe(&project, |this, _, event, cx| match event {
             project::Event::WorktreeAdded(_) | project::Event::WorktreeRemoved(_) => {
+                this.visible_override = this.read_visibility(cx);
                 this.reload(cx)
             }
             project::Event::WorktreeUpdatedEntries(_, changes) => {
@@ -116,7 +120,12 @@ impl LibraryRows {
                     path.parent().is_some_and(|parent| parent.is_empty())
                         && matches!(
                             path.file_name(),
-                            Some("composer.lock" | "package.json" | "package-lock.json")
+                            Some(
+                                "composer.json"
+                                    | "composer.lock"
+                                    | "package.json"
+                                    | "package-lock.json"
+                            )
                         )
                 });
                 if manifest_changed {
@@ -146,13 +155,70 @@ impl LibraryRows {
             selected: None,
             context_menu: None,
             downloading: false,
+            visible_override: None,
             library_worktrees: HashMap::default(),
             _subscriptions: subscriptions,
             _load: Task::ready(()),
             _download: Task::ready(()),
         };
+        this.visible_override = this.read_visibility(cx);
         this.reload(cx);
         this
+    }
+
+    /// The KV key for this project's choice: its folders, sorted.
+    fn visibility_key(&self, cx: &App) -> Option<String> {
+        let mut roots: Vec<String> = self
+            .project
+            .read(cx)
+            .visible_worktrees(cx)
+            .map(|worktree| worktree.read(cx).abs_path().to_string_lossy().into_owned())
+            .collect();
+        if roots.is_empty() {
+            return None;
+        }
+        roots.sort();
+        Some(format!("{VISIBLE_KEY_PREFIX}{}", roots.join("|")))
+    }
+
+    fn read_visibility(&self, cx: &App) -> Option<bool> {
+        let key = self.visibility_key(cx)?;
+        let value = KeyValueStore::global(cx)
+            .read_kvp(&key)
+            .log_err()
+            .flatten()?;
+        Some(value == "1")
+    }
+
+    /// Whether the node is shown now.
+    fn is_visible(&self) -> bool {
+        self.visible_override
+            .unwrap_or_else(|| self.libraries.as_ref().is_some_and(Libraries::has_content))
+    }
+
+    /// Shows External Libraries if it's hidden, hides it if it's shown, and
+    /// remembers the choice for this project.
+    pub(crate) fn toggle_visibility(&mut self, cx: &mut Context<Self>) {
+        let visible = !self.is_visible();
+        self.visible_override = Some(visible);
+        if visible {
+            self.expanded.insert(ROOT.into());
+        }
+        if let Some(key) = self.visibility_key(cx) {
+            let kvp = KeyValueStore::global(cx);
+            let value = if visible { "1" } else { "0" };
+            cx.background_spawn(async move {
+                kvp.write_kvp(key, value.into()).await.log_err();
+            })
+            .detach();
+        }
+        self.rebuild(cx);
+    }
+
+    fn hide(&mut self, _: &Row, _: &mut Window, cx: &mut Context<Self>) {
+        if self.is_visible() {
+            self.toggle_visibility(cx);
+        }
     }
 
     fn reload(&mut self, cx: &mut Context<Self>) {
@@ -194,7 +260,7 @@ impl LibraryRows {
             .filter(|(_, exists)| *exists)
             .map(|(path, _)| path.clone())
             .collect();
-        if libraries.php.as_ref().is_some_and(|php| php.has_stubs) {
+        if libraries.has_stubs {
             wanted.push(stubs_dir());
         }
         let stale: Vec<PathBuf> = self
@@ -253,6 +319,11 @@ impl LibraryRows {
     }
 
     fn rebuild(&mut self, cx: &mut Context<Self>) {
+        if !self.is_visible() {
+            self.rows = Vec::new();
+            cx.notify();
+            return;
+        }
         let mut rows = vec![Row {
             key: ROOT.into(),
             kind: RowKind::Root,
@@ -273,94 +344,56 @@ impl LibraryRows {
     }
 
     fn push_libraries(&self, libraries: &Libraries, rows: &mut Vec<Row>) {
-        if let Some(php) = &libraries.php {
+        if libraries.is_php_project {
             rows.push(Row {
                 key: PHP.into(),
                 kind: RowKind::Php,
-                label: "PHP Runtime".into(),
-                detail: Some(format!("PHP {}", short_version(&php.version)).into()),
+                label: "PHP".into(),
+                detail: None,
                 dimmed: false,
                 path: None,
                 depth: 1,
             });
             if self.expanded.contains(PHP) {
-                if !php.has_stubs {
+                if libraries.include_paths.is_empty() {
                     rows.push(Row {
                         depth: 2,
-                        ..note(if self.downloading {
-                            "Downloading PHP stubs…"
-                        } else {
-                            "Right-click PHP Runtime › Download PHP Stubs to browse them"
-                        })
+                        ..note("No include paths outside the project (right-click › PHP Settings…)")
                     });
                 }
-                for (extension, folder) in &php.extensions {
-                    let key: SharedString = format!("php/{extension}").into();
+                for (path, exists) in &libraries.include_paths {
+                    let key: SharedString = path.to_string_lossy().into_owned().into();
                     rows.push(Row {
                         key: key.clone(),
-                        kind: RowKind::PhpExtension,
-                        label: extension.clone().into(),
-                        detail: None,
-                        dimmed: folder.is_none(),
-                        path: folder.clone(),
+                        kind: RowKind::IncludePath,
+                        label: path
+                            .file_name()
+                            .map(|name| name.to_string_lossy().into_owned())
+                            .unwrap_or_else(|| path.to_string_lossy().into_owned())
+                            .into(),
+                        detail: (!exists).then(|| "missing".into()),
+                        dimmed: !exists,
+                        path: Some(path.clone()),
                         depth: 2,
                     });
-                    if let Some(folder) = folder
-                        && self.expanded.contains(&key)
-                    {
-                        self.push_folder(folder, 3, rows);
+                    if *exists && self.expanded.contains(&key) {
+                        self.push_folder(path, 3, rows);
                     }
                 }
             }
         }
-        for (path, exists) in &libraries.include_paths {
-            let key: SharedString = path.to_string_lossy().into_owned().into();
+        let several_folders = libraries.types.len() > 1;
+        for (index, group) in libraries.types.iter().enumerate() {
+            let key: SharedString = format!("types/{index}").into();
             rows.push(Row {
                 key: key.clone(),
-                kind: RowKind::IncludePath,
-                label: path
-                    .file_name()
-                    .map(|name| name.to_string_lossy().into_owned())
-                    .unwrap_or_else(|| path.to_string_lossy().into_owned())
-                    .into(),
-                detail: Some(if *exists {
-                    "include path".into()
-                } else {
-                    "include path · missing".into()
-                }),
-                dimmed: !exists,
-                path: Some(path.clone()),
-                depth: 1,
-            });
-            if *exists && self.expanded.contains(&key) {
-                self.push_folder(path, 2, rows);
-            }
-        }
-        let several_folders = libraries
-            .groups
-            .iter()
-            .map(|group| &group.folder)
-            .collect::<HashSet<_>>()
-            .len()
-            > 1;
-        for (index, group) in libraries.groups.iter().enumerate() {
-            let key: SharedString = format!("group/{index}").into();
-            let name = match group.kind {
-                GroupKind::Composer => "Composer",
-                GroupKind::Node => "Node.js",
-            };
-            rows.push(Row {
-                key: key.clone(),
-                kind: RowKind::Group(group.kind),
+                kind: RowKind::Types,
                 label: if several_folders {
-                    format!("{name} — {}", group.folder).into()
+                    format!("Project @types/* — {}", group.folder).into()
                 } else {
-                    name.into()
+                    "Project @types/*".into()
                 },
-                detail: Some(match group.packages.len() {
-                    1 => "1 package".into(),
-                    count => format!("{count} packages").into(),
-                }),
+                detail: None,
                 dimmed: false,
                 path: None,
                 depth: 1,
@@ -368,37 +401,25 @@ impl LibraryRows {
             if !self.expanded.contains(&key) {
                 continue;
             }
-            for (package, installed) in &group.packages {
+            for package in &group.packages {
                 let key: SharedString = package.path.to_string_lossy().into_owned().into();
-                let mut detail = package.version.clone().unwrap_or_default();
-                if package.dev {
-                    detail = format!("{detail} dev").trim().to_string();
-                }
-                if !installed {
-                    detail = format!("{detail} · not installed")
-                        .trim_start_matches(" · ")
-                        .to_string();
-                }
                 rows.push(Row {
                     key: key.clone(),
                     kind: RowKind::Package,
                     label: package.name.clone().into(),
-                    detail: (!detail.is_empty()).then(|| detail.into()),
-                    dimmed: !installed,
+                    detail: package.version.clone().map(Into::into),
+                    dimmed: false,
                     path: Some(package.path.clone()),
                     depth: 2,
                 });
-                if *installed && self.expanded.contains(&key) {
+                if self.expanded.contains(&key) {
                     self.push_folder(&package.path, 3, rows);
                 }
             }
         }
-        if libraries.php.is_none()
-            && libraries.groups.is_empty()
-            && libraries.include_paths.is_empty()
-        {
+        if !libraries.has_content() {
             rows.push(note(
-                "No PHP interpreter, composer.lock or package.json found",
+                "Nothing here: no PHP include paths or node_modules/@types",
             ));
         }
     }
@@ -523,8 +544,7 @@ impl LibraryRows {
         let has_stubs = self
             .libraries
             .as_ref()
-            .and_then(|libraries| libraries.php.as_ref())
-            .is_some_and(|php| php.has_stubs);
+            .is_some_and(|libraries| libraries.has_stubs);
         let downloading = self.downloading;
         let menu_row = row.clone();
         let menu = ContextMenu::build(window, cx, move |menu, _, _| {
@@ -562,6 +582,10 @@ impl LibraryRows {
                         .separator()
                 },
             )
+            .when(row.kind == RowKind::Root, |menu| {
+                menu.entry("Hide External Libraries", None, act(Self::hide))
+                    .separator()
+            })
             .when(row.path.is_some(), |menu| {
                 menu.entry("Reveal in Finder", None, act(Self::reveal))
                     .entry("Copy Path", None, act(Self::copy_path))
@@ -649,33 +673,25 @@ impl LibraryRows {
             return;
         };
         let mut owner: Option<(Vec<SharedString>, PathBuf)> = None;
-        if let Some(php) = &libraries.php {
-            for (extension, folder) in &php.extensions {
-                if let Some(folder) = folder
-                    && path.starts_with(folder)
-                {
-                    owner = Some((
-                        vec![ROOT.into(), PHP.into(), format!("php/{extension}").into()],
-                        folder.clone(),
-                    ));
-                }
-            }
-        }
         for (include, exists) in &libraries.include_paths {
             if *exists && path.starts_with(include) {
                 owner = Some((
-                    vec![ROOT.into(), include.to_string_lossy().into_owned().into()],
+                    vec![
+                        ROOT.into(),
+                        PHP.into(),
+                        include.to_string_lossy().into_owned().into(),
+                    ],
                     include.clone(),
                 ));
             }
         }
-        for (index, group) in libraries.groups.iter().enumerate() {
-            for (package, installed) in &group.packages {
-                if *installed && path.starts_with(&package.path) {
+        for (index, group) in libraries.types.iter().enumerate() {
+            for package in &group.packages {
+                if path.starts_with(&package.path) {
                     owner = Some((
                         vec![
                             ROOT.into(),
-                            format!("group/{index}").into(),
+                            format!("types/{index}").into(),
                             package.path.to_string_lossy().into_owned().into(),
                         ],
                         package.path.clone(),
@@ -760,11 +776,9 @@ impl ProjectPanelExtraRows for LibraryRows {
         };
         let icon = match row.kind {
             RowKind::Root => Icon::new(IconName::BookCopy),
-            RowKind::Php => file_icon("runtime.php"),
-            RowKind::PhpExtension => Icon::new(IconName::FileCode),
+            RowKind::Php => file_icon("index.php"),
             RowKind::IncludePath => Icon::new(IconName::FolderInclude),
-            RowKind::Group(GroupKind::Composer) => file_icon("composer.json"),
-            RowKind::Group(GroupKind::Node) => file_icon("package.json"),
+            RowKind::Types => file_icon("index.d.ts"),
             RowKind::Package => Icon::new(if expanded {
                 IconName::BoxOpen
             } else {

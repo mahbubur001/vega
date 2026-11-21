@@ -1,7 +1,8 @@
 //! "External Libraries" at the bottom of the project panel, like PhpStorm:
-//! the PHP interpreter's extensions (with JetBrains' phpstorm-stubs when
-//! downloaded), Composer packages from `composer.lock` and Node.js packages
-//! from `package.json`. Library files open read-only.
+//! "PHP" with the include paths outside the project, and "Project @types/*"
+//! with `node_modules/@types`. Shown only for projects that have either,
+//! unless the user shows or hides it for the project. Library files open
+//! read-only.
 
 mod model;
 mod protection;
@@ -14,14 +15,13 @@ use fs::Fs;
 use futures::StreamExt as _;
 use gpui::{App, AppContext as _, Entity, Window};
 use php_settings::PhpConfig;
-use php_settings::interpreters::php_info;
 use php_settings::stubs::stub_folders;
 use project_panel::ProjectPanel;
 use workspace::Workspace;
 
 pub use php_settings::stubs::stubs_dir;
 
-use crate::model::{Package, composer_packages, installed_version, node_dependencies};
+use crate::model::{Package, installed_version};
 
 pub fn init(cx: &mut App) {
     cx.observe_new(|workspace: &mut Workspace, window, cx| {
@@ -67,42 +67,57 @@ pub fn init(cx: &mut App) {
         let workspace = panel.workspace();
         let project = panel.project().clone();
         let panel_handle = cx.entity().downgrade();
-        let rows = cx.new(|cx| rows::LibraryRows::new(workspace, project, panel_handle, cx));
+        let rows =
+            cx.new(|cx| rows::LibraryRows::new(workspace.clone(), project, panel_handle, cx));
+        let weak_rows = rows.downgrade();
         panel.add_extra_rows(rows, cx);
+        // Tools › Show/Hide External Libraries, for this project.
+        if let Some(workspace) = workspace.upgrade() {
+            cx.defer(move |cx| {
+                workspace.update(cx, |workspace, _| {
+                    workspace.register_action(
+                        move |_, _: &zed_actions::php::ToggleExternalLibraries, _, cx| {
+                            weak_rows
+                                .update(cx, |rows, cx| rows.toggle_visibility(cx))
+                                .ok();
+                        },
+                    );
+                });
+            });
+        }
     })
     .detach();
 }
 
-/// The PHP interpreter VEGA found, and its extensions.
-#[derive(Clone, Debug, Default)]
-pub(crate) struct PhpRuntime {
-    pub version: String,
-    /// Extension name and, when stubs are downloaded, its stubs folder.
-    pub extensions: Vec<(String, Option<PathBuf>)>,
-    pub has_stubs: bool,
-}
-
-/// Packages of one project folder.
+/// `node_modules/@types` packages of one project folder (PhpStorm's
+/// "Project @types/*" library).
 #[derive(Clone, Debug)]
-pub(crate) struct PackageGroup {
-    pub kind: GroupKind,
+pub(crate) struct TypesGroup {
     /// The project folder's name, shown when the project has several.
     pub folder: String,
-    pub packages: Vec<(Package, bool)>,
-}
-
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub(crate) enum GroupKind {
-    Composer,
-    Node,
+    pub packages: Vec<Package>,
 }
 
 #[derive(Clone, Debug, Default)]
 pub(crate) struct Libraries {
-    pub php: Option<PhpRuntime>,
-    /// Include paths from the PHP settings, with whether each exists.
+    /// Whether JetBrains' phpstorm-stubs are downloaded (searched by Find in
+    /// Files with the include paths).
+    pub has_stubs: bool,
+    /// Whether the project is a PHP project (`composer.json`, VEGA PHP
+    /// settings, or include paths): the "PHP" node is shown.
+    pub is_php_project: bool,
+    /// Include paths outside the project folders, with whether each exists.
+    /// Paths inside the project are already in the project tree.
     pub include_paths: Vec<(PathBuf, bool)>,
-    pub groups: Vec<PackageGroup>,
+    pub types: Vec<TypesGroup>,
+}
+
+impl Libraries {
+    /// Whether External Libraries has anything to show for this project
+    /// (when the user hasn't chosen to show or hide it).
+    pub fn has_content(&self) -> bool {
+        self.is_php_project || !self.types.is_empty()
+    }
 }
 
 /// Reads everything the External Libraries node lists. `roots` are the
@@ -112,12 +127,22 @@ pub(crate) async fn load_libraries(
     roots: Vec<PathBuf>,
     config: PhpConfig,
 ) -> Libraries {
+    let all_include_paths = config.include_paths();
+    let mut is_php_project = !all_include_paths.is_empty();
+    for root in &roots {
+        if fs.is_file(&root.join("composer.json")).await
+            || fs.is_file(&php_settings::config::config_path(root)).await
+        {
+            is_php_project = true;
+        }
+    }
     let mut libraries = Libraries {
-        php: load_php(fs.as_ref(), &config).await,
+        has_stubs: is_php_project && !stub_folders(fs.as_ref()).await.is_empty(),
+        is_php_project,
         include_paths: Vec::new(),
-        groups: Vec::new(),
+        types: Vec::new(),
     };
-    for path in config.include_paths() {
+    for path in outside_roots(all_include_paths, &roots) {
         let exists = fs.is_dir(&path).await;
         libraries.include_paths.push((path, exists));
     }
@@ -126,75 +151,37 @@ pub(crate) async fn load_libraries(
             .file_name()
             .map(|name| name.to_string_lossy().into_owned())
             .unwrap_or_default();
-        if config.composer_libraries
-            && let Ok(lock) = fs.load(&root.join("composer.lock")).await
-        {
-            let mut packages = Vec::new();
-            for package in composer_packages(&lock, &root) {
-                let installed = fs.is_dir(&package.path).await;
-                packages.push((package, installed));
+        let types_dir = root.join("node_modules").join("@types");
+        let mut packages = Vec::new();
+        for (name, is_dir) in list_dir(fs.as_ref(), &types_dir).await {
+            if !is_dir {
+                continue;
             }
-            if !packages.is_empty() {
-                libraries.groups.push(PackageGroup {
-                    kind: GroupKind::Composer,
-                    folder: folder.clone(),
-                    packages,
-                });
-            }
+            let path = types_dir.join(&name);
+            let version = match fs.load(&path.join("package.json")).await {
+                Ok(json) => installed_version(&json),
+                Err(_) => None,
+            };
+            packages.push(Package {
+                name,
+                version,
+                path,
+                dev: false,
+            });
         }
-        if let Ok(package_json) = fs.load(&root.join("package.json")).await {
-            let mut packages = Vec::new();
-            for (name, dev) in node_dependencies(&package_json) {
-                let path = root.join("node_modules").join(&name);
-                let version = match fs.load(&path.join("package.json")).await {
-                    Ok(json) => installed_version(&json),
-                    Err(_) => None,
-                };
-                let installed = version.is_some();
-                packages.push((
-                    Package {
-                        name,
-                        version,
-                        path,
-                        dev,
-                    },
-                    installed,
-                ));
-            }
-            if !packages.is_empty() {
-                libraries.groups.push(PackageGroup {
-                    kind: GroupKind::Node,
-                    folder,
-                    packages,
-                });
-            }
+        if !packages.is_empty() {
+            libraries.types.push(TypesGroup { folder, packages });
         }
     }
     libraries
 }
 
-/// The interpreter's extensions, or the extensions chosen in the PHP
-/// settings, each with its stubs folder when stubs are downloaded.
-async fn load_php(fs: &dyn Fs, config: &PhpConfig) -> Option<PhpRuntime> {
-    let info = php_info(&config.php()).await?;
-    let stubs = stub_folders(fs).await;
-    let has_stubs = !stubs.is_empty();
-    let names = config.stubs.clone().unwrap_or(info.extensions);
-    let extensions = names
+/// The include paths that aren't inside one of the project folders.
+fn outside_roots(paths: Vec<PathBuf>, roots: &[PathBuf]) -> Vec<PathBuf> {
+    paths
         .into_iter()
-        .map(|extension| {
-            let folder = stubs
-                .iter()
-                .find(|(name, _)| name.eq_ignore_ascii_case(&extension))
-                .map(|(_, path)| path.clone());
-            (extension, folder)
-        })
-        .collect();
-    Some(PhpRuntime {
-        version: info.version,
-        extensions,
-        has_stubs,
-    })
+        .filter(|path| !roots.iter().any(|root| path.starts_with(root)))
+        .collect()
 }
 
 /// Names and kinds of the entries in `dir`, folders first, then by name.
@@ -230,61 +217,52 @@ mod tests {
     use super::*;
 
     #[gpui::test]
-    async fn lists_composer_and_node_packages(cx: &mut TestAppContext) {
+    async fn lists_outside_include_paths_and_types(cx: &mut TestAppContext) {
         let fs = FakeFs::new(cx.executor());
         fs.insert_tree(
             "/site",
             json!({
-                "composer.lock": r#"{"packages": [
-                    {"name": "psr/log", "version": "3.0.2"},
-                    {"name": "missing/package", "version": "1.0.0"}
-                ]}"#,
-                "package.json": r#"{"dependencies": {"lodash": "^4", "left-pad": "^1"}}"#,
-                "vendor": { "psr": { "log": { "src": { "LoggerInterface.php": "" } } } },
+                "composer.json": "{}",
+                "vendor": { "psr": { "log": {} } },
                 "node_modules": {
-                    "lodash": { "package.json": r#"{"version": "4.17.21"}"#, "index.js": "" }
+                    "lodash": { "package.json": r#"{"version": "4.17.21"}"#, "index.js": "" },
+                    "@types": {
+                        "react": { "package.json": r#"{"version": "19.0.1"}"#, "index.d.ts": "" },
+                        "lodash": { "index.d.ts": "" },
+                    },
                 },
             }),
         )
         .await;
+        fs.insert_tree("/plain", json!({ "README.md": "" })).await;
         let config = PhpConfig {
             interpreter: Some("vega-no-such-php".into()),
-            include_paths: vec!["/libs/wordpress".into()],
+            include_paths: vec!["/libs/wordpress".into(), "/site/vendor/psr/log".into()],
             ..Default::default()
         };
         let libraries = load_libraries(fs.clone(), vec![PathBuf::from("/site")], config).await;
+        assert!(libraries.is_php_project && libraries.has_content());
+        // vendor/ is inside the project: already in the project tree.
         assert_eq!(
             libraries.include_paths,
             [(PathBuf::from("/libs/wordpress"), false)]
         );
-        assert!(libraries.php.is_none());
-        assert_eq!(libraries.groups.len(), 2);
-
-        let composer = &libraries.groups[0];
-        assert_eq!(composer.kind, GroupKind::Composer);
-        assert_eq!(composer.folder, "site");
-        let composer: Vec<(&str, bool)> = composer
+        assert!(!libraries.has_stubs);
+        assert_eq!(libraries.types.len(), 1);
+        let types: Vec<(&str, Option<&str>)> = libraries.types[0]
             .packages
             .iter()
-            .map(|(package, installed)| (package.name.as_str(), *installed))
+            .map(|package| (package.name.as_str(), package.version.as_deref()))
             .collect();
-        assert_eq!(composer, [("missing/package", false), ("psr/log", true)]);
+        assert_eq!(types, [("lodash", None), ("react", Some("19.0.1"))]);
 
-        let node: Vec<(&str, Option<&str>, bool)> = libraries.groups[1]
-            .packages
-            .iter()
-            .map(|(package, installed)| {
-                (
-                    package.name.as_str(),
-                    package.version.as_deref(),
-                    *installed,
-                )
-            })
-            .collect();
-        assert_eq!(
-            node,
-            [("left-pad", None, false), ("lodash", Some("4.17.21"), true)]
-        );
+        let plain = load_libraries(
+            fs.clone(),
+            vec![PathBuf::from("/plain")],
+            PhpConfig::default(),
+        )
+        .await;
+        assert!(!plain.has_content());
 
         assert_eq!(
             list_dir(fs.as_ref(), Path::new("/site/node_modules/lodash")).await,
