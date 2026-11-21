@@ -17946,9 +17946,9 @@
     "semantic_hash": "1d600ecf4fcd7b5adb1332e473bff6a3"
   },
   "CLAUDE.md": {
-    "mtime": 1795138920.121279,
-    "seen": 1795193282.1313238,
-    "ast_hash": "7bc8ef392f01ccf1c00b5b69119cd164",
+    "mtime": 1795238060.6540606,
+    "seen": 1795238359.002858,
+    "ast_hash": "ab7916e6bff889f79370652a4ee55edd",
     "semantic_hash": ""
   },
   "CODE_OF_CONDUCT.md": {
@@ -22464,9 +22464,9 @@
     "semantic_hash": ""
   },
   "crates/settings_sync/src/history_picker.rs": {
-    "mtime": 1795027086.5710251,
-    "seen": 1795114344.3464499,
-    "ast_hash": "d25455eb7e0157bf40b989484ad8801a",
+    "mtime": 1795238042.9869342,
+    "seen": 1795238358.981539,
+    "ast_hash": "cd0426f2caf88c85439336860d3a6f1e",
     "semantic_hash": ""
   },
   "docs/src/settings-sync.md": {
@@ -22578,9 +22578,9 @@
     "semantic_hash": ""
   },
   "crates/deployment_ui/src/server_picker.rs": {
-    "mtime": 1795111964.3596673,
-    "seen": 1795114344.345691,
-    "ast_hash": "f909e7ee7b840ad2cccd31bfc703d153",
+    "mtime": 1795238042.9866335,
+    "seen": 1795238358.9545841,
+    "ast_hash": "5323243f90e5d1c3a2af00935546a5de",
     "semantic_hash": ""
   },
   "crates/deployment_ui/src/remote_edit_bar.rs": {
@@ -22692,9 +22692,9 @@
     "semantic_hash": ""
   },
   "crates/scratches/src/list_picker.rs": {
-    "mtime": 1795111964.3836682,
-    "seen": 1795114344.3464189,
-    "ast_hash": "2fe4cf2305fb830493a1c08510d99a4d",
+    "mtime": 1795238042.9867928,
+    "seen": 1795238358.9804852,
+    "ast_hash": "e5f78b8e58ff32082f84266c5b4bf8cc",
     "semantic_hash": ""
   },
   "crates/scratches/src/naming.rs": {
@@ -22854,9 +22854,21 @@
     "semantic_hash": ""
   },
   "crates/vega_branch_popup/src/vega_branch_popup.rs": {
-    "mtime": 1795203149.1500473,
-    "seen": 1795203349.065415,
-    "ast_hash": "95942e13e2171c1969d846fcd4a4204e",
+    "mtime": 1795238042.9871068,
+    "seen": 1795238358.988255,
+    "ast_hash": "c3c7ec376d9aed3638cd4ca4e9e71611",
+    "semantic_hash": ""
+  },
+  "script/vega-check-ui-widths": {
+    "mtime": 1795238040.7637084,
+    "seen": 1795238359.0006452,
+    "ast_hash": "48717d47b894b324c7e7ea4527cfff09",
+    "semantic_hash": ""
+  },
+  ".claude/skills/vega-ui-overflow/SKILL.md": {
+    "mtime": 1795238059.9759047,
+    "seen": 1795238359.002711,
+    "ast_hash": "3c371fec71d27a44efb07d232e529739",
     "semantic_hash": ""
   },
   "script/danger/pnpm-lock.yaml": {
