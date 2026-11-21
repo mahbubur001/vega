@@ -533,7 +533,10 @@ impl MenuTarget {
 }
 
 fn branch_info(branch: &git::repository::Branch) -> BranchInfo {
-    let tracking = branch.tracking_status();
+    let tracking = branch
+        .upstream
+        .as_ref()
+        .and_then(|upstream| upstream.tracking.status());
     BranchInfo {
         name: branch.name().to_string().into(),
         is_current: branch.is_head,

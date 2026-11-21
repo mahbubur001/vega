@@ -89,6 +89,7 @@ impl InputField {
         self
     }
 
+    /// VEGA: narrower fields in the Deployment dialog (removed upstream).
     pub fn label_min_width(mut self, width: impl Into<Length>) -> Self {
         self.min_width = width.into();
         self
