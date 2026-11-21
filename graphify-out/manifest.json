@@ -22542,9 +22542,9 @@
     "semantic_hash": ""
   },
   "vega/HANDOFF.md": {
-    "mtime": 1795203253.87095,
-    "seen": 1795203349.083471,
-    "ast_hash": "5e780d24ce996847b56f0e2be45da902",
+    "mtime": 1795238370.0976388,
+    "seen": 1795239126.993761,
+    "ast_hash": "1b7b29d5189bc6273a06c07f4cd4209c",
     "semantic_hash": ""
   },
   "crates/deployment_ui/src/sync_view.rs": {
@@ -22854,9 +22854,9 @@
     "semantic_hash": ""
   },
   "crates/vega_branch_popup/src/vega_branch_popup.rs": {
-    "mtime": 1795238042.9871068,
-    "seen": 1795238358.988255,
-    "ast_hash": "c3c7ec376d9aed3638cd4ca4e9e71611",
+    "mtime": 1795238965.107527,
+    "seen": 1795239126.975191,
+    "ast_hash": "6608ec18b2d9db427bc7af47bf284699",
     "semantic_hash": ""
   },
   "script/vega-check-ui-widths": {
