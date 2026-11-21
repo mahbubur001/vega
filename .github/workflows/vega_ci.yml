@@ -8,13 +8,11 @@ on:
   push:
     branches: [vega]
     paths-ignore:
-      - "graphify-out/**"
       - "**.md"
       - "docs/**"
   pull_request:
     branches: [vega]
     paths-ignore:
-      - "graphify-out/**"
       - "**.md"
       - "docs/**"
   workflow_dispatch:

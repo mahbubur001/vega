@@ -16,8 +16,7 @@ _Last updated: 2026-11-21 (built-in PHP, auto-install fixed). Branch `vega`, eve
 2. Rust via rustup (the toolchain comes from `rust-toolchain.toml`), `brew install cmake`.
 3. With full Xcode, plain `cargo run` works. Without Xcode, add `--features gpui_platform/runtime_shaders` to every build, check, test and clippy command that compiles the app (for crate tests: `cargo test -p <crate> -p gpui_platform --features gpui_platform/runtime_shaders`).
 4. Run the app as "VEGA Dev.app" so the Dock shows the VEGA icon: `script/vega-dev-app --build ~/some/test/project` (it picks runtime shaders itself when Xcode is missing). Don't open this repo itself in VEGA.
-5. Code graph: `graphify update .` once after cloning (`graph.json` and the cache are not in git).
-6. Disk: the debug build cache grows by tens of GB per session. When space runs low, `rm -r target/debug/incremental` (safe; it rebuilds). Each new dependency also leaves the old app and test binaries behind in `target/debug/deps` (`vega-<hash>`, about 1.2 GB each, and `<crate>-<hash>` test binaries); all but the newest of each name can be deleted.
+5. Disk: the debug build cache grows by tens of GB per session. When space runs low, `rm -r target/debug/incremental` (safe; it rebuilds). Each new dependency also leaves the old app and test binaries behind in `target/debug/deps` (`vega-<hash>`, about 1.2 GB each, and `<crate>-<hash>` test binaries); all but the newest of each name can be deleted.
 
 ## Where things stand
 

@@ -1,9 +1,0 @@
-{
-  "741": "workflows: community_close_stale_issues.y",
-  "742": "workflows: community_pr_cleanup.yml",
-  "743": "workflows: compliance_check.yml",
-  "744": "workflows: guild_assignment_status.yml",
-  "745": "workflows: wezel.yml",
-  "754": "search: registrar.rs",
-  "776": "bundle-mac: bundle-freebsd"
-}
