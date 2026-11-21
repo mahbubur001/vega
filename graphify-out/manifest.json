@@ -16290,9 +16290,9 @@
     "semantic_hash": ""
   },
   "crates/zed/src/zed/app_menus.rs": {
-    "mtime": 1795111964.3936331,
-    "seen": 1795114344.346842,
-    "ast_hash": "9e6fa2cb6abb6ccade8280c962cab0fc",
+    "mtime": 1795244845.3070729,
+    "seen": 1795245178.0448809,
+    "ast_hash": "a73fc8965af0df2e2d102754cc4a0098",
     "semantic_hash": ""
   },
   "crates/zed/src/zed/edit_prediction_registry.rs": {
@@ -16380,9 +16380,9 @@
     "semantic_hash": "7a79580828c81febcf9852e8fa23e55d"
   },
   "crates/zed_actions/src/lib.rs": {
-    "mtime": 1795243182.473751,
-    "seen": 1795243499.805936,
-    "ast_hash": "281ac44c5028234c3423fd68962a19a1",
+    "mtime": 1795244831.8090475,
+    "seen": 1795245178.045158,
+    "ast_hash": "19f9b09877cdcbdcbd9146b7a3c95553",
     "semantic_hash": ""
   },
   "crates/zed_credentials_provider/Cargo.toml": {
@@ -22542,9 +22542,9 @@
     "semantic_hash": ""
   },
   "vega/HANDOFF.md": {
-    "mtime": 1795241853.1496015,
-    "seen": 1795241952.486292,
-    "ast_hash": "8dfe52fc3f6cbc28928829f4faf5682d",
+    "mtime": 1795245087.4153168,
+    "seen": 1795245178.05531,
+    "ast_hash": "e549e2a736288cb4c2b652fef21f7a17",
     "semantic_hash": ""
   },
   "crates/deployment_ui/src/sync_view.rs": {
@@ -22608,15 +22608,15 @@
     "semantic_hash": ""
   },
   "crates/external_libraries/src/external_libraries.rs": {
-    "mtime": 1795111964.3672528,
-    "seen": 1795114344.3459141,
-    "ast_hash": "6e78cc5bfcf85984d170ab12577d13ec",
+    "mtime": 1795244838.1120555,
+    "seen": 1795245178.009126,
+    "ast_hash": "f24b9c5f2f3a12975cec054d24cb69c4",
     "semantic_hash": ""
   },
   "crates/external_libraries/src/model.rs": {
-    "mtime": 1795111964.367586,
-    "seen": 1795114344.3459148,
-    "ast_hash": "0aa5cb0dc36a309d781c9b3e82b0e8d1",
+    "mtime": 1795244818.249483,
+    "seen": 1795245178.0091279,
+    "ast_hash": "0d0acf9807d795a640c88750fcd44056",
     "semantic_hash": ""
   },
   "crates/external_libraries/src/protection.rs": {
@@ -22626,9 +22626,9 @@
     "semantic_hash": ""
   },
   "crates/external_libraries/src/rows.rs": {
-    "mtime": 1795193054.1929262,
-    "seen": 1795193282.092635,
-    "ast_hash": "05828e6a09ee0cff4597c67388acbe56",
+    "mtime": 1795244838.1203527,
+    "seen": 1795245178.009148,
+    "ast_hash": "c1495523c648fc6b4c8b2f6c4db5a9a1",
     "semantic_hash": ""
   },
   "crates/php_settings/Cargo.toml": {
@@ -22668,9 +22668,9 @@
     "semantic_hash": ""
   },
   "crates/php_settings/src/window.rs": {
-    "mtime": 1795111964.374826,
-    "seen": 1795114344.3462908,
-    "ast_hash": "036d2de077d92d78bbcd9e383610e050",
+    "mtime": 1795244967.685147,
+    "seen": 1795245178.024055,
+    "ast_hash": "1fa442268a45772224b9d1ac7291d385",
     "semantic_hash": ""
   },
   "crates/project/src/library_worktrees.rs": {
