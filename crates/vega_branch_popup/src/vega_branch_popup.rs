@@ -189,6 +189,14 @@ impl Ops {
         }
     }
 
+    /// Brings a branch that isn't checked out up to date with its upstream,
+    /// fast-forward only (git refuses when the two have diverged).
+    fn update_other(&self, name: &str, upstream: &str, cx: &mut App) {
+        if let Some(args) = update_args(name, upstream) {
+            self.run_git(args, cx);
+        }
+    }
+
     fn checkout_revision(&self, revision: String, cx: &mut App) {
         self.run_git(vec!["checkout".into(), revision], cx);
     }
@@ -427,6 +435,12 @@ impl BranchPopupDelegate {
                 MenuTarget::Branch(branch) => (branch.is_current, true, branch.is_remote),
                 MenuTarget::Tag(_) => (false, false, false),
             };
+            let other_upstream = match &target {
+                MenuTarget::Branch(branch) if !branch.is_current && !branch.is_remote => {
+                    branch.upstream.clone()
+                }
+                _ => None,
+            };
             let mut menu = menu;
             if !is_current {
                 let ops = ops.clone();
@@ -464,6 +478,13 @@ impl BranchPopupDelegate {
                         None,
                         move |_, cx| ops.merge_into_current(&name, cx),
                     );
+                }
+                if let Some(upstream) = other_upstream {
+                    let ops = ops.clone();
+                    let name = name.to_string();
+                    menu = menu.separator().entry("Update", None, move |_, cx| {
+                        ops.update_other(&name, &upstream, cx)
+                    });
                 }
             }
             if is_current {
@@ -540,6 +561,20 @@ async fn git_output(dir: &Path, args: &[&str]) -> String {
         .filter(|output| output.status.success())
         .map(|output| String::from_utf8_lossy(&output.stdout).into_owned())
         .unwrap_or_default()
+}
+
+/// `git fetch origin dev:dev` for local branch `dev` tracking `origin/dev`:
+/// fetches and fast-forwards a branch that isn't checked out.
+fn update_args(name: &str, upstream: &str) -> Option<Vec<String>> {
+    let (remote, branch) = upstream.split_once('/')?;
+    if remote.is_empty() || branch.is_empty() {
+        return None;
+    }
+    Some(vec![
+        "fetch".into(),
+        remote.into(),
+        format!("{branch}:{name}"),
+    ])
 }
 
 fn count(n: u32) -> String {
@@ -620,7 +655,12 @@ impl PickerDelegate for BranchPopupDelegate {
             }
             Entry::Branch(_, branch, _) => {
                 cx.emit(DismissEvent);
-                if let Some(ops) = &self.ops {
+                if branch.is_current {
+                    // Already checked out: a click pulls what's waiting (↓N).
+                    if branch.behind > 0 {
+                        window.dispatch_action(git::Pull.boxed_clone(), cx);
+                    }
+                } else if let Some(ops) = &self.ops {
                     ops.checkout(&branch, cx);
                 }
             }
@@ -788,6 +828,23 @@ impl BranchPopupDelegate {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn updates_another_branch_by_fast_forward_fetch() {
+        assert_eq!(
+            update_args("main", "origin/main"),
+            Some(vec!["fetch".into(), "origin".into(), "main:main".into()])
+        );
+        assert_eq!(
+            update_args("fb", "origin/feature/fb"),
+            Some(vec![
+                "fetch".into(),
+                "origin".into(),
+                "feature/fb:fb".into()
+            ])
+        );
+        assert_eq!(update_args("main", "main"), None);
+    }
 
     #[test]
     fn checks_branch_names_like_git() {
