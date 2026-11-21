@@ -5922,10 +5922,10 @@
     "semantic_hash": "611073324d27661bb29a3d597e6e0717"
   },
   "crates/github_releases/src/releases.rs": {
-    "mtime": 1795011961.9869797,
-    "seen": 1795114344.345963,
-    "ast_hash": "76a7900e88f0ad562b7237f048bcbebd",
-    "semantic_hash": "76a7900e88f0ad562b7237f048bcbebd"
+    "mtime": 1795239267.1589003,
+    "seen": 1795239767.810276,
+    "ast_hash": "fd1c6b0f98fc307544ceb34f4c8dcc72",
+    "semantic_hash": ""
   },
   "crates/go_to_line/Cargo.toml": {
     "mtime": 1795011961.9870627,
