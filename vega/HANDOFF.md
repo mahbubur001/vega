@@ -21,6 +21,8 @@ _Last updated: 2026-11-21 (built-in PHP, auto-install fixed). Branch `vega`, eve
 
 ## Where things stand
 
+**UI overflow guard (2026-11-21):** rows spilling past a popup's edge come from narrowing a `Picker` with a wrapper `.w(...)`. Use `.initial_width(...)` instead. Run `script/vega-check-ui-widths`; the skill `.claude/skills/vega-ui-overflow` covers the other causes.
+
 **Newest (2026-11-21, later): PhpStorm-style title bar and branch popup** (new crate `vega_branch_popup`; title bar change in `crates/title_bar/src/title_bar.rs`, one call swapped from `git_ui_core::build_branch_picker`).
 - Title bar: the worktree button shows only when the repository has several worktrees; the branch button shows ↓incoming ↑outgoing and a ▾.
 - Popup: search over branches and actions; Update Project (`git::Pull`), Commit… (`git::ExpandCommitEditor`), Push… (`git::Push`), New Branch…, Checkout Tag or Revision…; groups Recent (from the reflog, unfolded) / Local / Remote / Tags (folded; any query unfolds all). Rows: ★ current, ↓/↑ counts, upstream, › menu: Checkout, New Branch from…, Rebase current onto, Merge into current, Update/Push (current), Rename…, Delete. Enter on a branch checks it out; Enter on a header folds it.
