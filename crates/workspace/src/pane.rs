@@ -2413,7 +2413,8 @@ impl Pane {
             if save_intent == SaveIntent::Close {
                 let will_autosave = cx.update(|_window, cx| {
                     item.can_autosave(cx)
-                        && item.workspace_settings(cx).autosave.should_save_on_close()
+                        && crate::item::effective_autosave(item, project.read(cx), cx)
+                            .should_save_on_close()
                 })?;
                 if !will_autosave {
                     let item_id = item.item_id();

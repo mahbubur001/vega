@@ -21070,6 +21070,27 @@ dependencies = [
 ]
 
 [[package]]
+name = "vega_todo"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "collections",
+ "db",
+ "editor",
+ "futures 0.3.34",
+ "gpui",
+ "language",
+ "menu",
+ "project",
+ "regex",
+ "settings",
+ "theme",
+ "ui",
+ "util",
+ "workspace",
+]
+
+[[package]]
 name = "version-compare"
 version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -24107,6 +24128,7 @@ dependencies = [
  "urlencoding",
  "util",
  "uuid",
+ "vega_todo",
  "vim",
  "vim_mode_setting",
  "watch",

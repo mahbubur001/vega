@@ -244,6 +244,7 @@ members = [
     "crates/util",
     "crates/util_macros",
     "crates/vega_branch_popup",
+    "crates/vega_todo",
     "crates/vega_dialog",
     "crates/vim",
     "crates/vim_mode_setting",
@@ -530,6 +531,7 @@ ui_prompt = { path = "crates/ui_prompt" }
 util = { path = "crates/util" }
 util_macros = { path = "crates/util_macros" }
 vega_branch_popup = { path = "crates/vega_branch_popup" }
+vega_todo = { path = "crates/vega_todo" }
 vega_dialog = { path = "crates/vega_dialog" }
 vim = { path = "crates/vim" }
 vim_mode_setting = { path = "crates/vim_mode_setting" }

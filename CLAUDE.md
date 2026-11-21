@@ -17,7 +17,7 @@ Coding guidelines for Rust and GPUI (error handling, naming, GPUI contexts, enti
 
 - `upstream` = `https://github.com/zed-industries/zed` (read-only source of truth for the editor core).
 - `vega` = our working branch. `main` mirrors upstream; never commit VEGA work to `main`.
-- `origin` = `https://github.com/mahbubur001/vega` (private for now; default branch `vega`).
+- `origin` = `https://github.com/mahbubur001/vega` (public; default branch `vega`).
 - Sync upstream regularly: `git fetch upstream && git merge upstream/main` on `vega`. Keep VEGA changes small and localized so merges stay cheap — prefer config, new crates, and thin seams over rewriting upstream files.
 
 ## Commands

@@ -748,6 +748,7 @@ fn main() {
         php_settings::init(cx);
         external_libraries::init(cx);
         scratches::init(cx);
+        vega_todo::init(cx);
 
         load_embedded_fonts(cx);
         #[cfg(target_os = "linux")]

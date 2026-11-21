@@ -12,6 +12,7 @@ mod settings_sync;
 mod terminal;
 mod theme;
 mod title_bar;
+mod todo;
 mod workspace;
 
 pub use action::{ActionName, ActionWithArguments, CommandAliasTarget};
@@ -33,6 +34,7 @@ pub use settings_sync::*;
 pub use terminal::*;
 pub use theme::*;
 pub use title_bar::*;
+pub use todo::*;
 pub use workspace::*;
 
 use collections::{HashMap, IndexMap, IndexSet};
@@ -314,6 +316,9 @@ pub struct SettingsContent {
     /// VEGA: Settings Sync. Never synced itself.
     pub settings_sync: Option<SettingsSyncContent>,
 
+    /// VEGA: the TODO tool window.
+    pub todo: Option<TodoSettingsContent>,
+
     /// Whether or not to enable Vim mode.
     ///
     /// Default: false
@@ -417,7 +422,7 @@ fallible_options::flattened_deserialize!(SettingsContent {
         global_lsp_settings, image_viewer, markdown_preview, repl, helix_mode, hide_mouse,
         journal, log, line_indicator_format, language_models, copilot, outline_panel, project_panel,
         node, proxy, reduce_motion, server_url, credentials_url, session, telemetry, terminal,
-        title_bar, settings_sync, vim_mode, calls, which_key, vim, modeline_lines, feature_flags,
+        title_bar, settings_sync, todo, vim_mode, calls, which_key, vim, modeline_lines, feature_flags,
         instrumentation,
     },
     defaults: {},

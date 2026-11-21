@@ -40,6 +40,10 @@ pub fn scratches_dir() -> PathBuf {
 }
 
 pub fn init(cx: &mut App) {
+    // Like IntelliJ: scratch files save as you type and never ask on close.
+    cx.default_global::<workspace::item::AlwaysAutosaveFolders>()
+        .0
+        .push(scratches_dir());
     cx.observe_new(|workspace: &mut Workspace, _, _| {
         workspace
             .register_action(|workspace, _: &NewScratchFile, window, cx| {

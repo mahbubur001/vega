@@ -1,6 +1,7 @@
 # VEGA CI: Linux only, on GitHub-hosted runners (the upstream workflows use
-# Zed's Namespace runners and are skipped on this repo). macOS and Windows are
-# left out on purpose: on a private repo their minutes cost 10x and 2x.
+# Zed's Namespace runners and are skipped on this repo). The repo is public, so
+# GitHub-hosted runner minutes are free; macOS and Windows are still left out to
+# keep each run short.
 name: VEGA CI
 
 on:

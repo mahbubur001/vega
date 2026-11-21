@@ -2091,6 +2091,15 @@
     // 2. hour24
     "hour_format": "hour12",
   },
+  // VEGA: the TODO tool window (like IntelliJ's TODO patterns).
+  "todo": {
+    // Words that mark a TODO item in a comment, matched as whole words.
+    "patterns": ["TODO", "FIXME"],
+    // Whether the words must match case exactly (`TODO` but not `todo`).
+    "case_sensitive": false,
+    // Whether TODO items are highlighted in the editor.
+    "highlight": true,
+  },
   // Status bar-related settings.
   "status_bar": {
     // Whether to show the status bar.

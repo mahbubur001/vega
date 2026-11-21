@@ -34,6 +34,38 @@ use std::{
 use ui::{Color, Icon, IntoElement, Label, LabelCommon};
 use util::ResultExt;
 
+/// VEGA: folders whose files save as you type and never ask to be saved when
+/// closed, like IntelliJ's scratch files. Crates add their folder at startup.
+#[derive(Default)]
+pub struct AlwaysAutosaveFolders(pub Vec<std::path::PathBuf>);
+
+impl gpui::Global for AlwaysAutosaveFolders {}
+
+/// How long VEGA waits after typing before saving a file in an
+/// [`AlwaysAutosaveFolders`] folder.
+const ALWAYS_AUTOSAVE_DELAY_MS: u64 = 300;
+
+/// The item's autosave setting, or "after a short delay" for files in an
+/// [`AlwaysAutosaveFolders`] folder.
+pub fn effective_autosave(item: &dyn ItemHandle, project: &Project, cx: &App) -> AutosaveSetting {
+    let setting = item.workspace_settings(cx).autosave;
+    let in_folder = cx
+        .try_global::<AlwaysAutosaveFolders>()
+        .filter(|folders| !folders.0.is_empty())
+        .and_then(|folders| {
+            let path = project.absolute_path(&item.project_path(cx)?, cx)?;
+            Some(folders.0.iter().any(|folder| path.starts_with(folder)))
+        })
+        .unwrap_or(false);
+    if in_folder {
+        AutosaveSetting::AfterDelay {
+            milliseconds: ALWAYS_AUTOSAVE_DELAY_MS.into(),
+        }
+    } else {
+        setting
+    }
+}
+
 pub const LEADER_UPDATE_THROTTLE: Duration = Duration::from_millis(200);
 
 #[derive(Clone, Copy, Debug)]
@@ -937,7 +969,8 @@ impl<T: Item> ItemHandle for Entity<T> {
                         }
 
                         ItemEvent::Edit => {
-                            let autosave = item.workspace_settings(cx).autosave;
+                            let autosave =
+                                effective_autosave(item, workspace.project().read(cx), cx);
 
                             if let AutosaveSetting::AfterDelay { milliseconds } = autosave {
                                 let delay = Duration::from_millis(milliseconds.0);

@@ -189,6 +189,8 @@ pub enum HighlightKey {
     SearchWithinRange,
     SelectedTextHighlight,
     SyntaxTreeView(usize),
+    /// VEGA: TODO items in comments (crates/vega_todo).
+    VegaTodo,
     VimExchange,
 }
 
